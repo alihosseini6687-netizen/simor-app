@@ -16,15 +16,15 @@
             --border-color: rgba(212, 175, 55, 0.3);
             --admin-color: #ff3b30;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
         body {
-            margin: 0; padding: 0 0 75px 0;
+            margin: 0; padding: 0 0 78px 0;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             min-height: 100vh;
         }
-        .tab-content { display: none; padding: 18px; }
+        .tab-content { display: none; padding: 16px; }
         .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -58,18 +58,24 @@
             transition: all 0.2s;
         }
         .gold-btn:active { transform: scale(0.97); }
+        .gold-btn:disabled {
+            background: #2a2a34;
+            color: #777;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
 
         .admin-card {
             background: rgba(255, 59, 48, 0.08);
             border: 1px dashed var(--admin-color);
             border-radius: 16px;
-            padding: 16px;
+            padding: 14px;
             margin-bottom: 16px;
         }
 
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
-            height: 68px;
+            height: 70px;
             background: rgba(14, 14, 18, 0.96);
             backdrop-filter: blur(20px);
             border-top: 1px solid var(--border-color);
@@ -79,17 +85,34 @@
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: var(--text-muted);
-            font-size: 11px;
+            font-size: 10px;
             cursor: pointer;
             flex: 1;
             transition: all 0.2s;
         }
-        .nav-item .icon { font-size: 22px; margin-bottom: 3px; }
+        .nav-item .icon { font-size: 20px; margin-bottom: 3px; }
         .nav-item.active {
             color: var(--gold-color);
             font-weight: bold;
         }
         .nav-item.active .icon { transform: scale(1.15); filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.5)); }
+
+        .nav-item.tap-center {
+            position: relative;
+            top: -12px;
+        }
+        .nav-item.tap-center .tap-icon-wrap {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 18px rgba(212, 175, 55, 0.6);
+            font-size: 24px;
+            color: #0b0b0e;
+            border: 3px solid #0b0b0e;
+            transition: transform 0.15s;
+        }
+        .nav-item.tap-center:active .tap-icon-wrap { transform: scale(0.92); }
 
         .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         .feat-card {
@@ -103,11 +126,63 @@
         .feat-card:active { transform: scale(0.96); }
         .feat-card .f-icon { font-size: 32px; margin-bottom: 6px; }
 
+        .tap-screen-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+        }
+        .coin-wrapper {
+            position: relative;
+            margin: 25px auto;
+            width: 230px; height: 230px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .gold-coin {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fff1b0 0%, #d4af37 40%, #aa7c11 85%, #6a4a00 100%);
+            box-shadow: 0 10px 35px rgba(212, 175, 55, 0.45), inset 0 3px 6px rgba(255,255,255,0.7), inset 0 -6px 12px rgba(0,0,0,0.6);
+            border: 6px solid #f9e8a2;
+            display: flex; align-items: center; justify-content: center;
+            transition: transform 0.08s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+        .coin-inner-ring {
+            width: 82%; height: 82%;
+            border-radius: 50%;
+            border: 2px dashed rgba(106, 74, 0, 0.6);
+            display: flex; align-items: center; justify-content: center;
+        }
+        .coin-symbol {
+            font-size: 88px;
+            font-weight: 900;
+            color: #553b00;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.6), -1px -1px 2px rgba(0,0,0,0.4);
+            font-family: "B Titr", "B Yekan", system-ui, sans-serif;
+            margin-top: -8px;
+        }
+        .floating-plus {
+            position: absolute;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 0 0 8px #d4af37;
+            pointer-events: none;
+            animation: floatUp 0.8s ease-out forwards;
+            z-index: 99;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-70px) scale(1.4); }
+        }
+
         .wheel-container {
             position: relative;
             display: flex; flex-direction: column; align-items: center;
-            margin: 20px auto;
-            width: 280px; height: 280px;
+            margin: 15px auto;
+            width: 270px; height: 270px;
         }
         #wheel-canvas {
             border-radius: 50%;
@@ -162,8 +237,8 @@
             background: #15151c;
             border: 2px solid #d4af37;
             border-radius: 20px;
-            padding: 24px 20px;
-            width: 100%; max-width: 360px;
+            padding: 22px 18px;
+            width: 100%; max-width: 370px;
             text-align: center;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
             max-height: 90vh;
@@ -174,10 +249,10 @@
             background: #0b0b0e;
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 12px;
+            padding: 10px 12px;
             color: #fff;
-            font-size: 14px;
-            margin: 8px 0 14px 0;
+            font-size: 13px;
+            margin: 6px 0 12px 0;
             text-align: right;
             outline: none;
         }
@@ -198,7 +273,7 @@
 </head>
 <body>
 
-    <!-- مودال ورود اولیه / اجبار عضویت و نام‌کاربری -->
+    <!-- مودال ورود اولیه -->
     <div id="welcome-modal" class="modal-overlay" style="display: none;">
         <div class="modal-box">
             <div style="font-size: 34px; margin-bottom: 8px;">🎬</div>
@@ -228,43 +303,68 @@
             
             <div style="font-size: 13px; color: #ddd; line-height: 1.8; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
                 <p>✨ <b>هدف این مینی‌اپلیکیشن:</b><br>
-                فضایی جذاب برای تعامل و یادگیری تخصصی هنر تدوین، پریمیر، افترافکت و زیبایی‌شناسی سینما.</p>
+                فضایی پویا و تعاملی برای اعضای آکادمی تدوین جهت یادگیری، به چالش کشیدن اطلاعات و کسب پاداش‌های ارزشمند.</p>
 
-                <p>🎮 <b>بازی کنید و امتیاز بگیرید:</b><br>
-                با چرخش گردونه شانس روزانه، انجام تسک‌های کوتاه و شرکت در مینی‌گیم‌های هیجان‌انگیز، سکه و امتیاز کسب کنید.</p>
+                <p>🪙 <b>روش‌های کسب سکه و امتیاز:</b><br>
+                • <b>تپ روزانه:</b> دریافت روزانه تا ۵۰۰ سکه رایگان با لمس سکه سیمُر.<br>
+                • <b>گردونه شانس ۲۴ ساعته:</b> جوایز ارزشمند تا ۱۵ امتیاز با هر بار چرخش روزانه.<br>
+                • <b>ماموریت‌ها و تسک‌ها:</b> عضویت در کانال‌ها و دنبال کردن صفحات رسمی.</p>
 
                 <p>🎁 <b>تبدیل امتیازها به تخفیف واقعی:</b><br>
-                تمامی امتیازهای کسب‌شده در این اپلیکیشن ذخیره می‌شوند و شما می‌توانید آن‌ها را برای دریافت <b>تخفیف‌های ویژه روی دوره‌ها، ورکشاپ‌ها و بسته‌های آموزشی آکادمی سیمُر</b> استفاده نمایید!</p>
+                تمامی سکه‌ها در حساب شما ذخیره می‌شوند و می‌توانید از آن‌ها به عنوان <b>کد تخفیف اختصاصی</b> در ثبت‌نام دوره‌های جامع پریمیر، افترافکت و تدوین سینمایی استفاده کنید!</p>
+                
+                <p>🏆 <b>سیستم سطوح پیشرفته:</b><br>
+                با افزایش سکه‌ها رتبه شما تا سطح ۲۰ بالا می‌رود و در سطح ۲۰، جایزه طلایی <b>۳۰۰۰ سکه</b> به شما تعلق می‌گیرد!</p>
             </div>
 
             <button class="gold-btn" style="margin-top: 10px;" onclick="closeAboutModal()">متوجه شدم 👌</button>
         </div>
     </div>
 
-    <!-- مودال پنل مدیریت اختصاصی ادمین (فقط برای آیدی ادمین) -->
+    <!-- مودال پنل مدیریت آنلاین -->
     <div id="admin-modal" class="modal-overlay" style="display: none;">
         <div class="modal-box" style="text-align: right;">
-            <div style="text-align: center; font-size: 30px;">👑</div>
-            <h3 style="text-align: center; color: #ff3b30; margin: 0 0 10px 0;">پنل مدیریت مدیر کل (سید علی حسینی)</h3>
+            <div style="text-align: center; font-size: 28px;">👑</div>
+            <h3 style="text-align: center; color: #ff3b30; margin: 0 0 8px 0;">پنل مدیریت پیشرفته (استاد حسینی)</h3>
             
-            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
-                این بخش فقط برای آیدی شما (702007470) فعال است و سایر مشترکین به آن دسترسی ندارند.
+            <!-- بخش ۱: افزودن تسک جدید -->
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid #444; border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+                <div style="font-size: 13px; color: var(--gold-color); font-weight: bold; margin-bottom: 8px;">➕ افزودن تسک جدید به اپلیکیشن:</div>
+                <label style="font-size: 11px; color: #aaa;">عنوان تسک:</label>
+                <input type="text" id="admin-task-title" class="input-field" placeholder="مثال: عضویت در پیج یوتیوب">
+                
+                <label style="font-size: 11px; color: #aaa;">لینک تسک (کانال/پیج/سایت):</label>
+                <input type="text" id="admin-task-url" class="input-field" placeholder="https://youtube.com/...">
+                
+                <label style="font-size: 11px; color: #aaa;">مقدار پاداش (سکه):</label>
+                <input type="number" id="admin-task-reward" class="input-field" placeholder="مثال: 10" value="10">
+
+                <button class="gold-btn" style="padding: 9px;" onclick="adminAddNewTask()">ثبت و انتشار تسک در مینی‌اپ 🚀</button>
             </div>
 
-            <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; margin-bottom: 14px;">
-                <label style="font-size: 12px; color: var(--gold-color); font-weight: bold; display: block; margin-bottom: 6px;">📢 ارسال پیام خودکار ربات به کانال رسمی (@SimorApp):</label>
-                <textarea id="admin-channel-msg" style="width: 100%; height: 90px; background: #0b0b0e; border: 1px solid #444; border-radius: 8px; color: #fff; padding: 8px; font-size: 12px; font-family: inherit;" placeholder="متن پیام جهت ارسال به کانال..."></textarea>
-                <button class="gold-btn" style="margin-top: 8px; background: linear-gradient(135deg, #2481cc, #1a5ea6); color: #fff;" onclick="postToChannelFromAdmin()">ارسال پیام به کانال SimorApp 🚀</button>
+            <!-- بخش ۲: لیست تسک‌های سفارشی -->
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid #333; border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+                <div style="font-size: 12px; color: #fff; font-weight: bold; margin-bottom: 6px;">📋 لیست تسک‌های سفارشی شما:</div>
+                <div id="admin-custom-tasks-list" style="font-size: 12px; color: #aaa;">تسک سفارشی ثبت نشده است.</div>
+            </div>
+
+            <!-- بخش ۳: ارسال پیام به کانال -->
+            <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; margin-bottom: 12px;">
+                <label style="font-size: 12px; color: var(--gold-color); font-weight: bold; display: block; margin-bottom: 6px;">📢 ارسال پیام ربات به کانال (@SimorApp):</label>
+                <textarea id="admin-channel-msg" style="width: 100%; height: 75px; background: #0b0b0e; border: 1px solid #444; border-radius: 8px; color: #fff; padding: 8px; font-size: 12px; font-family: inherit;" placeholder="متن پیام جهت ارسال به کانال..."></textarea>
+                <button class="gold-btn" style="margin-top: 8px; background: linear-gradient(135deg, #2481cc, #1a5ea6); color: #fff; padding: 9px;" onclick="postToChannelFromAdmin()">ارسال پیام به کانال SimorApp 🚀</button>
                 <div id="channel-post-status" style="font-size: 11px; margin-top: 4px; text-align: center;"></div>
             </div>
 
+            <!-- بخش ۴: ابزارهای تست -->
             <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; margin-bottom: 14px;">
-                <label style="font-size: 12px; color: var(--gold-color); font-weight: bold; display: block; margin-bottom: 6px;">🪙 مدیریت سکه‌های تست من:</label>
-                <div style="display: flex; gap: 8px;">
-                    <button class="gold-btn" style="padding: 8px;" onclick="adminAddCoins(100)">+100 سکه</button>
-                    <button class="gold-btn" style="padding: 8px;" onclick="adminAddCoins(500)">+500 سکه</button>
-                    <button class="gold-btn" style="padding: 8px; background: #444; color: #fff;" onclick="adminResetCoins()">صفر کردن</button>
+                <label style="font-size: 12px; color: var(--gold-color); font-weight: bold; display: block; margin-bottom: 6px;">⚙️ ابزارهای تست:</label>
+                <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+                    <button class="gold-btn" style="padding: 7px; font-size: 11px;" onclick="adminAddCoins(100)">+100 سکه</button>
+                    <button class="gold-btn" style="padding: 7px; font-size: 11px;" onclick="adminAddCoins(500)">+500 سکه</button>
+                    <button class="gold-btn" style="padding: 7px; font-size: 11px; background: #444; color: #fff;" onclick="adminResetCoins()">صفر کردن</button>
                 </div>
+                <button class="gold-btn" style="padding: 7px; font-size: 11px; background: #555; color: #fff;" onclick="adminResetSpinTimer()">🔄 ریست تایمر ۲۴ ساعته گردونه (تست)</button>
             </div>
 
             <button class="gold-btn" onclick="closeAdminModal()">بستن پنل مدیریت ✖️</button>
@@ -274,14 +374,14 @@
     <!-- تب ۱: خانه -->
     <div id="tab-home" class="tab-content active">
         
-        <!-- کارت اختصاصی ادمین که فقط برای استاد حسینی نمایش داده می‌شود -->
+        <!-- کارت دسترسی ادمین -->
         <div id="admin-badge-container" style="display: none;">
             <div class="admin-card" onclick="openAdminModal()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <div style="color: #ff3b30; font-weight: bold; font-size: 13px;">👑 پنل مدیریت آنلاین آکادمی</div>
-                    <div style="font-size: 11px; color: #aaa;">ارسال پیام به کانال و کنترل سریع مینی‌اپ</div>
+                    <div style="font-size: 11px; color: #aaa;">افزودن تسک دلخواه، ارسال پیام به کانال و تنظیمات</div>
                 </div>
-                <div style="background: #ff3b30; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold;">ورود</div>
+                <div style="background: #ff3b30; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold;">مدیریت</div>
             </div>
         </div>
 
@@ -293,7 +393,7 @@
                 👤 هنرجو: در حال اتصال...
             </div>
 
-            <div style="display: flex; justify-content: space-around; margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 14px;">
+            <div style="display: flex; justify-content: space-around; margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
                 <div>
                     <div style="font-size: 12px; color: var(--text-muted);">موجودی سکه</div>
                     <div class="gold-text" style="font-size: 22px;" id="coins-display">0 🪙</div>
@@ -306,11 +406,14 @@
 
             <div style="margin-top: 14px; text-align: right;">
                 <div style="display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 4px;">
-                    <span>پیشرفت تا سطح بعدی</span>
+                    <span id="level-title-text">پیشرفت تا سطح بعدی</span>
                     <span id="level-progress-text">0 / 150</span>
                 </div>
-                <div style="background: rgba(255,255,255,0.08); height: 6px; border-radius: 4px; overflow: hidden;">
+                <div style="background: rgba(255,255,255,0.08); height: 7px; border-radius: 4px; overflow: hidden;">
                     <div id="level-progress-bar" style="background: var(--gold-gradient); height: 100%; width: 0%;"></div>
+                </div>
+                <div id="level-reward-badge" style="font-size: 10px; color: var(--gold-color); margin-top: 5px; text-align: left;">
+                    🎯 جایزه ویژه سطح ۲۰: ۳,۰۰۰ سکه
                 </div>
             </div>
         </div>
@@ -327,10 +430,10 @@
                 <div style="font-weight: bold; font-size: 14px;">ماموریت‌ها</div>
                 <div style="font-size: 11px; color: var(--text-muted);">کسب سکه و امتیاز</div>
             </div>
-            <div class="feat-card" onclick="alertMiniGame()">
-                <div class="f-icon">🎮</div>
-                <div style="font-weight: bold; font-size: 14px;">مینی گیم</div>
-                <div style="font-size: 11px; color: var(--text-muted);">بازی‌های تعاملی</div>
+            <div class="feat-card" onclick="switchTab('tab-tap')">
+                <div class="f-icon">🪙</div>
+                <div style="font-weight: bold; font-size: 14px;">مینی گیم تپ</div>
+                <div style="font-size: 11px; color: var(--text-muted);">۵۰۰ سکه روزانه</div>
             </div>
             <div class="feat-card" onclick="switchTab('tab-profile')">
                 <div class="f-icon">👤</div>
@@ -344,7 +447,7 @@
     <div id="tab-wheel" class="tab-content">
         <div class="gold-card" style="text-align: center;">
             <h2 class="gold-text" style="margin: 0;">🎡 گردونه شانس طلایی</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin: 6px 0 0 0;">شانس خود را امتحان کنید (جایزه ویژه: ۱۵ امتیاز!)</p>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 6px 0 0 0;">هر ۲۴ ساعت یک شانس چرخش رایگان (جایزه ویژه: ۱۵ امتیاز!)</p>
             
             <div class="wheel-container">
                 <div class="wheel-arrow"></div>
@@ -352,11 +455,36 @@
             </div>
 
             <button class="gold-btn" id="spin-button" onclick="spinWheel()">چرخاندن گردونه 🎰</button>
-            <div id="spin-result" style="margin-top: 12px; font-size: 14px; font-weight: bold; min-height: 20px;"></div>
+            <div id="spin-countdown" style="margin-top: 8px; font-size: 12px; color: #ff9500; font-weight: bold; display: none;"></div>
+            <div id="spin-result" style="margin-top: 10px; font-size: 14px; font-weight: bold; min-height: 20px;"></div>
         </div>
     </div>
 
-    <!-- تب ۳: تسک‌ها -->
+    <!-- تب ۳ (وسط): مینی‌گیم تپ‌تو‌ارن -->
+    <div id="tab-tap" class="tab-content">
+        <div class="gold-card tap-screen-container">
+            <h2 class="gold-text" style="margin: 0 0 4px 0;">🪙 تپ سکه سیمُر</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 10px 0;">روی سکه کلیک کنید و هر روز تا ۵۰۰ سکه رایگان دریافت کنید!</p>
+            
+            <div style="font-size: 14px; color: var(--gold-color); font-weight: bold;">
+                ⚡ انرژی روزانه: <span id="tap-energy-display">500</span> / 500
+            </div>
+
+            <div class="coin-wrapper" id="coin-tap-target" onclick="handleCoinTap(event)">
+                <div class="gold-coin" id="coin-visual">
+                    <div class="coin-inner-ring">
+                        <div class="coin-symbol">س</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="font-size: 12px; color: var(--text-muted);">
+                هر کلیک = ۱ سکه 🪙 | هر ۲۴ ساعت ۵۰۰ انرژی جدید شارژ می‌شود.
+            </div>
+        </div>
+    </div>
+
+    <!-- تب ۴: تسک‌ها -->
     <div id="tab-tasks" class="tab-content">
         <div class="gold-card">
             <h2 class="gold-text" style="margin: 0 0 6px 0;">🎯 ماموریت‌های پاداش‌دار</h2>
@@ -377,10 +505,12 @@
                 </div>
                 <button class="task-btn" id="btn-task-insta" onclick="startTask('insta', 'https://www.instagram.com/ali.hosseini.v/', 5)">شروع</button>
             </div>
+
+            <div id="custom-tasks-container"></div>
         </div>
     </div>
 
-    <!-- تب ۴: اطلاعات حساب -->
+    <!-- تب ۵: اطلاعات حساب -->
     <div id="tab-profile" class="tab-content">
         <div class="gold-card">
             <h2 class="gold-text" style="margin: 0 0 14px 0;">👤 مشخصات حساب کاربری</h2>
@@ -398,13 +528,13 @@
                 <div>🆔 آیدی تلگرام: <span id="detail-tg-user" style="color: var(--gold-color);">-</span></div>
                 <div>🏷 نام کاربری ثبت‌شده در اپ: <span id="detail-app-user" style="color: var(--gold-color);">-</span></div>
                 <div>🔢 شناسه عددی (User ID): <code id="detail-id" style="color: var(--gold-color);">-</code></div>
-                <div>⭐️ رتبه کاربری: <span id="detail-level" style="color: #4cd964;">سطح ۱ (۰ امتیاز)</span></div>
+                <div>⭐️ رتبه کاربری: <span id="detail-level" style="color: #4cd964;">سطح ۱</span></div>
             </div>
         </div>
         <button class="gold-btn" onclick="tg?.close ? tg.close() : alert('بستن اپ')">بستن اپلیکیشن</button>
     </div>
 
-    <!-- نوار ناوبری پایین صفحه (۴ تب اصلی) -->
+    <!-- نوار ناوبری ۵ گزینه‌ای با دکمه تپ در وسط -->
     <div class="bottom-nav">
         <div class="nav-item active" id="nav-tab-home" onclick="switchTab('tab-home')">
             <div class="icon">🏠</div>
@@ -414,6 +544,12 @@
             <div class="icon">🎡</div>
             <div>گردونه</div>
         </div>
+        
+        <div class="nav-item tap-center" id="nav-tab-tap" onclick="switchTab('tab-tap')">
+            <div class="tap-icon-wrap">🪙</div>
+            <div style="margin-top: 2px;">تپ سکه</div>
+        </div>
+
         <div class="nav-item" id="nav-tab-tasks" onclick="switchTab('tab-tasks')">
             <div class="icon">🎯</div>
             <div>تسک‌ها</div>
@@ -428,25 +564,57 @@
         const tg = window.Telegram?.WebApp;
         if (tg) { tg.ready(); tg.expand(); }
 
-        // شناسه و نام کاربری مستقل برای هر اکانت
         const tgUser = tg?.initDataUnsafe?.user;
         const uid = tgUser?.id ? tgUser.id.toString() : "guest";
         const defaultName = tgUser ? (tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "")) : "";
         const defaultUsername = tgUser?.username ? ("@" + tgUser.username) : "";
         const numericId = tgUser?.id ? tgUser.id.toString() : "702007470";
 
-        // کلیدهای محلی کاملاً ایزوله برای هر اکانت
         const STORAGE_KEY_COINS = 'simor_coins_' + uid;
         const STORAGE_KEY_REG = 'simor_reg_' + uid;
         const STORAGE_KEY_TASKS = 'simor_tasks_' + uid;
+        const STORAGE_KEY_LAST_SPIN = 'simor_last_spin_' + uid;
+        const STORAGE_KEY_TAP_ENERGY = 'simor_tap_energy_' + uid;
+        const STORAGE_KEY_TAP_DATE = 'simor_tap_date_' + uid;
+        const STORAGE_KEY_CUSTOM_TASKS = 'simor_custom_tasks';
 
         let coins = parseInt(localStorage.getItem(STORAGE_KEY_COINS) || '0');
         let regData = JSON.parse(localStorage.getItem(STORAGE_KEY_REG) || 'null');
         let completedTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_TASKS) || '{}');
 
-        // توکن ربات جهت ارسال مستقیم پیام به کانال توسط ادمین
         const BOT_TOKEN = "8618313837:AAEh1zVlkk1tKJCjyU1pXy3fjWgKZ5z-_GM";
         const CHANNEL_ID = "@SimorApp";
+
+        // سیستم محاسبه سطوح (سطح ۱: ۱۵۰ سکه، سطوح بعدی +۴۵٪ تا سطح ۲۰ با ۳۰۰۰ سکه)
+        const LEVEL_THRESHOLDS = [0];
+        (function initLevels() {
+            let req = 150;
+            let cum = 0;
+            for (let l = 1; l <= 20; l++) {
+                cum += Math.round(req);
+                LEVEL_THRESHOLDS.push(cum);
+                req *= 1.45;
+            }
+        })();
+
+        function getLevelInfo(totalCoins) {
+            let currentLevel = 1;
+            for (let l = 1; l <= 20; l++) {
+                if (totalCoins >= LEVEL_THRESHOLDS[l-1]) {
+                    currentLevel = l;
+                } else {
+                    break;
+                }
+            }
+            const isMax = currentLevel >= 20;
+            const levelStart = LEVEL_THRESHOLDS[currentLevel - 1];
+            const nextGoal = isMax ? LEVEL_THRESHOLDS[20] : LEVEL_THRESHOLDS[currentLevel];
+            const neededForLevel = nextGoal - levelStart;
+            const progress = totalCoins - levelStart;
+            const percent = isMax ? 100 : Math.min(100, Math.max(0, (progress / neededForLevel) * 100));
+
+            return { currentLevel, progress, neededForLevel, percent, isMax };
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
             initWheel();
@@ -454,9 +622,11 @@
             checkWelcomeModal();
             checkAdminAccess();
             restoreTaskStates();
+            checkDailySpinTimer();
+            initTapEnergy();
+            renderCustomTasks();
         });
 
-        // بررسی دسترسی اختصاصی ادمین
         function checkAdminAccess() {
             if (numericId === "702007470" || tgUser?.username === "Alihosseiniv") {
                 document.getElementById('admin-badge-container').style.display = 'block';
@@ -468,15 +638,80 @@
 
 ارادتمند شما، سید علی حسینی ✨
 @SimorApp_bot`;
+                renderAdminTaskList();
             }
         }
 
-        function openAdminModal() { document.getElementById('admin-modal').style.display = 'flex'; }
+        function openAdminModal() { renderAdminTaskList(); document.getElementById('admin-modal').style.display = 'flex'; }
         function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
         function openAboutModal() { document.getElementById('about-modal').style.display = 'flex'; }
         function closeAboutModal() { document.getElementById('about-modal').style.display = 'none'; }
 
-        // ارسال پیام از مینی اپ به کانال رسمی سیمر
+        function adminAddNewTask() {
+            const title = document.getElementById('admin-task-title').value.trim();
+            const url = document.getElementById('admin-task-url').value.trim();
+            const reward = parseInt(document.getElementById('admin-task-reward').value.trim() || '10');
+
+            if (!title || !url) {
+                alert("لطفاً عنوان و آدرس لینک تسک را وارد کنید.");
+                return;
+            }
+
+            const customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
+            const newTask = {
+                id: 'custom_' + Date.now(),
+                title: title,
+                url: url,
+                reward: reward
+            };
+            customTasks.push(newTask);
+            localStorage.setItem(STORAGE_KEY_CUSTOM_TASKS, JSON.stringify(customTasks));
+
+            document.getElementById('admin-task-title').value = "";
+            document.getElementById('admin-task-url').value = "";
+            alert(`✅ تسک «${title}» با پاداش ${reward} سکه با موفقیت اضافه شد!`);
+            renderAdminTaskList();
+            renderCustomTasks();
+        }
+
+        function renderAdminTaskList() {
+            const container = document.getElementById('admin-custom-tasks-list');
+            const customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
+            if (customTasks.length === 0) {
+                container.innerHTML = "هنوز تسک سفارشی اضافه نشده است.";
+                return;
+            }
+            container.innerHTML = customTasks.map(t => `
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 8px; margin-bottom: 6px;">
+                    <div><b>${t.title}</b> (+${t.reward} سکه)</div>
+                    <button onclick="adminDeleteTask('${t.id}')" style="background: #ff3b30; color: #fff; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer;">حذف 🗑</button>
+                </div>
+            `).join('');
+        }
+
+        function adminDeleteTask(taskId) {
+            let customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
+            customTasks = customTasks.filter(t => t.id !== taskId);
+            localStorage.setItem(STORAGE_KEY_CUSTOM_TASKS, JSON.stringify(customTasks));
+            renderAdminTaskList();
+            renderCustomTasks();
+        }
+
+        function renderCustomTasks() {
+            const container = document.getElementById('custom-tasks-container');
+            const customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
+            container.innerHTML = customTasks.map(t => `
+                <div class="task-card">
+                    <div class="task-info">
+                        <h4>${t.title}</h4>
+                        <p>+${t.reward} امتیاز 🪙</p>
+                    </div>
+                    <button class="task-btn" id="btn-task-${t.id}" onclick="startTask('${t.id}', '${t.url}', ${t.reward})">شروع</button>
+                </div>
+            `).join('');
+            restoreTaskStates();
+        }
+
         async function postToChannelFromAdmin() {
             const text = document.getElementById('admin-channel-msg').value.trim();
             const statusDiv = document.getElementById('channel-post-status');
@@ -521,6 +756,56 @@
             alert("موجودی سکه‌های شما صفر شد.");
         }
 
+        function adminResetSpinTimer() {
+            localStorage.removeItem(STORAGE_KEY_LAST_SPIN);
+            checkDailySpinTimer();
+            alert("تایمر گردونه شانس ریست شد. اکنون می‌توانید گردونه را بچرخانید.");
+        }
+
+        let currentEnergy = 500;
+        function initTapEnergy() {
+            const today = new Date().toDateString();
+            const savedDate = localStorage.getItem(STORAGE_KEY_TAP_DATE);
+            if (savedDate !== today) {
+                currentEnergy = 500;
+                localStorage.setItem(STORAGE_KEY_TAP_DATE, today);
+                localStorage.setItem(STORAGE_KEY_TAP_ENERGY, '500');
+            } else {
+                currentEnergy = parseInt(localStorage.getItem(STORAGE_KEY_TAP_ENERGY) || '500');
+            }
+            document.getElementById('tap-energy-display').innerText = currentEnergy;
+        }
+
+        function handleCoinTap(event) {
+            if (currentEnergy <= 0) {
+                alert("⚡ انرژی روزانه تپ شما به پایان رسیده است! فردا ۵۰۰ انرژی جدید دریافت خواهید کرد.");
+                return;
+            }
+
+            currentEnergy--;
+            coins++;
+            localStorage.setItem(STORAGE_KEY_TAP_ENERGY, currentEnergy.toString());
+            document.getElementById('tap-energy-display').innerText = currentEnergy;
+
+            const coinEl = document.getElementById('coin-visual');
+            coinEl.style.transform = "scale(0.93)";
+            setTimeout(() => { coinEl.style.transform = "scale(1)"; }, 70);
+
+            const plus = document.createElement('div');
+            plus.className = 'floating-plus';
+            plus.innerText = "+1";
+            const rect = document.getElementById('coin-tap-target').getBoundingClientRect();
+            const x = (event.clientX || (rect.left + rect.width / 2)) - rect.left - 10;
+            const y = (event.clientY || (rect.top + rect.height / 2)) - rect.top - 20;
+            plus.style.left = x + 'px';
+            plus.style.top = y + 'px';
+            document.getElementById('coin-tap-target').appendChild(plus);
+            setTimeout(() => plus.remove(), 800);
+
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
+            updateUI();
+        }
+
         function checkWelcomeModal() {
             if (!regData) {
                 document.getElementById('welcome-modal').style.display = 'flex';
@@ -550,21 +835,33 @@
         }
 
         function updateUI() {
-            const level = Math.floor(coins / 150) + 1;
-            const progress = coins % 150;
-            const percent = (progress / 150) * 100;
+            const { currentLevel, progress, neededForLevel, percent, isMax } = getLevelInfo(coins);
+
+            if (currentLevel >= 20 && !localStorage.getItem('simor_lvl20_awarded_' + uid)) {
+                localStorage.setItem('simor_lvl20_awarded_' + uid, 'true');
+                coins += 3000;
+                alert("🎉 تبریک فوق‌العاده! شما به بالاترین سطح (سطح ۲۰) رسیدید و جایزه ویژه ۳۰۰۰ سکه به شما تعلق گرفت! 🏆");
+            }
 
             document.getElementById('coins-display').innerText = coins.toLocaleString('fa') + " 🪙";
-            document.getElementById('level-display').innerText = "سطح " + level.toLocaleString('fa') + " ⭐️";
-            document.getElementById('level-progress-text').innerText = `${progress} / 150 تا سطح ${level + 1}`;
-            document.getElementById('level-progress-bar').style.width = percent + "%";
+            document.getElementById('level-display').innerText = "سطح " + currentLevel.toLocaleString('fa') + (isMax ? " (حداکثر) 🏆" : " ⭐️");
+            
+            if (isMax) {
+                document.getElementById('level-title-text').innerText = "سطح نهایی تکمیل شد!";
+                document.getElementById('level-progress-text').innerText = "سطح ۲۰";
+                document.getElementById('level-progress-bar').style.width = "100%";
+            } else {
+                document.getElementById('level-title-text').innerText = `پیشرفت تا سطح ${currentLevel + 1}`;
+                document.getElementById('level-progress-text').innerText = `${progress} / ${neededForLevel}`;
+                document.getElementById('level-progress-bar').style.width = percent + "%";
+            }
 
             const displayName = regData ? regData.fullName : (defaultName || "هنرجوی گرامی");
             document.getElementById('home-user-badge').innerText = "👤 هنرجو: " + displayName;
             document.getElementById('prof-fullname').innerText = displayName;
             document.getElementById('detail-name').innerText = displayName;
             document.getElementById('detail-id').innerText = numericId;
-            document.getElementById('detail-level').innerText = `سطح ${level} (${coins} امتیاز)`;
+            document.getElementById('detail-level').innerText = `سطح ${currentLevel} (${coins} امتیاز)`;
 
             if (defaultUsername) {
                 document.getElementById('prof-user-line').innerText = defaultUsername;
@@ -586,11 +883,6 @@
             document.getElementById('nav-' + tabId).classList.add('active');
         }
 
-        function alertMiniGame() {
-            alert("🎮 بخش کوئیز و مینی‌گیم‌های تدوین در آپدیت بعدی فعال خواهد شد.");
-        }
-
-        // تابع باز کردن امن لینک بدون بسته شدن مینی‌اپ
         function safeOpenLink(url) {
             if (tg?.openTelegramLink && url.includes('t.me/')) {
                 tg.openTelegramLink(url);
@@ -601,7 +893,46 @@
             }
         }
 
-        // بخش گردونه ۶ تایی با شانس دقیق
+        let spinTimerInterval = null;
+        function checkDailySpinTimer() {
+            const lastSpin = parseInt(localStorage.getItem(STORAGE_KEY_LAST_SPIN) || '0');
+            const now = Date.now();
+            const elapsed = now - lastSpin;
+            const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+
+            const btn = document.getElementById('spin-button');
+            const countdownEl = document.getElementById('spin-countdown');
+
+            if (elapsed < TWENTY_FOUR_HOURS) {
+                btn.disabled = true;
+                countdownEl.style.display = "block";
+                updateSpinCountdown(TWENTY_FOUR_HOURS - elapsed);
+
+                if (spinTimerInterval) clearInterval(spinTimerInterval);
+                spinTimerInterval = setInterval(() => {
+                    const rem = TWENTY_FOUR_HOURS - (Date.now() - lastSpin);
+                    if (rem <= 0) {
+                        clearInterval(spinTimerInterval);
+                        btn.disabled = false;
+                        countdownEl.style.display = "none";
+                    } else {
+                        updateSpinCountdown(rem);
+                    }
+                }, 1000);
+            } else {
+                btn.disabled = false;
+                countdownEl.style.display = "none";
+                if (spinTimerInterval) clearInterval(spinTimerInterval);
+            }
+        }
+
+        function updateSpinCountdown(remMs) {
+            const h = Math.floor(remMs / (1000 * 60 * 60));
+            const m = Math.floor((remMs % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((remMs % (1000 * 60)) / 1000);
+            document.getElementById('spin-countdown').innerText = `⏳ چرخش رایگان بعدی: ${h} ساعت و ${m} دقیقه و ${s} ثانیه`;
+        }
+
         const sectors = [
             { text: "پوچ", score: 0, color: "#141419", textCol: "#8e8e93", prob: 30 },
             { text: "۲ امتیاز", score: 2, color: "#c59f2d", textCol: "#000", prob: 28 },
@@ -637,6 +968,7 @@
                 ctx.textAlign = "right";
                 ctx.fillStyle = sectors[i].textCol;
                 ctx.font = "bold 13px system-ui";
+                ctx.fillText(sectors[i].text, 115, 5px system-ui";
                 ctx.fillText(sectors[i].text, 115, 5);
                 ctx.restore();
             }
@@ -644,6 +976,12 @@
 
         function spinWheel() {
             if (isSpinning) return;
+            const lastSpin = parseInt(localStorage.getItem(STORAGE_KEY_LAST_SPIN) || '0');
+            if (Date.now() - lastSpin < 24 * 60 * 60 * 1000) {
+                alert("شما امروز چرخش رایگان خود را انجام داده‌اید. لطفاً تا پایان تایمر ۲۴ ساعته صبر کنید.");
+                return;
+            }
+
             isSpinning = true;
             document.getElementById('spin-result').innerText = "";
 
@@ -676,25 +1014,34 @@
                 const resDiv = document.getElementById('spin-result');
 
                 if (win.score === "retry") {
-                    resDiv.innerText = "🔄 چرخش مجدد! دوباره دکمه را بزنید.";
+                    resDiv.innerText = "🔄 چرخش مجدد رایگان! دوباره دکمه را بزنید.";
                     resDiv.style.color = "#d4af37";
-                } else if (win.score === 0) {
-                    resDiv.innerText = "💨 پوچ شد! دفعه بعد برنده می‌شوید.";
-                    resDiv.style.color = "#8e8e93";
                 } else {
-                    coins += win.score;
-                    resDiv.innerText = `🎉 تبریک! شما ${win.score} امتیاز دریافت کردید!`;
-                    resDiv.style.color = "#4cd964";
-                    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                    updateUI();
+                    localStorage.setItem(STORAGE_KEY_LAST_SPIN, Date.now().toString());
+                    checkDailySpinTimer();
+
+                    if (win.score === 0) {
+                        resDiv.innerText = "💨 پوچ شد! ۲۴ ساعت دیگر دوباره شانس خود را امتحان کنید.";
+                        resDiv.style.color = "#8e8e93";
+                    } else {
+                        coins += win.score;
+                        resDiv.innerText = `🎉 تبریک! شما ${win.score} امتیاز دریافت کردید!`;
+                        resDiv.style.color = "#4cd964";
+                        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                        updateUI();
+                    }
                 }
             }, 4600);
         }
 
-        // بخش مدیریت تسک‌ها و بازگردانی وضعیت
         function restoreTaskStates() {
-            if (completedTasks['tg']) markTaskCompleted('tg');
-            if (completedTasks['insta']) markTaskCompleted('insta');
+            const allTasks = ['tg', 'insta'];
+            const customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
+            customTasks.forEach(t => allTasks.push(t.id));
+
+            allTasks.forEach(id => {
+                if (completedTasks[id]) markTaskCompleted(id);
+            });
         }
 
         function markTaskCompleted(taskId) {
@@ -710,9 +1057,8 @@
 
         function startTask(taskId, url, reward) {
             const btn = document.getElementById('btn-task-' + taskId);
-            if (btn.classList.contains('claimed') || btn.classList.contains('timer')) return;
+            if (!btn || btn.classList.contains('claimed') || btn.classList.contains('timer')) return;
 
-            // باز کردن لینک به صورت امن
             safeOpenLink(url);
 
             let timeLeft = 10;
