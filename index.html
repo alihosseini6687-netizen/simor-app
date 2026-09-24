@@ -14,6 +14,7 @@
             --text-color: #ffffff;
             --text-muted: #8e8e93;
             --border-color: rgba(212, 175, 55, 0.3);
+            --admin-color: #ff3b30;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
@@ -57,6 +58,14 @@
             transition: all 0.2s;
         }
         .gold-btn:active { transform: scale(0.97); }
+
+        .admin-card {
+            background: rgba(255, 59, 48, 0.08);
+            border: 1px dashed var(--admin-color);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
 
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
@@ -135,7 +144,7 @@
             font-size: 12px;
             font-weight: bold;
             cursor: pointer;
-            min-width: 90px;
+            min-width: 95px;
             text-align: center;
         }
         .task-btn.timer { background: #2a2a34; color: #f3e5ab; cursor: wait; }
@@ -157,6 +166,8 @@
             width: 100%; max-width: 360px;
             text-align: center;
             box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            max-height: 90vh;
+            overflow-y: auto;
         }
         .input-field {
             width: 100%;
@@ -166,8 +177,8 @@
             padding: 12px;
             color: #fff;
             font-size: 14px;
-            margin: 10px 0 16px 0;
-            text-align: center;
+            margin: 8px 0 14px 0;
+            text-align: right;
             outline: none;
         }
         .input-field:focus { border-color: #f9e8a2; }
@@ -181,6 +192,7 @@
             text-decoration: none;
             font-weight: bold;
             margin-bottom: 15px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -193,22 +205,86 @@
             <h3 class="gold-text" style="margin: 0 0 6px 0;">خوش آمدید به سیمُر اپ</h3>
             <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 16px 0;">برای فعال‌سازی اپلیکیشن و دریافت امتیاز اولیه، مراحل زیر را تکمیل کنید:</p>
             
-            <a href="https://t.me/SimorApp" target="_blank" class="channel-btn">
+            <div onclick="safeOpenLink('https://t.me/SimorApp')" class="channel-btn">
                 📢 عضویت در کانال رسمی سیمُر
-            </a>
+            </div>
 
             <label style="font-size: 12px; color: var(--text-muted); display: block; text-align: right;">نام و نام خانوادگی:</label>
             <input type="text" id="reg-fullname" class="input-field" placeholder="مثال: علی حسینی">
 
-            <label style="font-size: 12px; color: var(--text-muted); display: block; text-align: right;">نام کاربری (Username):</label>
+            <label style="font-size: 12px; color: var(--text-muted); display: block; text-align: right;">نام کاربری اپلیکیشن:</label>
             <input type="text" id="reg-username" class="input-field" placeholder="مثال: ali_simor">
 
             <button class="gold-btn" onclick="submitRegistration()">تایید و ورود به اپلیکیشن 🚀</button>
         </div>
     </div>
 
+    <!-- مودال اختصاصی درباره ما -->
+    <div id="about-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box" style="text-align: right;">
+            <div style="text-align: center; font-size: 32px; margin-bottom: 6px;">🎬</div>
+            <h3 class="gold-text" style="text-align: center; margin: 0 0 4px 0;">آکادمی تدوین سیمُر</h3>
+            <div style="text-align: center; font-size: 12px; color: var(--gold-color); margin-bottom: 14px;">مدرس و مدیر: سید علی حسینی</div>
+            
+            <div style="font-size: 13px; color: #ddd; line-height: 1.8; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
+                <p>✨ <b>هدف این مینی‌اپلیکیشن:</b><br>
+                فضایی جذاب برای تعامل و یادگیری تخصصی هنر تدوین، پریمیر، افترافکت و زیبایی‌شناسی سینما.</p>
+
+                <p>🎮 <b>بازی کنید و امتیاز بگیرید:</b><br>
+                با چرخش گردونه شانس روزانه، انجام تسک‌های کوتاه و شرکت در مینی‌گیم‌های هیجان‌انگیز، سکه و امتیاز کسب کنید.</p>
+
+                <p>🎁 <b>تبدیل امتیازها به تخفیف واقعی:</b><br>
+                تمامی امتیازهای کسب‌شده در این اپلیکیشن ذخیره می‌شوند و شما می‌توانید آن‌ها را برای دریافت <b>تخفیف‌های ویژه روی دوره‌ها، ورکشاپ‌ها و بسته‌های آموزشی آکادمی سیمُر</b> استفاده نمایید!</p>
+            </div>
+
+            <button class="gold-btn" style="margin-top: 10px;" onclick="closeAboutModal()">متوجه شدم 👌</button>
+        </div>
+    </div>
+
+    <!-- مودال پنل مدیریت اختصاصی ادمین (فقط برای آیدی ادمین) -->
+    <div id="admin-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box" style="text-align: right;">
+            <div style="text-align: center; font-size: 30px;">👑</div>
+            <h3 style="text-align: center; color: #ff3b30; margin: 0 0 10px 0;">پنل مدیریت مدیر کل (سید علی حسینی)</h3>
+            
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+                این بخش فقط برای آیدی شما (702007470) فعال است و سایر مشترکین به آن دسترسی ندارند.
+            </div>
+
+            <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; margin-bottom: 14px;">
+                <label style="font-size: 12px; color: var(--gold-color); font-weight: bold; display: block; margin-bottom: 6px;">📢 ارسال پیام خودکار ربات به کانال رسمی (@SimorApp):</label>
+                <textarea id="admin-channel-msg" style="width: 100%; height: 90px; background: #0b0b0e; border: 1px solid #444; border-radius: 8px; color: #fff; padding: 8px; font-size: 12px; font-family: inherit;" placeholder="متن پیام جهت ارسال به کانال..."></textarea>
+                <button class="gold-btn" style="margin-top: 8px; background: linear-gradient(135deg, #2481cc, #1a5ea6); color: #fff;" onclick="postToChannelFromAdmin()">ارسال پیام به کانال SimorApp 🚀</button>
+                <div id="channel-post-status" style="font-size: 11px; margin-top: 4px; text-align: center;"></div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; margin-bottom: 14px;">
+                <label style="font-size: 12px; color: var(--gold-color); font-weight: bold; display: block; margin-bottom: 6px;">🪙 مدیریت سکه‌های تست من:</label>
+                <div style="display: flex; gap: 8px;">
+                    <button class="gold-btn" style="padding: 8px;" onclick="adminAddCoins(100)">+100 سکه</button>
+                    <button class="gold-btn" style="padding: 8px;" onclick="adminAddCoins(500)">+500 سکه</button>
+                    <button class="gold-btn" style="padding: 8px; background: #444; color: #fff;" onclick="adminResetCoins()">صفر کردن</button>
+                </div>
+            </div>
+
+            <button class="gold-btn" onclick="closeAdminModal()">بستن پنل مدیریت ✖️</button>
+        </div>
+    </div>
+
     <!-- تب ۱: خانه -->
     <div id="tab-home" class="tab-content active">
+        
+        <!-- کارت اختصاصی ادمین که فقط برای استاد حسینی نمایش داده می‌شود -->
+        <div id="admin-badge-container" style="display: none;">
+            <div class="admin-card" onclick="openAdminModal()" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="color: #ff3b30; font-weight: bold; font-size: 13px;">👑 پنل مدیریت آنلاین آکادمی</div>
+                    <div style="font-size: 11px; color: #aaa;">ارسال پیام به کانال و کنترل سریع مینی‌اپ</div>
+                </div>
+                <div style="background: #ff3b30; color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold;">ورود</div>
+            </div>
+        </div>
+
         <div class="gold-card" style="text-align: center;">
             <h2 class="gold-text" style="margin: 0; font-size: 22px;">سیمُر اپ 🎬</h2>
             <div style="font-size: 12px; color: var(--gold-color); margin: 3px 0 10px 0;">سازنده: آکادمی تدوین سید علی حسینی</div>
@@ -241,10 +317,10 @@
 
         <h3 style="font-size: 15px; margin: 15px 4px 10px;">بخش‌های اصلی</h3>
         <div class="features-grid">
-            <div class="feat-card" onclick="alertAboutUs()">
+            <div class="feat-card" onclick="openAboutModal()">
                 <div class="f-icon">ℹ️</div>
                 <div style="font-weight: bold; font-size: 14px;">درباره ما</div>
-                <div style="font-size: 11px; color: var(--text-muted);">معرفی آکادمی سیمُر</div>
+                <div style="font-size: 11px; color: var(--text-muted);">توضیحات و تخفیف‌ها</div>
             </div>
             <div class="feat-card" onclick="switchTab('tab-tasks')">
                 <div class="f-icon">🎯</div>
@@ -325,7 +401,7 @@
                 <div>⭐️ رتبه کاربری: <span id="detail-level" style="color: #4cd964;">سطح ۱ (۰ امتیاز)</span></div>
             </div>
         </div>
-        <button class="gold-btn" onclick="tg.close()">بستن اپلیکیشن</button>
+        <button class="gold-btn" onclick="tg?.close ? tg.close() : alert('بستن اپ')">بستن اپلیکیشن</button>
     </div>
 
     <!-- نوار ناوبری پایین صفحه (۴ تب اصلی) -->
@@ -352,19 +428,98 @@
         const tg = window.Telegram?.WebApp;
         if (tg) { tg.ready(); tg.expand(); }
 
-        let coins = parseInt(localStorage.getItem('simor_coins') || '0');
-        let regData = JSON.parse(localStorage.getItem('simor_reg') || 'null');
-
+        // شناسه و نام کاربری مستقل برای هر اکانت
         const tgUser = tg?.initDataUnsafe?.user;
+        const uid = tgUser?.id ? tgUser.id.toString() : "guest";
         const defaultName = tgUser ? (tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "")) : "";
         const defaultUsername = tgUser?.username ? ("@" + tgUser.username) : "";
-        const numericId = tgUser?.id || "702007470";
+        const numericId = tgUser?.id ? tgUser.id.toString() : "702007470";
+
+        // کلیدهای محلی کاملاً ایزوله برای هر اکانت
+        const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+        const STORAGE_KEY_REG = 'simor_reg_' + uid;
+        const STORAGE_KEY_TASKS = 'simor_tasks_' + uid;
+
+        let coins = parseInt(localStorage.getItem(STORAGE_KEY_COINS) || '0');
+        let regData = JSON.parse(localStorage.getItem(STORAGE_KEY_REG) || 'null');
+        let completedTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_TASKS) || '{}');
+
+        // توکن ربات جهت ارسال مستقیم پیام به کانال توسط ادمین
+        const BOT_TOKEN = "8618313837:AAEh1zVlkk1tKJCjyU1pXy3fjWgKZ5z-_GM";
+        const CHANNEL_ID = "@SimorApp";
 
         window.addEventListener('DOMContentLoaded', () => {
             initWheel();
             updateUI();
             checkWelcomeModal();
+            checkAdminAccess();
+            restoreTaskStates();
         });
+
+        // بررسی دسترسی اختصاصی ادمین
+        function checkAdminAccess() {
+            if (numericId === "702007470" || tgUser?.username === "Alihosseiniv") {
+                document.getElementById('admin-badge-container').style.display = 'block';
+                document.getElementById('admin-channel-msg').value = 
+`🎬 درود به اعضای فرهیخته آکادمی تدوین سیمُر!
+
+از همراهی و عضویت تک‌تک شما عزیزان در کانال رسمی سیمُر صمیمانه سپاسگزاریم. 
+در مینی‌اپلیکیشن آکادمی می‌توانید با انجام تسک‌ها، چالش‌ها و مینی‌گیم‌های تدوین، امتیاز کسب کرده و از تخفیف‌های ویژه روی دوره‌های تخصصی استفاده کنید.
+
+ارادتمند شما، سید علی حسینی ✨
+@SimorApp_bot`;
+            }
+        }
+
+        function openAdminModal() { document.getElementById('admin-modal').style.display = 'flex'; }
+        function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
+        function openAboutModal() { document.getElementById('about-modal').style.display = 'flex'; }
+        function closeAboutModal() { document.getElementById('about-modal').style.display = 'none'; }
+
+        // ارسال پیام از مینی اپ به کانال رسمی سیمر
+        async function postToChannelFromAdmin() {
+            const text = document.getElementById('admin-channel-msg').value.trim();
+            const statusDiv = document.getElementById('channel-post-status');
+            if (!text) { alert("لطفاً متن پیام را وارد کنید."); return; }
+
+            statusDiv.innerText = "⏳ در حال ارسال به کانال...";
+            statusDiv.style.color = "#d4af37";
+
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHANNEL_ID,
+                        text: text
+                    })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    statusDiv.innerText = "✅ پیام با موفقیت در کانال SimorApp@ ارسال شد!";
+                    statusDiv.style.color = "#4cd964";
+                    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                } else {
+                    statusDiv.innerText = "❌ خطا: " + (data.description || "ارسال نشد");
+                    statusDiv.style.color = "#ff3b30";
+                }
+            } catch (err) {
+                statusDiv.innerText = "❌ خطای شبکه در ارسال پیام";
+                statusDiv.style.color = "#ff3b30";
+            }
+        }
+
+        function adminAddCoins(amount) {
+            coins += amount;
+            updateUI();
+            alert(`+${amount} سکه به حساب تستی شما افزوده شد.`);
+        }
+
+        function adminResetCoins() {
+            coins = 0;
+            updateUI();
+            alert("موجودی سکه‌های شما صفر شد.");
+        }
 
         function checkWelcomeModal() {
             if (!regData) {
@@ -388,7 +543,7 @@
                 tgUsername: defaultUsername,
                 id: numericId
             };
-            localStorage.setItem('simor_reg', JSON.stringify(regData));
+            localStorage.setItem(STORAGE_KEY_REG, JSON.stringify(regData));
             document.getElementById('welcome-modal').style.display = 'none';
             if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             updateUI();
@@ -420,7 +575,7 @@
             }
             document.getElementById('detail-app-user').innerText = regData?.appUsername ? ("@" + regData.appUsername) : "ثبت نشده";
 
-            localStorage.setItem('simor_coins', coins.toString());
+            localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
         }
 
         function switchTab(tabId) {
@@ -431,14 +586,22 @@
             document.getElementById('nav-' + tabId).classList.add('active');
         }
 
-        function alertAboutUs() {
-            alert("🎬 آکادمی تدوین سیمُر\nمدرس و مدیر: استاد سید علی حسینی\nآموزش تخصصی پریمیر، فتوشاپ، افترافکت و زیبایی‌شناسی سینما.");
-        }
-
         function alertMiniGame() {
-            alert("🎮 بخش مینی‌گیم‌های تعاملی و کوئیز تدوین به زودی در این بخش فعال خواهد شد!");
+            alert("🎮 بخش کوئیز و مینی‌گیم‌های تدوین در آپدیت بعدی فعال خواهد شد.");
         }
 
+        // تابع باز کردن امن لینک بدون بسته شدن مینی‌اپ
+        function safeOpenLink(url) {
+            if (tg?.openTelegramLink && url.includes('t.me/')) {
+                tg.openTelegramLink(url);
+            } else if (tg?.openLink) {
+                tg.openLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+        }
+
+        // بخش گردونه ۶ تایی با شانس دقیق
         const sectors = [
             { text: "پوچ", score: 0, color: "#141419", textCol: "#8e8e93", prob: 30 },
             { text: "۲ امتیاز", score: 2, color: "#c59f2d", textCol: "#000", prob: 28 },
@@ -528,13 +691,29 @@
             }, 4600);
         }
 
+        // بخش مدیریت تسک‌ها و بازگردانی وضعیت
+        function restoreTaskStates() {
+            if (completedTasks['tg']) markTaskCompleted('tg');
+            if (completedTasks['insta']) markTaskCompleted('insta');
+        }
+
+        function markTaskCompleted(taskId) {
+            const btn = document.getElementById('btn-task-' + taskId);
+            if (btn) {
+                btn.classList.add('claimed');
+                btn.innerText = "انجام شد ✅";
+                btn.onclick = null;
+            }
+        }
+
         const taskTimers = {};
 
         function startTask(taskId, url, reward) {
             const btn = document.getElementById('btn-task-' + taskId);
             if (btn.classList.contains('claimed') || btn.classList.contains('timer')) return;
 
-            window.open(url, '_blank');
+            // باز کردن لینک به صورت امن
+            safeOpenLink(url);
 
             let timeLeft = 10;
             btn.classList.add('timer');
@@ -555,9 +734,10 @@
 
         function claimTaskReward(taskId, reward) {
             const btn = document.getElementById('btn-task-' + taskId);
-            btn.classList.add('claimed');
-            btn.innerText = "انجام شد ✅";
-            btn.onclick = null;
+            completedTasks[taskId] = true;
+            localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(completedTasks));
+            
+            markTaskCompleted(taskId);
             coins += reward;
             if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
             alert(`✅ پاداش +${reward} امتیاز به حساب شما اضافه شد!`);
