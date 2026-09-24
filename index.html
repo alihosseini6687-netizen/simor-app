@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>آکادمی تدوین سیمُر</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0b0e;
+            --card-bg: #141419;
+            --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
+            --gold-color: #e5c158;
+            --text-color: #ffffff;
+            --text-muted: #8e8e93;
+            --border-color: rgba(212, 175, 55, 0.25);
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            margin: 0; padding: 0 0 75px 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .tab-content { display: none; padding: 18px; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .gold-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .gold-text {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        .gold-btn {
+            background: var(--gold-gradient);
+            color: #0b0b0e;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            transition: all 0.2s;
+        }
+        .gold-btn:active { transform: scale(0.97); }
+
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            height: 68px;
+            background: rgba(18, 18, 22, 0.94);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 1000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted);
+            font-size: 11px;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.2s;
+        }
+        .nav-item .icon { font-size: 22px; margin-bottom: 3px; }
+        .nav-item.active {
+            color: var(--gold-color);
+            font-weight: bold;
+        }
+        .nav-item.active .icon { transform: scale(1.15); filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.5)); }
+
+        .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .feat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 15px; text-align: center;
+        }
+        .feat-card .f-icon { font-size: 30px; margin-bottom: 6px; }
+
+        .wheel-container { display: flex; flex-direction: column; align-items: center; margin: 20px 0; }
+        .wheel-box {
+            width: 250px; height: 250px; border-radius: 50%;
+            border: 5px solid #d4af37;
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
+            background: conic-gradient(
+                #1a1a24 0deg 60deg, #aa7c11 60deg 120deg,
+                #1a1a24 120deg 180deg, #d4af37 180deg 240deg,
+                #1a1a24 240deg 300deg, #f9e8a2 300deg 360deg
+            );
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+        .wheel-pin {
+            width: 0; height: 0;
+            border-left: 12px solid transparent; border-right: 12px solid transparent;
+            border-top: 22px solid #ffffff;
+            margin-bottom: -10px; z-index: 10;
+        }
+        .task-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .task-btn {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 6px 14px; font-size: 13px; font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- تب ۱: خانه -->
+    <div id="tab-home" class="tab-content active">
+        <div class="gold-card" style="text-align: center;">
+            <div style="font-size: 13px; color: var(--text-muted);">آکادمی تخصصی تدوین</div>
+            <h2 class="gold-text" style="margin: 6px 0 10px 0;">سیمُر استودیو 🎬</h2>
+            <div id="home-user" style="font-size: 13px; background: rgba(212,175,55,0.12); display: inline-block; padding: 4px 14px; border-radius: 12px; border: 1px solid var(--border-color);">
+                👤 در حال اتصال به تلگرام...
+            </div>
+            <div style="display: flex; justify-content: space-around; margin-top: 18px; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 12px;">
+                <div>
+                    <div style="font-size: 12px; color: var(--text-muted);">موجودی سکه</div>
+                    <div class="gold-text" style="font-size: 20px;" id="coins-count">1,250 🪙</div>
+                </div>
+                <div>
+                    <div style="font-size: 12px; color: var(--text-muted);">سطح کاربری</div>
+                    <div style="font-size: 17px; color: #fff;">سطح ۲ ⭐️</div>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 15px; margin: 15px 4px 10px;">بخش‌های منتخب</h3>
+        <div class="features-grid">
+            <div class="feat-card" onclick="switchTab('tab-wheel')">
+                <div class="f-icon">🎡</div>
+                <div style="font-weight: bold; font-size: 14px;">گردونه شانس</div>
+                <div style="font-size: 11px; color: var(--text-muted);">جوایز روزانه</div>
+            </div>
+            <div class="feat-card" onclick="switchTab('tab-tasks')">
+                <div class="f-icon">🎯</div>
+                <div style="font-weight: bold; font-size: 14px;">ماموریت‌ها</div>
+                <div style="font-size: 11px; color: var(--text-muted);">کسب امتیاز</div>
+            </div>
+            <div class="feat-card" onclick="alert('بخش دوره‌های تدوین')">
+                <div class="f-icon">🎬</div>
+                <div style="font-weight: bold; font-size: 14px;">دوره‌ها</div>
+                <div style="font-size: 11px; color: var(--text-muted);">پریمیر و ادوبی</div>
+            </div>
+            <div class="feat-card" onclick="switchTab('tab-profile')">
+                <div class="f-icon">👤</div>
+                <div style="font-weight: bold; font-size: 14px;">اطلاعات حساب</div>
+                <div style="font-size: 11px; color: var(--text-muted);">مشخصات شما</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- تب ۲: گردونه شانس -->
+    <div id="tab-wheel" class="tab-content">
+        <div class="gold-card" style="text-align: center;">
+            <h2 class="gold-text" style="margin: 0;">🎡 گردونه شانس طلایی</h2>
+            <p style="font-size: 13px; color: var(--text-muted); margin: 6px 0 0 0;">شانس خود را برای دریافت سکه و پریست امتحان کنید!</p>
+            <div class="wheel-container">
+                <div class="wheel-pin"></div>
+                <div class="wheel-box" id="wheel"></div>
+            </div>
+            <button class="gold-btn" id="spin-btn" onclick="spinWheel()">چرخاندن گردونه (رایگان)</button>
+        </div>
+    </div>
+
+    <!-- تب ۳: تسک‌ها -->
+    <div id="tab-tasks" class="tab-content">
+        <div class="gold-card">
+            <h2 class="gold-text" style="margin: 0 0 10px 0;">🎯 ماموریت‌های روزانه</h2>
+            <div class="task-row">
+                <div>
+                    <div style="font-weight: bold; font-size: 14px;">عضویت در کانال لاگ</div>
+                    <div style="font-size: 12px; color: var(--gold-color);">+۲۰۰ سکه 🪙</div>
+                </div>
+                <button class="task-btn" onclick="claimTask(this, 200)">دریافت</button>
+            </div>
+            <div class="task-row">
+                <div>
+                    <div style="font-weight: bold; font-size: 14px;">ارسال اولین تمرین تدوین</div>
+                    <div style="font-size: 12px; color: var(--gold-color);">+۵۰۰ سکه 🪙</div>
+                </div>
+                <button class="task-btn" onclick="claimTask(this, 500)">دریافت</button>
+            </div>
+            <div class="task-row">
+                <div>
+                    <div style="font-weight: bold; font-size: 14px;">تولید ۱ تصویر هوش مصنوعی</div>
+                    <div style="font-size: 12px; color: var(--gold-color);">+۱۵۰ سکه 🪙</div>
+                </div>
+                <button class="task-btn" onclick="claimTask(this, 150)">دریافت</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- تب ۴: اطلاعات حساب -->
+    <div id="tab-profile" class="tab-content">
+        <div class="gold-card">
+            <h2 class="gold-text" style="margin: 0 0 14px 0;">👤 مشخصات حساب کاربری</h2>
+            <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                <div style="width: 52px; height: 52px; border-radius: 50%; background: var(--gold-gradient); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-left: 12px;">🎬</div>
+                <div>
+                    <div id="prof-name" style="font-weight: bold; font-size: 16px;">هنرجوی آکادمی</div>
+                    <div id="prof-username" style="font-size: 13px; color: var(--gold-color);">@username</div>
+                </div>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; font-size: 13px; line-height: 1.8;">
+                <div>🆔 شناسه عددی: <code id="prof-id" style="color: var(--gold-color);">---</code></div>
+                <div>🎓 وضعیت دوره: <span style="color: #4cd964;">دانشجوی فعال</span></div>
+                <div>🤖 سهمیه تصویر روزانه: <span>۲ تصویر</span></div>
+                <div>💬 سهمیه سوالات تدوین: <span>۵ سوال</span></div>
+            </div>
+        </div>
+        <button class="gold-btn" onclick="tg.close()">بستن اپلیکیشن</button>
+    </div>
+
+    <!-- نوار ناوبری ۴ تایی پایین صفحه -->
+    <div class="bottom-nav">
+        <div class="nav-item active" id="nav-tab-home" onclick="switchTab('tab-home')">
+            <div class="icon">🏠</div>
+            <div>خانه</div>
+        </div>
+        <div class="nav-item" id="nav-tab-wheel" onclick="switchTab('tab-wheel')">
+            <div class="icon">🎡</div>
+            <div>گردونه</div>
+        </div>
+        <div class="nav-item" id="nav-tab-tasks" onclick="switchTab('tab-tasks')">
+            <div class="icon">🎯</div>
+            <div>تسک‌ها</div>
+        </div>
+        <div class="nav-item" id="nav-tab-profile" onclick="switchTab('tab-profile')">
+            <div class="icon">👤</div>
+            <div>حساب</div>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram?.WebApp;
+        if (tg) { tg.ready(); tg.expand(); }
+
+        let coins = 1250;
+        const user = tg?.initDataUnsafe?.user;
+        const fullName = user ? (user.first_name + (user.last_name ? " " + user.last_name : "")) : "هنرجوی گرامی";
+        const uname = user?.username ? ("@" + user.username) : "بدون آیدی";
+        const uid = user?.id || "702007470";
+
+        document.getElementById('home-user').innerText = "👤 هنرجو: " + fullName;
+        document.getElementById('prof-name').innerText = fullName;
+        document.getElementById('prof-username').innerText = uname;
+        document.getElementById('prof-id').innerText = uid;
+
+        function switchTab(tabId) {
+            if (tg?.HapticFeedback) tg.HapticFeedback.selectionChanged();
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.getElementById('nav-' + tabId).classList.add('active');
+        }
+
+        let spinning = false;
+        function spinWheel() {
+            if (spinning) return;
+            spinning = true;
+            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+            const wheel = document.getElementById('wheel');
+            const deg = 1800 + Math.floor(Math.random() * 360);
+            wheel.style.transform = `rotate(${deg}deg)`;
+            
+            setTimeout(() => {
+                spinning = false;
+                coins += 150;
+                document.getElementById('coins-count').innerText = coins.toLocaleString('fa') + " 🪙";
+                if (tg?.showAlert) tg.showAlert("🎉 تبریک! شما ۱۵۰ سکه طلایی برنده شدید!");
+            }, 4100);
+        }
+
+        function claimTask(btn, reward) {
+            if (btn.innerText === "انجام شد") return;
+            btn.innerText = "انجام شد";
+            btn.style.background = "#24242c";
+            btn.style.color = "#777";
+            coins += reward;
+            document.getElementById('coins-count').innerText = coins.toLocaleString('fa') + " 🪙";
+            if (tg?.showAlert) tg.showAlert(`✅ پاداش +${reward} سکه به حساب شما افزوده شد!`);
+        }
+    </script>
+</body>
+</html>
