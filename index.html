@@ -16,7 +16,7 @@
             --border-color: rgba(212, 175, 55, 0.3);
             --admin-color: #ff3b30;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
             margin: 0; padding: 0 0 78px 0;
             background-color: var(--bg-color);
@@ -59,9 +59,9 @@
         }
         .gold-btn:active { transform: scale(0.97); }
         .gold-btn:disabled {
-            background: #2a2a34;
-            color: #777;
-            box-shadow: none;
+            background: #2a2a34 !important;
+            color: #777 !important;
+            box-shadow: none !important;
             cursor: not-allowed;
         }
 
@@ -138,6 +138,7 @@
             width: 230px; height: 230px;
             cursor: pointer;
             touch-action: manipulation;
+            user-select: none;
         }
         .gold-coin {
             width: 100%; height: 100%;
@@ -160,7 +161,7 @@
             font-weight: 900;
             color: #553b00;
             text-shadow: 1px 1px 2px rgba(255,255,255,0.6), -1px -1px 2px rgba(0,0,0,0.4);
-            font-family: "B Titr", "B Yekan", system-ui, sans-serif;
+            font-family: system-ui, sans-serif;
             margin-top: -8px;
         }
         .floating-plus {
@@ -229,7 +230,8 @@
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.88);
             backdrop-filter: blur(10px);
-            display: flex; align-items: center; justify-content: center;
+            display: none;
+            align-items: center; justify-content: center;
             z-index: 2000;
             padding: 20px;
         }
@@ -274,7 +276,7 @@
 <body>
 
     <!-- مودال ورود اولیه -->
-    <div id="welcome-modal" class="modal-overlay" style="display: none;">
+    <div id="welcome-modal" class="modal-overlay">
         <div class="modal-box">
             <div style="font-size: 34px; margin-bottom: 8px;">🎬</div>
             <h3 class="gold-text" style="margin: 0 0 6px 0;">خوش آمدید به سیمُر اپ</h3>
@@ -295,7 +297,7 @@
     </div>
 
     <!-- مودال اختصاصی درباره ما -->
-    <div id="about-modal" class="modal-overlay" style="display: none;">
+    <div id="about-modal" class="modal-overlay">
         <div class="modal-box" style="text-align: right;">
             <div style="text-align: center; font-size: 32px; margin-bottom: 6px;">🎬</div>
             <h3 class="gold-text" style="text-align: center; margin: 0 0 4px 0;">آکادمی تدوین سیمُر</h3>
@@ -322,7 +324,7 @@
     </div>
 
     <!-- مودال پنل مدیریت آنلاین -->
-    <div id="admin-modal" class="modal-overlay" style="display: none;">
+    <div id="admin-modal" class="modal-overlay">
         <div class="modal-box" style="text-align: right;">
             <div style="text-align: center; font-size: 28px;">👑</div>
             <h3 style="text-align: center; color: #ff3b30; margin: 0 0 8px 0;">پنل مدیریت پیشرفته (استاد حسینی)</h3>
@@ -561,8 +563,31 @@
     </div>
 
     <script>
+        // ۱. داده‌ها و سکتورهای گردونه در ابتدای اسکریپت
+        const sectors = [
+            { text: "پوچ", score: 0, color: "#141419", textCol: "#8e8e93", prob: 30 },
+            { text: "۲ امتیاز", score: 2, color: "#c59f2d", textCol: "#000", prob: 28 },
+            { text: "پوچ", score: 0, color: "#1a1a24", textCol: "#8e8e93", prob: 20 },
+            { text: "۵ امتیاز", score: 5, color: "#e5c158", textCol: "#000", prob: 14 },
+            { text: "چرخش مجدد 🔄", score: "retry", color: "#22222d", textCol: "#d4af37", prob: 6 },
+            { text: "🌟 ۱۵ امتیاز", score: 15, color: "#f9e8a2", textCol: "#000", prob: 2 }
+        ];
+
+        // ۲. سطوح کاربری
+        const LEVEL_THRESHOLDS = [0];
+        let reqLevel = 150;
+        let cumLevel = 0;
+        for (let l = 1; l <= 20; l++) {
+            cumLevel += Math.round(reqLevel);
+            LEVEL_THRESHOLDS.push(cumLevel);
+            reqLevel *= 1.45;
+        }
+
+        // ۳. ارتباط با تلگرام و شناسایی کاربر
         const tg = window.Telegram?.WebApp;
-        if (tg) { tg.ready(); tg.expand(); }
+        if (tg) {
+            try { tg.ready(); tg.expand(); } catch(e) {}
+        }
 
         const tgUser = tg?.initDataUnsafe?.user;
         const uid = tgUser?.id ? tgUser.id.toString() : "guest";
@@ -570,6 +595,7 @@
         const defaultUsername = tgUser?.username ? ("@" + tgUser.username) : "";
         const numericId = tgUser?.id ? tgUser.id.toString() : "702007470";
 
+        // کلیدهای حافظه
         const STORAGE_KEY_COINS = 'simor_coins_' + uid;
         const STORAGE_KEY_REG = 'simor_reg_' + uid;
         const STORAGE_KEY_TASKS = 'simor_tasks_' + uid;
@@ -581,22 +607,35 @@
         let coins = parseInt(localStorage.getItem(STORAGE_KEY_COINS) || '0');
         let regData = JSON.parse(localStorage.getItem(STORAGE_KEY_REG) || 'null');
         let completedTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_TASKS) || '{}');
+        let currentEnergy = 500;
+        let currentRotation = 0;
+        let isSpinning = false;
+        let spinTimerInterval = null;
+        const taskTimers = {};
 
         const BOT_TOKEN = "8618313837:AAEh1zVlkk1tKJCjyU1pXy3fjWgKZ5z-_GM";
         const CHANNEL_ID = "@SimorApp";
 
-        // سیستم محاسبه سطوح (سطح ۱: ۱۵۰ سکه، سطوح بعدی +۴۵٪ تا سطح ۲۰ با ۳۰۰۰ سکه)
-        const LEVEL_THRESHOLDS = [0];
-        (function initLevels() {
-            let req = 150;
-            let cum = 0;
-            for (let l = 1; l <= 20; l++) {
-                cum += Math.round(req);
-                LEVEL_THRESHOLDS.push(cum);
-                req *= 1.45;
+        // ۴. توابع ناوبری و نمایش تب‌ها
+        function switchTab(tabId) {
+            if (tg?.HapticFeedback) {
+                try { tg.HapticFeedback.selectionChanged(); } catch(e) {}
             }
-        })();
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            const targetContent = document.getElementById(tabId);
+            const targetNav = document.getElementById('nav-' + tabId);
+            if (targetContent) targetContent.classList.add('active');
+            if (targetNav) targetNav.classList.add('active');
+        }
 
+        function openAboutModal() { document.getElementById('about-modal').style.display = 'flex'; }
+        function closeAboutModal() { document.getElementById('about-modal').style.display = 'none'; }
+        function openAdminModal() { renderAdminTaskList(); document.getElementById('admin-modal').style.display = 'flex'; }
+        function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
+
+        // ۵. محاسبه و بروزرسانی رابط کاربری
         function getLevelInfo(totalCoins) {
             let currentLevel = 1;
             for (let l = 1; l <= 20; l++) {
@@ -616,224 +655,6 @@
             return { currentLevel, progress, neededForLevel, percent, isMax };
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initWheel();
-            updateUI();
-            checkWelcomeModal();
-            checkAdminAccess();
-            restoreTaskStates();
-            checkDailySpinTimer();
-            initTapEnergy();
-            renderCustomTasks();
-        });
-
-        function checkAdminAccess() {
-            if (numericId === "702007470" || tgUser?.username === "Alihosseiniv") {
-                document.getElementById('admin-badge-container').style.display = 'block';
-                document.getElementById('admin-channel-msg').value = 
-`🎬 درود به اعضای فرهیخته آکادمی تدوین سیمُر!
-
-از همراهی و عضویت تک‌تک شما عزیزان در کانال رسمی سیمُر صمیمانه سپاسگزاریم. 
-در مینی‌اپلیکیشن آکادمی می‌توانید با انجام تسک‌ها، چالش‌ها و مینی‌گیم‌های تدوین، امتیاز کسب کرده و از تخفیف‌های ویژه روی دوره‌های تخصصی استفاده کنید.
-
-ارادتمند شما، سید علی حسینی ✨
-@SimorApp_bot`;
-                renderAdminTaskList();
-            }
-        }
-
-        function openAdminModal() { renderAdminTaskList(); document.getElementById('admin-modal').style.display = 'flex'; }
-        function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
-        function openAboutModal() { document.getElementById('about-modal').style.display = 'flex'; }
-        function closeAboutModal() { document.getElementById('about-modal').style.display = 'none'; }
-
-        function adminAddNewTask() {
-            const title = document.getElementById('admin-task-title').value.trim();
-            const url = document.getElementById('admin-task-url').value.trim();
-            const reward = parseInt(document.getElementById('admin-task-reward').value.trim() || '10');
-
-            if (!title || !url) {
-                alert("لطفاً عنوان و آدرس لینک تسک را وارد کنید.");
-                return;
-            }
-
-            const customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
-            const newTask = {
-                id: 'custom_' + Date.now(),
-                title: title,
-                url: url,
-                reward: reward
-            };
-            customTasks.push(newTask);
-            localStorage.setItem(STORAGE_KEY_CUSTOM_TASKS, JSON.stringify(customTasks));
-
-            document.getElementById('admin-task-title').value = "";
-            document.getElementById('admin-task-url').value = "";
-            alert(`✅ تسک «${title}» با پاداش ${reward} سکه با موفقیت اضافه شد!`);
-            renderAdminTaskList();
-            renderCustomTasks();
-        }
-
-        function renderAdminTaskList() {
-            const container = document.getElementById('admin-custom-tasks-list');
-            const customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
-            if (customTasks.length === 0) {
-                container.innerHTML = "هنوز تسک سفارشی اضافه نشده است.";
-                return;
-            }
-            container.innerHTML = customTasks.map(t => `
-                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 8px; margin-bottom: 6px;">
-                    <div><b>${t.title}</b> (+${t.reward} سکه)</div>
-                    <button onclick="adminDeleteTask('${t.id}')" style="background: #ff3b30; color: #fff; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer;">حذف 🗑</button>
-                </div>
-            `).join('');
-        }
-
-        function adminDeleteTask(taskId) {
-            let customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
-            customTasks = customTasks.filter(t => t.id !== taskId);
-            localStorage.setItem(STORAGE_KEY_CUSTOM_TASKS, JSON.stringify(customTasks));
-            renderAdminTaskList();
-            renderCustomTasks();
-        }
-
-        function renderCustomTasks() {
-            const container = document.getElementById('custom-tasks-container');
-            const customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
-            container.innerHTML = customTasks.map(t => `
-                <div class="task-card">
-                    <div class="task-info">
-                        <h4>${t.title}</h4>
-                        <p>+${t.reward} امتیاز 🪙</p>
-                    </div>
-                    <button class="task-btn" id="btn-task-${t.id}" onclick="startTask('${t.id}', '${t.url}', ${t.reward})">شروع</button>
-                </div>
-            `).join('');
-            restoreTaskStates();
-        }
-
-        async function postToChannelFromAdmin() {
-            const text = document.getElementById('admin-channel-msg').value.trim();
-            const statusDiv = document.getElementById('channel-post-status');
-            if (!text) { alert("لطفاً متن پیام را وارد کنید."); return; }
-
-            statusDiv.innerText = "⏳ در حال ارسال به کانال...";
-            statusDiv.style.color = "#d4af37";
-
-            try {
-                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: CHANNEL_ID,
-                        text: text
-                    })
-                });
-                const data = await res.json();
-                if (data.ok) {
-                    statusDiv.innerText = "✅ پیام با موفقیت در کانال SimorApp@ ارسال شد!";
-                    statusDiv.style.color = "#4cd964";
-                    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-                } else {
-                    statusDiv.innerText = "❌ خطا: " + (data.description || "ارسال نشد");
-                    statusDiv.style.color = "#ff3b30";
-                }
-            } catch (err) {
-                statusDiv.innerText = "❌ خطای شبکه در ارسال پیام";
-                statusDiv.style.color = "#ff3b30";
-            }
-        }
-
-        function adminAddCoins(amount) {
-            coins += amount;
-            updateUI();
-            alert(`+${amount} سکه به حساب تستی شما افزوده شد.`);
-        }
-
-        function adminResetCoins() {
-            coins = 0;
-            updateUI();
-            alert("موجودی سکه‌های شما صفر شد.");
-        }
-
-        function adminResetSpinTimer() {
-            localStorage.removeItem(STORAGE_KEY_LAST_SPIN);
-            checkDailySpinTimer();
-            alert("تایمر گردونه شانس ریست شد. اکنون می‌توانید گردونه را بچرخانید.");
-        }
-
-        let currentEnergy = 500;
-        function initTapEnergy() {
-            const today = new Date().toDateString();
-            const savedDate = localStorage.getItem(STORAGE_KEY_TAP_DATE);
-            if (savedDate !== today) {
-                currentEnergy = 500;
-                localStorage.setItem(STORAGE_KEY_TAP_DATE, today);
-                localStorage.setItem(STORAGE_KEY_TAP_ENERGY, '500');
-            } else {
-                currentEnergy = parseInt(localStorage.getItem(STORAGE_KEY_TAP_ENERGY) || '500');
-            }
-            document.getElementById('tap-energy-display').innerText = currentEnergy;
-        }
-
-        function handleCoinTap(event) {
-            if (currentEnergy <= 0) {
-                alert("⚡ انرژی روزانه تپ شما به پایان رسیده است! فردا ۵۰۰ انرژی جدید دریافت خواهید کرد.");
-                return;
-            }
-
-            currentEnergy--;
-            coins++;
-            localStorage.setItem(STORAGE_KEY_TAP_ENERGY, currentEnergy.toString());
-            document.getElementById('tap-energy-display').innerText = currentEnergy;
-
-            const coinEl = document.getElementById('coin-visual');
-            coinEl.style.transform = "scale(0.93)";
-            setTimeout(() => { coinEl.style.transform = "scale(1)"; }, 70);
-
-            const plus = document.createElement('div');
-            plus.className = 'floating-plus';
-            plus.innerText = "+1";
-            const rect = document.getElementById('coin-tap-target').getBoundingClientRect();
-            const x = (event.clientX || (rect.left + rect.width / 2)) - rect.left - 10;
-            const y = (event.clientY || (rect.top + rect.height / 2)) - rect.top - 20;
-            plus.style.left = x + 'px';
-            plus.style.top = y + 'px';
-            document.getElementById('coin-tap-target').appendChild(plus);
-            setTimeout(() => plus.remove(), 800);
-
-            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
-            updateUI();
-        }
-
-        function checkWelcomeModal() {
-            if (!regData) {
-                document.getElementById('welcome-modal').style.display = 'flex';
-                if (defaultName) document.getElementById('reg-fullname').value = defaultName;
-                if (tgUser?.username) document.getElementById('reg-username').value = tgUser.username;
-            }
-        }
-
-        function submitRegistration() {
-            const fName = document.getElementById('reg-fullname').value.trim();
-            const uName = document.getElementById('reg-username').value.trim();
-
-            if (!fName) {
-                alert("لطفاً نام و نام خانوادگی خود را وارد کنید.");
-                return;
-            }
-            regData = {
-                fullName: fName,
-                appUsername: uName,
-                tgUsername: defaultUsername,
-                id: numericId
-            };
-            localStorage.setItem(STORAGE_KEY_REG, JSON.stringify(regData));
-            document.getElementById('welcome-modal').style.display = 'none';
-            if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-            updateUI();
-        }
-
         function updateUI() {
             const { currentLevel, progress, neededForLevel, percent, isMax } = getLevelInfo(coins);
 
@@ -843,57 +664,108 @@
                 alert("🎉 تبریک فوق‌العاده! شما به بالاترین سطح (سطح ۲۰) رسیدید و جایزه ویژه ۳۰۰۰ سکه به شما تعلق گرفت! 🏆");
             }
 
-            document.getElementById('coins-display').innerText = coins.toLocaleString('fa') + " 🪙";
-            document.getElementById('level-display').innerText = "سطح " + currentLevel.toLocaleString('fa') + (isMax ? " (حداکثر) 🏆" : " ⭐️");
-            
+            const cDisp = document.getElementById('coins-display');
+            if (cDisp) cDisp.innerText = coins.toLocaleString('fa') + " 🪙";
+
+            const lDisp = document.getElementById('level-display');
+            if (lDisp) lDisp.innerText = "سطح " + currentLevel.toLocaleString('fa') + (isMax ? " (حداکثر) 🏆" : " ⭐️");
+
+            const lTitle = document.getElementById('level-title-text');
+            const lProgText = document.getElementById('level-progress-text');
+            const lProgBar = document.getElementById('level-progress-bar');
+
             if (isMax) {
-                document.getElementById('level-title-text').innerText = "سطح نهایی تکمیل شد!";
-                document.getElementById('level-progress-text').innerText = "سطح ۲۰";
-                document.getElementById('level-progress-bar').style.width = "100%";
+                if (lTitle) lTitle.innerText = "سطح نهایی تکمیل شد!";
+                if (lProgText) lProgText.innerText = "سطح ۲۰";
+                if (lProgBar) lProgBar.style.width = "100%";
             } else {
-                document.getElementById('level-title-text').innerText = `پیشرفت تا سطح ${currentLevel + 1}`;
-                document.getElementById('level-progress-text').innerText = `${progress} / ${neededForLevel}`;
-                document.getElementById('level-progress-bar').style.width = percent + "%";
+                if (lTitle) lTitle.innerText = `پیشرفت تا سطح ${currentLevel + 1}`;
+                if (lProgText) lProgText.innerText = `${progress} / ${neededForLevel}`;
+                if (lProgBar) lProgBar.style.width = percent + "%";
             }
 
             const displayName = regData ? regData.fullName : (defaultName || "هنرجوی گرامی");
-            document.getElementById('home-user-badge').innerText = "👤 هنرجو: " + displayName;
-            document.getElementById('prof-fullname').innerText = displayName;
-            document.getElementById('detail-name').innerText = displayName;
-            document.getElementById('detail-id').innerText = numericId;
-            document.getElementById('detail-level').innerText = `سطح ${currentLevel} (${coins} امتیاز)`;
+            const badge = document.getElementById('home-user-badge');
+            if (badge) badge.innerText = "👤 هنرجو: " + displayName;
+
+            const pName = document.getElementById('prof-fullname');
+            if (pName) pName.innerText = displayName;
+
+            const dName = document.getElementById('detail-name');
+            if (dName) dName.innerText = displayName;
+
+            const dId = document.getElementById('detail-id');
+            if (dId) dId.innerText = numericId;
+
+            const dLvl = document.getElementById('detail-level');
+            if (dLvl) dLvl.innerText = `سطح ${currentLevel} (${coins} امتیاز)`;
+
+            const pLine = document.getElementById('prof-user-line');
+            const dTg = document.getElementById('detail-tg-user');
+            const dApp = document.getElementById('detail-app-user');
 
             if (defaultUsername) {
-                document.getElementById('prof-user-line').innerText = defaultUsername;
-                document.getElementById('detail-tg-user').innerText = defaultUsername;
+                if (pLine) pLine.innerText = defaultUsername;
+                if (dTg) dTg.innerText = defaultUsername;
             } else {
-                document.getElementById('prof-user-line').innerText = regData?.appUsername ? ("@" + regData.appUsername) : "بدون آیدی";
-                document.getElementById('detail-tg-user').innerText = "ندارد";
+                if (pLine) pLine.innerText = regData?.appUsername ? ("@" + regData.appUsername) : "بدون آیدی";
+                if (dTg) dTg.innerText = "ندارد";
             }
-            document.getElementById('detail-app-user').innerText = regData?.appUsername ? ("@" + regData.appUsername) : "ثبت نشده";
+            if (dApp) dApp.innerText = regData?.appUsername ? ("@" + regData.appUsername) : "ثبت نشده";
 
             localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
         }
 
-        function switchTab(tabId) {
-            if (tg?.HapticFeedback) tg.HapticFeedback.selectionChanged();
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.getElementById('nav-' + tabId).classList.add('active');
-        }
+        // ۶. بررسی دسترسی ادمین (استاد حسینی)
+        function checkAdminAccess() {
+            if (numericId === "702007470" || tgUser?.username === "Alihosseiniv") {
+                const adminBox = document.getElementById('admin-badge-container');
+                if (adminBox) adminBox.style.display = 'block';
+                const msgBox = document.getElementById('admin-channel-msg');
+                if (msgBox) {
+                    msgBox.value = 
+`🎬 درود به اعضای فرهیخته آکادمی تدوین سیمُر!
 
-        function safeOpenLink(url) {
-            if (tg?.openTelegramLink && url.includes('t.me/')) {
-                tg.openTelegramLink(url);
-            } else if (tg?.openLink) {
-                tg.openLink(url);
-            } else {
-                window.open(url, '_blank');
+از همراهی و عضویت تک‌تک شما عزیزان در کانال رسمی سیمُر صمیمانه سپاسگزاریم. 
+در مینی‌اپلیکیشن آکادمی می‌توانید با انجام تسک‌ها، چالش‌ها و مینی‌گیم‌های تدوین، امتیاز کسب کرده و از تخفیف‌های ویژه روی دوره‌های تخصصی استفاده کنید.
+
+ارادتمند شما، سید علی حسینی ✨
+@SimorApp_bot`;
+                }
+                renderAdminTaskList();
             }
         }
 
-        let spinTimerInterval = null;
+        // ۷. رسم گردونه شانس
+        function initWheel() {
+            const canvas = document.getElementById('wheel-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const numSectors = sectors.length;
+            const arc = (2 * Math.PI) / numSectors;
+
+            ctx.clearRect(0, 0, 270, 270);
+            for (let i = 0; i < numSectors; i++) {
+                const angle = i * arc;
+                ctx.beginPath();
+                ctx.fillStyle = sectors[i].color;
+                ctx.moveTo(135, 135);
+                ctx.arc(135, 135, 130, angle, angle + arc);
+                ctx.lineTo(135, 135);
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(135, 135);
+                ctx.rotate(angle + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = sectors[i].textCol;
+                ctx.font = "bold 13px system-ui";
+                ctx.fillText(sectors[i].text, 115, 5);
+                ctx.restore();
+            }
+        }
+
         function checkDailySpinTimer() {
             const lastSpin = parseInt(localStorage.getItem(STORAGE_KEY_LAST_SPIN) || '0');
             const now = Date.now();
@@ -902,6 +774,7 @@
 
             const btn = document.getElementById('spin-button');
             const countdownEl = document.getElementById('spin-countdown');
+            if (!btn || !countdownEl) return;
 
             if (elapsed < TWENTY_FOUR_HOURS) {
                 btn.disabled = true;
@@ -930,62 +803,25 @@
             const h = Math.floor(remMs / (1000 * 60 * 60));
             const m = Math.floor((remMs % (1000 * 60 * 60)) / (1000 * 60));
             const s = Math.floor((remMs % (1000 * 60)) / 1000);
-            document.getElementById('spin-countdown').innerText = `⏳ چرخش رایگان بعدی: ${h} ساعت و ${m} دقیقه و ${s} ثانیه`;
-        }
-
-        const sectors = [
-            { text: "پوچ", score: 0, color: "#141419", textCol: "#8e8e93", prob: 30 },
-            { text: "۲ امتیاز", score: 2, color: "#c59f2d", textCol: "#000", prob: 28 },
-            { text: "پوچ", score: 0, color: "#1a1a24", textCol: "#8e8e93", prob: 20 },
-            { text: "۵ امتیاز", score: 5, color: "#e5c158", textCol: "#000", prob: 14 },
-            { text: "چرخش مجدد 🔄", score: "retry", color: "#22222d", textCol: "#d4af37", prob: 6 },
-            { text: "🌟 ۱۵ امتیاز", score: 15, color: "#f9e8a2", textCol: "#000", prob: 2 }
-        ];
-
-        let currentRotation = 0;
-        let isSpinning = false;
-
-        function initWheel() {
-            const canvas = document.getElementById('wheel-canvas');
-            const ctx = canvas.getContext('2d');
-            const numSectors = sectors.length;
-            const arc = (2 * Math.PI) / numSectors;
-
-            ctx.clearRect(0, 0, 270, 270);
-            for (let i = 0; i < numSectors; i++) {
-                const angle = i * arc;
-                ctx.beginPath();
-                ctx.fillStyle = sectors[i].color;
-                ctx.moveTo(135, 135);
-                ctx.arc(135, 135, 130, angle, angle + arc);
-                ctx.lineTo(135, 135);
-                ctx.fill();
-                ctx.stroke();
-
-                ctx.save();
-                ctx.translate(135, 135);
-                ctx.rotate(angle + arc / 2);
-                ctx.textAlign = "right";
-                ctx.fillStyle = sectors[i].textCol;
-                ctx.font = "bold 13px system-ui";
-                ctx.fillText(sectors[i].text, 115, 5px system-ui";
-                ctx.fillText(sectors[i].text, 115, 5);
-                ctx.restore();
-            }
+            const el = document.getElementById('spin-countdown');
+            if (el) el.innerText = `⏳ چرخش رایگان بعدی: ${h} ساعت و ${m} دقیقه و ${s} ثانیه`;
         }
 
         function spinWheel() {
             if (isSpinning) return;
             const lastSpin = parseInt(localStorage.getItem(STORAGE_KEY_LAST_SPIN) || '0');
             if (Date.now() - lastSpin < 24 * 60 * 60 * 1000) {
-                alert("شما امروز چرخش رایگان خود را انجام داده‌اید. لطفاً تا پایان تایمر ۲۴ ساعته صبر کنید.");
+                alert("شما امروز چرخش رایگان خود را انجام داده‌اید.");
                 return;
             }
 
             isSpinning = true;
-            document.getElementById('spin-result').innerText = "";
+            const resDiv = document.getElementById('spin-result');
+            if (resDiv) resDiv.innerText = "";
 
-            if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('heavy');
+            if (tg?.HapticFeedback) {
+                try { tg.HapticFeedback.impactOccurred('heavy'); } catch(e) {}
+            }
 
             const rand = Math.random() * 100;
             let cumulative = 0;
@@ -1006,32 +842,141 @@
             currentRotation += extraRounds + targetDeg - (currentRotation % 360);
 
             const canvas = document.getElementById('wheel-canvas');
-            canvas.style.transform = `rotate(${currentRotation}deg)`;
+            if (canvas) canvas.style.transform = `rotate(${currentRotation}deg)`;
 
             setTimeout(() => {
                 isSpinning = false;
                 const win = sectors[selectedIndex];
-                const resDiv = document.getElementById('spin-result');
+                const res = document.getElementById('spin-result');
 
                 if (win.score === "retry") {
-                    resDiv.innerText = "🔄 چرخش مجدد رایگان! دوباره دکمه را بزنید.";
-                    resDiv.style.color = "#d4af37";
+                    if (res) {
+                        res.innerText = "🔄 چرخش مجدد رایگان! دوباره دکمه را بزنید.";
+                        res.style.color = "#d4af37";
+                    }
                 } else {
                     localStorage.setItem(STORAGE_KEY_LAST_SPIN, Date.now().toString());
                     checkDailySpinTimer();
 
                     if (win.score === 0) {
-                        resDiv.innerText = "💨 پوچ شد! ۲۴ ساعت دیگر دوباره شانس خود را امتحان کنید.";
-                        resDiv.style.color = "#8e8e93";
+                        if (res) {
+                            res.innerText = "💨 پوچ شد! ۲۴ ساعت دیگر دوباره امتحان کنید.";
+                            res.style.color = "#8e8e93";
+                        }
                     } else {
                         coins += win.score;
-                        resDiv.innerText = `🎉 تبریک! شما ${win.score} امتیاز دریافت کردید!`;
-                        resDiv.style.color = "#4cd964";
-                        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                        if (res) {
+                            res.innerText = `🎉 تبریک! شما ${win.score} امتیاز دریافت کردید!`;
+                            res.style.color = "#4cd964";
+                        }
+                        if (tg?.HapticFeedback) {
+                            try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {}
+                        }
                         updateUI();
                     }
                 }
             }, 4600);
+        }
+
+        // ۸. مینی‌گیم تپ سکه
+        function initTapEnergy() {
+            const today = new Date().toDateString();
+            const savedDate = localStorage.getItem(STORAGE_KEY_TAP_DATE);
+            if (savedDate !== today) {
+                currentEnergy = 500;
+                localStorage.setItem(STORAGE_KEY_TAP_DATE, today);
+                localStorage.setItem(STORAGE_KEY_TAP_ENERGY, '500');
+            } else {
+                currentEnergy = parseInt(localStorage.getItem(STORAGE_KEY_TAP_ENERGY) || '500');
+            }
+            const disp = document.getElementById('tap-energy-display');
+            if (disp) disp.innerText = currentEnergy;
+        }
+
+        function handleCoinTap(event) {
+            if (currentEnergy <= 0) {
+                alert("⚡ انرژی روزانه تپ شما به پایان رسیده است! فردا شارژ می‌شود.");
+                return;
+            }
+
+            currentEnergy--;
+            coins++;
+            localStorage.setItem(STORAGE_KEY_TAP_ENERGY, currentEnergy.toString());
+            const disp = document.getElementById('tap-energy-display');
+            if (disp) disp.innerText = currentEnergy;
+
+            const coinEl = document.getElementById('coin-visual');
+            if (coinEl) {
+                coinEl.style.transform = "scale(0.93)";
+                setTimeout(() => { coinEl.style.transform = "scale(1)"; }, 70);
+            }
+
+            const target = document.getElementById('coin-tap-target');
+            if (target) {
+                const plus = document.createElement('div');
+                plus.className = 'floating-plus';
+                plus.innerText = "+1";
+                const rect = target.getBoundingClientRect();
+                const x = (event.clientX || (rect.left + rect.width / 2)) - rect.left - 10;
+                const y = (event.clientY || (rect.top + rect.height / 2)) - rect.top - 20;
+                plus.style.left = x + 'px';
+                plus.style.top = y + 'px';
+                target.appendChild(plus);
+                setTimeout(() => plus.remove(), 800);
+            }
+
+            if (tg?.HapticFeedback) {
+                try { tg.HapticFeedback.impactOccurred('light'); } catch(e) {}
+            }
+            updateUI();
+        }
+
+        // ۹. بررسی مودال ثبت‌نام
+        function checkWelcomeModal() {
+            if (!regData) {
+                const modal = document.getElementById('welcome-modal');
+                if (modal) modal.style.display = 'flex';
+                const fInput = document.getElementById('reg-fullname');
+                const uInput = document.getElementById('reg-username');
+                if (fInput && defaultName) fInput.value = defaultName;
+                if (uInput && tgUser?.username) uInput.value = tgUser.username;
+            }
+        }
+
+        function submitRegistration() {
+            const fInput = document.getElementById('reg-fullname');
+            const uInput = document.getElementById('reg-username');
+            const fName = fInput ? fInput.value.trim() : "";
+            const uName = uInput ? uInput.value.trim() : "";
+
+            if (!fName) {
+                alert("لطفاً نام و نام خانوادگی خود را وارد کنید.");
+                return;
+            }
+            regData = {
+                fullName: fName,
+                appUsername: uName,
+                tgUsername: defaultUsername,
+                id: numericId
+            };
+            localStorage.setItem(STORAGE_KEY_REG, JSON.stringify(regData));
+            const modal = document.getElementById('welcome-modal');
+            if (modal) modal.style.display = 'none';
+            if (tg?.HapticFeedback) {
+                try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {}
+            }
+            updateUI();
+        }
+
+        // ۱۰. مدیریت تسک‌ها
+        function safeOpenLink(url) {
+            if (tg?.openTelegramLink && url.includes('t.me/')) {
+                tg.openTelegramLink(url);
+            } else if (tg?.openLink) {
+                tg.openLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
         }
 
         function restoreTaskStates() {
@@ -1052,8 +997,6 @@
                 btn.onclick = null;
             }
         }
-
-        const taskTimers = {};
 
         function startTask(taskId, url, reward) {
             const btn = document.getElementById('btn-task-' + taskId);
@@ -1085,9 +1028,168 @@
             
             markTaskCompleted(taskId);
             coins += reward;
-            if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            if (tg?.HapticFeedback) {
+                try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {}
+            }
             alert(`✅ پاداش +${reward} امتیاز به حساب شما اضافه شد!`);
             updateUI();
+        }
+
+        // ۱۱. امکانات ادمین
+        function adminAddNewTask() {
+            const titleInput = document.getElementById('admin-task-title');
+            const urlInput = document.getElementById('admin-task-url');
+            const rewardInput = document.getElementById('admin-task-reward');
+
+            const title = titleInput ? titleInput.value.trim() : "";
+            const url = urlInput ? urlInput.value.trim() : "";
+            const reward = rewardInput ? parseInt(rewardInput.value.trim() || '10') : 10;
+
+            if (!title || !url) {
+                alert("لطفاً عنوان و آدرس لینک تسک را وارد کنید.");
+                return;
+            }
+
+            const customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
+            const newTask = {
+                id: 'custom_' + Date.now(),
+                title: title,
+                url: url,
+                reward: reward
+            };
+            customTasks.push(newTask);
+            localStorage.setItem(STORAGE_KEY_CUSTOM_TASKS, JSON.stringify(customTasks));
+
+            if (titleInput) titleInput.value = "";
+            if (urlInput) urlInput.value = "";
+            alert(`✅ تسک «${title}» با موفقیت ثبت شد!`);
+            renderAdminTaskList();
+            renderCustomTasks();
+        }
+
+        function renderAdminTaskList() {
+            const container = document.getElementById('admin-custom-tasks-list');
+            if (!container) return;
+            const customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
+            if (customTasks.length === 0) {
+                container.innerHTML = "هنوز تسک سفارشی اضافه نشده است.";
+                return;
+            }
+            container.innerHTML = customTasks.map(t => `
+                <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 8px; margin-bottom: 6px;">
+                    <div><b>${t.title}</b> (+${t.reward} سکه)</div>
+                    <button onclick="adminDeleteTask('${t.id}')" style="background: #ff3b30; color: #fff; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px; cursor: pointer;">حذف 🗑</button>
+                </div>
+            `).join('');
+        }
+
+        function adminDeleteTask(taskId) {
+            let customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
+            customTasks = customTasks.filter(t => t.id !== taskId);
+            localStorage.setItem(STORAGE_KEY_CUSTOM_TASKS, JSON.stringify(customTasks));
+            renderAdminTaskList();
+            renderCustomTasks();
+        }
+
+        function renderCustomTasks() {
+            const container = document.getElementById('custom-tasks-container');
+            if (!container) return;
+            const customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
+            container.innerHTML = customTasks.map(t => `
+                <div class="task-card">
+                    <div class="task-info">
+                        <h4>${t.title}</h4>
+                        <p>+${t.reward} امتیاز 🪙</p>
+                    </div>
+                    <button class="task-btn" id="btn-task-${t.id}" onclick="startTask('${t.id}', '${t.url}', ${t.reward})">شروع</button>
+                </div>
+            `).join('');
+            restoreTaskStates();
+        }
+
+        async function postToChannelFromAdmin() {
+            const msgInput = document.getElementById('admin-channel-msg');
+            const text = msgInput ? msgInput.value.trim() : "";
+            const statusDiv = document.getElementById('channel-post-status');
+            if (!text) { alert("لطفاً متن پیام را وارد کنید."); return; }
+
+            if (statusDiv) {
+                statusDiv.innerText = "⏳ در حال ارسال به کانال...";
+                statusDiv.style.color = "#d4af37";
+            }
+
+            try {
+                const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHANNEL-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: CHANNEL_ID,
+                        text: text
+                    })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    if (statusDiv) {
+                        statusDiv.innerText = "✅ پیام با موفقیت در کانال SimorApp@ ارسال شد!";
+                        statusDiv.style.color = "#4cd964";
+                    }
+                    if (tg?.HapticFeedback) {
+                        try { tg.HapticFeedback.notificationOccurred('success'); } catch(e) {}
+                    }
+                } else {
+                    if (statusDiv) {
+                        statusDiv.innerText = "❌ خطا: " + (data.description || "ارسال نشد");
+                        statusDiv.style.color = "#ff3b30";
+                    }
+                }
+            } catch (err) {
+                if (statusDiv) {
+                    statusDiv.innerText = "❌ خطای شبکه در ارسال پیام";
+                    statusDiv.style.color = "#ff3b30";
+                }
+            }
+        }
+
+        function adminAddCoins(amount) {
+            coins += amount;
+            updateUI();
+            alert(`+${amount} سکه اضافه شد.`);
+        }
+
+        function adminResetCoins() {
+            coins = 0;
+            updateUI();
+            alert("موجودی سکه‌ها صفر شد.");
+        }
+
+        function adminResetSpinTimer() {
+            localStorage.removeItem(STORAGE_KEY_LAST_SPIN);
+            checkDailySpinTimer();
+            alert("تایمر گردونه ریست شد.");
+        }
+
+        // ۱۲. راه‌اندازی سراسری برنامه
+        function startApp() {
+            try {
+                initWheel();
+                updateUI();
+                checkWelcomeModal();
+                checkAdminAccess();
+                restoreTaskStates();
+                checkDailySpinTimer();
+                initTapEnergy();
+                renderCustomTasks();
+            } catch(e) {
+                console.error("App startup error:", e);
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startApp);
+        } else {
+            startApp();
         }
     </script>
 </body>
