@@ -17,7 +17,6 @@
       --border: rgba(212, 175, 55, 0.28);
       --green: #34c759;
       --red: #ff3b30;
-      --blue: #007aff;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
@@ -28,20 +27,12 @@
     .tab-content.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* بنر مدیریت ادمین */
-    .admin-banner {
-      background: rgba(255, 59, 48, 0.12); border: 1px dashed var(--red);
-      border-radius: 12px; padding: 10px 14px; display: flex;
-      justify-content: space-between; align-items: center; margin-bottom: 12px;
-    }
-    .btn-admin { background: var(--red); color: white; border: none; padding: 6px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-    /* کارت کاربر */
+    /* کارت پروفایل خانه */
     .user-card {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 16px; padding: 16px; margin-bottom: 14px; text-align: center;
+      border-radius: 16px; padding: 18px 16px; margin-bottom: 14px; text-align: center;
     }
-    .brand-title { font-size: 20px; font-weight: bold; color: var(--gold); margin-bottom: 4px; }
+    .brand-title { font-size: 22px; font-weight: bold; color: var(--gold); margin-bottom: 4px; }
     .brand-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
     .user-pill {
       background: var(--card-inner); border: 1px solid var(--border);
@@ -50,7 +41,7 @@
     }
     .stats-grid { display: flex; justify-content: space-around; margin-bottom: 12px; }
     .stat-item h4 { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-    .stat-item .val { font-size: 17px; font-weight: bold; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .stat-item .val { font-size: 18px; font-weight: bold; color: var(--gold); display: flex; align-items: center; justify-content: center; gap: 4px; }
 
     .progress-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
     .progress-bar-bg { width: 100%; height: 7px; background: #222230; border-radius: 4px; overflow: hidden; }
@@ -68,36 +59,57 @@
     }
     .streak-day.active { border-color: var(--gold); background: rgba(212,175,55,0.15); color: var(--gold); }
 
-    /* بخش‌های اصلی ۲x۲ */
+    /* بخش‌های اصلی ۲x۲ در خانه */
     .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
     .menu-card {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 14px 10px; text-align: center; cursor: pointer;
+      border-radius: 14px; padding: 16px 10px; text-align: center; cursor: pointer;
     }
     .menu-card:active { transform: scale(0.97); }
     .menu-card .icon-box {
-      width: 40px; height: 40px; border-radius: 50%; background: var(--card-inner);
+      width: 44px; height: 44px; border-radius: 50%; background: var(--card-inner);
       border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 8px; font-size: 18px;
+      margin: 0 auto 8px; font-size: 20px;
     }
-    .menu-card h4 { font-size: 13px; margin-bottom: 2px; }
-    .menu-card p { font-size: 10px; color: var(--text-muted); }
+    .menu-card h4 { font-size: 14px; margin-bottom: 2px; }
+    .menu-card p { font-size: 11px; color: var(--text-muted); }
 
     /* شبکه ۳×۴ بازی‌ها */
     .games-grid-3x4 {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px;
     }
     .game-box {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 12px; padding: 12px 6px; text-align: center; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 90px;
+      border-radius: 14px; padding: 14px 6px; text-align: center; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 95px;
+      transition: transform 0.1s;
     }
-    .game-box img { width: 36px; height: 36px; object-fit: contain; margin-bottom: 6px; }
-    .game-box span { font-size: 11px; font-weight: bold; }
-    .game-box.empty { border: 1px dashed rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); opacity: 0.4; cursor: default; }
+    .game-box:active { transform: scale(0.96); }
+    .game-box img { width: 40px; height: 40px; object-fit: contain; margin-bottom: 6px; }
+    .game-box span { font-size: 12px; font-weight: bold; }
+    .game-box.empty { border: 1px dashed rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); opacity: 0.35; cursor: default; }
 
-    /* گردونه شانس */
-    .wheel-container { position: relative; width: 260px; height: 260px; margin: 15px auto; }
+    /* مینی بازی تپ سکه درون تب بازی‌ها */
+    .tap-container {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px; margin-top: 16px; display: none; text-align: center;
+    }
+    .big-coin {
+      width: 170px; height: 170px; border-radius: 50%;
+      background: radial-gradient(circle, #f9e8a2, #d4af37 60%, #875e07);
+      border: 6px solid #ffd700; box-shadow: 0 0 25px rgba(212,175,55,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 70px; font-weight: 900; color: #3b2800; cursor: pointer;
+      margin: 15px auto; transition: transform 0.06s ease;
+    }
+    .big-coin:active { transform: scale(0.94); }
+
+    /* گردونه شانس درون تب بازی‌ها */
+    .wheel-panel {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 16px; margin-top: 16px; display: none; text-align: center;
+    }
+    .wheel-container { position: relative; width: 250px; height: 250px; margin: 15px auto; }
     #wheel-canvas { width: 100%; height: 100%; border-radius: 50%; border: 5px solid var(--gold); }
     .wheel-pointer {
       position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
@@ -105,39 +117,17 @@
       border-top: 20px solid white; z-index: 10;
     }
     .btn-spin {
-      width: 100%; max-width: 260px; margin: 15px auto 8px; display: block;
+      width: 100%; max-width: 250px; margin: 12px auto; display: block;
       background: var(--gold-gradient); color: black; border: none; padding: 12px;
       border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer;
     }
 
-    /* جدول تاریخچه جوایز ۱۰ تایی */
-    .history-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 12px; margin-top: 20px;
-    }
-    .history-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
-    .history-table th { color: var(--gold); padding: 6px; border-bottom: 1px solid var(--border); text-align: center; }
-    .history-table td { padding: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
-
-    /* تپ سکه */
-    .big-coin {
-      width: 200px; height: 200px; border-radius: 50%;
-      background: radial-gradient(circle, #f9e8a2, #d4af37 60%, #875e07);
-      border: 6px solid #ffd700; box-shadow: 0 0 30px rgba(212,175,55,0.4);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 80px; font-weight: 900; color: #3b2800; cursor: pointer;
-      margin: 25px auto; transition: transform 0.06s ease;
-    }
-    .big-coin:active { transform: scale(0.95); }
-
-    /* تسک‌ها */
+    /* تسک‌ها و دوستان */
     .task-card {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 12px; padding: 12px; display: flex;
       justify-content: space-between; align-items: center; margin-bottom: 10px;
     }
-
-    /* دوستان */
     .ref-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
     .ref-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; }
     .ref-box h5 { font-size: 11px; color: var(--text-muted); }
@@ -147,7 +137,7 @@
       padding: 10px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer;
     }
 
-    /* مودال‌ها */
+    /* مودال‌ها و پاپ‌آپ‌ها */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
       z-index: 1000; align-items: center; justify-content: center; padding: 16px;
@@ -155,14 +145,9 @@
     .modal-overlay.open { display: flex; }
     .modal-card {
       background: var(--card-bg); border: 1px solid var(--gold);
-      border-radius: 16px; width: 100%; max-width: 360px; padding: 18px;
-      max-height: 90vh; overflow-y: auto;
+      border-radius: 16px; width: 100%; max-width: 350px; padding: 18px;
     }
-
-    /* پاپ‌آپ پیام لوکس به جای alert پیش‌فرض */
-    .custom-alert {
-      text-align: center; padding: 10px;
-    }
+    .custom-alert { text-align: center; padding: 10px; }
     .custom-alert .alert-icon { font-size: 42px; margin-bottom: 8px; }
     .custom-alert h3 { color: var(--gold); margin-bottom: 6px; font-size: 17px; }
     .custom-alert p { color: var(--text); font-size: 13px; margin-bottom: 16px; line-height: 1.6; }
@@ -178,25 +163,13 @@
       background: none; border: none; color: var(--text-muted); font-size: 11px; cursor: pointer;
     }
     .nav-btn.active { color: var(--gold); }
-    .nav-btn svg { width: 20px; height: 20px; fill: currentColor; }
-    .nav-center-btn {
-      position: relative; top: -14px; width: 52px; height: 52px; border-radius: 50%;
-      background: var(--gold-gradient); border: 3px solid #ffd700;
-      box-shadow: 0 0 12px rgba(212,175,55,0.6); display: flex;
-      align-items: center; justify-content: center; font-size: 24px;
-      font-weight: 900; color: #3b2800; cursor: pointer;
-    }
+    .nav-btn svg { width: 22px; height: 22px; fill: currentColor; }
   </style>
 </head>
 <body>
 
-  <!-- تب ۱: خانه -->
+  <!-- تب ۱: خانه (خلوت و بدون بنر مدیریت) -->
   <div id="tab-home" class="tab-content active">
-    <div class="admin-banner" id="admin-banner" style="display: none;">
-      <span id="txt-admin-title">👑 Admin Control Panel</span>
-      <button class="btn-admin" id="btn-admin-open" onclick="openModal('modal-admin')">Manage</button>
-    </div>
-
     <div class="user-card">
       <div class="brand-title">Simor App 📁</div>
       <div class="brand-sub" id="txt-creator">Creator: Simor Academy</div>
@@ -243,8 +216,10 @@
       </div>
     </div>
 
+    <!-- بخش‌های اصلی ۲x۲ -->
     <div class="grid-2x2">
-      <div class="menu-card" onclick="openModal('modal-games')" style="border-color: var(--gold);">
+      <!-- ورود مستقیم به تب بازی‌ها -->
+      <div class="menu-card" onclick="switchNav('games')" style="border-color: var(--gold);">
         <div class="icon-box" style="background: rgba(212,175,55,0.2);">🎮</div>
         <h4 style="color: var(--gold);" id="txt-mg-title">Mini Games</h4>
         <p id="txt-mg-sub">Poker, Slots, Tap</p>
@@ -262,94 +237,101 @@
         <p id="txt-about-sub">Guides & Simor Info</p>
       </div>
 
-      <div class="menu-card" onclick="switchNav('friends')">
-        <div class="icon-box">👥</div>
-        <h4 id="txt-friends-title">Friends</h4>
-        <p id="txt-friends-sub">Referral & Bonus</p>
+      <div class="menu-card" onclick="switchNav('profile')">
+        <div class="icon-box">👤</div>
+        <h4 id="txt-prof-card">Account Info</h4>
+        <p id="txt-prof-sub">User Profile</p>
       </div>
     </div>
   </div>
 
-  <!-- تب ۲: گردونه شانس -->
-  <div id="tab-wheel" class="tab-content" style="text-align: center;">
-    <h3 style="color: var(--gold); margin-bottom: 4px;" id="txt-wh-title">🎡 Lucky Golden Wheel</h3>
-    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;" id="txt-wh-sub">1 Free spin every 24h (Resets 00:00 London UTC)</p>
+  <!-- تب ۲: بازی‌ها (شبکه ۳x۴ متمرکز) -->
+  <div id="tab-games" class="tab-content">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+      <h3 style="color: var(--gold);" id="txt-gh-head">🎮 Games Hub</h3>
+      <div style="display: flex; align-items: center; gap: 6px; background: rgba(212,175,55,0.1); padding: 4px 10px; border-radius: 12px; border: 1px solid var(--border);">
+        <img src="assets/coin.png" width="16">
+        <span id="games-coin-val" style="color: var(--gold); font-weight: bold; font-size: 13px;">1,000 S</span>
+      </div>
+    </div>
+    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;" id="txt-gh-desc">Choose a game to play:</p>
 
-    <div class="wheel-container">
-      <div class="wheel-pointer"></div>
-      <canvas id="wheel-canvas" width="260" height="260"></canvas>
+    <!-- شبکه ۳x۴ بازی‌ها -->
+    <div class="games-grid-3x4">
+      <!-- ۱. تپ سکه S -->
+      <div class="game-box" onclick="toggleSubGame('tap')">
+        <div style="font-size: 26px; font-weight: bold; color: var(--gold);">S</div>
+        <span style="margin-top: 4px;" id="txt-g-tap">Coin Tap</span>
+      </div>
+      <!-- ۲. گردونه شانس -->
+      <div class="game-box" onclick="toggleSubGame('wheel')">
+        <div style="font-size: 24px;">🎡</div>
+        <span style="margin-top: 4px;" id="txt-g-wheel">Lucky Wheel</span>
+      </div>
+      <!-- ۳. پوکر تگزاس هولدم (ورود مستقیم به فایل بازی) -->
+      <div class="game-box" onclick="openGame('games/poker/index.html')">
+        <img src="assets/poker-chip.png">
+        <span style="color: var(--gold);" id="txt-g-poker">Poker</span>
+      </div>
+
+      <!-- ۹ کادر خالی -->
+      <div class="game-box empty"><span>Coming</span></div>
+      <div class="game-box empty"><span>Coming</span></div>
+      <div class="game-box empty"><span>Coming</span></div>
+      <div class="game-box empty"><span>Coming</span></div>
+      <div class="game-box empty"><span>Coming</span></div>
+      <div class="game-box empty"><span>Coming</span></div>
+      <div class="game-box empty"><span>Coming</span></div>
+      <div class="game-box empty"><span>Coming</span></div>
+      <div class="game-box empty"><span>Coming</span></div>
     </div>
 
-    <button id="btn-spin" class="btn-spin" onclick="spinWheel()">🎰 Spin Wheel</button>
-    <div style="font-size: 12px; color: #ff9f0a; margin-top: 6px;" id="wheel-timer">Ready to Spin!</div>
+    <!-- بخش بازشونده تپ سکه درون تب بازی‌ها -->
+    <div id="subgame-tap" class="tap-container">
+      <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px;">
+        <span id="txt-per-tap">Per Tap: <b>+1</b></span>
+        <span>⚡ <span id="energy-text">500 / 500</span></span>
+      </div>
+      <div class="big-coin" onclick="handleTap(event)">S</div>
+      <button class="btn-action" style="background: #252532; color: white; padding: 6px 14px; font-size: 11px;" onclick="toggleSubGame('none')">Close Tap ✕</button>
+    </div>
 
-    <!-- جدول تاریخچه ۱۰ تایی جوایز -->
-    <div class="history-card">
-      <h4 style="color: var(--gold); font-size: 12px; margin-bottom: 6px;" id="txt-hist-title">📜 Recent Spin Rewards (Last 10)</h4>
-      <table class="history-table">
-        <thead>
-          <tr>
-            <th id="th-date">Date</th>
-            <th id="th-prize">Reward</th>
-          </tr>
-        </thead>
-        <tbody id="history-body">
-          <tr><td colspan="2" style="color: var(--text-muted);" id="txt-no-hist">No spins recorded yet</td></tr>
-        </tbody>
-      </table>
+    <!-- بخش بازشونده گردونه درون تب بازی‌ها -->
+    <div id="subgame-wheel" class="wheel-panel">
+      <h4 style="color: var(--gold); margin-bottom: 4px;">🎡 Lucky Golden Wheel</h4>
+      <div class="wheel-container">
+        <div class="wheel-pointer"></div>
+        <canvas id="wheel-canvas" width="250" height="250"></canvas>
+      </div>
+      <button id="btn-spin" class="btn-spin" onclick="spinWheel()">🎰 Spin Wheel</button>
+      <div style="font-size: 11px; color: #ff9f0a; margin-bottom: 10px;" id="wheel-timer">Ready to Spin!</div>
+      <button class="btn-action" style="background: #252532; color: white; padding: 6px 14px; font-size: 11px;" onclick="toggleSubGame('none')">Close Wheel ✕</button>
     </div>
   </div>
 
-  <!-- تب ۳: تپ سکه S -->
-  <div id="tab-tap" class="tab-content">
-    <div style="display: flex; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; font-size: 12px;">
-      <span id="txt-per-tap">Per Tap: <b>+1</b></span>
-      <span id="txt-boosts">Boosters 🚀</span>
-      <span><span id="txt-taps-lbl">Taps</span>: <b id="tap-count">0</b></span>
-    </div>
-
-    <div style="font-size: 34px; font-weight: 900; text-align: center; margin: 16px 0; color: var(--gold);">
-      <span id="tap-coins">1,000</span> S
-    </div>
-
-    <div class="big-coin" onclick="handleTap(event)">S</div>
-
-    <div style="margin-top: 20px;">
-      <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-        <span id="txt-energy-lbl">⚡ Energy</span>
-        <span id="energy-text">500 / 500</span>
-      </div>
-      <div class="progress-bar-bg" style="height: 8px;">
-        <div class="progress-bar-fill" id="energy-fill" style="width: 100%; background: #34c759;"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- تب ۴: تسک‌ها -->
+  <!-- تب ۳: تسک‌ها -->
   <div id="tab-tasks" class="tab-content">
-    <h3 style="margin-bottom: 8px; color: var(--gold);" id="txt-task-h">Missions & Rewards</h3>
+    <h3 style="margin-bottom: 6px; color: var(--gold);" id="txt-task-h">Missions & Rewards</h3>
     <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 14px;" id="txt-task-sub">Join and earn coins after timer:</p>
 
-    <div id="tasks-list">
-      <div class="task-card">
-        <div>
-          <h4 id="t1-title">Join Official Simor Channel</h4>
-          <span style="font-size: 11px; color: var(--gold);">+5 Points 🪙</span>
-        </div>
-        <button class="btn-action" style="max-width: 90px;" id="t1-btn" onclick="startTask('t1', 'https://t.me/SimorApp', 5)">Join</button>
+    <div class="task-card">
+      <div>
+        <h4 id="t1-title">Join Official Simor Channel</h4>
+        <span style="font-size: 11px; color: var(--gold);">+5 Points 🪙</span>
       </div>
+      <button class="btn-action" style="max-width: 90px;" id="t1-btn" onclick="startTask('t1', 'https://t.me/SimorApp', 5)">Join</button>
+    </div>
 
-      <div class="task-card">
-        <div>
-          <h4 id="t2-title">Visit Instagram Page</h4>
-          <span style="font-size: 11px; color: var(--gold);">+5 Points 🪙</span>
-        </div>
-        <button class="btn-action" style="max-width: 90px;" id="t2-btn" onclick="startTask('t2', 'https://instagram.com', 5)">Visit</button>
+    <div class="task-card">
+      <div>
+        <h4 id="t2-title">Visit Instagram Page</h4>
+        <span style="font-size: 11px; color: var(--gold);">+5 Points 🪙</span>
       </div>
+      <button class="btn-action" style="max-width: 90px;" id="t2-btn" onclick="startTask('t2', 'https://instagram.com', 5)">Visit</button>
     </div>
   </div>
 
-  <!-- تب ۵: دوستان و رفرال -->
+  <!-- تب ۴: دوستان و رفرال -->
   <div id="tab-friends" class="tab-content">
     <h3 style="color: var(--gold); margin-bottom: 6px;" id="txt-fr-title">Invite Friends</h3>
     <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;" id="txt-fr-sub">Share your link and earn bonus coins!</p>
@@ -374,7 +356,7 @@
       <button class="btn-action" style="flex: 1; background: #252532; color: white;" onclick="copyRefLink()" id="btn-copy">Copy Link</button>
     </div>
 
-    <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 10px;">
+    <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px;">
       <span style="font-size: 12px;" id="txt-enter-code">Enter Friend Code:</span>
       <div style="display: flex; gap: 8px; margin-top: 6px;">
         <input type="text" id="friend-code-input" placeholder="s7020074" style="flex: 1; background: var(--card-inner); border: 1px solid var(--border); color: white; padding: 8px; border-radius: 8px;">
@@ -383,7 +365,7 @@
     </div>
   </div>
 
-  <!-- تب ۶: حساب کاربری -->
+  <!-- تب ۵: حساب کاربری -->
   <div id="tab-profile" class="tab-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
       <h3 style="color: var(--gold);" id="txt-prof-title">User Profile</h3>
@@ -416,61 +398,26 @@
     <button class="btn-action" style="width: 100%; padding: 12px;" onclick="tg?.close()" id="btn-close-app">Close App</button>
   </div>
 
-  <!-- مودال ۱: هاب ۳x۴ بازی‌ها -->
-  <div class="modal-overlay" id="modal-games">
-    <div class="modal-card" style="max-width: 360px;">
-      <h3 style="color: var(--gold); text-align: center; margin-bottom: 4px;" id="txt-m-gh">🎮 Games Hub</h3>
-      <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 10px;" id="txt-m-gh-sub">Select a game (Shared Balance)</p>
-
-      <div class="games-grid-3x4">
-        <div class="game-box" onclick="closeModal('modal-games'); switchNav('tap');">
-          <div style="font-size: 24px; font-weight: bold; color: var(--gold);">S</div>
-          <span style="margin-top: 4px;" id="txt-g-tap">Coin Tap</span>
-        </div>
-        <div class="game-box" onclick="showPopup('Slot Machine', 'Lucky Slot is coming soon with Box, Diamond & 7 symbols!', '🎰')">
-          <img src="assets/chest.png">
-          <span id="txt-g-slot">Lucky Slot</span>
-        </div>
-        <div class="game-box" onclick="openGame('games/poker/index.html')">
-          <img src="assets/poker-chip.png">
-          <span style="color: var(--gold);" id="txt-g-poker">Poker</span>
-        </div>
-
-        <div class="game-box empty"><span>Coming</span></div>
-        <div class="game-box empty"><span>Coming</span></div>
-        <div class="game-box empty"><span>Coming</span></div>
-        <div class="game-box empty"><span>Coming</span></div>
-        <div class="game-box empty"><span>Coming</span></div>
-        <div class="game-box empty"><span>Coming</span></div>
-        <div class="game-box empty"><span>Coming</span></div>
-        <div class="game-box empty"><span>Coming</span></div>
-        <div class="game-box empty"><span>Coming</span></div>
-      </div>
-
-      <button class="btn-action" style="width: 100%; margin-top: 14px; background: #222230; color: white;" onclick="closeModal('modal-games')" id="btn-close-games">Close ✕</button>
-    </div>
-  </div>
-
-  <!-- مودال ۲: درباره ما و قوانین -->
+  <!-- مودال درباره ما و قوانین -->
   <div class="modal-overlay" id="modal-about">
     <div class="modal-card">
-      <h3 style="color: var(--gold); margin-bottom: 8px;" id="txt-ab-h">ℹ️ About Simor Academy</h3>
-      <p style="font-size: 12px; line-height: 1.7; color: var(--text-muted); margin-bottom: 12px;" id="txt-ab-body">
+      <h3 style="color: var(--gold); margin-bottom: 8px;">ℹ️ About Simor Academy</h3>
+      <p style="font-size: 12px; line-height: 1.7; color: var(--text-muted); margin-bottom: 12px;">
         <b>Simor Academy</b> by Seyed Ali Hosseini.<br>
         Professional editing academy & gaming ecosystem.<br>
         All games share the same secure coin balance.
       </p>
-      <h4 style="color: var(--gold); margin-bottom: 6px;" id="txt-ab-rh">📜 Rules & Fair Play</h4>
-      <p style="font-size: 11px; line-height: 1.6; color: var(--text-muted); margin-bottom: 14px;" id="txt-ab-rbody">
+      <h4 style="color: var(--gold); margin-bottom: 6px;">📜 Rules & Fair Play</h4>
+      <p style="font-size: 11px; line-height: 1.6; color: var(--text-muted); margin-bottom: 14px;">
         1. Free wheel resets daily at 00:00 UTC (London).<br>
         2. Quitting poker mid-hand is counted as Fold.<br>
         3. Fair play is strictly enforced.
       </p>
-      <button class="btn-action" style="width: 100%; background: #222230; color: white;" onclick="closeModal('modal-about')" id="btn-close-about">Close ✕</button>
+      <button class="btn-action" style="width: 100%; background: #222230; color: white;" onclick="closeModal('modal-about')">Close ✕</button>
     </div>
   </div>
 
-  <!-- مودال ۳: انتخاب زبان -->
+  <!-- مودال انتخاب زبان -->
   <div class="modal-overlay" id="modal-lang">
     <div class="modal-card" style="text-align: center;">
       <h3 style="color: var(--gold); margin-bottom: 12px;">🌐 Select Language</h3>
@@ -482,47 +429,7 @@
     </div>
   </div>
 
-  <!-- مودال ۴: پنل مدیریت ادمین -->
-  <div class="modal-overlay" id="modal-admin">
-    <div class="modal-card">
-      <h3 style="color: var(--red); text-align: center; margin-bottom: 12px;">👑 Admin Control Panel</h3>
-      
-      <!-- ارسال پیام به کانال -->
-      <div style="background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 12px;">
-        <h5 style="color: var(--gold); margin-bottom: 6px;">📢 Send Message to Simor Channel (@SimorApp):</h5>
-        <textarea id="admin-broadcast-msg" rows="3" placeholder="Enter announcement text..." style="width: 100%; background: #101015; border: 1px solid var(--border); color: white; padding: 8px; border-radius: 6px; font-size: 12px; resize: none;"></textarea>
-        <button class="btn-action" style="width: 100%; margin-top: 6px; background: #007aff; color: white;" onclick="sendBroadcast()">🚀 Send to Channel (@SimorApp)</button>
-      </div>
-
-      <!-- افزودن تسک دلخواه -->
-      <div style="background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 12px;">
-        <h5 style="color: var(--gold); margin-bottom: 6px;">➕ Add Custom Task:</h5>
-        <input type="text" id="new-task-title" placeholder="Task Title (e.g. Subscribe Youtube)" style="width: 100%; padding: 6px; margin-bottom: 4px; background: #101015; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 12px;">
-        <input type="text" id="new-task-url" placeholder="https://..." style="width: 100%; padding: 6px; margin-bottom: 4px; background: #101015; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 12px;">
-        <input type="number" id="new-task-coins" placeholder="Reward Coins (e.g. 10)" style="width: 100%; padding: 6px; margin-bottom: 6px; background: #101015; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 12px;">
-        <button class="btn-action" style="width: 100%;" onclick="addCustomTask()">Add Task</button>
-      </div>
-
-      <!-- واریز به کاربر دیگر -->
-      <div style="background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 12px;">
-        <h5 style="color: var(--gold); margin-bottom: 6px;">💸 Transfer Coins by User ID:</h5>
-        <input type="text" id="admin-target-id" placeholder="Telegram User ID (e.g. 702007470)" style="width: 100%; padding: 6px; margin-bottom: 4px; background: #101015; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 12px;">
-        <input type="number" id="admin-target-amount" placeholder="Amount (e.g. 500)" style="width: 100%; padding: 6px; margin-bottom: 6px; background: #101015; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 12px;">
-        <button class="btn-action" style="width: 100%;" onclick="adminTransfer()">Transfer Coins</button>
-      </div>
-
-      <!-- دکمه‌های تست سریع -->
-      <div style="display: flex; gap: 6px; margin-bottom: 6px;">
-        <button class="btn-admin" style="flex: 1; background: var(--green);" onclick="addCoins(500)">+500</button>
-        <button class="btn-admin" style="flex: 1; background: var(--gold); color: black;" onclick="addCoins(2000)">+2000</button>
-      </div>
-      <button class="btn-admin" style="width: 100%; margin-bottom: 6px;" onclick="setCoins(0)">Zero Coins</button>
-      <button class="btn-admin" style="width: 100%; background: #5856d6; margin-bottom: 12px;" onclick="resetWheel()">Reset Wheel 24h Timer</button>
-      <button class="btn-action" style="width: 100%; background: #222230; color: white;" onclick="closeModal('modal-admin')">Close Admin ✕</button>
-    </div>
-  </div>
-
-  <!-- مودال ۵: پاپ‌آپ اختصاصی لوکس (جایگزین پنجره سفید alert) -->
+  <!-- مودال پیام لوکس (پاپ‌آپ جایگزین alert) -->
   <div class="modal-overlay" id="modal-alert">
     <div class="modal-card custom-alert">
       <div class="alert-icon" id="pop-icon">🎉</div>
@@ -532,22 +439,23 @@
     </div>
   </div>
 
-  <!-- نوار ناوبری ۵ تایی -->
+  <!-- نوار منوی پایین ۵ تایی مرتب -->
   <nav class="bottom-nav">
     <button class="nav-btn active" id="btn-home" onclick="switchNav('home')">
       <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
       <span id="nb-home">Home</span>
     </button>
-    <button class="nav-btn" id="btn-wheel" onclick="switchNav('wheel')">
-      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-      <span id="nb-wheel">Wheel</span>
+    <button class="nav-btn" id="btn-games" onclick="switchNav('games')">
+      <svg viewBox="0 0 24 24"><path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-10 7H8v3H6v-3H3v-2h3V8h2v3h3v2zm4.5 2c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm3-3c-.83 0-1.5-.67-1.5-1.5S17.67 9 18.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+      <span id="nb-games">Games</span>
     </button>
-    
-    <div class="nav-center-btn" onclick="switchNav('tap')">S</div>
-
     <button class="nav-btn" id="btn-tasks" onclick="switchNav('tasks')">
       <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
       <span id="nb-tasks">Tasks</span>
+    </button>
+    <button class="nav-btn" id="btn-friends" onclick="switchNav('friends')">
+      <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      <span id="nb-friends">Friends</span>
     </button>
     <button class="nav-btn" id="btn-profile" onclick="switchNav('profile')">
       <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -557,7 +465,6 @@
 
   <script>
     const tg = window.Telegram?.WebApp;
-    const ADMIN_ID = 702007470;
 
     if (tg) {
       tg.ready();
@@ -571,70 +478,52 @@
         document.getElementById('p-username').innerText = u.username ? '@' + u.username : '@User';
         document.getElementById('p-id').innerText = u.id || '702007470';
         document.getElementById('p-gid').innerText = 's' + (u.id ? u.id.toString().slice(0, 7) : '7020074');
-
-        if (u.id === ADMIN_ID || !u.id) {
-          document.getElementById('admin-banner').style.display = 'flex';
-        }
       }
     }
 
     let balance = 1000;
     let energy = 500;
-    let tapCount = 0;
     let currentLang = localStorage.getItem('simor_lang') || 'en';
 
-    // سیستم جامع ترجمه (i18n)
     const translations = {
       en: {
-        adminTitle: '👑 Admin Control Panel', manage: 'Manage', creator: 'Creator: Simor Academy', role: 'Player:',
-        coins: 'Coin Balance', level: 'Player Level', prog: 'Progress to Level 2', streak: 'Daily Streak Rewards 🎁',
-        day: 'Day', mgTitle: 'Mini Games', mgSub: 'Poker, Slots, Tap', tasksTitle: 'Missions', tasksSub: 'Earn Coins',
-        aboutTitle: 'About & Rules', aboutSub: 'Guides & Simor Info', friendsTitle: 'Friends', friendsSub: 'Referral & Bonus',
-        whTitle: '🎡 Lucky Golden Wheel', whSub: '1 Free spin every 24h (Resets 00:00 London UTC)', spinBtn: '🎰 Spin Wheel',
-        whReady: 'Ready to Spin!', whHist: '📜 Recent Spin Rewards (Last 10)', thDate: 'Date', thPrize: 'Reward',
-        noHist: 'No spins recorded yet', perTap: 'Per Tap: ', boosts: 'Boosters 🚀', taps: 'Taps', energy: '⚡ Energy',
-        taskH: 'Missions & Rewards', taskSub: 'Join and earn coins after timer:', join: 'Join', visit: 'Visit',
+        creator: 'Creator: Simor Academy', role: 'Player:', coins: 'Coin Balance', level: 'Player Level',
+        prog: 'Progress to Level 2', streak: 'Daily Streak Rewards 🎁', day: 'Day',
+        mgTitle: 'Mini Games', mgSub: 'Poker, Slots, Tap', tasksTitle: 'Missions', tasksSub: 'Earn Coins',
+        aboutTitle: 'About & Rules', aboutSub: 'Guides & Simor Info', profCard: 'Account Info', profSub: 'User Profile',
+        ghHead: '🎮 Games Hub', ghDesc: 'Choose a game to play (Shared Balance):', gTap: 'Coin Tap', gWheel: 'Lucky Wheel', gPoker: 'Poker',
+        perTap: 'Per Tap: ', taskH: 'Missions & Rewards', taskSub: 'Join and earn coins after timer:',
         frTitle: 'Invite Friends', frSub: 'Share your link and earn bonus coins!', frTotal: 'Total Friends',
         frActive: 'Active', frEarned: 'Earned', inviteBtn: 'Invite a Friend', copyBtn: 'Copy Link',
         enterCode: 'Enter Friend Code:', submit: 'Submit', profTitle: 'User Profile', profName: 'Name:',
         profUser: 'Telegram ID:', profId: 'User ID:', profGid: 'Game ID:', profRank: 'Rank:', profLvl: 'Level 1',
-        closeApp: 'Close App', ghTitle: '🎮 Games Hub', ghSub: 'Select a game (Shared Balance)',
-        gTap: 'Coin Tap', gSlot: 'Lucky Slot', gPoker: 'Poker', close: 'Close ✕',
-        home: 'Home', wheel: 'Wheel', tasks: 'Tasks', profile: 'Profile'
+        closeApp: 'Close App', home: 'Home', games: 'Games', tasks: 'Tasks', friends: 'Friends', profile: 'Profile'
       },
       ru: {
-        adminTitle: '👑 Панель управления', manage: 'Управление', creator: 'Создатель: Академия Simor', role: 'Игрок:',
-        coins: 'Баланс монет', level: 'Уровень игрока', prog: 'Прогресс до 2 уровня', streak: 'Ежедневные награды 🎁',
-        day: 'День', mgTitle: 'Мини-игры', mgSub: 'Покер, Слоты, Тап', tasksTitle: 'Задания', tasksSub: 'Заработать монеты',
-        aboutTitle: 'О нас и Правила', aboutSub: 'Гайды и Инфо', friendsTitle: 'Друзья', friendsSub: 'Рефералы и бонусы',
-        whTitle: '🎡 Золотое Колесо Удачи', whSub: '1 спин в 24ч (Сброс 00:00 Лондон)', spinBtn: '🎰 Крутить колесо',
-        whReady: 'Готово к вращению!', whHist: '📜 История наград (Последние 10)', thDate: 'Дата', thPrize: 'Награда',
-        noHist: 'История пуста', perTap: 'За клик: ', boosts: 'Бустеры 🚀', taps: 'Клики', energy: '⚡ Энергия',
-        taskH: 'Задания и Награды', taskSub: 'Выполняйте задания и получайте монеты:', join: 'Войти', visit: 'Перейти',
+        creator: 'Создатель: Академия Simor', role: 'Игрок:', coins: 'Баланс монет', level: 'Уровень игрока',
+        prog: 'Прогресс до 2 уровня', streak: 'Ежедневные награды 🎁', day: 'День',
+        mgTitle: 'Мини-игры', mgSub: 'Покер, Слоты, Тап', tasksTitle: 'Задания', tasksSub: 'Заработать монеты',
+        aboutTitle: 'О нас и Правила', aboutSub: 'Гайды и Инфо', profCard: 'Данные аккаунта', profSub: 'Профиль',
+        ghHead: '🎮 Центр Игр', ghDesc: 'Выберите игру (Общий баланс):', gTap: 'Тап монеты', gWheel: 'Колесо Удачи', gPoker: 'Покер',
+        perTap: 'За клик: ', taskH: 'Задания и Награды', taskSub: 'Выполняйте задания и получайте монеты:',
         frTitle: 'Пригласить друзей', frSub: 'Делитесь ссылкой и получайте бонусы!', frTotal: 'Всего друзей',
         frActive: 'Активные', frEarned: 'Заработано', inviteBtn: 'Пригласить друга', copyBtn: 'Копировать ссылку',
         enterCode: 'Введите код друга:', submit: 'Отправить', profTitle: 'Профиль пользователя', profName: 'Имя:',
         profUser: 'Telegram ID:', profId: 'User ID:', profGid: 'Game ID:', profRank: 'Ранг:', profLvl: 'Уровень 1',
-        closeApp: 'Закрыть приложение', ghTitle: '🎮 Центр Игр', ghSub: 'Выберите игру (Общий баланс)',
-        gTap: 'Тап монеты', gSlot: 'Слоты удачи', gPoker: 'Покер', close: 'Закрыть ✕',
-        home: 'Главная', wheel: 'Колесо', tasks: 'Задания', profile: 'Профиль'
+        closeApp: 'Закрыть приложение', home: 'Главная', games: 'Игры', tasks: 'Задания', friends: 'Друзья', profile: 'Профиль'
       },
       fa: {
-        adminTitle: '👑 پنل مدیریت آنلاین', manage: 'مدیریت', creator: 'سازنده: آکادمی simor', role: 'بازیکن:',
-        coins: 'موجودی سکه', level: 'سطح بازیکن', prog: 'پیشرفت تا سطح ۲', streak: 'پاداش ورود ۷ روزه 🎁',
-        day: 'روز', mgTitle: 'مینی گیم‌ها', mgSub: 'پوکر، اسلات و تپ', tasksTitle: 'ماموریت‌ها', tasksSub: 'کسب سکه و امتیاز',
-        aboutTitle: 'درباره ما و قوانین', aboutSub: 'توضیحات و آموزش', friendsTitle: 'دوستان', friendsSub: 'کسب سکه با رفرال',
-        whTitle: '🎡 گردونه شانس طلایی', whSub: 'هر ۲۴ ساعت ۱ شانس (ریست ۰۰:۰۰ لندن)', spinBtn: '🎰 چرخاندن گردونه',
-        whReady: 'آماده چرخش رایگان!', whHist: '📜 تاریخچه جوایز اخیر (۱۰ روز گذشته)', thDate: 'تاریخ', thPrize: 'جایزه',
-        noHist: 'هنوز چرخشی ثبت نشده است', perTap: 'هر کلیک: ', boosts: 'ارتقاها 🚀', taps: 'تپ‌ها', energy: '⚡ انرژی',
-        taskH: 'ماموریت‌های پاداش‌دار', taskSub: 'روی هر تسک بزنید و پس از تایمر سکه بگیرید:', join: 'عضویت', visit: 'مشاهده',
+        creator: 'سازنده: آکادمی simor', role: 'بازیکن:', coins: 'موجودی سکه', level: 'سطح بازیکن',
+        prog: 'پیشرفت تا سطح ۲', streak: 'پاداش ورود ۷ روزه 🎁', day: 'روز',
+        mgTitle: 'مینی گیم‌ها', mgSub: 'پوکر، گردونه و تپ', tasksTitle: 'ماموریت‌ها', tasksSub: 'کسب سکه و امتیاز',
+        aboutTitle: 'درباره ما و قوانین', aboutSub: 'توضیحات و آموزش', profCard: 'اطلاعات حساب', profSub: 'مشخصات کاربری',
+        ghHead: '🎮 مرکز بازی‌ها', ghDesc: 'بازی مورد نظر را انتخاب کنید (موجودی مشترک):', gTap: 'تپ سکه S', gWheel: 'گردونه شانس', gPoker: 'پوکر تگزاس',
+        perTap: 'هر کلیک: ', taskH: 'ماموریت‌های پاداش‌دار', taskSub: 'روی هر تسک بزنید و پس از تایمر سکه بگیرید:',
         frTitle: 'دعوت از دوستان', frSub: 'لینک خود را ارسال کنید و پاداش بگیرید!', frTotal: 'تعداد کل',
         frActive: 'فعال', frEarned: 'مجموع پاداش', inviteBtn: 'دعوت از دوستان', copyBtn: 'کپی لینک',
         enterCode: 'کد معرف دوست:', submit: 'ثبت کد', profTitle: 'مشخصات حساب کاربری', profName: 'نام:',
         profUser: 'آیدی تلگرام:', profId: 'شناسه عددی:', profGid: 'کد بازی:', profRank: 'رتبه کاربری:', profLvl: 'سطح ۱',
-        closeApp: 'بستن اپلیکیشن', ghTitle: '🎮 انتخاب مینی‌گیم', ghSub: 'بازی مورد نظر را انتخاب کنید (موجودی مشترک)',
-        gTap: 'تپ سکه S', gSlot: 'اسلات شانس', gPoker: 'پوکر تگزاس', close: 'بستن ✕',
-        home: 'خانه', wheel: 'گردونه', tasks: 'تسک‌ها', profile: 'حساب'
+        closeApp: 'بستن اپلیکیشن', home: 'خانه', games: 'بازی‌ها', tasks: 'تسک‌ها', friends: 'دوستان', profile: 'حساب'
       }
     };
 
@@ -644,8 +533,6 @@
       const t = translations[lang];
       document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
 
-      document.getElementById('txt-admin-title').innerText = t.adminTitle;
-      document.getElementById('btn-admin-open').innerText = t.manage;
       document.getElementById('txt-creator').innerText = t.creator;
       document.getElementById('txt-role').innerText = t.role;
       document.getElementById('txt-coins-title').innerText = t.coins;
@@ -660,25 +547,18 @@
       document.getElementById('txt-tasks-sub').innerText = t.tasksSub;
       document.getElementById('txt-about-title').innerText = t.aboutTitle;
       document.getElementById('txt-about-sub').innerText = t.aboutSub;
-      document.getElementById('txt-friends-title').innerText = t.friendsTitle;
-      document.getElementById('txt-friends-sub').innerText = t.friendsSub;
+      document.getElementById('txt-prof-card').innerText = t.profCard;
+      document.getElementById('txt-prof-sub').innerText = t.profSub;
 
-      document.getElementById('txt-wh-title').innerText = t.whTitle;
-      document.getElementById('txt-wh-sub').innerText = t.whSub;
-      document.getElementById('btn-spin').innerText = t.spinBtn;
-      document.getElementById('txt-hist-title').innerText = t.whHist;
-      document.getElementById('th-date').innerText = t.thDate;
-      document.getElementById('th-prize').innerText = t.thPrize;
-
+      document.getElementById('txt-gh-head').innerText = t.ghHead;
+      document.getElementById('txt-gh-desc').innerText = t.ghDesc;
+      document.getElementById('txt-g-tap').innerText = t.gTap;
+      document.getElementById('txt-g-wheel').innerText = t.gWheel;
+      document.getElementById('txt-g-poker').innerText = t.gPoker;
       document.getElementById('txt-per-tap').innerHTML = `${t.perTap}<b>+1</b>`;
-      document.getElementById('txt-boosts').innerText = t.boosts;
-      document.getElementById('txt-taps-lbl').innerText = t.taps;
-      document.getElementById('txt-energy-lbl').innerText = t.energy;
 
       document.getElementById('txt-task-h').innerText = t.taskH;
       document.getElementById('txt-task-sub').innerText = t.taskSub;
-      const b1 = document.getElementById('t1-btn'); if (b1 && !b1.disabled) b1.innerText = t.join;
-      const b2 = document.getElementById('t2-btn'); if (b2 && !b2.disabled) b2.innerText = t.visit;
 
       document.getElementById('txt-fr-title').innerText = t.frTitle;
       document.getElementById('txt-fr-sub').innerText = t.frSub;
@@ -696,3 +576,120 @@
       document.getElementById('txt-prof-id').innerText = t.profId;
       document.getElementById('txt-prof-gid').innerText = t.profGid;
       document.getElementById('txt-prof-rank').innerText = t.profRank;
+      document.getElementById('txt-prof-lvl').innerText = t.profLvl;
+      document.getElementById('btn-close-app').innerText = t.closeApp;
+
+      document.getElementById('nb-home').innerText = t.home;
+      document.getElementById('nb-games').innerText = t.games;
+      document.getElementById('nb-tasks').innerText = t.tasks;
+      document.getElementById('nb-friends').innerText = t.friends;
+      document.getElementById('nb-profile').innerText = t.profile;
+    }
+
+    function setLanguage(lang) {
+      applyLang(lang);
+      closeModal('modal-lang');
+    }
+
+    function showPopup(title, msg, icon = '🎉') {
+      document.getElementById('pop-icon').innerText = icon;
+      document.getElementById('pop-title').innerText = title;
+      document.getElementById('pop-msg').innerText = msg;
+      openModal('modal-alert');
+    }
+
+    function loadBalance() {
+      if (tg?.CloudStorage) {
+        tg.CloudStorage.getItem('user_balance', (err, val) => {
+          if (!err && val) balance = parseInt(val);
+          updateUI();
+        });
+      } else {
+        balance = parseInt(localStorage.getItem('user_balance') || '1000');
+        updateUI();
+      }
+    }
+
+    function saveBalance() {
+      if (tg?.CloudStorage) {
+        tg.CloudStorage.setItem('user_balance', balance.toString());
+      } else {
+        localStorage.setItem('user_balance', balance.toString());
+      }
+      updateUI();
+    }
+
+    function updateUI() {
+      document.getElementById('home-coins').innerText = balance.toLocaleString();
+      document.getElementById('games-coin-val').innerText = balance.toLocaleString() + ' S';
+      document.getElementById('p-coins').innerText = balance.toLocaleString();
+    }
+
+    function switchNav(tab) {
+      tg?.HapticFeedback?.impactOccurred('light');
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      const targetTab = document.getElementById('tab-' + tab);
+      if (targetTab) targetTab.classList.add('active');
+
+      const targetBtn = document.getElementById('btn-' + tab);
+      if (targetBtn) targetBtn.classList.add('active');
+    }
+
+    function toggleSubGame(type) {
+      const tapBox = document.getElementById('subgame-tap');
+      const wheelBox = document.getElementById('subgame-wheel');
+      tapBox.style.display = 'none';
+      wheelBox.style.display = 'none';
+
+      if (type === 'tap') {
+        tapBox.style.display = 'block';
+      } else if (type === 'wheel') {
+        wheelBox.style.display = 'block';
+        drawWheel();
+      }
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function openGame(path) { window.location.href = path; }
+
+    function handleTap(e) {
+      if (energy <= 0) return;
+      tg?.HapticFeedback?.impactOccurred('light');
+      energy--;
+      balance++;
+      document.getElementById('energy-text').innerText = `${energy} / 500`;
+      updateUI();
+      saveBalance();
+    }
+
+    function startTask(id, url, reward) {
+      if (tg?.openTelegramLink && url.includes('t.me')) {
+        tg.openTelegramLink(url);
+      } else if (tg?.openLink) {
+        tg.openLink(url);
+      } else {
+        window.open(url, '_blank');
+      }
+
+      const btn = document.getElementById(id + '-btn');
+      btn.disabled = true;
+      let left = 30;
+      btn.innerText = left + 's';
+
+      const timer = setInterval(() => {
+        left--;
+        btn.innerText = left + 's';
+        if (left <= 0) {
+          clearInterval(timer);
+          btn.innerText = 'Claim';
+          btn.disabled = false;
+          btn.onclick = () => {
+            balance += reward;
+            saveBalance();
+            btn.innerText = 'Done ✓';
+            btn.disabled = true;
+            btn.style.background = '#252532';
+            btn.style.color = '#3
