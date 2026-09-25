@@ -14,7 +14,7 @@
       --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
       --text: #ffffff;
       --text-muted: #8e8e98;
-      --border: rgba(212, 175, 55, 0.28);
+      --border: rgba(212, 175, 55, 0.2);
       --green: #34c759;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
@@ -31,64 +31,89 @@
       padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
     }
 
-    /* پیش‌نمایش کارت بانکی لوکس */
+    /* کانتینر کارت دقیقا منطبق با تناسب عکس‌ها */
     .card-preview-container {
-      margin: 10px auto 16px; width: 100%; max-width: 330px;
+      margin: 8px auto 16px;
+      width: 100%;
+      max-width: 340px;
     }
+    
+    /* حذف حاشیه و قاب اضافه دور کارت */
     .bank-card {
-      width: 100%; height: 205px; border-radius: 16px; padding: 16px;
-      position: relative; box-shadow: 0 12px 30px rgba(0,0,0,0.85);
-      display: flex; flex-direction: column; justify-content: space-between;
-      text-align: right; overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.35);
-      background-size: cover; background-position: center; background-repeat: no-repeat;
-      transition: all 0.3s ease;
+      width: 100%;
+      aspect-ratio: 1000 / 610;
+      border-radius: 18px;
+      padding: 16px 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: right;
+      overflow: hidden;
+      border: none !important;
+      background-color: transparent !important;
+      background-size: 100% 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+      transition: all 0.25s ease;
     }
 
-    /* آدرس دقیق تصاویر کارت‌ها در پوشه assets */
-    .theme-gold {
-      background-image: url('../../assets/card-gold.png');
-      background-color: #14120c;
-    }
-    .theme-birthday {
-      background-image: url('../../assets/card-birthday.png');
-      background-color: #2b0b2e;
-    }
-    .theme-friend {
-      background-image: url('../../assets/card-friend.png');
-      background-color: #081d33;
-    }
-    .theme-luck {
-      background-image: url('../../assets/card-luck.png');
-      background-color: #052414;
-    }
+    .theme-gold { background-image: url('../../assets/card-gold.png'); }
+    .theme-birthday { background-image: url('../../assets/card-birthday.png'); }
+    .theme-friend { background-image: url('../../assets/card-friend.png'); }
+    .theme-luck { background-image: url('../../assets/card-luck.png'); }
 
-    .card-top { display: flex; justify-content: space-between; align-items: center; z-index: 2; }
+    /* متن‌های بالا: ظریف، بدون کادر سیاه مزاحم */
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 2px;
+    }
     .card-logo {
-      font-size: 13px; font-weight: 900; color: var(--gold); letter-spacing: 1.5px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #f7d779;
+      letter-spacing: 1.2px;
       text-shadow: 0 2px 4px rgba(0,0,0,0.9);
     }
     .card-badge {
-      font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.85);
-      background: rgba(0,0,0,0.55); padding: 3px 8px; border-radius: 6px;
-      border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(4px);
+      font-size: 9px;
+      font-weight: 800;
+      color: #ecd58b;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
     }
 
-    /* چیپ مصنوعی مخفی است چون روی عکس‌ها چیپ واقعی وجود دارد */
-    .card-chip {
-      display: none !important;
-    }
+    .card-chip { display: none !important; }
 
+    /* پیام وسط: فاصله از سمت چپ تا متن روی چیپ نیفتد */
     .card-msg {
-      font-size: 15px; font-weight: bold; line-height: 1.5; color: #ffffff;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.95); margin: 6px 0; min-height: 44px;
-      display: flex; align-items: center; z-index: 2;
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: #ffffff;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.95);
+      margin: auto 0;
+      padding-left: 75px; /* جلوگیری از برخورد با چیپ */
+      text-align: right;
     }
+
+    /* فوتر کارت */
     .card-footer {
-      display: flex; justify-content: space-between; align-items: flex-end;
-      font-size: 12px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 6px;
-      z-index: 2; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      font-size: 11px;
+      padding-bottom: 2px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
     }
-    .card-holder { font-weight: bold; color: var(--gold); font-size: 13px; }
+    .card-holder {
+      font-weight: 800;
+      color: #f7d779;
+      font-size: 12px;
+    }
 
     /* تب‌های انتخاب پوسته */
     .themes-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 12px; }
@@ -118,7 +143,7 @@
     }
     .btn-buy-card:active { transform: scale(0.98); }
 
-    /* باکس ذخیره در گالری بعد از خرید */
+    /* باکس ذخیره در گالری */
     .delivery-box {
       display: none; background: rgba(52, 199, 89, 0.1); border: 1px solid var(--green);
       border-radius: 14px; padding: 16px; margin-bottom: 14px;
@@ -160,7 +185,7 @@
     </button>
   </div>
 
-  <!-- پیش‌نمایش کارت بانکی لوکس -->
+  <!-- پیش‌نمایش کارت بانکی لوکس (کاملاً فیت روی خود عکس) -->
   <div class="card-preview-container">
     <div class="bank-card theme-gold" id="bank-card">
       <div class="card-top">
@@ -168,19 +193,17 @@
         <span class="card-badge" id="card-badge-txt">VIP EDITION</span>
       </div>
       
-      <div class="card-chip"></div>
-      
-      <!-- پیام دلخواه تبریک -->
+      <!-- پیام دلخواه تبریک (با فاصله از چیپ سمت چپ) -->
       <div class="card-msg" id="preview-msg">تولدت مبارک رفیق، همیشه برنده باشی! 🌸</div>
       
       <!-- پاورقی مشخصات فرستنده و گیرنده -->
       <div class="card-footer">
         <div>
-          <span style="font-size: 9px; opacity: 0.7; display:block;">به نام:</span>
+          <span style="font-size: 8px; opacity: 0.8; display:block;">به نام:</span>
           <span class="card-holder" id="preview-to">دوست عزیز</span>
         </div>
         <div style="text-align: left;">
-          <span style="font-size: 9px; opacity: 0.7; display:block;">از طرف:</span>
+          <span style="font-size: 8px; opacity: 0.8; display:block;">از طرف:</span>
           <span style="color: white; font-weight: bold;" id="preview-from">علی</span>
         </div>
       </div>
@@ -209,8 +232,8 @@
     </button>
   </div>
 
-  <!-- کنواس مخفی جهت خروجی دانلود باکیفیت -->
-  <canvas id="card-canvas" width="1000" height="630" style="display:none;"></canvas>
+  <!-- کنواس مخفی -->
+  <canvas id="card-canvas" width="1000" height="610" style="display:none;"></canvas>
 
   <script>
     const tg = window.Telegram?.WebApp;
@@ -282,6 +305,7 @@
       alert('🎉 کارت شما با موفقیت صادر شد!');
     }
 
+    // خروجی تصویر تمیز بدون به هم ریختگی
     function downloadCardImage() {
       const canvas = document.getElementById('card-canvas');
       const ctx = canvas.getContext('2d');
@@ -299,26 +323,37 @@
       bgImg.src = imgSrc;
 
       bgImg.onload = function() {
-        ctx.drawImage(bgImg, 0, 0, 1000, 630);
+        ctx.clearRect(0, 0, 1000, 610);
+        ctx.drawImage(bgImg, 0, 0, 1000, 610);
 
         ctx.direction = 'rtl';
         ctx.textAlign = 'right';
 
-        ctx.fillStyle = '#e5c158';
-        ctx.font = 'bold 36px sans-serif';
-        ctx.fillText('SIMOR GIFT CARD 💳', 940, 85);
+        // سایه ملایم برای خوانایی عالی روی تصویر
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
 
+        // عنوان بالا
+        ctx.fillStyle = '#f7d779';
+        ctx.font = 'bold 30px sans-serif';
+        ctx.fillText('SIMOR GIFT CARD', 930, 75);
+
+        // متن تبریک وسط (سمت راست تا روی چیپ چپ نیفتد)
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 32px sans-serif';
-        ctx.fillText(document.getElementById('preview-msg').innerText, 940, 360);
-
-        ctx.fillStyle = '#e5c158';
         ctx.font = 'bold 28px sans-serif';
-        ctx.fillText('به نام: ' + document.getElementById('preview-to').innerText, 940, 560);
+        ctx.fillText(document.getElementById('preview-msg').innerText, 930, 340);
 
+        // به نام
+        ctx.fillStyle = '#f7d779';
+        ctx.font = 'bold 25px sans-serif';
+        ctx.fillText('به نام: ' + document.getElementById('preview-to').innerText, 930, 545);
+
+        // از طرف
         ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 28px sans-serif';
-        ctx.fillText('از طرف: ' + document.getElementById('preview-from').innerText, 350, 560);
+        ctx.font = 'bold 25px sans-serif';
+        ctx.fillText('از طرف: ' + document.getElementById('preview-from').innerText, 340, 545);
 
         const link = document.createElement('a');
         link.download = 'Simor-Gift-Card.png';
