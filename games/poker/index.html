@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>میز پوکر</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      background-color: #072a16;
+      color: #ffffff;
+      font-family: system-ui, sans-serif;
+      margin: 0;
+      padding: 16px;
+      text-align: center;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .back-btn {
+      background: #14141b;
+      color: #e5c158;
+      border: 1px solid #e5c158;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .table-felt {
+      background: #0f4d2a;
+      border: 5px solid #5a3d28;
+      border-radius: 40px;
+      padding: 35px 15px;
+      margin: 20px 0;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.6);
+    }
+    .cards-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .card {
+      background: white;
+      color: black;
+      width: 44px;
+      height: 64px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .btn-action {
+      background: #e5c158;
+      color: #000;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      margin: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-bar">
+    <button class="back-btn" onclick="goBack()">🔙 برگشت به منو</button>
+    <div style="color: #e5c158; font-weight: bold;">
+      موجودی: <span id="poker-balance">1000</span>
+    </div>
+  </div>
+
+  <h2>میز بازی پوکر</h2>
+
+  <div class="table-felt">
+    <p>کارت‌های مشترک:</p>
+    <div class="cards-row">
+      <div class="card">A♠</div>
+      <div class="card" style="color: red;">K♥</div>
+      <div class="card">Q♣</div>
+    </div>
+  </div>
+
+  <div>
+    <button class="btn-action" onclick="alert('فولد کردید')">فولد (Fold)</button>
+    <button class="btn-action" onclick="alert('چک کردید')">چک (Check)</button>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      tg.BackButton.show();
+      tg.BackButton.onClick(goBack);
+    }
+
+    function goBack() {
+      window.location.href = '../../index.html';
+    }
+
+    // خواندن موجودی کاربر
+    if (tg?.CloudStorage) {
+      tg.CloudStorage.getItem('user_balance', (err, val) => {
+        if (!err && val) {
+          document.getElementById('poker-balance').innerText = parseInt(val).toLocaleString();
+        }
+      });
+    } else {
+      const b = localStorage.getItem('user_balance') || '1000';
+      document.getElementById('poker-balance').innerText = parseInt(b).toLocaleString();
+    }
+  </script>
+</body>
+</html>
