@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>فال و طالع‌بینی سیمُر</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0c0814;
+      --card-bg: #150f24;
+      --card-inner: #1e1533;
+      --gold: #e5c158;
+      --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
+      --purple: #8b3dff;
+      --purple-gradient: linear-gradient(135deg, #7928ca, #ff0080);
+      --text: #ffffff;
+      --text-muted: #9d8eb5;
+      --border: rgba(212, 175, 55, 0.28);
+      --green: #34c759;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
+    body {
+      background: radial-gradient(circle at 50% 10%, #29154a 0%, #0c0814 100%);
+      color: var(--text); min-height: 100vh; padding: 12px; text-align: center; padding-bottom: 30px;
+    }
+
+    /* هدر */
+    .top-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 8px 12px; margin-bottom: 14px; font-size: 13px;
+    }
+    .btn-back {
+      background: #251a36; color: var(--gold); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
+    }
+
+    /* انتخاب نوع فال */
+    .tabs-type { display: flex; gap: 6px; justify-content: center; margin-bottom: 14px; }
+    .btn-type {
+      flex: 1; padding: 9px 4px; border-radius: 10px; font-size: 11px;
+      font-weight: bold; border: 1px solid var(--border); background: var(--card-bg);
+      color: var(--text-muted); cursor: pointer; transition: transform 0.1s;
+    }
+    .btn-type.active {
+      background: var(--purple-gradient); border-color: transparent; color: white;
+      box-shadow: 0 0 12px rgba(139,61,255,0.4);
+    }
+
+    /* شبکه ۱۲ ماه سال */
+    .signs-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;
+    }
+    .sign-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 4px; cursor: pointer;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: transform 0.1s, border-color 0.2s;
+    }
+    .sign-card:active { transform: scale(0.96); }
+    .sign-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.15); }
+    .sign-symbol { font-size: 24px; margin-bottom: 2px; }
+    .sign-name { font-size: 12px; font-weight: bold; color: var(--gold); }
+    .sign-date { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
+
+    /* کارت نتیجه فال */
+    .result-container {
+      display: none; background: var(--card-bg); border: 1px solid var(--gold);
+      border-radius: 16px; padding: 18px 14px; text-align: right;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .result-header {
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; margin-bottom: 12px;
+    }
+    .result-title { font-size: 16px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 6px; }
+
+    /* نوار درصد شانس */
+    .luck-bar-wrap { margin-bottom: 14px; }
+    .luck-bar-labels { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
+    .luck-bar-bg { width: 100%; height: 8px; background: #222230; border-radius: 4px; overflow: hidden; }
+    .luck-bar-fill { height: 100%; background: var(--gold-gradient); border-radius: 4px; }
+
+    /* ردیف‌های طالع */
+    .fortune-section { margin-bottom: 12px; line-height: 1.6; }
+    .fortune-section h4 { font-size: 13px; color: var(--gold); margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
+    .fortune-section p { font-size: 12px; color: #ffffff; text-align: justify; }
+
+    /* باکث‌های فکت‌های شانس */
+    .luck-facts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+    .luck-fact-box {
+      background: var(--card-inner); border: 1px solid rgba(212,175,55,0.2);
+      border-radius: 8px; padding: 8px; text-align: center;
+    }
+    .luck-fact-box span { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px; }
+    .luck-fact-box b { font-size: 14px; color: var(--gold); }
+
+    .btn-action {
+      width: 100%; background: var(--gold-gradient); color: #000;
+      border: none; padding: 12px; border-radius: 10px; font-weight: bold;
+      font-size: 13px; cursor: pointer; margin-top: 6px;
+    }
+    .btn-action.purple { background: var(--purple-gradient); color: white; }
+  </style>
+</head>
+<body>
+
+  <!-- هدر -->
+  <div class="top-bar">
+    <button class="btn-back" onclick="goBack()">🔙 لابی</button>
+    <div style="font-weight: bold; color: var(--gold);">🔮 فال و انرژی کائنات</div>
+    <div style="color: var(--gold); font-weight: bold;">
+      🪙 <span id="user-bal">1,000</span>
+    </div>
+  </div>
+
+  <!-- نوع فال -->
+  <div class="tabs-type">
+    <button class="btn-type active" id="btn-t-daily" onclick="selectType('daily', this)">☀️ فال روزانه (رایگان)</button>
+    <button class="btn-type" id="btn-t-weekly" onclick="selectType('weekly', this)">📅 فال هفتگی (۵ سکه)</button>
+    <button class="btn-type" id="btn-t-astro" onclick="selectType('astro', this)">🪐 طالع ماه تولد (۵ سکه)</button>
+  </div>
+
+  <!-- انتخاب ماه تولد -->
+  <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;" id="choose-hint">ماه تولد خود را انتخاب کنید:</p>
+
+  <div class="signs-grid" id="signs-container">
+    <!-- فروردین تا اسفند -->
+    <div class="sign-card" onclick="openFortune(0)">
+      <div class="sign-symbol">♈</div>
+      <div class="sign-name">فروردین</div>
+      <div class="sign-date">Aries</div>
+    </div>
+    <div class="sign-card" onclick="openFortune(1)">
+      <div class="sign-symbol">♉</div>
+      <div class="sign-name">اردیبهشت</div>
+      <div class="sign-date">Taurus</div>
+    </div>
+    <div class="sign-card" onclick="openFortune(2)">
+      <div class="sign-symbol">♊</div>
+      <div class="sign-name">خرداد</div>
+      <div class="sign-date">Gemini</div>
+    </div>
+
+    <div class="sign-card" onclick="openFortune(3)">
+      <div class="sign-symbol">♋</div>
+      <div class="sign-name">تیر</div>
+      <div class="sign-date">Cancer</div>
+    </div>
+    <div class="sign-card" onclick="openFortune(4)">
+      <div class="sign-symbol">♌</div>
+      <div class="sign-name">مرداد</div>
+      <div class="sign-date">Leo</div>
+    </div>
+    <div class="sign-card" onclick="openFortune(5)">
+      <div class="sign-symbol">♍</div>
+      <div class="sign-name">شهریور</div>
+      <div class="sign-date">Virgo</div>
+    </div>
+
+    <div class="sign-card" onclick="openFortune(6)">
+      <div class="sign-symbol">♎</div>
+      <div class="sign-name">مهر</div>
+      <div class="sign-date">Libra</div>
+    </div>
+    <div class="sign-card" onclick="openFortune(7)">
+      <div class="sign-symbol">♏</div>
+      <div class="sign-name">آبان</div>
+      <div class="sign-date">Scorpio</div>
+    </div>
+    <div class="sign-card" onclick="openFortune(8)">
+      <div class="sign-symbol">♐</div>
+      <div class="sign-name">آذر</div>
+      <div class="sign-date">Sagittarius</div>
+    </div>
+
+    <div class="sign-card" onclick="openFortune(9)">
+      <div class="sign-symbol">♑</div>
+      <div class="sign-name">دی</div>
+      <div class="sign-date">Capricorn</div>
+    </div>
+    <div class="sign-card" onclick="openFortune(10)">
+      <div class="sign-symbol">♒</div>
+      <div class="sign-name">بهمن</div>
+      <div class="sign-date">Aquarius</div>
+    </div>
+    <div class="sign-card" onclick="openFortune(11)">
+      <div class="sign-symbol">♓</div>
+      <div class="sign-name">اسفند</div>
+      <div class="sign-date">Pisces</div>
+    </div>
+  </div>
+
+  <!-- کارت نمایش نتیجه فال -->
+  <div class="result-container" id="result-box">
+    <div class="result-header">
+      <div class="result-title">
+        <span id="res-symbol">♈</span>
+        <span id="res-sign-title">طالع متولدین فروردین</span>
+      </div>
+      <span style="font-size: 11px; color: var(--gold);" id="res-date">امروز</span>
+    </div>
+
+    <!-- نوار درصد شانس امروز -->
+    <div class="luck-bar-wrap">
+      <div class="luck-bar-labels">
+        <span>شاخص شانس و فرکانس مثبت</span>
+        <b style="color: var(--gold);" id="res-luck-pct">۸۸٪</b>
+      </div>
+      <div class="luck-bar-bg">
+        <div class="luck-bar-fill" id="res-luck-fill" style="width: 88%;"></div>
+      </div>
+    </div>
+
+    <!-- متن فال روز -->
+    <div class="fortune-section">
+      <h4>🌟 پیام و انرژی کائنات:</h4>
+      <p id="res-msg">امروز روزی پر از انرژی مثبت و شروع‌های تازه است. در تصمیم‌گیری‌های مهم شجاع باشید.</p>
+    </div>
+
+    <div class="fortune-section">
+      <h4>💼 کار، ثروت و موفقیت:</h4>
+      <p id="res-money">یک پیشنهاد مالی یا ایده جدید در مسیر شما قرار می‌گیرد. با دقت بررسی کنید.</p>
+    </div>
+
+    <div class="fortune-section">
+      <h4>❤️ عشق و روابط:</h4>
+      <p id="res-love">گفتگویی صمیمانه با فردی مهم می‌تواند آرامش ذهنی را به شما بازگرداند.</p>
+    </div>
+
+    <!-- عدد و رنگ شانس -->
+    <div class="luck-facts-grid">
+      <div class="luck-fact-box">
+        <span>عدد شانس امروز</span>
+        <b id="res-num">۷</b>
+      </div>
+      <div class="luck-fact-box">
+        <span>رنگ انرژی‌بخش</span>
+        <b id="res-color">طلایی</b>
+      </div>
+    </div>
+
+    <!-- دکمه‌های اقدام -->
+    <button class="btn-action purple" onclick="shareFortune()">ارسال و اشتراک فال در تلگرام 📤</button>
+    <button class="btn-action" style="background:#251a36; color:white;" onclick="resetSelection()">انتخاب ماه دیگر 🔄</button>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(goBack);
+        }
+      }
+    } catch(e) {}
+
+    function goBack() { window.location.href = '../../index.html'; }
+
+    let balance = 1000;
+    try { balance = parseInt(localStorage.getItem('user_balance') || '1000'); } catch(e) {}
+    function saveBalance() {
+      try { localStorage.setItem('user_balance', balance.toString()); } catch(e) {}
+      document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S';
+    }
+    document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S';
+
+    let currentMode = 'daily';
+    const monthNames = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+    const monthSymbols = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
+
+    // دیتابیس متنوع فال بر اساس فرمول تاریخ روز
+    const fortunePool = [
+      {
+        gen: "مدارهای انرژی در نقطه عطفی برای شما قرار دارند. هر برنامه‌ای که به تعویق انداخته‌اید را امروز با قدرت پیش ببرید.",
+        fin: "مراقب هزینه‌های هیجانی باشید. سرمایه‌گذاری‌های کوچک امروز، در آینده نزدیک بازدهی غیرمنتظره خواهند داشت.",
+        lov: "یک پیام یا توجه غیرمنتظره مسیر روز شما را تغییر می‌دهد. احساسات واقعی خود را پنهان نکنید.",
+        num: 7, col: "طلایی"
+      },
+      {
+        gen: "تمرکز و خونسردی، کلید پیروزی امروز شماست. به توانایی‌های درونی خود اعتماد کامل داشته باشید.",
+        fin: "فرصتی برای کسب پاداش یا سود در محیط کاری یا بازی‌ها نمایان می‌شود. با حساب و کتاب جلو بروید.",
+        lov: "زمان مناسبی برای یک دیدار یا صحبت دوستانه است. سوءتفاهم‌های گذشته را کنار بگذارید.",
+        num: 3, col: "آبی فیروزه‌ای"
+      },
+      {
+        gen: "الهامات فکری نویدبخش موفقیت‌های بزرگ است. به نشانه‌هایی که اطراف شما رخ می‌دهد توجه کنید.",
+        fin: "شانس مالی شما در اوج است. ریسک‌های معقول می‌توانند نتایج شگفت‌انگیزی رقم بزنند.",
+        lov: "یک هدیه کوچک یا کلام محبت‌آمیز می‌تواند پیوندهای عاطفی شما را عمیق‌تر کند.",
+        num: 9, col: "زمردی"
+      },
+      {
+        gen: "امروز کائنات برای شما آرامش و نظم به ارمغان آورده است. از عجله بپرهیزید و با طمأنینه تصمیم بگیرید.",
+        fin: "برنامه‌ریزی دقیق مالی شما جواب می‌دهد و به زودی پاداش تلاش‌های اخیرتان را دریافت می‌کنید.",
+        lov: "شنونده خوبی باشید؛ یک دوست یا فرد نزدیک به همدلی و حمایت فکری شما نیاز دارد.",
+        num: 5, col: "یاقوتی"
+      }
+    ];
+
+    function selectType(mode, btn) {
+      currentMode = mode;
+      document.querySelectorAll('.btn-type').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      resetSelection();
+    }
+
+    function openFortune(idx) {
+      // بررسی هزینه برای فال هفتگی و ماهانه
+      if (currentMode !== 'daily') {
+        if (balance < 5) {
+          alert('برای این فال نیاز به ۵ سکه دارید. موجودی شما کافی نیست!');
+          return;
+        }
+        balance -= 5;
+        saveBalance();
+      }
+
+      // تولید محتوای الگوریتمی متغیر بر اساس تاریخ روز
+      const now = new Date();
+      const seed = (now.getDate() + now.getMonth() + idx) % fortunePool.length;
+      const data = fortunePool[seed];
+
+      const pct = 70 + ((idx * 7 + now.getDate()) % 29); // درصد بین ۷۰ تا ۹۸
+
+      document.getElementById('res-symbol').innerText = monthSymbols[idx];
+      document.getElementById('res-sign-title').innerText = `طالع متولدین ${monthNames[idx]}`;
+      document.getElementById('res-date').innerText = (currentMode === 'daily') ? 'فال روزانه' : (currentMode === 'weekly' ? 'فال هفتگی' : 'طالع نجومی');
+
+      document.getElementById('res-luck-pct').innerText = pct + '٪';
+      document.getElementById('res-luck-fill').style.width = pct + '%';
+
+      document.getElementById('res-msg').innerText = data.gen;
+      document.getElementById('res-money').innerText = data.fin;
+      document.getElementById('res-love').innerText = data.lov;
+      document.getElementById('res-num').innerText = ((data.num + idx) % 9) + 1;
+      document.getElementById('res-color').innerText = data.col;
+
+      document.getElementById('signs-container').style.display = 'none';
+      document.getElementById('choose-hint').style.display = 'none';
+      document.getElementById('result-box').style.display = 'block';
+    }
+
+    function resetSelection() {
+      document.getElementById('signs-container').style.display = 'grid';
+      document.getElementById('choose-hint').style.display = 'block';
+      document.getElementById('result-box').style.display = 'none';
+    }
+
+    function shareFortune() {
+      const sign = document.getElementById('res-sign-title').innerText;
+      const pct = document.getElementById('res-luck-pct').innerText;
+      const msg = document.getElementById('res-msg').innerText;
+      const text = `🔮 ${sign}\n📊 شانس امروز: ${pct}\n🌟 پیام کائنات: "${msg}"\n\n✨ دریافت فال اختصاصی در مینی‌اپ سیمُر:`;
+      const url = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/SimorMiniApp_bot')}&text=${encodeURIComponent(text)}`;
+
+      try {
+        if (tg?.openTelegramLink) tg.openTelegramLink(url);
+        else window.open(url, '_blank');
+      } catch(e) {
+        window.open(url, '_blank');
+      }
+    }
+  </script>
+</body>
+</html>
