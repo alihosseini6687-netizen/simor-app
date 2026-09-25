@@ -2,127 +2,221 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Smart Gaming Hub</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="stylesheet" href="css/main.css">
 </head>
-<body class="dark-theme">
-  <!-- هدر اطلاعات کاربر و سطح -->
-  <header class="user-header">
-    <div class="user-info">
-      <img id="user-avatar" src="assets/logo.png" alt="Avatar" class="avatar-circle">
-      <div>
-        <div id="user-name">Player</div>
-        <div id="user-uid" class="badge">s--------</div>
+<body class="dark-gold-theme">
+
+  <!-- هدر لوکس اطلاعات کاربر و موجودی طلایی -->
+  <header class="luxury-header">
+    <div class="user-profile-meta">
+      <div class="avatar-ring">
+        <span class="avatar-letter" id="user-avatar-text">S</span>
+      </div>
+      <div class="user-details">
+        <div id="user-name" class="gold-gradient-text">Player</div>
+        <div id="user-uid" class="uid-tag">s--------</div>
       </div>
     </div>
-    <div class="balance-card">
-      <span class="coin-icon"></span>
-      <span id="coin-balance">0.000</span>
-      <small>S Coins</small>
+    <div class="gold-balance-badge">
+      <div class="balance-title">موجودی سکه</div>
+      <div class="balance-val"><span id="coin-balance">0.000</span> <small>S</small></div>
     </div>
   </header>
 
-  <!-- نوار پیشرفت سطح (۱ تا ۵۰) -->
-  <section class="level-progress-bar">
-    <div class="level-label">
-      <span id="current-level">Level 1</span>
-      <span id="level-req">0 / 150</span>
+  <!-- نوار لول و پیشرفت تا لول ۵۰ -->
+  <section class="level-container">
+    <div class="level-info">
+      <span id="current-level" class="level-chip">سطح ۱ ★</span>
+      <span id="level-req" class="level-points">0 / 150</span>
     </div>
-    <div class="progress-track">
+    <div class="gold-progress-track">
       <div id="progress-fill" style="width: 0%;"></div>
     </div>
   </section>
 
-  <!-- محتوای صفحات -->
-  <main id="app-viewport">
-    
-    <!-- تب ۱: خانه و هاب بازی‌ها (۳ ستون در ۴ سطر) -->
-    <section id="view-games" class="view-screen active">
-      <div class="hero-banner">
-        <img src="assets/banner.jpg" alt="Game Hub Banner">
+  <!-- محفظه تب‌های مینی‌اپ -->
+  <main id="app-content">
+
+    <!-- تب ۱: هاب بازی‌ها (۳ ستون در ۴ سطر) -->
+    <section id="tab-games" class="tab-view active">
+      <div class="banner-card">
+        <div class="banner-overlay">
+          <h2>مرکز بازی‌های فکری و سرگرمی</h2>
+          <p>بازی کن، لول آپ شو و پاداش‌های واقعی ببر!</p>
+        </div>
       </div>
-      <h3 class="section-title" data-i18n="gamesHub">مرکز بازی‌ها و سرگرمی</h3>
+
+      <h3 class="gold-section-title">🎮 مینی‌گیم‌های منتخب</h3>
       <div class="games-grid-3x4">
-        <!-- خانه ۱: تپ سکه (بالا راست) -->
-        <div class="game-card" onclick="openGame('tap')">
-          <img src="assets/coin.png" alt="Coin Tap">
-          <span data-i18n="tapGame">تپ سکه S</span>
+        <div class="game-tile gold-border" onclick="openGame('tap')">
+          <div class="tile-icon-box">🪙</div>
+          <span>تپ سکه S</span>
         </div>
-        <!-- خانه ۲: رولر شانس / اسلات (بالا وسط) -->
-        <div class="game-card" onclick="openGame('slot')">
-          <img src="assets/chest.png" alt="Slot Machine">
-          <span data-i18n="slotGame">اسلات طلایی</span>
+        <div class="game-tile gold-border" onclick="openGame('slot')">
+          <div class="tile-icon-box">🎰</div>
+          <span>رول اسلات</span>
         </div>
-        <!-- خانه ۳: پوکر تگزاس هولدم (بالا چپ) -->
-        <div class="game-card" onclick="openGame('poker')">
-          <img src="assets/poker-chip.png" alt="Poker">
-          <span data-i18n="pokerGame">پوکر هولدم</span>
+        <div class="game-tile gold-border" onclick="openGame('poker')">
+          <div class="tile-icon-box">♠️</div>
+          <span>پوکر هولدم</span>
         </div>
-        <!-- خانه‌های آینده (اطلاعات عمومی، کوییز و چالش‌ها) -->
-        <div class="game-card locked"><span>🧠 کوییز روزانه</span></div>
-        <div class="game-card locked"><span>🧩 پازل حافظه</span></div>
-        <div class="game-card locked"><span>🎯 چالش هفتگی</span></div>
-        <div class="game-card locked"><span>🎲 تاس شانس</span></div>
-        <div class="game-card locked"><span>🏆 تورنمنت</span></div>
-        <div class="game-card locked"><span>⚔️ نبرد ذهن</span></div>
-        <div class="game-card locked"><span>🔮 پیش‌بینی</span></div>
-        <div class="game-card locked"><span>🃏 بیست و یک</span></div>
-        <div class="game-card locked"><span>🎁 صندوق مرموز</span></div>
+        <div class="game-tile locked"><div class="tile-icon-box">🧠</div><span>کوییز روزانه</span></div>
+        <div class="game-tile locked"><div class="tile-icon-box">🧩</div><span>پازل حافظه</span></div>
+        <div class="game-tile locked"><div class="tile-icon-box">🎯</div><span>چالش هفتگی</span></div>
+        <div class="game-tile locked"><div class="tile-icon-box">🎲</div><span>تاس شانس</span></div>
+        <div class="game-tile locked"><div class="tile-icon-box">🏆</div><span>تورنمنت</span></div>
+        <div class="game-tile locked"><div class="tile-icon-box">⚔️</div><span>نبرد ذهن</span></div>
+        <div class="game-tile locked"><div class="tile-icon-box">🔮</div><span>پیش‌بینی</span></div>
+        <div class="game-tile locked"><div class="tile-icon-box">🃏</div><span>بیست و یک</span></div>
+        <div class="game-tile locked"><div class="tile-icon-box">🎁</div><span>صندوق مرموز</span></div>
       </div>
     </section>
 
-    <!-- مودال بازی تپ با دکمه شفاف تقویت در پایین -->
-    <div id="modal-tap-game" class="game-modal hidden">
-      <button class="close-modal-btn" onclick="closeGame('tap')">✕</button>
-      <div class="tap-area">
-        <div class="coin-wrapper" id="coin-tap-target">
-          <img src="assets/coin.png" class="coin-3d" alt="S Coin">
+    <!-- تب ۲: گردونه شانس ۲۴ ساعته -->
+    <section id="tab-wheel" class="tab-view">
+      <div class="wheel-screen-wrapper">
+        <h3 class="gold-section-title">🎡 گردونه شانس طلایی</h3>
+        <p class="sub-desc">هر شب ساعت ۱۲ شب انگلیس شانس چرخش ریست می‌شود</p>
+        <div class="wheel-box">
+          <div class="wheel-pointer">▼</div>
+          <div id="wheel-disc" class="wheel-disc">
+            <div class="wheel-sec sec-1">15 S</div>
+            <div class="wheel-sec sec-2">پوچ</div>
+            <div class="wheel-sec sec-3">30 S</div>
+            <div class="wheel-sec sec-4">2 S</div>
+            <div class="wheel-sec sec-5">5 S</div>
+            <div class="wheel-sec sec-6">شانس مجدد</div>
+          </div>
         </div>
-        <div class="energy-container">
-          <div class="energy-text">⚡ <span id="energy-val">2500</span> / 2500</div>
+        <button id="spin-btn" class="gold-btn wide" onclick="spinWheel()">چرخاندن گردونه 🎰</button>
+        <div id="wheel-timer" class="gold-timer">چرخش بعدی: ۱۲ شب به وقت انگلیس</div>
+      </div>
+    </section>
+
+    <!-- تب ۳: تسک‌ها و ماموریت‌ها -->
+    <section id="tab-tasks" class="tab-view">
+      <h3 class="gold-section-title">📋 ماموریت‌های پاداش‌دار</h3>
+      <div class="tasks-list">
+        <div class="task-card">
+          <div class="task-info">
+            <b>عضویت در کانال تلگرام ما</b>
+            <span class="task-reward">+۱۰ سکه S</span>
+          </div>
+          <button class="check-btn" onclick="verifyTask(this, 10)">چک کردن</button>
+        </div>
+        <div class="task-card">
+          <div class="task-info">
+            <b>دعوت از ۳ دوست فعال</b>
+            <span class="task-reward">+۴۰ سکه S</span>
+          </div>
+          <button class="check-btn" onclick="verifyTask(this, 40)">چک کردن</button>
+        </div>
+        <div class="task-card">
+          <div class="task-info">
+            <b>دعوت از ۷ دوست فعال</b>
+            <span class="task-reward">+۱۰۰ سکه S</span>
+          </div>
+          <button class="check-btn" onclick="verifyTask(this, 100)">چک کردن</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- تب ۴: رفرال و لیدربورد -->
+    <section id="tab-friends" class="tab-view">
+      <h3 class="gold-section-title">👥 دعوت دوستان و رفرال</h3>
+      <div class="referral-box">
+        <p>لینک اختصاصی شما:</p>
+        <div class="ref-link-display">
+          <span id="ref-link-text">https://t.me/YourBot?startapp=</span>
+          <button onclick="copyRefLink()">کپی</button>
+        </div>
+      </div>
+      <h4 class="gold-section-title" style="margin-top:20px;">🏆 برترین کاربران (Leaderboard)</h4>
+      <div id="leaderboard-list" class="leaderboard-box">
+        <div class="rank-row"><span>#1 Órion</span><b>15,000 S</b></div>
+        <div class="rank-row"><span>#2 Айрик</span><b>12,500 S</b></div>
+        <div class="rank-row"><span>#3 Eduard</span><b>10,200 S</b></div>
+      </div>
+    </section>
+
+    <!-- تب ۵: تنظیمات، زبان و آموزش -->
+    <section id="tab-profile" class="tab-view">
+      <h3 class="gold-section-title">⚙️ تنظیمات و قوانین</h3>
+      <div class="settings-card">
+        <label>زبان برنامه (Language):</label>
+        <select id="lang-select" onchange="changeLanguage(this.value)">
+          <option value="fa">فارسی</option>
+          <option value="en">English</option>
+          <option value="ru">Русский</option>
+        </select>
+      </div>
+      <div class="settings-card">
+        <b>قوانین و راهنمای بازی:</b>
+        <p class="rules-text">تمامی سکه‌های کسب‌شده قابل استفاده در بازی‌های رول و پوکر بوده و در پایان هر ماه امکان تبدیل آن‌ها به کدهای تخفیف واقعی در فروشگاه‌های اینترنتی وجود دارد.</p>
+      </div>
+    </section>
+
+    <!-- مودال بازی تپ سکه با دکمه شفاف تقویت در پایین -->
+    <div id="modal-tap-game" class="game-modal hidden">
+      <div class="modal-top">
+        <button class="close-btn" onclick="closeGame('tap')">✕ بازگشت به هاب</button>
+      </div>
+      <div class="tap-stage">
+        <div class="coin-container" id="coin-tap-target">
+          <div class="coin-3d-gold">
+            <span class="coin-s-symbol">S</span>
+          </div>
+        </div>
+        <div class="energy-box">
+          <div class="energy-labels">
+            <span>⚡ انرژی باقی‌مانده</span>
+            <span id="energy-val">2500 / 2500</span>
+          </div>
           <div class="energy-track"><div id="energy-fill" style="width: 100%;"></div></div>
         </div>
       </div>
-      <!-- دکمه شناور و کاملاً شفاف تقویت‌کننده‌ها -->
-      <button class="floating-boost-btn" onclick="toggleBoostSheet()">
-        ⚡ <span data-i18n="boosts">ارتقا و تقویت‌کننده</span>
+      <!-- دکمه شناور تقویت با رنگ نئونی طلایی شفاف -->
+      <button class="gold-boost-floating-btn" onclick="toggleBoostSheet()">
+        ⚡ ارتقا و تقویت‌کننده
       </button>
     </div>
 
-    <!-- پنل کشویی ارتقا و بوسترها (Bottom Sheet) -->
+    <!-- پنل کشویی بوسترها -->
     <div id="boost-sheet" class="bottom-sheet hidden">
-      <div class="sheet-header">
-        <h4 data-i18n="boostsTitle">تقویت‌کننده‌ها و ظرفیت</h4>
+      <div class="sheet-head">
+        <h4>⚡ تقویت‌کننده‌ها</h4>
         <button onclick="toggleBoostSheet()">✕</button>
       </div>
-      <div class="boost-items">
-        <div class="boost-card">
+      <div class="boost-list">
+        <div class="boost-item">
           <div>
-            <b data-i18n="tapPower">قدرت تپ</b>
-            <p>Level <span id="tap-lvl">1</span>/10 (+0.001)</p>
+            <b>قدرت کلیک (سطح <span id="tap-lvl">1</span>)</b>
+            <p>دریافت +0.001 سکه در هر تپ</p>
           </div>
-          <button class="upgrade-btn" onclick="buyTapUpgrade()"><span id="tap-cost">50</span> S</button>
+          <button class="gold-btn-small" onclick="buyTapUpgrade()"><span id="tap-cost">50</span> S</button>
         </div>
-        <div class="boost-card">
+        <div class="boost-item">
           <div>
-            <b data-i18n="fullRefill">شارژ دستی مخزن</b>
-            <p><span id="refill-left">3</span> بار باقی‌مانده امروز</p>
+            <b>شارژ کامل انرژی</b>
+            <p><span id="refill-left">3</span> بار سهمیه امروز</p>
           </div>
-          <button class="upgrade-btn" onclick="buyRefill()"><span id="refill-cost">100</span> S</button>
+          <button class="gold-btn-small" onclick="buyRefill()"><span id="refill-cost">100</span> S</button>
         </div>
       </div>
     </div>
+
   </main>
 
-  <!-- ناوبری پایین صفحه -->
-  <nav class="bottom-nav">
-    <button class="nav-item active" onclick="switchTab('games')">🎮 <span data-i18n="navGames">بازی‌ها</span></button>
-    <button class="nav-item" onclick="switchTab('wheel')">🎡 <span data-i18n="navWheel">گردونه</span></button>
-    <button class="nav-item" onclick="switchTab('tasks')">📋 <span data-i18n="navTasks">تسک‌ها</span></button>
-    <button class="nav-item" onclick="switchTab('friends')">👥 <span data-i18n="navFriends">دوستان</span></button>
-    <button class="nav-item" onclick="switchTab('profile')">⚙️ <span data-i18n="navProfile">تنظیمات</span></button>
+  <!-- ناوبری پایین صفحه با تم طلایی-مشکی -->
+  <nav class="luxury-bottom-nav">
+    <button class="nav-tab active" onclick="switchNav('games', this)">🎮<span>بازی‌ها</span></button>
+    <button class="nav-tab" onclick="switchNav('wheel', this)">🎡<span>گردونه</span></button>
+    <button class="nav-tab" onclick="switchNav('tasks', this)">📋<span>تسک‌ها</span></button>
+    <button class="nav-tab" onclick="switchNav('friends', this)">👥<span>دوستان</span></button>
+    <button class="nav-tab" onclick="switchNav('profile', this)">⚙️<span>تنظیمات</span></button>
   </nav>
 
   <script src="js/app.js"></script>
