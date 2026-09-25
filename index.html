@@ -5,44 +5,104 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Smart Gaming Hub</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <link rel="stylesheet" href="css/main.css">
+  <style>
+    :root {
+      --bg: #0c0c10;
+      --card: #14141b;
+      --gold: #e5c158;
+      --gold-grad: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
+      --text: #ffffff;
+      --border: rgba(212, 175, 55, 0.3);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
+    body { background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 20px; }
+    
+    /* هدر مشخصات کاربر */
+    .header { display: flex; justify-content: space-between; align-items: center; padding: 16px; background: var(--card); border-bottom: 1px solid var(--border); }
+    .balance-box { display: flex; align-items: center; gap: 8px; background: rgba(212,175,55,0.1); border: 1px solid var(--border); padding: 6px 14px; border-radius: 20px; color: var(--gold); font-weight: bold; }
+    
+    /* بنر */
+    .banner { padding: 14px; text-align: center; }
+    .banner img { width: 100%; border-radius: 12px; border: 1px solid var(--border); }
+
+    /* کارت‌های بازی */
+    .games-list { display: flex; flex-direction: column; gap: 12px; padding: 0 14px; }
+    .card { display: flex; align-items: center; gap: 14px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 16px; cursor: pointer; }
+    .card img { width: 50px; height: 50px; object-fit: contain; }
+    .card-info { flex-grow: 1; }
+    .card-info h3 { font-size: 16px; margin-bottom: 4px; }
+    .card-info p { font-size: 12px; color: #8e8e98; }
+    .btn { background: var(--gold-grad); color: #000; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; font-size: 13px; cursor: pointer; }
+  </style>
 </head>
 <body>
 
-  <!-- هدر: اطلاعات کاربر و موجودی -->
-  <header class="user-header">
-    <div class="user-info">
-      <span id="user-name">کاربر</span>
-    </div>
+  <!-- هدر -->
+  <header class="header">
+    <div id="username" style="font-weight: bold;">کاربر</div>
     <div class="balance-box">
-      <img src="assets/coin.png" alt="Coin" class="coin-icon">
-      <span id="user-balance">0</span>
+      <img src="assets/coin.png" width="22" height="22">
+      <span id="balance">0</span>
     </div>
   </header>
 
-  <!-- بنر یا خوش‌آمدگویی -->
+  <!-- بنر -->
   <div class="banner">
     <img src="assets/banner.jpg" alt="Banner">
   </div>
 
-  <!-- لابی بازی‌ها -->
-  <main class="games-grid">
-    <!-- کارت پوکر -->
-    <div class="game-card" onclick="openGame('games/poker/index.html')">
+  <!-- لیست بازی‌ها -->
+  <main class="games-list">
+    <!-- کارت ورود به پوکر -->
+    <div class="card" onclick="openGame('games/poker/index.html')">
       <img src="assets/poker-chip.png" alt="Poker">
-      <h3>پوکر تگزاس</h3>
-      <button class="btn-play">ورود به بازی</button>
+      <div class="card-info">
+        <h3>بازی پوکر</h3>
+        <p>میز آنلاین با موجودی مشترک</p>
+      </div>
+      <button class="btn">ورود</button>
     </div>
 
     <!-- کارت بازی بعدی (مثلاً رولت) -->
-    <div class="game-card" onclick="openGame('games/roulette/index.html')">
+    <div class="card" onclick="alert('بازی بعدی به زودی اضافه می‌شود!')">
       <img src="assets/chest.png" alt="Roulette">
-      <h3>گردونه شانس / رولت</h3>
-      <button class="btn-play">ورود به بازی</button>
+      <div class="card-info">
+        <h3>گردونه و رولت</h3>
+        <p>به زودی...</p>
+      </div>
+      <button class="btn">بزودی</button>
     </div>
   </main>
 
-  <script src="js/storage.js"></script>
-  <script src="js/app.js"></script>
+  <script>
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      tg.BackButton.hide();
+      if (tg.initDataUnsafe?.user) {
+        document.getElementById('username').innerText = tg.initDataUnsafe.user.first_name || 'کاربر';
+      }
+    }
+
+    // خواندن موجودی از تلگرام
+    function loadBalance() {
+      if (tg?.CloudStorage) {
+        tg.CloudStorage.getItem('user_balance', (err, val) => {
+          const bal = (err || !val) ? 1000 : parseInt(val);
+          document.getElementById('balance').innerText = bal.toLocaleString();
+        });
+      } else {
+        const bal = localStorage.getItem('user_balance') || '1000';
+        document.getElementById('balance').innerText = parseInt(bal).toLocaleString();
+      }
+    }
+
+    function openGame(path) {
+      window.location.href = path;
+    }
+
+    loadBalance();
+  </script>
 </body>
 </html>
