@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>رولر شانس سیمُر</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0e0717;
+      --wood-dark: #3a1f0d;
+      --wood-light: #6a3d1b;
+      --gold: #e5c158;
+      --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
+      --red: #ff3b30;
+      --green: #34c759;
+      --text: #ffffff;
+      --text-muted: #a69bb8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
+    body {
+      background: radial-gradient(circle at 50% 15%, #2a1145 0%, #0c0514 100%);
+      color: var(--text); min-height: 100vh; padding: 10px; overflow-x: hidden; text-align: center;
+    }
+
+    /* نوار هدر */
+    .top-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(25,12,38,0.85); border: 1px solid rgba(212,175,55,0.3);
+      border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; font-size: 13px;
+    }
+    .btn-back {
+      background: #25163a; color: var(--gold); border: 1px solid rgba(212,175,55,0.3);
+      padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
+    }
+
+    /* باکس نمایش برد بزرگ در بالا */
+    .win-display-box {
+      background: #1f0b0b; border: 2px solid #ff9f0a;
+      box-shadow: 0 0 15px rgba(255,159,10,0.4);
+      border-radius: 14px; padding: 10px 14px; margin: 0 auto 12px;
+      max-width: 320px; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .win-amount { font-size: 26px; font-weight: 900; color: #ffd700; font-family: monospace; }
+
+    /* قاب چوبی ماشین اسلات ۳ رول (برگرفته از Boinkers) */
+    .slot-machine-frame {
+      position: relative; width: 100%; max-width: 330px; margin: 0 auto;
+      background: linear-gradient(180deg, var(--wood-light), var(--wood-dark));
+      border: 6px solid #241206; border-radius: 24px; padding: 18px 12px 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.2);
+    }
+    .roof-decor {
+      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      background: #ffd700; color: #000; font-weight: 900; font-size: 12px;
+      padding: 3px 18px; border-radius: 12px; border: 2px solid #5a3212;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    }
+
+    /* کانتینر رول‌ها */
+    .reels-container {
+      display: flex; justify-content: center; gap: 8px;
+      background: #000000; border: 4px solid #1a0c04;
+      border-radius: 16px; padding: 10px 6px; box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+      position: relative;
+    }
+    .payline-marker {
+      position: absolute; top: 50%; left: 0; right: 0; height: 2px;
+      background: rgba(255, 59, 48, 0.6); pointer-events: none; transform: translateY(-50%);
+      box-shadow: 0 0 8px red;
+    }
+
+    /* هر ستون رول */
+    .reel-window {
+      width: 90px; height: 110px; overflow: hidden; position: relative;
+      background: #181822; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);
+    }
+    .reel-strip {
+      display: flex; flex-direction: column; align-items: center;
+      transition: transform 0.1s linear;
+    }
+    .slot-item {
+      width: 90px; height: 110px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; font-size: 38px;
+    }
+    .slot-item img { width: 55px; height: 55px; object-fit: contain; }
+    .slot-item span { font-size: 10px; font-weight: bold; color: var(--gold); margin-top: 2px; }
+
+    /* کنترل‌های شرط‌بندی و ضرایب */
+    .bet-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      max-width: 330px; margin: 12px auto 8px; background: rgba(25,12,38,0.7);
+      border: 1px solid rgba(212,175,55,0.3); border-radius: 12px; padding: 6px 12px; font-size: 12px;
+    }
+    .multiplier-group { display: flex; gap: 4px; }
+    .btn-multi {
+      background: #25163a; border: 1px solid var(--gold); color: var(--gold);
+      padding: 4px 8px; border-radius: 6px; font-weight: bold; font-size: 11px; cursor: pointer;
+    }
+    .btn-multi.active { background: var(--gold-gradient); color: #000; }
+
+    /* دکمه بزرگ لوزی‌شکل چرخش (SPIN) مشابه Boinkers */
+    .spin-btn-container { margin: 10px auto; }
+    .btn-spin-main {
+      width: 140px; height: 58px; background: var(--gold-gradient);
+      border: 3px solid #ffd700; border-radius: 20px; color: #000;
+      font-size: 18px; font-weight: 900; cursor: pointer;
+      box-shadow: 0 0 25px rgba(212,175,55,0.5); transition: transform 0.08s;
+      display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .btn-spin-main:active { transform: scale(0.94); }
+    .btn-spin-main:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-spin-main sub { font-size: 9px; font-weight: normal; margin-top: -2px; }
+
+    .btn-auto {
+      background: #25163a; color: white; border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 12px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; margin-top: 6px;
+    }
+    .btn-auto.active { border-color: var(--red); color: var(--red); }
+
+    /* جدول جوایز */
+    .payout-card {
+      max-width: 330px; margin: 14px auto 0; background: rgba(25,12,38,0.8);
+      border: 1px solid rgba(212,175,55,0.25); border-radius: 12px; padding: 10px; font-size: 11px;
+    }
+    .payout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; text-align: right; }
+    .payout-item { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; }
+
+    /* پاپ‌آپ جک‌پات */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      z-index: 1000; align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .jackpot-modal {
+      background: radial-gradient(circle, #3a1555, #140522); border: 2px solid var(--gold);
+      border-radius: 20px; padding: 25px 15px; width: 100%; max-width: 310px; text-align: center;
+      animation: popIn 0.25s ease;
+    }
+    @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  </style>
+</head>
+<body>
+
+  <!-- نوار بالای صفحه -->
+  <div class="top-bar">
+    <button class="btn-back" onclick="goBack()">🔙 لابی</button>
+    <div style="font-weight: bold; color: var(--gold);">🎰 رولر شانس سیمُر</div>
+    <div style="color: var(--gold); font-weight: bold;">
+      🪙 <span id="user-bal">1,000</span>
+    </div>
+  </div>
+
+  <!-- کادر رقم برد -->
+  <div class="win-display-box">
+    <span style="font-size: 18px;">🪙</span>
+    <span class="win-amount" id="win-display">۰</span>
+  </div>
+
+  <!-- ماشین اسلات ۳ ردیفه (قاب چوبی) -->
+  <div class="slot-machine-frame">
+    <div class="roof-decor">SIMOR ROLLER</div>
+
+    <div class="reels-container">
+      <div class="payline-marker"></div>
+
+      <!-- رول ۱ -->
+      <div class="reel-window">
+        <div class="reel-strip" id="strip-1">
+          <div class="slot-item"><img src="../../assets/chest.png"><span>صندوق</span></div>
+        </div>
+      </div>
+
+      <!-- رول ۲ -->
+      <div class="reel-window">
+        <div class="reel-strip" id="strip-2">
+          <div class="slot-item"><img src="../../assets/coin.png"><span>سکه</span></div>
+        </div>
+      </div>
+
+      <!-- رول ۳ -->
+      <div class="reel-window">
+        <div class="reel-strip" id="strip-3">
+          <div class="slot-item"><span>💎</span><span>الماس</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- نوار تنظیم ضریب و شرط -->
+  <div class="bet-bar">
+    <div>
+      <span>هزینه چرخش:</span>
+      <b style="color: var(--gold);" id="bet-cost-text">۲ سکه</b>
+    </div>
+    <div class="multiplier-group">
+      <button class="btn-multi active" id="m-1" onclick="setMultiplier(1)">x1</button>
+      <button class="btn-multi" id="m-2" onclick="setMultiplier(2)">x2</button>
+      <button class="btn-multi" id="m-5" onclick="setMultiplier(5)">x5</button>
+      <button class="btn-multi" id="m-10" onclick="setMultiplier(10)">MAX</button>
+    </div>
+  </div>
+
+  <!-- دکمه چرخش اصلی -->
+  <div class="spin-btn-container">
+    <button class="btn-spin-main" id="btn-spin" onclick="spinSlot()">
+      <span>SPIN 🎰</span>
+      <sub>چرخش رول‌ها</sub>
+    </button>
+    <br>
+    <button class="btn-auto" id="btn-auto" onclick="toggleAutoSpin()">🔄 چرخش خودکار (Auto)</button>
+  </div>
+
+  <!-- جدول جوایز و ضرایب -->
+  <div class="payout-card">
+    <b style="color: var(--gold);">📜 راهنمای جوایز (۳ نماد یکسان):</b>
+    <div class="payout-grid">
+      <div class="payout-item"><span>📦 ۳ صندوق گنج</span><b style="color: #ffd700;">x50 (جک‌پات)</b></div>
+      <div class="payout-item"><span>💎 ۳ الماس</span><b style="color: #5ac8fa;">x30</b></div>
+      <div class="payout-item"><span>🔴 ۳ هفت سرخ</span><b style="color: #ff3b30;">x20</b></div>
+      <div class="payout-item"><span>💰 ۳ سکه طلا</span><b style="color: #ffd700;">x10</b></div>
+      <div class="payout-item"><span>⚡ ۳ انرژی</span><b style="color: #34c759;">+۲۰ سکه</b></div>
+      <div class="payout-item"><span>✨ ۲ نماد همسان</span><b style="color: #ffffff;">x2</b></div>
+    </div>
+  </div>
+
+  <!-- پاپ‌آپ جک‌پات و برد بزرگ -->
+  <div class="modal-overlay" id="jackpot-modal">
+    <div class="jackpot-modal">
+      <div style="font-size: 55px; margin-bottom: 6px;">🎉</div>
+      <h2 style="color: var(--gold); margin-bottom: 6px;" id="jp-title">BIG WIN!</h2>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="jp-desc">شما برنده جایزه بزرگ شدید!</p>
+      <div style="font-size: 32px; font-weight: 900; color: #ffd700; margin-bottom: 16px;" id="jp-amount">+500 S</div>
+      <button class="btn-back" style="width: 100%; padding: 12px; background: var(--gold-gradient); color: #000; border: none; font-weight: bold;" onclick="closeJackpotModal()">ادامه بازی 🎰</button>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(goBack);
+        }
+      }
+    } catch(e) {}
+
+    function goBack() { window.location.href = '../../index.html'; }
+
+    let balance = 1000;
+    try { balance = parseInt(localStorage.getItem('user_balance') || '1000'); } catch(e) {}
+    function saveBalance() {
+      try { localStorage.setItem('user_balance', balance.toString()); } catch(e) {}
+      document.getElementById('user-bal').innerText = balance.toLocaleString();
+    }
+    document.getElementById('user-bal').innerText = balance.toLocaleString();
+
+    let multiplier = 1;
+    const baseCost = 2;
+    let isSpinning = false;
+    let autoSpinActive = false;
+
+    function setMultiplier(m) {
+      if (isSpinning) return;
+      multiplier = m;
+      document.querySelectorAll('.btn-multi').forEach(b => b.classList.remove('active'));
+      const activeBtn = document.getElementById('m-' + m);
+      if (activeBtn) activeBtn.classList.add('active');
+      document.getElementById('bet-cost-text').innerText = `${baseCost * multiplier} سکه`;
+    }
+
+    // تعریف نمادهای اسلات
+    const symbols = [
+      { id: 'chest', html: '<img src="../../assets/chest.png"><span>صندوق</span>', mult: 50, weight: 2 },
+      { id: 'diamond', html: '<span>💎</span><span>الماس</span>', mult: 30, weight: 4 },
+      { id: 'seven', html: '<span style="color:red; font-weight:900;">7</span><span>هفت سرخ</span>', mult: 20, weight: 6 },
+      { id: 'coin', html: '<img src="../../assets/coin.png"><span>سکه</span>', mult: 10, weight: 10 },
+      { id: 'energy', html: '<span style="color:#ffd700;">⚡</span><span>انرژی</span>', mult: 8, weight: 14 },
+      { id: 'chip', html: '<img src="../../assets/poker-chip.png"><span>چیپ</span>', mult: 5, weight: 18 }
+    ];
+
+    function getRandomSymbol() {
+      const totalWeight = symbols.reduce((s, x) => s + x.weight, 0);
+      let rand = Math.random() * totalWeight;
+      for (let s of symbols) {
+        if (rand < s.weight) return s;
+        rand -= s.weight;
+      }
+      return symbols[0];
+    }
+
+    // رندر آیتم در استریپ
+    function createReelItems(stripEl) {
+      stripEl.innerHTML = '';
+      for (let i = 0; i < 20; i++) {
+        const s = symbols[Math.floor(Math.random() * symbols.length)];
+        const div = document.createElement('div');
+        div.className = 'slot-item';
+        div.innerHTML = s.html;
+        stripEl.appendChild(div);
+      }
+    }
+
+    createReelItems(document.getElementById('strip-1'));
+    createReelItems(document.getElementById('strip-2'));
+    createReelItems(document.getElementById('strip-3'));
+
+    function spinSlot() {
+      const cost = baseCost * multiplier;
+      if (balance < cost) {
+        alert('موجودی سکه برای چرخش کافی نیست!');
+        if (autoSpinActive) toggleAutoSpin();
+        return;
+      }
+
+      if (isSpinning) return;
+      isSpinning = true;
+      document.getElementById('btn-spin').disabled = true;
+
+      balance -= cost;
+      saveBalance();
+
+      try {
+        if (tg?.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg?.HapticFeedback) {
+          tg.HapticFeedback.impactOccurred('medium');
+        }
+      } catch(e) {}
+
+      // نتایج رول‌ها
+      const res1 = getRandomSymbol();
+      const res2 = getRandomSymbol();
+      const res3 = getRandomSymbol();
+
+      animateReel('strip-1', res1, 1000);
+      animateReel('strip-2', res2, 1400);
+      animateReel('strip-3', res3, 1800, () => {
+        isSpinning = false;
+        document.getElementById('btn-spin').disabled = false;
+        checkWin(res1, res2, res3);
+
+        if (autoSpinActive) {
+          setTimeout(spinSlot, 800);
+        }
+      });
+    }
+
+    function animateReel(stripId, targetSymbol, duration, onComplete) {
+      const strip = document.getElementById(stripId);
+      const items = strip.children;
+      // قرار دادن نماد هدف در انتهای رول
+      items[items.length - 1].innerHTML = targetSymbol.html;
+
+      strip.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.9, 0.2, 1)`;
+      const targetY = -((items.length - 1) * 110);
+      strip.style.transform = `translateY(${targetY}px)`;
+
+      setTimeout(() => {
+        // بازنشانی موقعیت برای چرخش بعدی
+        strip.style.transition = 'none';
+        items[0].innerHTML = targetSymbol.html;
+        strip.style.transform = 'translateY(0px)';
+        if (onComplete) onComplete();
+      }, duration + 50);
+    }
+
+    function checkWin(s1, s2, s3) {
+      let winMultiplier = 0;
+      let title = '';
+
+      if (s1.id === s2.id && s2.id === s3.id) {
+        winMultiplier = s1.mult;
+        title = (s1.id === 'chest') ? '🔥 JACKPOT گنج طلایی!' : '🎉 برد بزرگ ۳ تایی!';
+      } else if (s1.id === s2.id || s2.id === s3.id || s1.id === s3.id) {
+        winMultiplier = 2;
+        title = '✨ برد جفت (۲ نماد یکسان)';
+      }
+
+      if (winMultiplier > 0) {
+        const winCoins = (baseCost * multiplier) * winMultiplier;
+        balance += winCoins;
+        saveBalance();
+
+        document.getElementById('win-display').innerText = `+${winCoins.toLocaleString()}`;
+
+        try {
+          if (tg?.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg?.HapticFeedback) {
+            tg.HapticFeedback.notificationOccurred('success');
+          }
+        } catch(e) {}
+
+        if (winMultiplier >= 10) {
+          document.getElementById('jp-title').innerText = title;
+          document.getElementById('jp-amount').innerText = `+${winCoins.toLocaleString()} S`;
+          document.getElementById('jackpot-modal').classList.add('open');
+        }
+      } else {
+        document.getElementById('win-display').innerText = '۰';
+      }
+    }
+
+    function toggleAutoSpin() {
+      autoSpinActive = !autoSpinActive;
+      const b = document.getElementById('btn-auto');
+      if (autoSpinActive) {
+        b.classList.add('active');
+        b.innerText = '⏹️ توقف چرخش خودکار';
+        if (!isSpinning) spinSlot();
+      } else {
+        b.classList.remove('active');
+        b.innerText = '🔄 چرخش خودکار (Auto)';
+      }
+    }
+
+    function closeJackpotModal() {
+      document.getElementById('jackpot-modal').classList.remove('open');
+    }
+  </script>
+</body>
+</html>
