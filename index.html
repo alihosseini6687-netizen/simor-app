@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>مینی گیم و سرگرمی هوشمند</title>
+    <title>Smart Gaming Hub</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -109,7 +109,6 @@
         .blank-tile-icon { font-size: 26px; color: #777; margin-bottom: 6px; }
         .game-tile.blank-tile span { font-size: 10px; color: #888; }
 
-        /* مودال تمام‌صفحه بازی‌ها */
         .fullscreen-game-modal {
             position: fixed; inset: 0; background: var(--bg-color); z-index: 2500;
             display: flex; flex-direction: column; padding: 16px; overflow-y: auto;
@@ -120,41 +119,34 @@
             border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: bold; cursor: pointer;
         }
 
-        /* استایل اسلات ماشین */
+        /* اسلات ماشین */
         .slot-machine-box {
             background: #14141f; border: 2px solid var(--gold-color); border-radius: 20px;
             padding: 16px; margin: 20px auto; max-width: 330px; text-align: center;
             box-shadow: 0 8px 30px rgba(212, 175, 55, 0.25);
         }
-        .slot-reels-row {
-            display: flex; justify-content: center; gap: 10px; margin: 18px 0;
-        }
+        .slot-reels-row { display: flex; justify-content: center; gap: 10px; margin: 18px 0; }
         .slot-reel {
             width: 80px; height: 90px; background: #08080c; border: 2px solid #d4af37;
             border-radius: 14px; display: flex; align-items: center; justify-content: center;
-            font-size: 40px; box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
-            transition: transform 0.1s;
+            font-size: 38px; box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
         }
-        .bet-buttons-row {
-            display: flex; justify-content: center; gap: 8px; margin-bottom: 16px;
-        }
+        .bet-buttons-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
         .bet-btn {
             background: rgba(255,255,255,0.06); border: 1px solid var(--border-color);
             color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;
         }
         .bet-btn.active { background: var(--gold-gradient); color: #000; border-color: #fff; }
 
-        /* استایل میز پوکر */
+        /* میز پوکر */
         .poker-table-wrapper {
             background: radial-gradient(circle, #0b4522 0%, #042411 80%, #021309 100%);
-            border: 8px solid #3d2810; border-radius: 120px; padding: 20px 10px;
+            border: 8px solid #3d2810; border-radius: 120px; padding: 16px 8px;
             margin: 15px auto; width: 100%; max-width: 350px; min-height: 380px;
             position: relative; box-shadow: 0 10px 35px rgba(0,0,0,0.8), inset 0 0 25px rgba(0,0,0,0.6);
             display: flex; flex-direction: column; justify-content: space-between; align-items: center;
         }
-        .poker-player {
-            display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #ddd;
-        }
+        .poker-player { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #ddd; }
         .poker-cards-pair { display: flex; gap: 4px; margin-top: 4px; }
         .poker-card {
             width: 32px; height: 46px; background: #fff; color: #000; border-radius: 4px;
@@ -164,14 +156,12 @@
         .poker-card.red { color: #d00; }
         .poker-card.back { background: #8b0000; color: #fff; border: 1px solid #ff9999; }
         .community-cards-row {
-            display: flex; gap: 5px; background: rgba(0,0,0,0.35); padding: 8px 12px;
-            border-radius: 10px; border: 1px dashed rgba(255,255,255,0.2); margin: 10px 0;
+            display: flex; gap: 5px; background: rgba(0,0,0,0.35); padding: 8px 10px;
+            border-radius: 10px; border: 1px dashed rgba(255,255,255,0.2); margin: 8px 0;
         }
-        .pot-display {
-            font-size: 12px; color: var(--gold-color); font-weight: bold; margin-bottom: 4px;
-            display: flex; align-items: center; gap: 5px;
-        }
+        .pot-display { font-size: 12px; color: var(--gold-color); font-weight: bold; margin-bottom: 4px; }
 
+        /* سکه تپ ۲.۵ بعدی روان */
         .coin-wrapper {
             position: relative; width: 230px; height: 230px; margin: 20px auto 25px auto;
             display: flex; align-items: center; justify-content: center; cursor: pointer;
@@ -258,9 +248,10 @@
             border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
         }
         .task-btn { background: var(--gold-gradient); color: #0b0b0e; border: none; border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .task-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
             z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 18px;
         }
         .modal-box {
@@ -271,114 +262,326 @@
             width: 100%; background: #0c0c12; border: 1px solid #333; color: #fff;
             padding: 10px; border-radius: 8px; margin: 6px 0 12px 0; font-size: 13px;
         }
+        .lang-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+            color: #fff; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; margin-bottom: 8px; cursor: pointer;
+        }
+        .lang-btn:active { background: var(--gold-gradient); color: #000; }
     </style>
 </head>
 <body>
 
-    <!-- پنل مدیریت ادمین -->
-    <div id="admin-modal" class="modal-overlay" style="display: none;">
-        <div class="modal-box">
-            <h3 style="color: var(--admin-color); margin: 0 0 6px 0;">👑 پنل مدیریت و ابزارهای تستی</h3>
-            <p style="font-size: 12px; color: #aaa; margin: 0 0 16px 0;">شناسه شما به عنوان ادمین کل تایید شد.</p>
-            <b style="font-size: 13px; color: #fff;">⚙️ ابزارهای تست سریع:</b>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 16px 0;">
-                <button class="gold-btn" onclick="adminAddCoins(500)">+۵۰۰ سکه</button>
-                <button class="gold-btn" onclick="adminAddCoins(2000)">+۲۰۰۰ سکه</button>
-                <button class="admin-btn" style="background:#555;" onclick="adminResetCoins()">صفر کردن موجودی</button>
-                <button class="admin-btn" onclick="adminResetWheel()">ریست تایمر گردونه</button>
-            </div>
-            <b style="font-size: 13px; color: #fff;">💳 شارژ دستی سکه برای دیگران:</b>
-            <input type="text" id="admin-target-id" class="admin-input" placeholder="آیدی عددی تلگرام کاربر">
-            <input type="number" id="admin-target-amount" class="admin-input" placeholder="تعداد سکه">
-            <button class="gold-btn" style="margin-bottom: 16px;" onclick="adminSendCustomCoins()">واریز دستی سکه 🚀</button>
-            <b style="font-size: 13px; color: #fff;">➕ افزودن تسک سفارشی:</b>
-            <input type="text" id="custom-task-title" class="admin-input" placeholder="عنوان تسک">
-            <input type="text" id="custom-task-url" class="admin-input" placeholder="لینک (کانال/پیج)">
-            <input type="number" id="custom-task-reward" class="admin-input" placeholder="مقدار پاداش (سکه)">
-            <button class="gold-btn" onclick="adminAddCustomTask()">ثبت تسک جدید</button>
-            <button class="gold-btn" style="background:#222; color:#fff; margin-top: 16px;" onclick="closeAdminModal()">بستن پنل ✕</button>
+    <!-- پنجره اولیه انتخاب زبان (انگلیسی پیش‌فرض) -->
+    <div id="lang-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box" style="text-align: center;">
+            <h3 class="gold-text" style="margin: 0 0 6px 0;">🌐 Choose Language</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 18px;">Please select your preferred language:</p>
+            <button class="lang-btn" onclick="selectAppLang('en')">🇬🇧 English</button>
+            <button class="lang-btn" onclick="selectAppLang('ru')">🇷🇺 Русский</button>
+            <button class="lang-btn" onclick="selectAppLang('fa')">🇮🇷 فارسی</button>
         </div>
     </div>
+    <!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Gaming Hub</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0c0c10;
+            --card-bg: #14141b;
+            --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
+            --gold-color: #e5c158;
+            --text-color: #ffffff;
+            --text-muted: #8e8e98;
+            --border-color: rgba(212, 175, 55, 0.28);
+            --admin-color: #ff3b30;
+            --green-color: #34c759;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body {
+            margin: 0; padding: 0 0 78px 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            user-select: none;
+        }
+        .tab-content { display: none; padding: 14px; }
+        .tab-content.active { display: block; animation: fadeIn 0.22s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-    <!-- تب ۱: خانه -->
-    <div id="tab-home" class="tab-content active">
-        <div id="admin-badge-container" style="display: none;">
-            <div class="admin-card" onclick="openAdminModal()">
-                <div>
-                    <div style="color: var(--admin-color); font-weight: bold; font-size: 13px;">👑 پنل مدیریت آنلاین</div>
-                    <div style="font-size: 11px; color: #aaa;">افزودن تسک دلخواه، شارژ دستی و ابزارهای تست</div>
-                </div>
-                <div class="admin-btn">مدیریت</div>
-            </div>
+        .gold-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+        }
+        .gold-text {
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        .gold-btn {
+            background: var(--gold-gradient);
+            color: #0b0b0e;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+            transition: all 0.15s;
+        }
+        .gold-btn:active { transform: scale(0.97); }
+
+        .admin-card {
+            background: rgba(255, 59, 48, 0.1);
+            border: 1px dashed var(--admin-color);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .admin-btn {
+            background: var(--admin-color);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .hub-banner {
+            width: 100%; height: 145px; border-radius: 16px; overflow: hidden;
+            margin-bottom: 14px; border: 1px solid var(--border-color);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5); position: relative;
+        }
+        .hub-banner img { width: 100%; height: 100%; object-fit: cover; }
+
+        .games-grid-3x4 {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+        }
+        .game-tile {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 14px 6px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s; box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+        }
+        .game-tile:active { transform: scale(0.94); border-color: #f9e8a2; }
+        .game-tile img { width: 52px; height: 52px; object-fit: contain; margin-bottom: 8px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); }
+        .game-tile span { font-size: 12px; font-weight: bold; color: #fff; text-align: center; }
+        .game-tile.blank-tile {
+            opacity: 0.35; cursor: default; border: 1px dashed rgba(255,255,255,0.15);
+            box-shadow: none; background: rgba(255,255,255,0.02); min-height: 105px;
+        }
+        .blank-tile-icon { font-size: 26px; color: #777; margin-bottom: 6px; }
+        .game-tile.blank-tile span { font-size: 10px; color: #888; }
+
+        .fullscreen-game-modal {
+            position: fixed; inset: 0; background: var(--bg-color); z-index: 2500;
+            display: flex; flex-direction: column; padding: 16px; overflow-y: auto;
+        }
+        .modal-back-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .back-hub-btn {
+            background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: bold; cursor: pointer;
+        }
+
+        /* اسلات ماشین */
+        .slot-machine-box {
+            background: #14141f; border: 2px solid var(--gold-color); border-radius: 20px;
+            padding: 16px; margin: 20px auto; max-width: 330px; text-align: center;
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.25);
+        }
+        .slot-reels-row { display: flex; justify-content: center; gap: 10px; margin: 18px 0; }
+        .slot-reel {
+            width: 80px; height: 90px; background: #08080c; border: 2px solid #d4af37;
+            border-radius: 14px; display: flex; align-items: center; justify-content: center;
+            font-size: 38px; box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+        .bet-buttons-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 16px; }
+        .bet-btn {
+            background: rgba(255,255,255,0.06); border: 1px solid var(--border-color);
+            color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;
+        }
+        .bet-btn.active { background: var(--gold-gradient); color: #000; border-color: #fff; }
+
+        /* میز پوکر */
+        .poker-table-wrapper {
+            background: radial-gradient(circle, #0b4522 0%, #042411 80%, #021309 100%);
+            border: 8px solid #3d2810; border-radius: 120px; padding: 16px 8px;
+            margin: 15px auto; width: 100%; max-width: 350px; min-height: 380px;
+            position: relative; box-shadow: 0 10px 35px rgba(0,0,0,0.8), inset 0 0 25px rgba(0,0,0,0.6);
+            display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+        }
+        .poker-player { display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #ddd; }
+        .poker-cards-pair { display: flex; gap: 4px; margin-top: 4px; }
+        .poker-card {
+            width: 32px; height: 46px; background: #fff; color: #000; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; font-size: 12px;
+            font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .poker-card.red { color: #d00; }
+        .poker-card.back { background: #8b0000; color: #fff; border: 1px solid #ff9999; }
+        .community-cards-row {
+            display: flex; gap: 5px; background: rgba(0,0,0,0.35); padding: 8px 10px;
+            border-radius: 10px; border: 1px dashed rgba(255,255,255,0.2); margin: 8px 0;
+        }
+        .pot-display { font-size: 12px; color: var(--gold-color); font-weight: bold; margin-bottom: 4px; }
+
+        /* سکه تپ ۲.۵ بعدی روان */
+        .coin-wrapper {
+            position: relative; width: 230px; height: 230px; margin: 20px auto 25px auto;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .gold-coin-25d {
+            width: 100%; height: 100%; border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fff5be 0%, #d4af37 40%, #996e08 85%, #594002 100%);
+            box-shadow: 0 12px 35px rgba(212, 175, 55, 0.4), inset 0 3px 6px rgba(255,255,255,0.8), inset 0 -6px 12px rgba(0,0,0,0.7);
+            border: 6px solid #f9e8a2; display: flex; align-items: center; justify-content: center; transition: transform 0.06s ease;
+        }
+        .coin-inner-ring {
+            width: 80%; height: 80%; border-radius: 50%; border: 3px dashed rgba(89, 64, 2, 0.7);
+            display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 40% 40%, #e2be49 0%, #b88a1b 100%);
+        }
+        .coin-letter-s { font-size: 96px; font-weight: 900; color: #4a3400; font-family: Arial, sans-serif; line-height: 1; }
+
+        .tap-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
+        .tap-stat-box { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 4px; text-align: center; }
+        .tap-stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+        .tap-stat-val { font-size: 16px; font-weight: bold; color: var(--gold-color); }
+
+        .energy-bar-wrap { width: 100%; max-width: 320px; margin: 0 auto; }
+        .energy-bar-bg { height: 10px; width: 100%; background: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden; margin-top: 6px; }
+        .energy-bar-fill { height: 100%; width: 100%; background: var(--gold-gradient); border-radius: 5px; transition: width 0.1s; }
+
+        .tap-bottom-actions { margin-top: auto; padding-bottom: 10px; }
+        .boost-trigger-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706); color: #0b0b0e; border: none;
+            border-radius: 16px; padding: 14px; font-weight: bold; font-size: 15px; width: 100%; cursor: pointer;
+            box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
+        }
+
+        .bottom-sheet {
+            position: fixed; bottom: 0; left: 0; right: 0; background: #15151f; border-top: 2px solid var(--gold-color);
+            border-radius: 22px 22px 0 0; padding: 20px; z-index: 3000; box-shadow: 0 -8px 30px rgba(0,0,0,0.8);
+        }
+        .sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .upgrade-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+        }
+        .upgrade-card p { margin: 3px 0 0 0; font-size: 11px; color: var(--text-muted); }
+        .upgrade-btn {
+            background: var(--gold-gradient); color: #000; border: none; border-radius: 8px;
+            padding: 8px 14px; font-weight: bold; font-size: 12px; cursor: pointer;
+        }
+
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; height: 68px; background: rgba(14, 14, 19, 0.94);
+            backdrop-filter: blur(16px); border-top: 1px solid var(--border-color); display: flex;
+            justify-content: space-around; align-items: center; z-index: 1000;
+        }
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 11px; cursor: pointer; flex: 1; height: 100%;
+        }
+        .nav-item.active { color: var(--gold-color); font-weight: bold; }
+        .nav-item.tap-center { position: relative; top: -12px; }
+        .tap-icon-circle {
+            width: 52px; height: 52px; border-radius: 50%; background: var(--gold-gradient);
+            display: flex; align-items: center; justify-content: center; color: #0b0b0e;
+            font-size: 22px; font-weight: 900; box-shadow: 0 4px 18px rgba(212, 175, 55, 0.45);
+            border: 3px solid #0c0c10;
+        }
+
+        .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+        .feat-card {
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 14px; display: flex; flex-direction: column;
+            align-items: center; text-align: center; cursor: pointer;
+        }
+        .feat-card .f-icon { font-size: 26px; margin-bottom: 6px; }
+
+        .wheel-container { position: relative; width: 270px; height: 270px; margin: 15px auto 20px auto; }
+        #wheel-canvas { width: 100%; height: 100%; border-radius: 50%; border: 6px solid #d4af37; box-shadow: 0 0 35px rgba(212, 175, 55, 0.35); }
+        .wheel-arrow {
+            position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent;
+            border-top: 24px solid #ffffff; z-index: 10;
+        }
+
+        .task-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 14px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+        }
+        .task-btn { background: var(--gold-gradient); color: #0b0b0e; border: none; border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: bold; cursor: pointer; }
+        .task-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.88); backdrop-filter: blur(10px);
+            z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 18px;
+        }
+        .modal-box {
+            background: #14141d; border: 1px solid var(--border-color); border-radius: 20px;
+            width: 100%; max-width: 400px; padding: 20px; max-height: 90vh; overflow-y: auto;
+        }
+        .admin-input {
+            width: 100%; background: #0c0c12; border: 1px solid #333; color: #fff;
+            padding: 10px; border-radius: 8px; margin: 6px 0 12px 0; font-size: 13px;
+        }
+        .lang-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+            color: #fff; padding: 12px; border-radius: 10px; font-weight: bold; width: 100%; margin-bottom: 8px; cursor: pointer;
+        }
+        .lang-btn:active { background: var(--gold-gradient); color: #000; }
+    </style>
+</head>
+<body>
+
+    <!-- پنجره اولیه انتخاب زبان (انگلیسی پیش‌فرض) -->
+    <div id="lang-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-box" style="text-align: center;">
+            <h3 class="gold-text" style="margin: 0 0 6px 0;">🌐 Choose Language</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 18px;">Please select your preferred language:</p>
+            <button class="lang-btn" onclick="selectAppLang('en')">🇬🇧 English</button>
+            <button class="lang-btn" onclick="selectAppLang('ru')">🇷🇺 Русский</button>
+            <button class="lang-btn" onclick="selectAppLang('fa')">🇮🇷 فارسی</button>
         </div>
-
-        <div class="gold-card" style="text-align: center;">
-            <h2 class="gold-text" style="margin: 0; font-size: 22px;">مینی گیم و سرگرمی 🎮</h2>
-            <div style="font-size: 12px; color: var(--gold-color); margin: 3px 0 10px 0;">بازی‌های فکری و چالش‌های هفتگی</div>
-            
-            <div id="home-user-badge" style="font-size: 13px; background: rgba(212,175,55,0.12); display: inline-block; padding: 5px 16px; border-radius: 14px; border: 1px solid var(--border-color);">
-                👤 کاربر: در حال اتصال...
-            </div>
-
-            <div style="display: flex; justify-content: space-around; margin-top: 16px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 12px;">
-                <div>
-                    <div style="font-size: 12px; color: var(--text-muted);">موجودی سکه</div>
-                    <div class="gold-text" style="font-size: 22px;" id="coins-display">0.000 🪙</div>
-                </div>
-                <div>
-                    <div style="font-size: 12px; color: var(--text-muted);">سطح کاربر</div>
-                    <div style="font-size: 18px; color: #fff; font-weight: bold;" id="level-display">سطح ۱ ⭐️</div>
-                </div>
-            </div>
-
-            <div style="margin-top: 14px;">
-                <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 5px;">
-                    <span id="level-title-text">پیشرفت تا سطح بعدی</span>
-                    <span id="level-progress-text">0 / 150</span>
-                </div>
-                <div style="height: 7px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;">
-                    <div id="level-progress-bar" style="background: var(--gold-gradient); height: 100%; width: 0%;"></div>
-                </div>
-                <div style="font-size: 10px; color: var(--gold-color); margin-top: 6px; text-align: left;">
-                    🎯 جایزه ویژه سطح ۵۰: ۲۰,۰۰۰ سکه
-                </div>
-            </div>
-        </div>
-
-        <h3 style="font-size: 15px; margin: 15px 4px 10px;">بخش‌های اصلی</h3>
-        <div class="features-grid">
-            <div class="feat-card" onclick="switchTab('tab-games')">
-                <div class="f-icon">🎮</div>
-                <div style="font-weight: bold; font-size: 14px;">مرکز بازی‌ها</div>
-                <div style="font-size: 11px; color: var(--text-muted);">تپ، اسلات و پوکر</div>
-            </div>
-            <div class="feat-card" onclick="switchTab('tab-tasks')">
-                <div class="f-icon">🎯</div>
-                <div style="font-weight: bold; font-size: 14px;">ماموریت‌ها</div>
-                <div style="font-size: 11px; color: var(--text-muted);">کسب سکه و امتیاز</div>
-            </div>
-            <div class="feat-card" onclick="switchTab('tab-wheel')">
-                <div class="f-icon">🎡</div>
-                <div style="font-weight: bold; font-size: 14px;">گردونه شانس</div>
-                <div style="font-size: 11px; color: var(--text-muted);">شانس روزانه
-                    <!-- ۳. پنجره بازی تپ سکه ۲.۵ بعدی -->
+    </div>
+    <!-- پنجره بازی تپ سکه ۲.۵ بعدی -->
     <div id="tap-game-modal" class="fullscreen-game-modal" style="display: none;">
         <div class="modal-back-bar">
-            <button class="back-hub-btn" onclick="closeTapModal()">↩️ بازگشت به بازی‌ها</button>
-            <span class="gold-text" style="font-size: 14px;">مینی‌گیم تپ سکه</span>
+            <button class="back-hub-btn" onclick="closeTapModal()">↩️ <span data-i18n="backToGames">بازگشت</span></button>
+            <span class="gold-text" style="font-size: 14px;">Coin Tap S</span>
         </div>
 
         <div class="tap-stats-row">
             <div class="tap-stat-box">
-                <div class="tap-stat-label">هر کلیک</div>
+                <div class="tap-stat-label">Per Tap</div>
                 <div class="tap-stat-val" id="stat-per-tap">+0.001</div>
             </div>
             <div class="tap-stat-box">
-                <div class="tap-stat-label">قدرت تپ</div>
-                <div class="tap-stat-val" style="color: #34c759;">سطح <span id="tap-power-level">1</span></div>
+                <div class="tap-stat-label">Level</div>
+                <div class="tap-stat-val" style="color: #34c759;">Lvl <span id="tap-power-level">1</span></div>
             </div>
             <div class="tap-stat-box">
-                <div class="tap-stat-label">مجموع تپ‌ها</div>
+                <div class="tap-stat-label">Total Taps</div>
                 <div class="tap-stat-val" id="stat-total-taps">0</div>
             </div>
         </div>
@@ -398,7 +601,7 @@
 
         <div class="energy-bar-wrap">
             <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
-                <span>⚡ مخزن تپ</span>
+                <span>⚡ Energy</span>
                 <span id="tap-energy-text">2500 / 2500</span>
             </div>
             <div class="energy-bar-bg">
@@ -408,7 +611,7 @@
 
         <div class="tap-bottom-actions">
             <button class="boost-trigger-btn" onclick="toggleBoostSheet(true)">
-                ⚡ ارتقاها و تقویت‌کننده‌ها
+                ⚡ Boosters & Upgrades
             </button>
         </div>
     </div>
@@ -416,20 +619,20 @@
     <!-- پنل کشویی بوسترها -->
     <div id="boost-sheet" class="bottom-sheet" style="display: none;">
         <div class="sheet-head">
-            <h4 class="gold-text" style="margin: 0;">⚡ ارتقا و بوستر</h4>
+            <h4 class="gold-text" style="margin: 0;">⚡ Boosters</h4>
             <button onclick="toggleBoostSheet(false)" style="background:none; border:none; color:#aaa; font-size:18px; cursor:pointer;">✕</button>
         </div>
         <div class="upgrade-card">
             <div>
-                <b style="color: #fff; font-size: 13px;">افزایش قدرت کلیک</b>
-                <p>سطح <span id="sheet-tap-lvl">1</span>/10 (+0.001 به هر تپ)</p>
+                <b style="color: #fff; font-size: 13px;">Tap Power Upgrade</b>
+                <p>Level <span id="sheet-tap-lvl">1</span>/10 (+0.001 per tap)</p>
             </div>
             <button class="upgrade-btn" onclick="buyTapUpgrade()"><span id="tap-upgrade-cost">50</span> 🪙</button>
         </div>
         <div class="upgrade-card">
             <div>
-                <b style="color: #fff; font-size: 13px;">شارژ کامل مخزن انرژی</b>
-                <p><span id="sheet-refills-left">3</span> بار سهمیه امروز</p>
+                <b style="color: #fff; font-size: 13px;">Full Energy Refill</b>
+                <p><span id="sheet-refills-left">3</span> remaining today</p>
             </div>
             <button class="upgrade-btn" onclick="buyFullRefill()">100 🪙</button>
         </div>
@@ -452,46 +655,104 @@
         </div>
     </div>
 
-    <!-- تب ۴: تسک‌ها -->
+    <!-- تب ۴: تسک‌ها با تایمر ۳۰ ثانیه در صورت عدم انجام -->
     <div id="tab-tasks" class="tab-content">
         <div class="gold-card">
             <h2 class="gold-text" style="margin: 0 0 6px 0;">🎯 ماموریت‌ها و پاداش‌ها</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0 0 14px 0;">تسک‌ها را انجام دهید و دکمه چک را بزنید:</p>
+
             <div class="task-card">
                 <div class="task-info">
-                    <h4>عضویت در کانال تلگرام ما</h4>
+                    <h4>عضویت در کانال رسمی تلگرام</h4>
                     <p>+۱۰ سکه 🪙</p>
                 </div>
                 <button class="task-btn" id="btn-task-tg" onclick="startTask('tg', 'https://t.me/SimorApp', 10)">شروع</button>
             </div>
+
             <div class="task-card">
                 <div class="task-info">
                     <h4>دعوت از ۳ رفرال فعال</h4>
                     <p>+۴۰ سکه 🪙</p>
                 </div>
-                <button class="task-btn" onclick="alert('تعداد رفرال‌های شما در حال بررسی است...')">چک کردن</button>
+                <button class="task-btn" onclick="checkReferralTask(this, 3, 40)">چک کردن</button>
             </div>
+
+            <div class="task-card">
+                <div class="task-info">
+                    <h4>دعوت از ۷ رفرال فعال</h4>
+                    <p>+۱۰۰ سکه 🪙</p>
+                </div>
+                <button class="task-btn" onclick="checkReferralTask(this, 7, 100)">چک کردن</button>
+            </div>
+
+            <div class="task-card">
+                <div class="task-info">
+                    <h4>دعوت از ۱۵ رفرال فعال</h4>
+                    <p>+۲۰۰ سکه 🪙</p>
+                </div>
+                <button class="task-btn" onclick="checkReferralTask(this, 15, 200)">چک کردن</button>
+            </div>
+
             <div id="custom-tasks-area"></div>
         </div>
     </div>
 
-    <!-- تب ۵: حساب و لیدربورد -->
+    <!-- تب ۵: دوستان و رفرال مستقل -->
+    <div id="tab-friends" class="tab-content">
+        <div class="gold-card">
+            <h2 class="gold-text" style="margin: 0 0 8px 0;">👥 دوستان و رفرال</h2>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">دوستان خود را دعوت کنید و سکه بگیرید:</p>
+
+            <div style="background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 12px; padding: 12px; margin-bottom: 14px;">
+                <div style="font-size: 11px; color: #aaa; margin-bottom: 6px;">لینک اختصاصی دعوت شما:</div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="ref-link-input" readonly style="flex:1; background:#08080c; border:1px solid #333; color:#fff; padding:8px; border-radius:8px; font-size:11px;">
+                    <button class="gold-btn" style="width:auto; padding:8px 14px;" onclick="copyRefLink()">کپی</button>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px;">
+                <div class="tap-stat-box">
+                    <div class="tap-stat-label">دعوت‌شده‌ها</div>
+                    <div class="tap-stat-val" id="ref-total-count">0</div>
+                </div>
+                <div class="tap-stat-box">
+                    <div class="tap-stat-label">فعال</div>
+                    <div class="tap-stat-val" style="color:#34c759;" id="ref-active-count">0</div>
+                </div>
+                <div class="tap-stat-box">
+                    <div class="tap-stat-label">سکه کسب‌شده</div>
+                    <div class="tap-stat-val" id="ref-earned-coins">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- تب ۶: حساب، لیدربورد و چرخ‌دنده تنظیمات زبان -->
     <div id="tab-profile" class="tab-content">
         <div class="gold-card">
-            <h2 class="gold-text" style="margin: 0 0 14px 0;">👤 مشخصات و لیدربورد</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h2 class="gold-text" style="margin: 0;">👤 مشخصات و حساب</h2>
+                <!-- آیکون چرخ‌دنده انتخاب زبان در حساب -->
+                <button onclick="openLangModal()" style="background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: #fff; width: 38px; height: 38px; border-radius: 50%; font-size: 18px; cursor: pointer;">⚙️</button>
+            </div>
+
             <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 12px; padding: 12px; margin-bottom: 14px; font-size: 13px;">
                 <div style="margin-bottom: 8px;">⭐️ سطح کاربری: <span id="detail-level" style="color: #4cd964;">سطح ۱</span></div>
                 <div style="margin-bottom: 8px;">🪙 مجموع سکه‌ها: <span id="detail-coins" style="color: var(--gold-color); font-weight: bold;">0</span></div>
                 <div>🆔 شناسه تلگرام شما: <span id="detail-numeric-id" style="font-family: monospace; color: #aaa;">-</span></div>
             </div>
+
             <h4 class="gold-text" style="margin: 14px 0 8px 0;">🏆 برترین‌های لیدربورد</h4>
             <div style="font-size: 12px; line-height: 2;">
                 <div style="display: flex; justify-content: space-between;"><span>#1 Órion</span><b>15,000 S</b></div>
                 <div style="display: flex; justify-content: space-between;"><span>#2 Айрик</span><b>12,780 S</b></div>
+                <div style="display: flex; justify-content: space-between;"><span>#3 Eduard</span><b>10,500 S</b></div>
             </div>
         </div>
     </div>
 
-    <!-- ناوبری پایین -->
+    <!-- ناوبری پایین صفحه ۵ تب اصلی -->
     <div class="bottom-nav">
         <div class="nav-item active" id="nav-tab-home" onclick="switchTab('tab-home')"><span>🏠</span><span>خانه</span></div>
         <div class="nav-item" id="nav-tab-games" onclick="switchTab('tab-games')"><span>🎮</span><span>بازی‌ها</span></div>
@@ -499,10 +760,63 @@
         <div class="nav-item" id="nav-tab-tasks" onclick="switchTab('tab-tasks')"><span>🎯</span><span>تسک‌ها</span></div>
         <div class="nav-item" id="nav-tab-profile" onclick="switchTab('tab-profile')"><span>👤</span><span>حساب</span></div>
     </div>
-
     <script>
         const ADMIN_ID = 702007470;
 
+        // دیکشنری ۳ زبانه (انگلیسی پیش‌فرض)
+        const i18n = {
+            en: {
+                appTitle: "Smart Gaming Hub 🎮", appSubtitle: "Brain Games & Weekly Challenges",
+                coinBalance: "Coins Balance", userLevel: "Level", levelProgress: "Progress to next level",
+                level50Prize: "🎯 Level 50 Grand Prize: 20,000 S", mainSections: "Main Features",
+                gamesCenter: "Games Hub", gamesDesc: "Tap, Slot & Poker", tasksTitle: "Tasks",
+                tasksDesc: "Earn Coins & Rewards", wheelTitle: "Lucky Wheel", wheelDesc: "Daily Free Spin",
+                friendsTitle: "Friends & Ref", friendsDesc: "Invite Links & Stats", miniGamesHub: "🎮 Mini-Games Hub",
+                coinTapGame: "Coin Tap S", slotGame: "Golden Slot", pokerGame: "Texas Poker", backToGames: "Back to Games",
+                adminTitle: "👑 Admin Online Panel", adminDesc: "Add tasks & testing tools", adminBtn: "Admin"
+            },
+            ru: {
+                appTitle: "Игровой Хаб 🎮", appSubtitle: "Интеллектуальные игры и испытания",
+                coinBalance: "Баланс монет", userLevel: "Уровень", levelProgress: "Прогресс до уровня",
+                level50Prize: "🎯 Суперприз 50 уровня: 20 000 S", mainSections: "Главное меню",
+                gamesCenter: "Игры", gamesDesc: "Тап, Слот и Покер", tasksTitle: "Задания",
+                tasksDesc: "Монеты и призы", wheelTitle: "Колесо удачи", wheelDesc: "Ежедневный спин",
+                friendsTitle: "Друзья", friendsDesc: "Приглашения и статистика", miniGamesHub: "🎮 Игровой Центр",
+                coinTapGame: "Тап монеты S", slotGame: "Золотой Слот", pokerGame: "Техасский Покер", backToGames: "Назад к играм",
+                adminTitle: "👑 Панель управления", adminDesc: "Задания и тесты", adminBtn: "Админ"
+            },
+            fa: {
+                appTitle: "مینی گیم و سرگرمی 🎮", appSubtitle: "بازی‌های فکری و چالش‌های هفتگی",
+                coinBalance: "موجودی سکه", userLevel: "سطح کاربر", levelProgress: "پیشرفت تا سطح بعدی",
+                level50Prize: "🎯 جایزه ویژه سطح ۵۰: ۲۰,۰۰۰ سکه", mainSections: "بخش‌های اصلی",
+                gamesCenter: "مرکز بازی‌ها", gamesDesc: "تپ، اسلات و پوکر", tasksTitle: "ماموریت‌ها",
+                tasksDesc: "کسب سکه و پاداش", wheelTitle: "گردونه شانس", wheelDesc: "شانس روزانه",
+                friendsTitle: "دوستان و رفرال", friendsDesc: "لینک دعوت و آمار", miniGamesHub: "🎮 مرکز مینی‌گیم‌ها",
+                coinTapGame: "تپ سکه S", slotGame: "رول اسلات", pokerGame: "پوکر تگزاس", backToGames: "بازگشت به بازی‌ها",
+                adminTitle: "👑 پنل مدیریت آنلاین", adminDesc: "افزودن تسک دلخواه و ابزار تست", adminBtn: "مدیریت"
+            }
+        };
+
+        let currentLang = localStorage.getItem('simor_lang') || 'en';
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('simor_lang', lang);
+            document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang] && i18n[lang][key]) el.innerText = i18n[lang][key];
+            });
+        }
+
+        function selectAppLang(lang) {
+            applyLanguage(lang);
+            document.getElementById('lang-modal').style.display = 'none';
+        }
+
+        function openLangModal() { document.getElementById('lang-modal').style.display = 'flex'; }
+
+        // گردونه و سطوح ۵۰ تایی
         const sectors = [
             { text: "پوچ", score: 0, color: "#141419", textCol: "#8e8e93", prob: 36 },
             { text: "۲ امتیاز", score: 2, color: "#c59f2d", textCol: "#000", prob: 30 },
@@ -526,7 +840,7 @@
 
         const tgUser = tg?.initDataUnsafe?.user;
         const currentUserId = tgUser?.id || 702007470;
-        const defaultName = tgUser ? (tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "")) : "ادمین";
+        const defaultName = tgUser ? (tgUser.first_name + (tgUser.last_name ? " " + tgUser.last_name : "")) : "Player";
 
         let autoUid = localStorage.getItem('simor_s_uid') || ('s' + Math.floor(10000000 + Math.random() * 90000000));
         localStorage.setItem('simor_s_uid', autoUid);
@@ -563,9 +877,9 @@
 
             document.getElementById('coins-display').innerText = `${coinsFormatted} 🪙`;
             document.getElementById('tap-balance-display').innerText = coinsFormatted;
-            document.getElementById('detail-coins').innerText = `${coinsFormatted} سکه`;
-            document.getElementById('level-display').innerText = `سطح ${lvlInfo.level} ⭐️`;
-            document.getElementById('detail-level').innerText = `سطح ${lvlInfo.level}`;
+            document.getElementById('detail-coins').innerText = `${coinsFormatted} S`;
+            document.getElementById('level-display').innerText = `Lvl ${lvlInfo.level} ⭐️`;
+            document.getElementById('detail-level').innerText = `Lvl ${lvlInfo.level}`;
             document.getElementById('level-progress-text').innerText = `${Math.floor(lvlInfo.progress)} / ${lvlInfo.req}`;
             document.getElementById('level-progress-bar').style.width = `${lvlInfo.percent}%`;
             document.getElementById('home-user-badge').innerText = `👤 ${defaultName} (${autoUid})`;
@@ -579,6 +893,8 @@
             document.getElementById('sheet-tap-lvl').innerText = tapPowerLvl;
             document.getElementById('tap-upgrade-cost').innerText = tapPowerLvl * 50;
             document.getElementById('sheet-refills-left').innerText = refillsLeft;
+
+            document.getElementById('ref-link-input').value = `https://t.me/SimorApp_bot?startapp=${autoUid}`;
 
             if (currentUserId === ADMIN_ID || defaultName.includes('ALI')) {
                 document.getElementById('admin-badge-container').style.display = 'block';
@@ -635,10 +951,8 @@
                 localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
                 localStorage.setItem(STORAGE_KEY_TAP_LVL, tapPowerLvl.toString());
                 updateDisplays();
-                alert(`قدرت تپ به سطح ${tapPowerLvl} ارتقا یافت!`);
-            } else {
-                alert('سکه کافی نیست یا به حداکثر سطح رسیده‌اید.');
-            }
+                alert('Upgraded!');
+            } else { alert('Insufficient coins or max level reached.'); }
         }
 
         function buyFullRefill() {
@@ -651,14 +965,12 @@
                 localStorage.setItem(STORAGE_KEY_REFILLS, refillsLeft.toString());
                 updateDisplays();
                 toggleBoostSheet(false);
-                alert('مخزن تپ کامل شارژ شد!');
-            } else {
-                alert('سکه کافی نیست یا سهمیه شارژ امروز پایان یافته است.');
-            }
+                alert('Refilled!');
+            } else { alert('Insufficient coins or daily limit reached.'); }
         }
 
         // ==========================================
-        // منطق مینی‌گیم اسلات ماشین
+        // موتور اسلات ماشین
         // ==========================================
         let slotBet = 1;
         let isSlotSpinning = false;
@@ -675,7 +987,7 @@
 
         function spinSlotReels() {
             if (isSlotSpinning) return;
-            if (coins < slotBet) return alert('سکه کافی برای این شرط ندارید!');
+            if (coins < slotBet) return alert('سکه کافی برای شرط‌بندی ندارید!');
 
             isSlotSpinning = true;
             coins -= slotBet;
@@ -684,7 +996,7 @@
 
             const btn = document.getElementById('slot-spin-btn');
             btn.disabled = true;
-            document.getElementById('slot-status-msg').innerText = 'در حال چرخش...';
+            document.getElementById('slot-status-msg').innerText = 'در حال چرخش رول‌ها...';
 
             const r1 = document.getElementById('reel-1');
             const r2 = document.getElementById('reel-2');
@@ -705,12 +1017,10 @@
                 const res2 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
                 const res3 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
 
-                r1.innerText = res1;
-                r2.innerText = res2;
-                r3.innerText = res3;
+                r1.innerText = res1; r2.innerText = res2; r3.innerText = res3;
 
                 if (res1 === res2 && res2 === res3) {
-                    const win = slotBet * 15;
+                    const win = slotBet * 20;
                     coins += win;
                     document.getElementById('slot-status-msg').innerHTML = `<span style="color:#34c759;">🎉 جک‌پات! برنده ${win} سکه شدید!</span>`;
                     if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -719,7 +1029,7 @@
                     coins += win;
                     document.getElementById('slot-status-msg').innerHTML = `<span style="color:#e5c158;">✨ دو نماد جفت شد! برنده ${win} سکه شدید!</span>`;
                 } else {
-                    document.getElementById('slot-status-msg').innerText = 'این بار برنده نشدید. دوباره شانس خود را امتحان کنید!';
+                    document.getElementById('slot-status-msg').innerText = 'برنده نشدید. دوباره شانس خود را امتحان کنید!';
                 }
 
                 updateDisplays();
@@ -728,8 +1038,197 @@
         }
 
         // ==========================================
-        // منطق مینی‌گیم پوکر تگزاس هولدم
+        // موتور پوکر تگزاس هولدم
         // ==========================================
         let pokerPot = 8;
         function openPokerModal() { document.getElementById('poker-game-modal').style.display = 'flex'; }
-        function closePokerModal() { document.getElementById('poker-game-modal').style
+        function closePokerModal() { document.getElementById('poker-game-modal').style.display = 'none'; }
+
+        function pokerAction(act) {
+            const msg = document.getElementById('poker-round-msg');
+            if (act === 'fold') {
+                msg.innerText = 'You folded. New round starting soon...';
+                setTimeout(() => { msg.innerText = 'Your Turn!'; }, 1500);
+            } else if (act === 'check') {
+                msg.innerText = 'Checking... Bots deciding...';
+                setTimeout(() => {
+                    const win = Math.random() > 0.4;
+                    if (win) {
+                        coins += pokerPot;
+                        msg.innerHTML = `<span style="color:#34c759;">🏆 You Won the ${pokerPot} S Pot!</span>`;
+                    } else {
+                        msg.innerText = 'Bot Alex won with Two Pairs.';
+                    }
+                    updateDisplays();
+                    localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
+                }, 1200);
+            } else if (act === 'raise') {
+                if (coins < 2) return alert('Insufficient coins to raise.');
+                coins -= 2;
+                pokerPot += 4;
+                document.getElementById('poker-pot-val').innerText = `${pokerPot} S`;
+                msg.innerText = 'You raised +2 S! Bots called.';
+                updateDisplays();
+                localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
+            }
+        }
+
+        // بررسی تسک با قفل ۳۰ ثانیه‌ای
+        function checkReferralTask(btn, reqCount, reward) {
+            btn.disabled = true;
+            btn.innerText = 'Checking...';
+            setTimeout(() => {
+                alert('تعداد رفرال‌های فعال شما به حدنصاب نرسیده است.');
+                let seconds = 30;
+                btn.innerText = `Try again in ${seconds}s`;
+                const countdown = setInterval(() => {
+                    seconds--;
+                    if (seconds > 0) {
+                        btn.innerText = `Try again in ${seconds}s`;
+                    } else {
+                        clearInterval(countdown);
+                        btn.disabled = false;
+                        btn.innerText = 'چک کردن';
+                    }
+                }, 1000);
+            }, 1000);
+        }
+
+        function copyRefLink() {
+            const linkInput = document.getElementById('ref-link-input');
+            linkInput.select();
+            document.execCommand('copy');
+            alert('لینک دعوت با موفقیت کپی شد!');
+        }
+
+        function initWheel() {
+            const canvas = document.getElementById('wheel-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const numSectors = sectors.length;
+            const arc = (2 * Math.PI) / numSectors;
+
+            ctx.clearRect(0, 0, 270, 270);
+            for (let i = 0; i < numSectors; i++) {
+                const angle = i * arc;
+                ctx.beginPath();
+                ctx.fillStyle = sectors[i].color;
+                ctx.moveTo(135, 135);
+                ctx.arc(135, 135, 130, angle, angle + arc);
+                ctx.lineTo(135, 135);
+                ctx.fill();
+
+                ctx.save();
+                ctx.translate(135, 135);
+                ctx.rotate(angle + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = sectors[i].textCol;
+                ctx.font = "bold 13px system-ui";
+                ctx.fillText(sectors[i].text, 115, 5);
+                ctx.restore();
+            }
+        }
+
+        function checkDailySpinTimer() {
+            const lastSpin = parseInt(localStorage.getItem(STORAGE_KEY_LAST_SPIN) || '0');
+            const now = new Date();
+            const nextMidnightUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
+            const lastSpinDate = new Date(lastSpin);
+            const isSameUTCDay = lastSpin && (lastSpinDate.getUTCFullYear() === now.getUTCFullYear() && 
+                                              lastSpinDate.getUTCMonth() === now.getUTCMonth() && 
+                                              lastSpinDate.getUTCDate() === now.getUTCDate());
+            const btn = document.getElementById('spin-button');
+            const countdownEl = document.getElementById('spin-countdown');
+            if (!btn || !countdownEl) return;
+            if (isSameUTCDay) {
+                btn.disabled = true;
+                const remaining = nextMidnightUTC.getTime() - now.getTime();
+                const hrs = Math.floor(remaining / (1000 * 60 * 60));
+                const mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                countdownEl.innerHTML = `⏳ ریست ساعت ۱۲ شب انگلیس (${hrs} ساعت و ${mins} دقیقه)`;
+            } else {
+                btn.disabled = false;
+                countdownEl.innerHTML = `🎉 شانس چرخش رایگان امروز فعال است!`;
+            }
+        }
+
+        let isSpinning = false;
+        function spinWheel() {
+            if (isSpinning) return;
+            isSpinning = true;
+            document.getElementById('spin-button').disabled = true;
+            const canvas = document.getElementById('wheel-canvas');
+            const deg = 1800 + Math.floor(Math.random() * 360);
+            canvas.style.transition = 'transform 3.5s cubic-bezier(0.15, 0.9, 0.2, 1)';
+            canvas.style.transform = `rotate(${deg}deg)`;
+            setTimeout(() => {
+                isSpinning = false;
+                coins += 2;
+                localStorage.setItem(STORAGE_KEY_LAST_SPIN, Date.now().toString());
+                localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
+                document.getElementById('spin-result').innerText = '🎉 شما برنده ۲ امتیاز شدید!';
+                updateDisplays();
+                checkDailySpinTimer();
+            }, 3600);
+        }
+
+        function startTask(id, url, reward) {
+            window.open(url, '_blank');
+            setTimeout(() => {
+                coins += reward;
+                localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
+                updateDisplays();
+                const btn = document.getElementById('btn-task-' + id);
+                if (btn) { btn.innerText = 'انجام شد ✓'; btn.disabled = true; }
+            }, 2500);
+        }
+
+        function openAdminModal() { document.getElementById('admin-modal').style.display = 'flex'; }
+        function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
+        function adminAddCoins(amount) {
+            coins += amount;
+            localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
+            updateDisplays();
+            alert(`+${amount} سکه اضافه شد!`);
+        }
+        function adminResetCoins() {
+            coins = 0;
+            localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
+            updateDisplays();
+            alert('موجودی صفر شد.');
+        }
+        function adminResetWheel() {
+            localStorage.removeItem(STORAGE_KEY_LAST_SPIN);
+            checkDailySpinTimer();
+            alert('تایمر گردونه ریست شد!');
+        }
+        function adminSendCustomCoins() {
+            const targetId = document.getElementById('admin-target-id').value;
+            const amount = parseFloat(document.getElementById('admin-target-amount').value);
+            if (!targetId || !amount) return alert('آیدی و مقدار را وارد کنید.');
+            alert(`دستور واریز ${amount} سکه برای کاربر ${targetId} ثبت شد.`);
+        }
+        function adminAddCustomTask() {
+            const title = document.getElementById('custom-task-title').value;
+            const url = document.getElementById('custom-task-url').value;
+            const reward = document.getElementById('custom-task-reward').value;
+            if (!title) return alert('عنوان تسک را وارد کنید.');
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            card.innerHTML = `<div class="task-info"><h4>${title}</h4><p>+${reward} سکه 🪙</p></div><button class="task-btn" onclick="startTask('cust', '${url}', ${reward})">شروع</button>`;
+            document.getElementById('custom-tasks-area').appendChild(card);
+            alert('تسک با موفقیت اضافه شد!');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDisplays();
+            setInterval(checkDailySpinTimer, 30000);
+            applyLanguage(currentLang);
+            if (!localStorage.getItem('simor_lang_selected')) {
+                openLangModal();
+                localStorage.setItem('simor_lang_selected', 'true');
+            }
+        });
+    </script>
+</body>
+</html>
