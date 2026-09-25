@@ -17,10 +17,9 @@
       --border: rgba(212, 175, 55, 0.28);
       --green: #34c759;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
     body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 12px; text-align: center; }
-
+    
     /* هدر */
     .top-bar {
       display: flex; justify-content: space-between; align-items: center;
@@ -32,67 +31,62 @@
       padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
     }
 
-    /* پیش‌نمایش کارت بانکی لوکس (نسبت استاندارد کارت اعتباری) */
+    /* پیش‌نمایش کارت بانکی لوکس */
     .card-preview-container {
       margin: 10px auto 16px; width: 100%; max-width: 330px;
     }
     .bank-card {
-      width: 100%; height: 200px; border-radius: 16px; padding: 16px;
+      width: 100%; height: 205px; border-radius: 16px; padding: 16px;
       position: relative; box-shadow: 0 12px 30px rgba(0,0,0,0.85);
       display: flex; flex-direction: column; justify-content: space-between;
-      text-align: right; overflow: hidden; border: 2px solid rgba(255,255,255,0.15);
-      background-size: cover; background-position: center; transition: all 0.3s ease;
+      text-align: right; overflow: hidden; border: 1px solid rgba(212, 175, 55, 0.35);
+      background-size: cover; background-position: center; background-repeat: no-repeat;
+      transition: all 0.3s ease;
     }
 
-    /* پوسته‌های پایه (با قابلیت پشتیبانی از تصاویر اختصاصی assets) */
+    /* آدرس دقیق تصاویر کارت‌ها در پوشه assets */
     .theme-gold {
-      background: radial-gradient(circle at 80% 20%, #2e2308, #0a0803 80%);
-      border-color: var(--gold);
+      background-image: url('../../assets/card-gold.png');
+      background-color: #14120c;
     }
     .theme-birthday {
-      background: linear-gradient(135deg, #421045, #14041f);
-      border-color: #d946ef;
+      background-image: url('../../assets/card-birthday.png');
+      background-color: #2b0b2e;
     }
     .theme-friend {
-      background: linear-gradient(135deg, #0d2847, #040c17);
-      border-color: #38bdf8;
+      background-image: url('../../assets/card-friend.png');
+      background-color: #081d33;
     }
     .theme-luck {
-      background: linear-gradient(135deg, #07381f, #02120a);
-      border-color: #4ade80;
+      background-image: url('../../assets/card-luck.png');
+      background-color: #052414;
     }
 
-    .card-top { display: flex; justify-content: space-between; align-items: center; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; z-index: 2; }
     .card-logo {
       font-size: 13px; font-weight: 900; color: var(--gold); letter-spacing: 1.5px;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
     }
     .card-badge {
-      font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.7);
-      background: rgba(0,0,0,0.4); padding: 2px 8px; border-radius: 6px;
+      font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.85);
+      background: rgba(0,0,0,0.55); padding: 3px 8px; border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.15); backdrop-filter: blur(4px);
     }
 
-    /* چیپ شبیه‌سازی‌شده واقعی کارت بانکی */
+    /* چیپ مصنوعی مخفی است چون روی عکس‌ها چیپ واقعی وجود دارد */
     .card-chip {
-      width: 40px; height: 30px;
-      background: linear-gradient(135deg, #d4af37, #f9e8a2 50%, #aa7c11);
-      border-radius: 6px; border: 1px solid #795b00; margin: 4px 0;
-      position: relative; box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
-    }
-    .card-chip::after {
-      content: ''; position: absolute; inset: 6px 10px;
-      border: 1px dashed rgba(0,0,0,0.4); border-radius: 2px;
+      display: none !important;
     }
 
     .card-msg {
       font-size: 15px; font-weight: bold; line-height: 1.5; color: #ffffff;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.9); margin: 6px 0; min-height: 44px;
-      display: flex; align-items: center;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.95); margin: 6px 0; min-height: 44px;
+      display: flex; align-items: center; z-index: 2;
     }
-
     .card-footer {
       display: flex; justify-content: space-between; align-items: flex-end;
-      font-size: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px;
+      font-size: 12px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 6px;
+      z-index: 2; text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     }
     .card-holder { font-weight: bold; color: var(--gold); font-size: 13px; }
 
@@ -117,7 +111,6 @@
       border-radius: 8px; color: white; font-size: 13px; margin-bottom: 10px; outline: none;
     }
     .card-input:focus { border-color: var(--gold); }
-
     .btn-buy-card {
       width: 100%; background: var(--gold-gradient); color: #000;
       border: none; padding: 13px; border-radius: 10px; font-weight: bold;
@@ -138,7 +131,6 @@
   </style>
 </head>
 <body>
-
   <!-- نوار بالای صفحه -->
   <div class="top-bar">
     <button class="btn-back" onclick="goBack()">🔙 لابی</button>
@@ -168,18 +160,19 @@
     </button>
   </div>
 
-  <!-- پیش‌نمایش کارت بانکی لوکس (بدون شماره کارت) -->
+  <!-- پیش‌نمایش کارت بانکی لوکس -->
   <div class="card-preview-container">
     <div class="bank-card theme-gold" id="bank-card">
       <div class="card-top">
         <span class="card-logo">SIMOR GIFT CARD</span>
         <span class="card-badge" id="card-badge-txt">VIP EDITION</span>
       </div>
+      
       <div class="card-chip"></div>
       
       <!-- پیام دلخواه تبریک -->
       <div class="card-msg" id="preview-msg">تولدت مبارک رفیق، همیشه برنده باشی! 🌸</div>
-
+      
       <!-- پاورقی مشخصات فرستنده و گیرنده -->
       <div class="card-footer">
         <div>
@@ -198,29 +191,25 @@
   <div class="form-box">
     <label class="input-label">نام دوست (دریافت‌کننده کارت):</label>
     <input type="text" class="card-input" id="input-to" value="دوست عزیز" oninput="updateCardText()">
-
     <label class="input-label">متن دلخواه روی کارت:</label>
     <input type="text" class="card-input" id="input-msg" value="تولدت مبارک رفیق، همیشه برنده باشی! 🌸" oninput="updateCardText()">
-
     <label class="input-label">نام شما (فرستنده):</label>
     <input type="text" class="card-input" id="input-from" value="علی" oninput="updateCardText()">
-
     <button class="btn-buy-card" id="btn-buy" onclick="purchaseCard()">💳 خرید و صدور کارت (۱۵۰ سکه)</button>
   </div>
 
-  <!-- بخش ذخیره در گالری بعد از خرید (ارسال به پی‌وی حذف شد) -->
+  <!-- باکس ذخیره در گالری بعد از خرید -->
   <div class="delivery-box" id="delivery-box">
     <h4 style="color: var(--green); margin-bottom: 6px;">🎉 کارت هدیه با موفقیت صادر شد!</h4>
     <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
       کارت شما آماده شد. اکنون می‌توانید عکس باکیفیت آن را در گالری گوشی ذخیره کنید:
     </p>
-
     <button class="btn-download" onclick="downloadCardImage()">
       <span>📥 ذخیره عکس کارت در گالری گوشی (PNG)</span>
     </button>
   </div>
 
-  <!-- کنواس مخفی با ابعاد استاندارد کارت بانکی جهت دانلود باکیفیت -->
+  <!-- کنواس مخفی جهت خروجی دانلود باکیفیت -->
   <canvas id="card-canvas" width="1000" height="630" style="display:none;"></canvas>
 
   <script>
@@ -257,11 +246,9 @@
       currentPrice = price;
       document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-
       const card = document.getElementById('bank-card');
       card.className = `bank-card theme-${themeName}`;
       currentTheme = `theme-${themeName}`;
-
       const badges = {
         gold: 'VIP EDITION',
         birthday: 'BIRTHDAY GIFT',
@@ -283,85 +270,65 @@
         alert(`موجودی شما کافی نیست! برای این کارت به ${currentPrice} سکه نیاز دارید.`);
         return;
       }
-
       balance -= currentPrice;
       saveBalance();
-
       try {
         if (tg?.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg?.HapticFeedback) {
           tg.HapticFeedback.notificationOccurred('success');
         }
       } catch(e) {}
-
       document.getElementById('btn-buy').style.display = 'none';
       document.getElementById('delivery-box').style.display = 'block';
       alert('🎉 کارت شما با موفقیت صادر شد!');
     }
 
-    // تولید عکس تمیز در ابعاد ۱۰۰۰ در ۶۳۰ برای گالری
     function downloadCardImage() {
       const canvas = document.getElementById('card-canvas');
       const ctx = canvas.getContext('2d');
 
-      // رنگ‌آمیزی گرادینت بدنه کارت
-      if (currentTheme.includes('gold')) {
-        const grad = ctx.createLinearGradient(0, 0, 1000, 630);
-        grad.addColorStop(0, '#2e2308'); grad.addColorStop(1, '#0a0803');
-        ctx.fillStyle = grad;
-      } else if (currentTheme.includes('birthday')) {
-        const grad = ctx.createLinearGradient(0, 0, 1000, 630);
-        grad.addColorStop(0, '#421045'); grad.addColorStop(1, '#14041f');
-        ctx.fillStyle = grad;
-      } else if (currentTheme.includes('friend')) {
-        const grad = ctx.createLinearGradient(0, 0, 1000, 630);
-        grad.addColorStop(0, '#0d2847'); grad.addColorStop(1, '#040c17');
-        ctx.fillStyle = grad;
-      } else {
-        const grad = ctx.createLinearGradient(0, 0, 1000, 630);
-        grad.addColorStop(0, '#07381f'); grad.addColorStop(1, '#02120a');
-        ctx.fillStyle = grad;
-      }
-      ctx.fillRect(0, 0, 1000, 630);
+      const themeImages = {
+        'theme-gold': '../../assets/card-gold.png',
+        'theme-birthday': '../../assets/card-birthday.png',
+        'theme-friend': '../../assets/card-friend.png',
+        'theme-luck': '../../assets/card-luck.png'
+      };
 
-      // حاشیه طلایی کارت
-      ctx.strokeStyle = '#e5c158';
-      ctx.lineWidth = 10;
-      ctx.strokeRect(15, 15, 970, 600);
+      const imgSrc = themeImages[currentTheme] || '../../assets/card-gold.png';
+      const bgImg = new Image();
+      bgImg.crossOrigin = "anonymous";
+      bgImg.src = imgSrc;
 
-      // چیپ کارت
-      const chipGrad = ctx.createLinearGradient(80, 160, 200, 250);
-      chipGrad.addColorStop(0, '#d4af37'); chipGrad.addColorStop(1, '#aa7c11');
-      ctx.fillStyle = chipGrad;
-      ctx.fillRect(80, 160, 130, 95);
-      ctx.strokeStyle = '#795b00';
-      ctx.lineWidth = 3;
-      ctx.strokeRect(80, 160, 130, 95);
+      bgImg.onload = function() {
+        ctx.drawImage(bgImg, 0, 0, 1000, 630);
 
-      // متون رسمی
-      ctx.direction = 'rtl';
-      ctx.textAlign = 'right';
+        ctx.direction = 'rtl';
+        ctx.textAlign = 'right';
 
-      ctx.fillStyle = '#e5c158';
-      ctx.font = 'bold 36px sans-serif';
-      ctx.fillText('SIMOR GIFT CARD 💳', 940, 80);
+        ctx.fillStyle = '#e5c158';
+        ctx.font = 'bold 36px sans-serif';
+        ctx.fillText('SIMOR GIFT CARD 💳', 940, 85);
 
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 30px sans-serif';
-      ctx.fillText(document.getElementById('preview-msg').innerText, 940, 330);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 32px sans-serif';
+        ctx.fillText(document.getElementById('preview-msg').innerText, 940, 360);
 
-      ctx.fillStyle = '#e5c158';
-      ctx.font = 'bold 26px sans-serif';
-      ctx.fillText('به نام: ' + document.getElementById('preview-to').innerText, 940, 550);
+        ctx.fillStyle = '#e5c158';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillText('به نام: ' + document.getElementById('preview-to').innerText, 940, 560);
 
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 26px sans-serif';
-      ctx.fillText('از طرف: ' + document.getElementById('preview-from').innerText, 300, 550);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillText('از طرف: ' + document.getElementById('preview-from').innerText, 350, 560);
 
-      // دانلود مستقیم فایل
-      const link = document.createElement('a');
-      link.download = 'Simor-Gift-Card.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+        const link = document.createElement('a');
+        link.download = 'Simor-Gift-Card.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      };
+
+      bgImg.onerror = function() {
+        alert('تصویر کارت یافت نشد.');
+      };
     }
   </script>
 </body>
