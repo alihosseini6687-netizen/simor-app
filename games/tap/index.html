@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>مینی گیم تپ سکه سیمُر</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0c0c10;
+      --card-bg: #14141b;
+      --card-inner: #1a1a24;
+      --gold: #e5c158;
+      --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
+      --text: #ffffff;
+      --text-muted: #8e8e98;
+      --border: rgba(212, 175, 55, 0.28);
+      --green: #34c759;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; text-align: center; overflow: hidden; }
+
+    /* نوار هدر */
+    .top-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px 14px; margin-bottom: 16px;
+    }
+    .btn-back {
+      background: #252532; color: var(--gold); border: 1px solid var(--border);
+      padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;
+    }
+
+    /* نوار آمار بالای سکه */
+    .stats-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; font-size: 12px;
+    }
+    .btn-boost {
+      background: rgba(212,175,55,0.15); border: 1px solid var(--gold);
+      color: var(--gold); padding: 4px 10px; border-radius: 8px; cursor: pointer; font-weight: bold;
+    }
+
+    /* موجودی بزرگ */
+    .score-display {
+      font-size: 38px; font-weight: 900; color: var(--gold); margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    /* سکه بزرگ و انیمیشن لمس */
+    .coin-wrapper {
+      position: relative; width: 230px; height: 230px; margin: 20px auto;
+    }
+    .big-coin {
+      width: 100%; height: 100%; border-radius: 50%;
+      background: radial-gradient(circle, #f9e8a2 10%, #d4af37 60%, #875e07 100%);
+      border: 8px solid #ffd700; box-shadow: 0 0 35px rgba(212, 175, 55, 0.45);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 90px; font-weight: 900; color: #3b2800; cursor: pointer;
+      transition: transform 0.06s ease;
+    }
+    .big-coin:active { transform: scale(0.93); }
+
+    /* عدد شناور +1 */
+    .floating-text {
+      position: absolute; color: #ffffff; font-weight: bold; font-size: 24px;
+      pointer-events: none; animation: floatUp 0.7s ease-out forwards; text-shadow: 0 0 8px rgba(212,175,55,0.8);
+    }
+    @keyframes floatUp {
+      0% { opacity: 1; transform: translateY(0); }
+      100% { opacity: 0; transform: translateY(-70px); }
+    }
+
+    /* نوار انرژی */
+    .energy-container { margin-top: 30px; text-align: right; }
+    .energy-labels { display: flex; justify-content: space-between; font-size: 13px; font-weight: bold; margin-bottom: 6px; }
+    .energy-bar-bg { width: 100%; height: 10px; background: #222230; border-radius: 6px; overflow: hidden; }
+    .energy-bar-fill { width: 100%; height: 100%; background: var(--green); border-radius: 6px; transition: width 0.15s ease; }
+
+    /* مودال ارتقا و بوسترها */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      z-index: 1000; align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-card {
+      background: var(--card-bg); border: 1px solid var(--gold);
+      border-radius: 16px; width: 100%; max-width: 320px; padding: 18px; text-align: center;
+    }
+    .boost-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-inner); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; font-size: 13px;
+    }
+    .btn-buy {
+      background: var(--gold-gradient); color: black; border: none;
+      padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 11px;
+    }
+    .btn-close {
+      width: 100%; background: #222230; color: white; border: none;
+      padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- هدر -->
+  <div class="top-bar">
+    <button class="btn-back" onclick="goBack()">🔙 برگشت به منو</button>
+    <div style="color: var(--gold); font-weight: bold; font-size: 14px;">🪙 مینی‌گیم تپ سکه</div>
+  </div>
+
+  <!-- نوار آمار -->
+  <div class="stats-bar">
+    <span>هر ضربه: <b id="tap-power-val">+۱</b></span>
+    <button class="btn-boost" onclick="openBoostModal()">ارتقاها و تقویت 🚀⚡</button>
+    <span>مجموع تپ‌ها: <b id="total-taps">۰</b></span>
+  </div>
+
+  <!-- نمایش امتیاز -->
+  <div class="score-display">
+    <span id="score-text">1,000</span>
+    <span style="font-size: 26px;">S</span>
+  </div>
+
+  <!-- سکه بزرگ کلیکی -->
+  <div class="coin-wrapper" id="coin-area">
+    <div class="big-coin" id="coin-btn" onclick="tapCoin(event)">S</div>
+  </div>
+
+  <!-- نوار انرژی ۵۰۰ تایی -->
+  <div class="energy-container">
+    <div class="energy-labels">
+      <span>⚡ انرژی باقی‌مانده</span>
+      <span id="energy-val">500 / 500</span>
+    </div>
+    <div class="energy-bar-bg">
+      <div class="energy-bar-fill" id="energy-fill"></div>
+    </div>
+  </div>
+
+  <!-- مودال تقویت‌کننده‌ها (Boosters) -->
+  <div class="modal-overlay" id="boost-modal">
+    <div class="modal-card">
+      <h3 style="color: var(--gold); margin-bottom: 12px;">🚀 تقویت‌کننده‌ها (بوسترها)</h3>
+      
+      <div class="boost-item">
+        <div style="text-align: right;">
+          <b>شارژ فوری انرژی</b>
+          <p style="font-size: 11px; color: var(--text-muted);">پر شدن ۵۰۰ انرژی</p>
+        </div>
+        <button class="btn-buy" onclick="buyFullEnergy()">۵۰ سکه</button>
+      </div>
+
+      <div class="boost-item">
+        <div style="text-align: right;">
+          <b>افزایش قدرت کلیک (+۱)</b>
+          <p style="font-size: 11px; color: var(--text-muted);">هر ضربه ۱ سکه بیشتر</p>
+        </div>
+        <button class="btn-buy" onclick="buyMultiTap()">۱۰۰ سکه</button>
+      </div>
+
+      <button class="btn-close" onclick="closeBoostModal()">بستن ✕</button>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(goBack);
+        }
+      }
+    } catch(e) {}
+
+    function goBack() {
+      window.location.href = '../../index.html';
+    }
+
+    let balance = 1000;
+    let energy = 500;
+    const maxEnergy = 500;
+    let tapPower = 1;
+    let totalTaps = 0;
+
+    // بارگیری اطلاعات
+    try {
+      balance = parseInt(localStorage.getItem('user_balance') || '1000');
+      tapPower = parseInt(localStorage.getItem('tap_power') || '1');
+      totalTaps = parseInt(localStorage.getItem('total_taps') || '0');
+    } catch(e) {}
+
+    function updateUI() {
+      document.getElementById('score-text').innerText = balance.toLocaleString();
+      document.getElementById('energy-val').innerText = `${energy} / ${maxEnergy}`;
+      document.getElementById('energy-fill').style.width = `${(energy / maxEnergy) * 100}%`;
+      document.getElementById('tap-power-val').innerText = `+${tapPower}`;
+      document.getElementById('total-taps').innerText = totalTaps.toLocaleString();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('user_balance', balance.toString());
+        localStorage.setItem('tap_power', tapPower.toString());
+        localStorage.setItem('total_taps', totalTaps.toString());
+      } catch(e) {}
+    }
+
+    // عملکرد تپ سکه همراه با انیمیشن عدد شناور
+    function tapCoin(e) {
+      if (energy <= 0) return;
+
+      try {
+        if (tg?.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg?.HapticFeedback) {
+          tg.HapticFeedback.impactOccurred('light');
+        }
+      } catch(err) {}
+
+      energy--;
+      balance += tapPower;
+      totalTaps++;
+      updateUI();
+      saveState();
+
+      // ایجاد افکت عدد شناور
+      const coinArea = document.getElementById('coin-area');
+      const floatEl = document.createElement('div');
+      floatEl.className = 'floating-text';
+      floatEl.innerText = `+${tapPower}`;
+      
+      const rect = coinArea.getBoundingClientRect();
+      const x = (e.clientX || (rect.left + rect.width / 2)) - rect.left - 15;
+      const y = (e.clientY || (rect.top + rect.height / 2)) - rect.top - 20;
+
+      floatEl.style.left = `${Math.max(20, Math.min(x, 180))}px`;
+      floatEl.style.top = `${Math.max(20, Math.min(y, 180))}px`;
+
+      coinArea.appendChild(floatEl);
+      setTimeout(() => floatEl.remove(), 700);
+    }
+
+    // شارژ خودکار انرژی (هر ۱.۵ ثانیه ۱ انرژی)
+    setInterval(() => {
+      if (energy < maxEnergy) {
+        energy++;
+        updateUI();
+      }
+    }, 1500);
+
+    // بوسترها
+    function openBoostModal() { document.getElementById('boost-modal').classList.add('open'); }
+    function closeBoostModal() { document.getElementById('boost-modal').classList.remove('open'); }
+
+    function buyFullEnergy() {
+      if (balance >= 50) {
+        balance -= 50;
+        energy = maxEnergy;
+        saveState();
+        updateUI();
+        closeBoostModal();
+        alert('⚡ انرژی شما با موفقیت فول شد!');
+      } else {
+        alert('موجودی سکه کافی نیست!');
+      }
+    }
+
+    function buyMultiTap() {
+      if (balance >= 100) {
+        balance -= 100;
+        tapPower++;
+        saveState();
+        updateUI();
+        closeBoostModal();
+        alert(`🚀 قدرت کلیک افزایش یافت! اکنون هر ضربه +${tapPower} سکه می‌دهد.`);
+      } else {
+        alert('موجودی سکه کافی نیست!');
+      }
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>
