@@ -488,6 +488,7 @@
           document.getElementById('p-name').innerText = fullName;
           document.getElementById('p-username').innerText = u.username ? '@' + u.username : '@User';
           document.getElementById('p-id').innerText = u.id || '702007470';
+          document.getElementById('p-gid').innerText = 's' + (u.id ? u.id.toString().slice(0, 7) : '7020074');
           if (u.id === 702007470) {
           const admBtn = document.getElementById('btn-admin-access');
           if (admBtn) admBtn.style.display = 'block';
