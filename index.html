@@ -28,7 +28,7 @@
     .tab-content.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* بنر مدیریت */
+    /* بنر مدیریت ادمین */
     .admin-banner {
       background: rgba(255, 59, 48, 0.12); border: 1px dashed var(--red);
       border-radius: 12px; padding: 10px 14px; display: flex;
@@ -36,7 +36,7 @@
     }
     .btn-admin { background: var(--red); color: white; border: none; padding: 6px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; }
 
-    /* کارت پروفایل خانه */
+    /* کارت کاربر */
     .user-card {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 16px; padding: 16px; margin-bottom: 14px; text-align: center;
@@ -56,7 +56,19 @@
     .progress-bar-bg { width: 100%; height: 7px; background: #222230; border-radius: 4px; overflow: hidden; }
     .progress-bar-fill { width: 26%; height: 100%; background: var(--gold-gradient); }
 
-    /* بخش‌های اصلی (۴ کارت ۲x۲) */
+    /* تقویم ورود ۷ روزه */
+    .streak-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px; margin-bottom: 14px;
+    }
+    .streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
+    .streak-day {
+      background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 8px; padding: 6px 2px; text-align: center; font-size: 10px;
+    }
+    .streak-day.active { border-color: var(--gold); background: rgba(212,175,55,0.15); color: var(--gold); }
+
+    /* بخش‌های اصلی ۲x۲ */
     .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
     .menu-card {
       background: var(--card-bg); border: 1px solid var(--border);
@@ -71,18 +83,6 @@
     .menu-card h4 { font-size: 13px; margin-bottom: 2px; }
     .menu-card p { font-size: 10px; color: var(--text-muted); }
 
-    /* تقویم ورود روزانه ۷ روزه */
-    .streak-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 12px; margin-bottom: 14px;
-    }
-    .streak-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-top: 8px; }
-    .streak-day {
-      background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 8px; padding: 6px 2px; text-align: center; font-size: 10px;
-    }
-    .streak-day.active { border-color: var(--gold); background: rgba(212,175,55,0.15); color: var(--gold); }
-
     /* شبکه ۳×۴ بازی‌ها */
     .games-grid-3x4 {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;
@@ -96,18 +96,7 @@
     .game-box span { font-size: 11px; font-weight: bold; }
     .game-box.empty { border: 1px dashed rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); opacity: 0.4; cursor: default; }
 
-    /* تب دوستان و رفرال */
-    .ref-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-    .ref-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; }
-    .ref-box h5 { font-size: 11px; color: var(--text-muted); }
-    .ref-box span { font-size: 15px; font-weight: bold; color: var(--gold); }
-    .ref-actions { display: flex; gap: 8px; margin-bottom: 14px; }
-    .btn-action {
-      flex: 1; background: var(--gold-gradient); color: #000; border: none;
-      padding: 10px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer;
-    }
-
-    /* تب گردونه شانس */
+    /* گردونه شانس */
     .wheel-container { position: relative; width: 260px; height: 260px; margin: 15px auto; }
     #wheel-canvas { width: 100%; height: 100%; border-radius: 50%; border: 5px solid var(--gold); }
     .wheel-pointer {
@@ -121,7 +110,16 @@
       border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer;
     }
 
-    /* تب تپ سکه */
+    /* جدول تاریخچه جوایز ۱۰ تایی */
+    .history-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px; margin-top: 20px;
+    }
+    .history-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 8px; }
+    .history-table th { color: var(--gold); padding: 6px; border-bottom: 1px solid var(--border); text-align: center; }
+    .history-table td { padding: 6px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
+
+    /* تپ سکه */
     .big-coin {
       width: 200px; height: 200px; border-radius: 50%;
       background: radial-gradient(circle, #f9e8a2, #d4af37 60%, #875e07);
@@ -139,6 +137,16 @@
       justify-content: space-between; align-items: center; margin-bottom: 10px;
     }
 
+    /* دوستان */
+    .ref-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
+    .ref-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; }
+    .ref-box h5 { font-size: 11px; color: var(--text-muted); }
+    .ref-box span { font-size: 15px; font-weight: bold; color: var(--gold); }
+    .btn-action {
+      background: var(--gold-gradient); color: #000; border: none;
+      padding: 10px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer;
+    }
+
     /* مودال‌ها */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
@@ -147,8 +155,17 @@
     .modal-overlay.open { display: flex; }
     .modal-card {
       background: var(--card-bg); border: 1px solid var(--gold);
-      border-radius: 16px; width: 100%; max-width: 350px; padding: 18px;
+      border-radius: 16px; width: 100%; max-width: 360px; padding: 18px;
+      max-height: 90vh; overflow-y: auto;
     }
+
+    /* پاپ‌آپ پیام لوکس به جای alert پیش‌فرض */
+    .custom-alert {
+      text-align: center; padding: 10px;
+    }
+    .custom-alert .alert-icon { font-size: 42px; margin-bottom: 8px; }
+    .custom-alert h3 { color: var(--gold); margin-bottom: 6px; font-size: 17px; }
+    .custom-alert p { color: var(--text); font-size: 13px; margin-bottom: 16px; line-height: 1.6; }
 
     /* نوار منوی پایین ۵ تایی */
     .bottom-nav {
@@ -175,13 +192,11 @@
 
   <!-- تب ۱: خانه -->
   <div id="tab-home" class="tab-content active">
-    <!-- بنر مدیریت مخصوص ادمین -->
     <div class="admin-banner" id="admin-banner" style="display: none;">
       <span id="txt-admin-title">👑 Admin Control Panel</span>
-      <button class="btn-admin" onclick="openModal('modal-admin')">Manage</button>
+      <button class="btn-admin" id="btn-admin-open" onclick="openModal('modal-admin')">Manage</button>
     </div>
 
-    <!-- کارت کاربر -->
     <div class="user-card">
       <div class="brand-title">Simor App 📁</div>
       <div class="brand-sub" id="txt-creator">Creator: Simor Academy</div>
@@ -218,19 +233,17 @@
     <div class="streak-card">
       <div style="font-size: 12px; font-weight: bold; margin-bottom: 6px;" id="txt-streak-title">Daily Streak Rewards 🎁</div>
       <div class="streak-grid">
-        <div class="streak-day active">Day 1<br>+5</div>
-        <div class="streak-day">Day 2<br>+10</div>
-        <div class="streak-day">Day 3<br>+15</div>
-        <div class="streak-day">Day 4<br>+20</div>
-        <div class="streak-day">Day 5<br>+25</div>
-        <div class="streak-day">Day 6<br>+30</div>
-        <div class="streak-day">Day 7<br>Spin 🎡</div>
+        <div class="streak-day active"><span class="d-txt">Day</span> 1<br>+5</div>
+        <div class="streak-day"><span class="d-txt">Day</span> 2<br>+10</div>
+        <div class="streak-day"><span class="d-txt">Day</span> 3<br>+15</div>
+        <div class="streak-day"><span class="d-txt">Day</span> 4<br>+20</div>
+        <div class="streak-day"><span class="d-txt">Day</span> 5<br>+25</div>
+        <div class="streak-day"><span class="d-txt">Day</span> 6<br>+30</div>
+        <div class="streak-day"><span class="d-txt">Day</span> 7<br>🎡</div>
       </div>
     </div>
 
-    <!-- بخش‌های اصلی ۲x۲ -->
     <div class="grid-2x2">
-      <!-- هاب مینی‌گیم‌ها (شبکه ۳x۴) -->
       <div class="menu-card" onclick="openModal('modal-games')" style="border-color: var(--gold);">
         <div class="icon-box" style="background: rgba(212,175,55,0.2);">🎮</div>
         <h4 style="color: var(--gold);" id="txt-mg-title">Mini Games</h4>
@@ -269,14 +282,30 @@
 
     <button id="btn-spin" class="btn-spin" onclick="spinWheel()">🎰 Spin Wheel</button>
     <div style="font-size: 12px; color: #ff9f0a; margin-top: 6px;" id="wheel-timer">Ready to Spin!</div>
+
+    <!-- جدول تاریخچه ۱۰ تایی جوایز -->
+    <div class="history-card">
+      <h4 style="color: var(--gold); font-size: 12px; margin-bottom: 6px;" id="txt-hist-title">📜 Recent Spin Rewards (Last 10)</h4>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th id="th-date">Date</th>
+            <th id="th-prize">Reward</th>
+          </tr>
+        </thead>
+        <tbody id="history-body">
+          <tr><td colspan="2" style="color: var(--text-muted);" id="txt-no-hist">No spins recorded yet</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- تب ۳: تپ سکه S -->
   <div id="tab-tap" class="tab-content">
     <div style="display: flex; justify-content: space-between; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; font-size: 12px;">
-      <span>Per Tap: <b>+1</b></span>
-      <span>Boosters 🚀</span>
-      <span>Taps: <b id="tap-count">0</b></span>
+      <span id="txt-per-tap">Per Tap: <b>+1</b></span>
+      <span id="txt-boosts">Boosters 🚀</span>
+      <span><span id="txt-taps-lbl">Taps</span>: <b id="tap-count">0</b></span>
     </div>
 
     <div style="font-size: 34px; font-weight: 900; text-align: center; margin: 16px 0; color: var(--gold);">
@@ -287,7 +316,7 @@
 
     <div style="margin-top: 20px;">
       <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
-        <span>⚡ Energy</span>
+        <span id="txt-energy-lbl">⚡ Energy</span>
         <span id="energy-text">500 / 500</span>
       </div>
       <div class="progress-bar-bg" style="height: 8px;">
@@ -301,20 +330,22 @@
     <h3 style="margin-bottom: 8px; color: var(--gold);" id="txt-task-h">Missions & Rewards</h3>
     <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 14px;" id="txt-task-sub">Join and earn coins after timer:</p>
 
-    <div class="task-card">
-      <div>
-        <h4 id="t1-title">Join Official Simor Channel</h4>
-        <span style="font-size: 11px; color: var(--gold);">+5 Points 🪙</span>
+    <div id="tasks-list">
+      <div class="task-card">
+        <div>
+          <h4 id="t1-title">Join Official Simor Channel</h4>
+          <span style="font-size: 11px; color: var(--gold);">+5 Points 🪙</span>
+        </div>
+        <button class="btn-action" style="max-width: 90px;" id="t1-btn" onclick="startTask('t1', 'https://t.me/SimorApp', 5)">Join</button>
       </div>
-      <button class="btn-action" style="max-width: 90px;" id="t1-btn" onclick="startTask('t1', 'https://t.me/SimorApp', 5)">Join</button>
-    </div>
 
-    <div class="task-card">
-      <div>
-        <h4 id="t2-title">Visit Instagram Page</h4>
-        <span style="font-size: 11px; color: var(--gold);">+5 Points 🪙</span>
+      <div class="task-card">
+        <div>
+          <h4 id="t2-title">Visit Instagram Page</h4>
+          <span style="font-size: 11px; color: var(--gold);">+5 Points 🪙</span>
+        </div>
+        <button class="btn-action" style="max-width: 90px;" id="t2-btn" onclick="startTask('t2', 'https://instagram.com', 5)">Visit</button>
       </div>
-      <button class="btn-action" style="max-width: 90px;" id="t2-btn" onclick="startTask('t2', 'https://instagram.com', 5)">Visit</button>
     </div>
   </div>
 
@@ -338,16 +369,16 @@
       </div>
     </div>
 
-    <div class="ref-actions">
-      <button class="btn-action" onclick="shareRefLink()" id="btn-share">Invite a Friend</button>
-      <button class="btn-action" style="background: #252532; color: white;" onclick="copyRefLink()" id="btn-copy">Copy Link</button>
+    <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+      <button class="btn-action" style="flex: 1;" onclick="shareRefLink()" id="btn-share">Invite a Friend</button>
+      <button class="btn-action" style="flex: 1; background: #252532; color: white;" onclick="copyRefLink()" id="btn-copy">Copy Link</button>
     </div>
 
     <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-top: 10px;">
       <span style="font-size: 12px;" id="txt-enter-code">Enter Friend Code:</span>
       <div style="display: flex; gap: 8px; margin-top: 6px;">
         <input type="text" id="friend-code-input" placeholder="s7020074" style="flex: 1; background: var(--card-inner); border: 1px solid var(--border); color: white; padding: 8px; border-radius: 8px;">
-        <button class="btn-action" style="max-width: 80px;" onclick="applyReferral()">Submit</button>
+        <button class="btn-action" style="max-width: 80px;" onclick="applyReferral()" id="btn-submit-ref">Submit</button>
       </div>
     </div>
   </div>
@@ -356,7 +387,6 @@
   <div id="tab-profile" class="tab-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
       <h3 style="color: var(--gold);" id="txt-prof-title">User Profile</h3>
-      <!-- چرخ‌دنده تنظیمات زبان -->
       <button onclick="openModal('modal-lang')" style="background: none; border: none; font-size: 22px; cursor: pointer;">⚙️</button>
     </div>
 
@@ -379,35 +409,33 @@
       </div>
       <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 13px;">
         <span id="txt-prof-rank">Rank:</span>
-        <span style="color: var(--gold);">Level 1 (<span id="p-coins">1000</span> S)</span>
+        <span style="color: var(--gold);"><span id="txt-prof-lvl">Level 1</span> (<span id="p-coins">1000</span> S)</span>
       </div>
     </div>
 
-    <button class="btn-action" style="width: 100%; padding: 12px;" onclick="tg?.close()">Close App</button>
+    <button class="btn-action" style="width: 100%; padding: 12px;" onclick="tg?.close()" id="btn-close-app">Close App</button>
   </div>
 
   <!-- مودال ۱: هاب ۳x۴ بازی‌ها -->
   <div class="modal-overlay" id="modal-games">
     <div class="modal-card" style="max-width: 360px;">
       <h3 style="color: var(--gold); text-align: center; margin-bottom: 4px;" id="txt-m-gh">🎮 Games Hub</h3>
-      <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 10px;">Select a game (Shared Balance)</p>
+      <p style="font-size: 11px; color: var(--text-muted); text-align: center; margin-bottom: 10px;" id="txt-m-gh-sub">Select a game (Shared Balance)</p>
 
       <div class="games-grid-3x4">
-        <!-- ردیف بالا: ۳ بازی فعال -->
         <div class="game-box" onclick="closeModal('modal-games'); switchNav('tap');">
           <div style="font-size: 24px; font-weight: bold; color: var(--gold);">S</div>
-          <span style="margin-top: 4px;">Coin Tap</span>
+          <span style="margin-top: 4px;" id="txt-g-tap">Coin Tap</span>
         </div>
-        <div class="game-box" onclick="alert('Slot Machine coming soon!')">
+        <div class="game-box" onclick="showPopup('Slot Machine', 'Lucky Slot is coming soon with Box, Diamond & 7 symbols!', '🎰')">
           <img src="assets/chest.png">
-          <span>Lucky Slot</span>
+          <span id="txt-g-slot">Lucky Slot</span>
         </div>
         <div class="game-box" onclick="openGame('games/poker/index.html')">
           <img src="assets/poker-chip.png">
-          <span style="color: var(--gold);">Poker</span>
+          <span style="color: var(--gold);" id="txt-g-poker">Poker</span>
         </div>
 
-        <!-- ۹ خانه خالی طبق فایل ورد -->
         <div class="game-box empty"><span>Coming</span></div>
         <div class="game-box empty"><span>Coming</span></div>
         <div class="game-box empty"><span>Coming</span></div>
@@ -419,33 +447,33 @@
         <div class="game-box empty"><span>Coming</span></div>
       </div>
 
-      <button class="btn-action" style="width: 100%; margin-top: 14px; background: #222230; color: white;" onclick="closeModal('modal-games')">Close ✕</button>
+      <button class="btn-action" style="width: 100%; margin-top: 14px; background: #222230; color: white;" onclick="closeModal('modal-games')" id="btn-close-games">Close ✕</button>
     </div>
   </div>
 
   <!-- مودال ۲: درباره ما و قوانین -->
   <div class="modal-overlay" id="modal-about">
     <div class="modal-card">
-      <h3 style="color: var(--gold); margin-bottom: 8px;">ℹ️ About Simor Academy</h3>
-      <p style="font-size: 12px; line-height: 1.7; color: var(--text-muted); margin-bottom: 12px;">
+      <h3 style="color: var(--gold); margin-bottom: 8px;" id="txt-ab-h">ℹ️ About Simor Academy</h3>
+      <p style="font-size: 12px; line-height: 1.7; color: var(--text-muted); margin-bottom: 12px;" id="txt-ab-body">
         <b>Simor Academy</b> by Seyed Ali Hosseini.<br>
         Professional editing academy & gaming ecosystem.<br>
         All games share the same secure coin balance.
       </p>
-      <h4 style="color: var(--gold); margin-bottom: 6px;">📜 Rules & Fair Play</h4>
-      <p style="font-size: 11px; line-height: 1.6; color: var(--text-muted); margin-bottom: 14px;">
+      <h4 style="color: var(--gold); margin-bottom: 6px;" id="txt-ab-rh">📜 Rules & Fair Play</h4>
+      <p style="font-size: 11px; line-height: 1.6; color: var(--text-muted); margin-bottom: 14px;" id="txt-ab-rbody">
         1. Free wheel resets daily at 00:00 UTC (London).<br>
         2. Quitting poker mid-hand is counted as Fold.<br>
         3. Fair play is strictly enforced.
       </p>
-      <button class="btn-action" style="width: 100%; background: #222230; color: white;" onclick="closeModal('modal-about')">Close ✕</button>
+      <button class="btn-action" style="width: 100%; background: #222230; color: white;" onclick="closeModal('modal-about')" id="btn-close-about">Close ✕</button>
     </div>
   </div>
 
   <!-- مودال ۳: انتخاب زبان -->
   <div class="modal-overlay" id="modal-lang">
     <div class="modal-card" style="text-align: center;">
-      <h3 style="color: var(--gold); margin-bottom: 12px;">🌐 Select Language / انتخاب زبان</h3>
+      <h3 style="color: var(--gold); margin-bottom: 12px;">🌐 Select Language</h3>
       <div style="display: flex; flex-direction: column; gap: 8px;">
         <button class="btn-action" onclick="setLanguage('en')">English (Default)</button>
         <button class="btn-action" onclick="setLanguage('ru')">Русский</button>
@@ -457,24 +485,50 @@
   <!-- مودال ۴: پنل مدیریت ادمین -->
   <div class="modal-overlay" id="modal-admin">
     <div class="modal-card">
-      <h3 style="color: var(--red); text-align: center; margin-bottom: 12px;">👑 Admin Panel</h3>
+      <h3 style="color: var(--red); text-align: center; margin-bottom: 12px;">👑 Admin Control Panel</h3>
       
-      <!-- شارژ دستی برای دیگران -->
-      <div style="margin-bottom: 12px;">
-        <span style="font-size: 12px;">Transfer coins to User ID:</span>
-        <input type="text" id="admin-target-id" placeholder="User ID (e.g. 702007470)" style="width: 100%; padding: 8px; margin: 4px 0; background: var(--card-inner); border: 1px solid var(--border); color: white; border-radius: 6px;">
-        <input type="number" id="admin-target-amount" placeholder="Coin Amount" style="width: 100%; padding: 8px; background: var(--card-inner); border: 1px solid var(--border); color: white; border-radius: 6px;">
-        <button class="btn-action" style="width: 100%; margin-top: 6px;" onclick="adminTransfer()">Send Coins</button>
+      <!-- ارسال پیام به کانال -->
+      <div style="background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 12px;">
+        <h5 style="color: var(--gold); margin-bottom: 6px;">📢 Send Message to Simor Channel (@SimorApp):</h5>
+        <textarea id="admin-broadcast-msg" rows="3" placeholder="Enter announcement text..." style="width: 100%; background: #101015; border: 1px solid var(--border); color: white; padding: 8px; border-radius: 6px; font-size: 12px; resize: none;"></textarea>
+        <button class="btn-action" style="width: 100%; margin-top: 6px; background: #007aff; color: white;" onclick="sendBroadcast()">🚀 Send to Channel (@SimorApp)</button>
+      </div>
+
+      <!-- افزودن تسک دلخواه -->
+      <div style="background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 12px;">
+        <h5 style="color: var(--gold); margin-bottom: 6px;">➕ Add Custom Task:</h5>
+        <input type="text" id="new-task-title" placeholder="Task Title (e.g. Subscribe Youtube)" style="width: 100%; padding: 6px; margin-bottom: 4px; background: #101015; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 12px;">
+        <input type="text" id="new-task-url" placeholder="https://..." style="width: 100%; padding: 6px; margin-bottom: 4px; background: #101015; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 12px;">
+        <input type="number" id="new-task-coins" placeholder="Reward Coins (e.g. 10)" style="width: 100%; padding: 6px; margin-bottom: 6px; background: #101015; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 12px;">
+        <button class="btn-action" style="width: 100%;" onclick="addCustomTask()">Add Task</button>
+      </div>
+
+      <!-- واریز به کاربر دیگر -->
+      <div style="background: var(--card-inner); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 12px;">
+        <h5 style="color: var(--gold); margin-bottom: 6px;">💸 Transfer Coins by User ID:</h5>
+        <input type="text" id="admin-target-id" placeholder="Telegram User ID (e.g. 702007470)" style="width: 100%; padding: 6px; margin-bottom: 4px; background: #101015; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 12px;">
+        <input type="number" id="admin-target-amount" placeholder="Amount (e.g. 500)" style="width: 100%; padding: 6px; margin-bottom: 6px; background: #101015; border: 1px solid var(--border); color: white; border-radius: 6px; font-size: 12px;">
+        <button class="btn-action" style="width: 100%;" onclick="adminTransfer()">Transfer Coins</button>
       </div>
 
       <!-- دکمه‌های تست سریع -->
-      <div style="display: flex; gap: 6px; margin-bottom: 8px;">
+      <div style="display: flex; gap: 6px; margin-bottom: 6px;">
         <button class="btn-admin" style="flex: 1; background: var(--green);" onclick="addCoins(500)">+500</button>
         <button class="btn-admin" style="flex: 1; background: var(--gold); color: black;" onclick="addCoins(2000)">+2000</button>
       </div>
-      <button class="btn-admin" style="width: 100%; margin-bottom: 8px;" onclick="setCoins(0)">Zero Coins</button>
-      <button class="btn-admin" style="width: 100%; background: #5856d6; margin-bottom: 12px;" onclick="resetWheel()">Reset Wheel Timer</button>
+      <button class="btn-admin" style="width: 100%; margin-bottom: 6px;" onclick="setCoins(0)">Zero Coins</button>
+      <button class="btn-admin" style="width: 100%; background: #5856d6; margin-bottom: 12px;" onclick="resetWheel()">Reset Wheel 24h Timer</button>
       <button class="btn-action" style="width: 100%; background: #222230; color: white;" onclick="closeModal('modal-admin')">Close Admin ✕</button>
+    </div>
+  </div>
+
+  <!-- مودال ۵: پاپ‌آپ اختصاصی لوکس (جایگزین پنجره سفید alert) -->
+  <div class="modal-overlay" id="modal-alert">
+    <div class="modal-card custom-alert">
+      <div class="alert-icon" id="pop-icon">🎉</div>
+      <h3 id="pop-title">Notice</h3>
+      <p id="pop-msg">Message</p>
+      <button class="btn-action" style="width: 100%;" onclick="closeModal('modal-alert')">OK</button>
     </div>
   </div>
 
@@ -503,7 +557,7 @@
 
   <script>
     const tg = window.Telegram?.WebApp;
-    const ADMIN_ID = 702007470; // شناسه عددی ادمین
+    const ADMIN_ID = 702007470;
 
     if (tg) {
       tg.ready();
@@ -518,41 +572,69 @@
         document.getElementById('p-id').innerText = u.id || '702007470';
         document.getElementById('p-gid').innerText = 's' + (u.id ? u.id.toString().slice(0, 7) : '7020074');
 
-        // فعال‌سازی پنل مدیریت فقط برای ادمین
         if (u.id === ADMIN_ID || !u.id) {
           document.getElementById('admin-banner').style.display = 'flex';
         }
       }
     }
 
-    // متغیرهای اصلی
     let balance = 1000;
     let energy = 500;
     let tapCount = 0;
     let currentLang = localStorage.getItem('simor_lang') || 'en';
 
-    // سیستم ترجمه (i18n)
+    // سیستم جامع ترجمه (i18n)
     const translations = {
       en: {
-        creator: 'Creator: Simor Academy', role: 'Player:', coins: 'Coin Balance', level: 'Player Level',
-        mgTitle: 'Mini Games', mgSub: 'Poker, Slots, Tap', missions: 'Missions', earn: 'Earn Coins',
-        about: 'About & Rules', aboutSub: 'Guides & Simor Info', friends: 'Friends', friendsSub: 'Referral & Bonus',
-        streak: 'Daily Streak Rewards 🎁', wheelTitle: '🎡 Lucky Golden Wheel', wheelSub: '1 Free spin every 24h (Resets 00:00 London UTC)',
-        spinBtn: '🎰 Spin Wheel', readySpin: 'Ready to Spin!', home: 'Home', wheel: 'Wheel', tasks: 'Tasks', profile: 'Profile'
+        adminTitle: '👑 Admin Control Panel', manage: 'Manage', creator: 'Creator: Simor Academy', role: 'Player:',
+        coins: 'Coin Balance', level: 'Player Level', prog: 'Progress to Level 2', streak: 'Daily Streak Rewards 🎁',
+        day: 'Day', mgTitle: 'Mini Games', mgSub: 'Poker, Slots, Tap', tasksTitle: 'Missions', tasksSub: 'Earn Coins',
+        aboutTitle: 'About & Rules', aboutSub: 'Guides & Simor Info', friendsTitle: 'Friends', friendsSub: 'Referral & Bonus',
+        whTitle: '🎡 Lucky Golden Wheel', whSub: '1 Free spin every 24h (Resets 00:00 London UTC)', spinBtn: '🎰 Spin Wheel',
+        whReady: 'Ready to Spin!', whHist: '📜 Recent Spin Rewards (Last 10)', thDate: 'Date', thPrize: 'Reward',
+        noHist: 'No spins recorded yet', perTap: 'Per Tap: ', boosts: 'Boosters 🚀', taps: 'Taps', energy: '⚡ Energy',
+        taskH: 'Missions & Rewards', taskSub: 'Join and earn coins after timer:', join: 'Join', visit: 'Visit',
+        frTitle: 'Invite Friends', frSub: 'Share your link and earn bonus coins!', frTotal: 'Total Friends',
+        frActive: 'Active', frEarned: 'Earned', inviteBtn: 'Invite a Friend', copyBtn: 'Copy Link',
+        enterCode: 'Enter Friend Code:', submit: 'Submit', profTitle: 'User Profile', profName: 'Name:',
+        profUser: 'Telegram ID:', profId: 'User ID:', profGid: 'Game ID:', profRank: 'Rank:', profLvl: 'Level 1',
+        closeApp: 'Close App', ghTitle: '🎮 Games Hub', ghSub: 'Select a game (Shared Balance)',
+        gTap: 'Coin Tap', gSlot: 'Lucky Slot', gPoker: 'Poker', close: 'Close ✕',
+        home: 'Home', wheel: 'Wheel', tasks: 'Tasks', profile: 'Profile'
       },
       ru: {
-        creator: 'Создатель: Академия Simor', role: 'Игрок:', coins: 'Баланс монет', level: 'Уровень игрока',
-        mgTitle: 'Мини-игры', mgSub: 'Покер, Слоты, Тап', missions: 'Задания', earn: 'Заработать монеты',
-        about: 'О нас и Правила', aboutSub: 'Гайды и Инфо', friends: 'Друзья', friendsSub: 'Рефералы и бонусы',
-        streak: 'Ежедневные награды 🎁', wheelTitle: '🎡 Золотое Колесо Удачи', wheelSub: '1 спин в 24ч (Сброс 00:00 Лондон)',
-        spinBtn: '🎰 Крутить колесо', readySpin: 'Готово к вращению!', home: 'Главная', wheel: 'Колесо', tasks: 'Задания', profile: 'Профиль'
+        adminTitle: '👑 Панель управления', manage: 'Управление', creator: 'Создатель: Академия Simor', role: 'Игрок:',
+        coins: 'Баланс монет', level: 'Уровень игрока', prog: 'Прогресс до 2 уровня', streak: 'Ежедневные награды 🎁',
+        day: 'День', mgTitle: 'Мини-игры', mgSub: 'Покер, Слоты, Тап', tasksTitle: 'Задания', tasksSub: 'Заработать монеты',
+        aboutTitle: 'О нас и Правила', aboutSub: 'Гайды и Инфо', friendsTitle: 'Друзья', friendsSub: 'Рефералы и бонусы',
+        whTitle: '🎡 Золотое Колесо Удачи', whSub: '1 спин в 24ч (Сброс 00:00 Лондон)', spinBtn: '🎰 Крутить колесо',
+        whReady: 'Готово к вращению!', whHist: '📜 История наград (Последние 10)', thDate: 'Дата', thPrize: 'Награда',
+        noHist: 'История пуста', perTap: 'За клик: ', boosts: 'Бустеры 🚀', taps: 'Клики', energy: '⚡ Энергия',
+        taskH: 'Задания и Награды', taskSub: 'Выполняйте задания и получайте монеты:', join: 'Войти', visit: 'Перейти',
+        frTitle: 'Пригласить друзей', frSub: 'Делитесь ссылкой и получайте бонусы!', frTotal: 'Всего друзей',
+        frActive: 'Активные', frEarned: 'Заработано', inviteBtn: 'Пригласить друга', copyBtn: 'Копировать ссылку',
+        enterCode: 'Введите код друга:', submit: 'Отправить', profTitle: 'Профиль пользователя', profName: 'Имя:',
+        profUser: 'Telegram ID:', profId: 'User ID:', profGid: 'Game ID:', profRank: 'Ранг:', profLvl: 'Уровень 1',
+        closeApp: 'Закрыть приложение', ghTitle: '🎮 Центр Игр', ghSub: 'Выберите игру (Общий баланс)',
+        gTap: 'Тап монеты', gSlot: 'Слоты удачи', gPoker: 'Покер', close: 'Закрыть ✕',
+        home: 'Главная', wheel: 'Колесо', tasks: 'Задания', profile: 'Профиль'
       },
       fa: {
-        creator: 'سازنده: آکادمی simor', role: 'بازیکن:', coins: 'موجودی سکه', level: 'سطح بازیکن',
-        mgTitle: 'مینی گیم‌ها', mgSub: 'پوکر، اسلات و تپ', missions: 'ماموریت‌ها', earn: 'کسب سکه و امتیاز',
-        about: 'درباره ما و قوانین', aboutSub: 'توضیحات و آموزش', friends: 'دوستان', friendsSub: 'کسب سکه با رفرال',
-        streak: 'پاداش ورود ۷ روزه 🎁', wheelTitle: '🎡 گردونه شانس طلایی', wheelSub: 'هر ۲۴ ساعت ۱ شانس (ریست ۰۰:۰۰ لندن)',
-        spinBtn: '🎰 چرخاندن گردونه', readySpin: 'آماده چرخش رایگان!', home: 'خانه', wheel: 'گردونه', tasks: 'تسک‌ها', profile: 'حساب'
+        adminTitle: '👑 پنل مدیریت آنلاین', manage: 'مدیریت', creator: 'سازنده: آکادمی simor', role: 'بازیکن:',
+        coins: 'موجودی سکه', level: 'سطح بازیکن', prog: 'پیشرفت تا سطح ۲', streak: 'پاداش ورود ۷ روزه 🎁',
+        day: 'روز', mgTitle: 'مینی گیم‌ها', mgSub: 'پوکر، اسلات و تپ', tasksTitle: 'ماموریت‌ها', tasksSub: 'کسب سکه و امتیاز',
+        aboutTitle: 'درباره ما و قوانین', aboutSub: 'توضیحات و آموزش', friendsTitle: 'دوستان', friendsSub: 'کسب سکه با رفرال',
+        whTitle: '🎡 گردونه شانس طلایی', whSub: 'هر ۲۴ ساعت ۱ شانس (ریست ۰۰:۰۰ لندن)', spinBtn: '🎰 چرخاندن گردونه',
+        whReady: 'آماده چرخش رایگان!', whHist: '📜 تاریخچه جوایز اخیر (۱۰ روز گذشته)', thDate: 'تاریخ', thPrize: 'جایزه',
+        noHist: 'هنوز چرخشی ثبت نشده است', perTap: 'هر کلیک: ', boosts: 'ارتقاها 🚀', taps: 'تپ‌ها', energy: '⚡ انرژی',
+        taskH: 'ماموریت‌های پاداش‌دار', taskSub: 'روی هر تسک بزنید و پس از تایمر سکه بگیرید:', join: 'عضویت', visit: 'مشاهده',
+        frTitle: 'دعوت از دوستان', frSub: 'لینک خود را ارسال کنید و پاداش بگیرید!', frTotal: 'تعداد کل',
+        frActive: 'فعال', frEarned: 'مجموع پاداش', inviteBtn: 'دعوت از دوستان', copyBtn: 'کپی لینک',
+        enterCode: 'کد معرف دوست:', submit: 'ثبت کد', profTitle: 'مشخصات حساب کاربری', profName: 'نام:',
+        profUser: 'آیدی تلگرام:', profId: 'شناسه عددی:', profGid: 'کد بازی:', profRank: 'رتبه کاربری:', profLvl: 'سطح ۱',
+        closeApp: 'بستن اپلیکیشن', ghTitle: '🎮 انتخاب مینی‌گیم', ghSub: 'بازی مورد نظر را انتخاب کنید (موجودی مشترک)',
+        gTap: 'تپ سکه S', gSlot: 'اسلات شانس', gPoker: 'پوکر تگزاس', close: 'بستن ✕',
+        home: 'خانه', wheel: 'گردونه', tasks: 'تسک‌ها', profile: 'حساب'
       }
     };
 
@@ -561,250 +643,56 @@
       localStorage.setItem('simor_lang', lang);
       const t = translations[lang];
       document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
+
+      document.getElementById('txt-admin-title').innerText = t.adminTitle;
+      document.getElementById('btn-admin-open').innerText = t.manage;
       document.getElementById('txt-creator').innerText = t.creator;
       document.getElementById('txt-role').innerText = t.role;
       document.getElementById('txt-coins-title').innerText = t.coins;
       document.getElementById('txt-level-title').innerText = t.level;
+      document.getElementById('txt-prog').innerText = t.prog;
+      document.getElementById('txt-streak-title').innerText = t.streak;
+      document.querySelectorAll('.d-txt').forEach(el => el.innerText = t.day);
+
       document.getElementById('txt-mg-title').innerText = t.mgTitle;
       document.getElementById('txt-mg-sub').innerText = t.mgSub;
-      document.getElementById('txt-tasks-title').innerText = t.missions;
-      document.getElementById('txt-tasks-sub').innerText = t.earn;
-      document.getElementById('txt-about-title').innerText = t.about;
+      document.getElementById('txt-tasks-title').innerText = t.tasksTitle;
+      document.getElementById('txt-tasks-sub').innerText = t.tasksSub;
+      document.getElementById('txt-about-title').innerText = t.aboutTitle;
       document.getElementById('txt-about-sub').innerText = t.aboutSub;
-      document.getElementById('txt-friends-title').innerText = t.friends;
+      document.getElementById('txt-friends-title').innerText = t.friendsTitle;
       document.getElementById('txt-friends-sub').innerText = t.friendsSub;
-      document.getElementById('txt-streak-title').innerText = t.streak;
-      document.getElementById('txt-wh-title').innerText = t.wheelTitle;
-      document.getElementById('txt-wh-sub').innerText = t.wheelSub;
+
+      document.getElementById('txt-wh-title').innerText = t.whTitle;
+      document.getElementById('txt-wh-sub').innerText = t.whSub;
       document.getElementById('btn-spin').innerText = t.spinBtn;
-      document.getElementById('nb-home').innerText = t.home;
-      document.getElementById('nb-wheel').innerText = t.wheel;
-      document.getElementById('nb-tasks').innerText = t.tasks;
-      document.getElementById('nb-profile').innerText = t.profile;
-    }
+      document.getElementById('txt-hist-title').innerText = t.whHist;
+      document.getElementById('th-date').innerText = t.thDate;
+      document.getElementById('th-prize').innerText = t.thPrize;
 
-    function setLanguage(lang) {
-      applyLang(lang);
-      closeModal('modal-lang');
-    }
+      document.getElementById('txt-per-tap').innerHTML = `${t.perTap}<b>+1</b>`;
+      document.getElementById('txt-boosts').innerText = t.boosts;
+      document.getElementById('txt-taps-lbl').innerText = t.taps;
+      document.getElementById('txt-energy-lbl').innerText = t.energy;
 
-    // پاپ‌آپ زبان در اولین ورود
-    if (!localStorage.getItem('simor_lang_chosen')) {
-      setTimeout(() => openModal('modal-lang'), 300);
-      localStorage.setItem('simor_lang_chosen', 'true');
-    }
+      document.getElementById('txt-task-h').innerText = t.taskH;
+      document.getElementById('txt-task-sub').innerText = t.taskSub;
+      const b1 = document.getElementById('t1-btn'); if (b1 && !b1.disabled) b1.innerText = t.join;
+      const b2 = document.getElementById('t2-btn'); if (b2 && !b2.disabled) b2.innerText = t.visit;
 
-    // لود و ذخیره موجودی
-    function loadBalance() {
-      if (tg?.CloudStorage) {
-        tg.CloudStorage.getItem('user_balance', (err, val) => {
-          if (!err && val) balance = parseInt(val);
-          updateUI();
-        });
-      } else {
-        balance = parseInt(localStorage.getItem('user_balance') || '1000');
-        updateUI();
-      }
-    }
+      document.getElementById('txt-fr-title').innerText = t.frTitle;
+      document.getElementById('txt-fr-sub').innerText = t.frSub;
+      document.getElementById('txt-fr-total').innerText = t.frTotal;
+      document.getElementById('txt-fr-active').innerText = t.frActive;
+      document.getElementById('txt-fr-coins').innerText = t.frEarned;
+      document.getElementById('btn-share').innerText = t.inviteBtn;
+      document.getElementById('btn-copy').innerText = t.copyBtn;
+      document.getElementById('txt-enter-code').innerText = t.enterCode;
+      document.getElementById('btn-submit-ref').innerText = t.submit;
 
-    function saveBalance() {
-      if (tg?.CloudStorage) {
-        tg.CloudStorage.setItem('user_balance', balance.toString());
-      } else {
-        localStorage.setItem('user_balance', balance.toString());
-      }
-      updateUI();
-    }
-
-    function updateUI() {
-      document.getElementById('home-coins').innerText = balance.toLocaleString();
-      document.getElementById('tap-coins').innerText = balance.toLocaleString();
-      document.getElementById('p-coins').innerText = balance.toLocaleString();
-    }
-
-    // ناوبری
-    function switchNav(tab) {
-      tg?.HapticFeedback?.impactOccurred('light');
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-
-      const targetTab = document.getElementById('tab-' + tab);
-      if (targetTab) targetTab.classList.add('active');
-
-      const targetBtn = document.getElementById('btn-' + tab);
-      if (targetBtn) targetBtn.classList.add('active');
-    }
-
-    function openModal(id) {
-      document.getElementById(id).classList.add('open');
-    }
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('open');
-    }
-
-    function openGame(path) {
-      window.location.href = path;
-    }
-
-    // تپ سکه
-    function handleTap(e) {
-      if (energy <= 0) return;
-      tg?.HapticFeedback?.impactOccurred('light');
-      energy--;
-      balance++;
-      tapCount++;
-      document.getElementById('tap-count').innerText = tapCount;
-      document.getElementById('energy-text').innerText = `${energy} / 500`;
-      document.getElementById('energy-fill').style.width = `${(energy / 500) * 100}%`;
-      updateUI();
-      saveBalance();
-    }
-
-    // تسک‌ها با تایمر ۳۰ ثانیه‌ای و رفع باگ بسته‌شدن
-    function startTask(id, url, reward) {
-      if (tg?.openTelegramLink && url.includes('t.me')) {
-        tg.openTelegramLink(url);
-      } else if (tg?.openLink) {
-        tg.openLink(url);
-      } else {
-        window.open(url, '_blank');
-      }
-
-      const btn = document.getElementById(id + '-btn');
-      btn.disabled = true;
-      let left = 30;
-      btn.innerText = left + 's';
-
-      const timer = setInterval(() => {
-        left--;
-        btn.innerText = left + 's';
-        if (left <= 0) {
-          clearInterval(timer);
-          btn.innerText = 'Claim';
-          btn.disabled = false;
-          btn.onclick = () => {
-            balance += reward;
-            saveBalance();
-            btn.innerText = 'Done ✓';
-            btn.disabled = true;
-            btn.style.background = '#252532';
-            btn.style.color = '#34c759';
-            alert(`+${reward} S Added!`);
-          };
-        }
-      }, 1000);
-    }
-
-    // رفرال
-    function shareRefLink() {
-      const u = tg?.initDataUnsafe?.user;
-      const gid = 's' + (u?.id ? u.id.toString().slice(0, 7) : '7020074');
-      const shareText = `Join Simor App with my code: ${gid}!`;
-      const shareUrl = `https://t.me/SimorApp_bot?start=${gid}`;
-      if (tg?.openTelegramLink) {
-        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
-      } else {
-        navigator.clipboard.writeText(shareUrl);
-        alert('Referral link copied!');
-      }
-    }
-    function copyRefLink() {
-      const u = tg?.initDataUnsafe?.user;
-      const gid = 's' + (u?.id ? u.id.toString().slice(0, 7) : '7020074');
-      navigator.clipboard.writeText(`https://t.me/SimorApp_bot?start=${gid}`);
-      alert('Link copied to clipboard!');
-    }
-    function applyReferral() {
-      const code = document.getElementById('friend-code-input').value.trim();
-      if (code.startsWith('s') && code.length >= 6) {
-        balance += 25;
-        saveBalance();
-        alert('Referral bonus +25 S claimed!');
-      } else {
-        alert('Invalid code!');
-      }
-    }
-
-    // ابزارهای تست ادمین
-    function addCoins(num) { balance += num; saveBalance(); alert(`+${num} S added!`); }
-    function setCoins(num) { balance = num; saveBalance(); alert('Coins reset to ' + num); }
-    function resetWheel() { localStorage.removeItem('last_spin_day'); alert('Wheel timer reset!'); }
-    function adminTransfer() {
-      const target = document.getElementById('admin-target-id').value;
-      const amt = parseInt(document.getElementById('admin-target-amount').value);
-      if (target && amt) {
-        alert(`Transferred ${amt} S to Telegram ID: ${target}`);
-      }
-    }
-
-    // گردونه شانس با ریست ۰۰:۰۰ لندن (UTC)
-    const canvas = document.getElementById('wheel-canvas');
-    const ctx = canvas.getContext('2d');
-    const items = ['15 S', '0 S', '2 S', '0 S', '5 S', 'Spin Again'];
-    const colors = ['#d4af37', '#1a1a24', '#f9e8a2', '#1a1a24', '#aa7c11', '#14141b'];
-    let currentAngle = 0;
-    let spinning = false;
-
-    function drawWheel() {
-      const arc = (2 * Math.PI) / items.length;
-      ctx.clearRect(0, 0, 260, 260);
-      for (let i = 0; i < items.length; i++) {
-        const angle = currentAngle + i * arc;
-        ctx.beginPath();
-        ctx.moveTo(130, 130);
-        ctx.arc(130, 130, 124, angle, angle + arc);
-        ctx.fillStyle = colors[i];
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.save();
-        ctx.translate(130, 130);
-        ctx.rotate(angle + arc / 2);
-        ctx.textAlign = 'right';
-        ctx.fillStyle = (i % 2 === 0) ? '#000000' : '#ffffff';
-        ctx.font = 'bold 12px sans-serif';
-        ctx.fillText(items[i], 110, 4);
-        ctx.restore();
-      }
-    }
-
-    function spinWheel() {
-      const now = new Date();
-      const todayUTC = now.getUTCFullYear() + '-' + now.getUTCMonth() + '-' + now.getUTCDate();
-      if (localStorage.getItem('last_spin_day') === todayUTC) {
-        alert('You have already used your free spin for today. Resets at 00:00 UTC (London).');
-        return;
-      }
-      if (spinning) return;
-      spinning = true;
-
-      const spins = 5 + Math.random() * 4;
-      const targetAngle = spins * 2 * Math.PI + Math.random() * 2 * Math.PI;
-      let start = null;
-
-      function anim(t) {
-        if (!start) start = t;
-        const p = Math.min((t - start) / 3500, 1);
-        const ease = 1 - Math.pow(1 - p, 3);
-        currentAngle = ease * targetAngle;
-        drawWheel();
-        if (p < 1) {
-          requestAnimationFrame(anim);
-        } else {
-          spinning = false;
-          balance += 15;
-          localStorage.setItem('last_spin_day', todayUTC);
-          saveBalance();
-          alert('🎉 Congratulations! You won 15 S coins!');
-        }
-      }
-      requestAnimationFrame(anim);
-    }
-
-    // شروع
-    applyLang(currentLang);
-    drawWheel();
-    loadBalance();
-  </script>
-</body>
-</html>
+      document.getElementById('txt-prof-title').innerText = t.profTitle;
+      document.getElementById('txt-prof-name').innerText = t.profName;
+      document.getElementById('txt-prof-user').innerText = t.profUser;
+      document.getElementById('txt-prof-id').innerText = t.profId;
+      document.getElementById('txt-prof-gid').innerText = t.profGid;
+      document.getElementById('txt-prof-rank').innerText = t.profRank;
