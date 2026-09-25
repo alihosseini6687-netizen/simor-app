@@ -1,123 +1,163 @@
 /* ==========================================================
-   طراحی تم تاریک و نئونی مینی‌اپلیکیشن بازی (CSS / Main)
+   تم لوکس مشکی-طلایی نئونی مینی‌اپلیکیشن (Black & Gold)
    ========================================================== */
+
+:root {
+  --bg-dark: #0a0c12;
+  --panel-dark: #121622;
+  --card-dark: #1a2030;
+  --gold-primary: #f59e0b;
+  --gold-light: #fbbf24;
+  --gold-glow: rgba(245, 158, 11, 0.4);
+  --border-gold: rgba(245, 158, 11, 0.35);
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+}
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  -webkit-tap-highlight-color: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
 }
 
-body.dark-theme {
-  background-color: #0b0f19;
-  color: #f8fafc;
+body.dark-gold-theme {
+  background: var(--bg-dark);
+  color: var(--text-main);
   min-height: 100vh;
-  padding-bottom: 80px; /* فضا برای نوار ناوبری پایین */
+  padding-bottom: 75px;
   overflow-x: hidden;
 }
 
-/* هدر پروفایل و موجودی */
-.user-header {
+/* هدر */
+.luxury-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  background: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid #334155;
+  padding: 14px 16px;
+  background: var(--panel-dark);
+  border-bottom: 1px solid var(--border-gold);
 }
 
-.user-info {
+.user-profile-meta {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-.avatar-circle {
-  width: 48px;
-  height: 48px;
+.avatar-ring {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  border: 2px solid #f59e0b;
-  object-fit: cover;
+  border: 2px solid var(--gold-light);
+  background: linear-gradient(135deg, #2a200b, #000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px var(--gold-glow);
 }
 
-#user-name {
-  font-weight: 700;
+.avatar-letter {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--gold-light);
+}
+
+.gold-gradient-text {
   font-size: 15px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #fff, var(--gold-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-.badge {
+.uid-tag {
   font-size: 12px;
-  color: #94a3b8;
-  letter-spacing: 0.5px;
+  color: var(--text-muted);
 }
 
-.balance-card {
-  background: linear-gradient(135deg, #1e293b, #0f172a);
-  border: 1px solid #f59e0b55;
-  border-radius: 12px;
-  padding: 8px 14px;
-  text-align: right;
+.gold-balance-badge {
+  background: linear-gradient(145deg, #1f1a10, #14161f);
+  border: 1px solid var(--gold-light);
+  border-radius: 10px;
+  padding: 6px 12px;
+  text-align: left;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
 }
 
-#coin-balance {
-  font-size: 18px;
-  font-weight: 800;
-  color: #fbbf24;
-}
-
-.balance-card small {
-  display: block;
+.balance-title {
   font-size: 10px;
-  color: #94a3b8;
+  color: var(--text-muted);
 }
 
-/* نوار پیشرفت سطح (Level Progress) */
-.level-progress-bar {
-  padding: 12px 16px;
+.balance-val {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gold-light);
 }
 
-.level-label {
+/* نوار لول */
+.level-container {
+  padding: 10px 16px;
+  background: #0f121a;
+}
+
+.level-info {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  margin-bottom: 6px;
-  color: #cbd5e1;
+  margin-bottom: 5px;
 }
 
-.progress-track {
+.level-chip {
+  color: var(--gold-light);
+  font-weight: bold;
+}
+
+.gold-progress-track {
   width: 100%;
-  height: 8px;
-  background: #1e293b;
+  height: 7px;
+  background: #1e2433;
   border-radius: 4px;
   overflow: hidden;
 }
 
 #progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #f59e0b, #e11d48);
-  transition: width 0.3s ease;
+  background: linear-gradient(90deg, #d97706, var(--gold-light));
+  box-shadow: 0 0 8px var(--gold-glow);
 }
 
-/* بنر و عنوان هاب بازی‌ها */
-.hero-banner img {
-  width: 100%;
-  height: 160px;
-  object-fit: cover;
-  border-radius: 0 0 16px 16px;
-  margin-bottom: 12px;
+/* بنر و عناوین */
+.banner-card {
+  margin: 12px 16px;
+  padding: 20px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #241a05, #141824);
+  border: 1px solid var(--border-gold);
+  box-shadow: 0 5px 20px rgba(0,0,0,0.5);
 }
 
-.section-title {
-  padding: 0 16px;
+.banner-overlay h2 {
   font-size: 16px;
-  margin: 12px 0;
-  color: #f1f5f9;
+  color: var(--gold-light);
+  margin-bottom: 4px;
 }
 
-/* شبکه ۳ ستون در ۴ سطر بازی‌ها (Grid 3x4) */
+.banner-overlay p {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.gold-section-title {
+  padding: 0 16px;
+  font-size: 15px;
+  color: #fff;
+  margin: 12px 0;
+}
+
+/* شبکه ۳×۴ بازی‌ها */
 .games-grid-3x4 {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -125,9 +165,9 @@ body.dark-theme {
   padding: 0 16px;
 }
 
-.game-card {
-  background: #1e293b;
-  border: 1px solid #334155;
+.game-tile {
+  background: var(--card-dark);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: 14px;
   padding: 14px 6px;
   display: flex;
@@ -135,44 +175,54 @@ body.dark-theme {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.1s, border-color 0.1s;
 }
 
-.game-card:active {
-  transform: scale(0.95);
-  border-color: #f59e0b;
+.game-tile.gold-border {
+  border-color: var(--border-gold);
+  box-shadow: inset 0 0 12px rgba(245, 158, 11, 0.08);
 }
 
-.game-card img {
-  width: 55px;
-  height: 55px;
-  margin-bottom: 8px;
-  object-fit: contain;
+.game-tile:active {
+  transform: scale(0.94);
+  border-color: var(--gold-light);
 }
 
-.game-card span {
+.tile-icon-box {
+  font-size: 32px;
+  margin-bottom: 6px;
+}
+
+.game-tile span {
   font-size: 12px;
   font-weight: 600;
   text-align: center;
-  color: #e2e8f0;
 }
 
-.game-card.locked {
-  opacity: 0.45;
+.game-tile.locked {
+  opacity: 0.35;
   cursor: not-allowed;
   border-style: dashed;
 }
 
-/* بخش تپ سکه و افکت سه‌بعدی */
+/* تب‌ها */
+.tab-view {
+  display: none;
+}
+
+.tab-view.active {
+  display: block;
+}
+
+/* مودال تمام‌صفحه بازی تپ */
 .game-modal {
   position: fixed;
   inset: 0;
-  background: #0b0f19;
+  background: var(--bg-dark);
   z-index: 100;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   padding: 20px;
 }
 
@@ -180,173 +230,262 @@ body.dark-theme {
   display: none;
 }
 
-.close-modal-btn {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  background: #334155;
-  color: white;
-  border: none;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  font-size: 18px;
+.modal-top {
+  width: 100%;
+}
+
+.close-btn {
+  background: var(--card-dark);
+  border: 1px solid var(--border-gold);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-.tap-area {
+.tap-stage {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 40px;
 }
 
-.coin-wrapper {
+.coin-container {
   perspective: 1000px;
   margin: 30px 0;
 }
 
-.coin-3d {
-  width: 240px;
-  height: 240px;
-  user-select: none;
-  -webkit-user-drag: none;
+.coin-3d-gold {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fef08a, #ca8a04 60%, #713f12 95%);
+  border: 8px solid #facc15;
+  box-shadow: 0 0 35px var(--gold-glow), inset 0 0 15px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: transform 0.08s ease-out;
-  filter: drop-shadow(0 15px 25px rgba(245, 158, 11, 0.25));
 }
 
-.energy-container {
-  width: 260px;
-  margin-top: 15px;
+.coin-s-symbol {
+  font-size: 110px;
+  font-weight: 900;
+  color: #713f12;
+  text-shadow: 1px 2px 2px rgba(255,255,255,0.4), 0 -2px 2px rgba(0,0,0,0.6);
 }
 
-.energy-text {
-  font-size: 13px;
-  color: #fbbf24;
+.energy-box {
+  width: 250px;
+  margin-top: 20px;
+}
+
+.energy-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--gold-light);
   margin-bottom: 6px;
-  text-align: center;
 }
 
 .energy-track {
   width: 100%;
-  height: 10px;
-  background: #1e293b;
-  border-radius: 5px;
+  height: 9px;
+  background: #1a2030;
+  border-radius: 6px;
   overflow: hidden;
 }
 
 #energy-fill {
   height: 100%;
   background: linear-gradient(90deg, #10b981, #06b6d4);
-  transition: width 0.2s ease;
 }
 
-/* دکمه شناور ارتقا و بوستر (کاملاً واضح و شفاف در پایین) */
-.floating-boost-btn {
+/* دکمه شناور ارتقا */
+.gold-boost-floating-btn {
   position: absolute;
   bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: #fff;
-  border: none;
-  padding: 14px 28px;
+  background: linear-gradient(135deg, #d97706, #f59e0b);
+  border: 1px solid #fef08a;
+  color: #000;
+  font-weight: bold;
+  padding: 12px 28px;
   font-size: 15px;
-  font-weight: 700;
   border-radius: 30px;
-  box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+  box-shadow: 0 5px 20px var(--gold-glow);
   cursor: pointer;
-  z-index: 10;
 }
 
-/* پنل کشویی بوسترها (Bottom Sheet) */
+/* پنل کشویی بوسترها */
 .bottom-sheet {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: #1e293b;
-  border-top: 2px solid #f59e0b;
+  background: var(--panel-dark);
+  border-top: 2px solid var(--gold-primary);
   border-radius: 20px 20px 0 0;
   padding: 20px;
   z-index: 200;
-  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.6);
 }
 
-.bottom-sheet.hidden {
-  display: none;
-}
+.bottom-sheet.hidden { display: none; }
+.sheet-head { display: flex; justify-content: space-between; margin-bottom: 15px; }
+.sheet-head button { background: none; border: none; color: #fff; font-size: 18px; }
 
-.sheet-header {
+.boost-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  background: var(--card-dark);
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  border: 1px solid var(--border-gold);
 }
 
-.sheet-header button {
-  background: none;
+.boost-item p { font-size: 11px; color: var(--text-muted); }
+
+.gold-btn-small {
+  background: var(--gold-primary);
+  color: #000;
   border: none;
-  color: #94a3b8;
-  font-size: 20px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: bold;
   cursor: pointer;
 }
 
-.boost-card {
+/* استایل بخش‌های دیگر (گردونه، تسک، رفرال) */
+.wheel-screen-wrapper {
+  text-align: center;
+  padding: 20px 16px;
+}
+
+.sub-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; }
+
+.wheel-box {
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 20px;
+  position: relative;
+}
+
+.wheel-pointer { font-size: 24px; color: var(--gold-light); margin-bottom: -5px; }
+
+.wheel-disc {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 6px solid var(--gold-primary);
+  background: radial-gradient(circle, #2a1f0a, #0d0f17);
+  box-shadow: 0 0 25px var(--gold-glow);
+  position: relative;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  background: #0f172a;
+  justify-content: center;
+  transition: transform 3s cubic-bezier(0.15, 0.9, 0.2, 1);
+}
+
+.gold-btn.wide {
+  width: calc(100% - 32px);
+  margin: 0 16px;
   padding: 14px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  border: 1px solid #334155;
-}
-
-.boost-card p {
-  font-size: 12px;
-  color: #94a3b8;
-}
-
-.upgrade-btn {
-  background: #f59e0b;
-  color: #0f172a;
+  background: linear-gradient(135deg, #d97706, #f59e0b);
   border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 700;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 15px;
+  color: #000;
   cursor: pointer;
 }
 
-/* نوار ناوبری پایین صفحه */
-.bottom-nav {
+.gold-timer { margin-top: 10px; font-size: 12px; color: var(--gold-light); }
+
+.tasks-list, .referral-box, .settings-card, .leaderboard-box {
+  margin: 0 16px 16px;
+  background: var(--panel-dark);
+  border: 1px solid var(--border-gold);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.task-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.task-reward { font-size: 12px; color: var(--gold-light); display: block; }
+
+.check-btn {
+  background: var(--card-dark);
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-light);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ref-link-display {
+  display: flex;
+  justify-content: space-between;
+  background: var(--bg-dark);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+.ref-link-display button {
+  background: var(--gold-primary);
+  border: none;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.rank-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ناوبری پایین صفحه */
+.luxury-bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  height: 65px;
-  background: rgba(15, 23, 42, 0.95);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid #334155;
+  height: 60px;
+  background: rgba(18, 22, 34, 0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border-gold);
   display: flex;
   justify-content: space-around;
   align-items: center;
   z-index: 50;
 }
 
-.nav-item {
+.nav-tab {
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--text-muted);
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 11px;
-  gap: 4px;
+  gap: 3px;
   cursor: pointer;
 }
 
-.nav-item.active {
-  color: #f59e0b;
+.nav-tab.active {
+  color: var(--gold-light);
   font-weight: bold;
 }
