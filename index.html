@@ -24,6 +24,7 @@
             color: var(--text-color);
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             min-height: 100vh;
+            user-select: none;
         }
         .tab-content { display: none; padding: 14px; }
         .tab-content.active { display: block; animation: fadeIn 0.22s ease; }
@@ -60,7 +61,6 @@
         }
         .gold-btn:active { transform: scale(0.97); }
 
-        /* کارت دسترسی ادمین */
         .admin-card {
             background: rgba(255, 59, 48, 0.1);
             border: 1px dashed var(--admin-color);
@@ -83,56 +83,112 @@
             cursor: pointer;
         }
 
+        .hub-banner {
+            width: 100%; height: 145px; border-radius: 16px; overflow: hidden;
+            margin-bottom: 14px; border: 1px solid var(--border-color);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5); position: relative;
+        }
+        .hub-banner img { width: 100%; height: 100%; object-fit: cover; }
+
+        .games-grid-3x4 {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+        }
+        .game-tile {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 16px; padding: 14px 6px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s; box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+        }
+        .game-tile:active { transform: scale(0.94); border-color: #f9e8a2; }
+        .game-tile img { width: 52px; height: 52px; object-fit: contain; margin-bottom: 8px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); }
+        .game-tile span { font-size: 12px; font-weight: bold; color: #fff; text-align: center; }
+        .game-tile.blank-tile {
+            opacity: 0.35; cursor: default; border: 1px dashed rgba(255,255,255,0.15);
+            box-shadow: none; background: rgba(255,255,255,0.02); min-height: 105px;
+        }
+        .blank-tile-icon { font-size: 26px; color: #777; margin-bottom: 6px; }
+        .game-tile.blank-tile span { font-size: 10px; color: #888; }
+
+        .fullscreen-game-modal {
+            position: fixed; inset: 0; background: var(--bg-color); z-index: 2500;
+            display: flex; flex-direction: column; padding: 16px;
+        }
+        .modal-back-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .back-hub-btn {
+            background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: bold; cursor: pointer;
+        }
+
+        .coin-wrapper {
+            position: relative; width: 230px; height: 230px; margin: 20px auto 25px auto;
+            display: flex; align-items: center; justify-content: center; cursor: pointer;
+        }
+        .gold-coin-25d {
+            width: 100%; height: 100%; border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, #fff5be 0%, #d4af37 40%, #996e08 85%, #594002 100%);
+            box-shadow: 0 12px 35px rgba(212, 175, 55, 0.4), inset 0 3px 6px rgba(255,255,255,0.8), inset 0 -6px 12px rgba(0,0,0,0.7);
+            border: 6px solid #f9e8a2; display: flex; align-items: center; justify-content: center; transition: transform 0.06s ease;
+        }
+        .coin-inner-ring {
+            width: 80%; height: 80%; border-radius: 50%; border: 3px dashed rgba(89, 64, 2, 0.7);
+            display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 40% 40%, #e2be49 0%, #b88a1b 100%);
+        }
+        .coin-letter-s { font-size: 96px; font-weight: 900; color: #4a3400; font-family: Arial, sans-serif; line-height: 1; }
+
+        .tap-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; }
+        .tap-stat-box { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 4px; text-align: center; }
+        .tap-stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+        .tap-stat-val { font-size: 16px; font-weight: bold; color: var(--gold-color); }
+
+        .energy-bar-wrap { width: 100%; max-width: 320px; margin: 0 auto; }
+        .energy-bar-bg { height: 10px; width: 100%; background: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden; margin-top: 6px; }
+        .energy-bar-fill { height: 100%; width: 100%; background: var(--gold-gradient); border-radius: 5px; transition: width 0.1s; }
+
+        .tap-bottom-actions { margin-top: auto; padding-bottom: 10px; }
+        .boost-trigger-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706); color: #0b0b0e; border: none;
+            border-radius: 16px; padding: 14px; font-weight: bold; font-size: 15px; width: 100%; cursor: pointer;
+            box-shadow: 0 4px 18px rgba(245, 158, 11, 0.45);
+        }
+
+        .bottom-sheet {
+            position: fixed; bottom: 0; left: 0; right: 0; background: #15151f; border-top: 2px solid var(--gold-color);
+            border-radius: 22px 22px 0 0; padding: 20px; z-index: 3000; box-shadow: 0 -8px 30px rgba(0,0,0,0.8);
+        }
+        .sheet-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .upgrade-card {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;
+        }
+        .upgrade-card p { margin: 3px 0 0 0; font-size: 11px; color: var(--text-muted); }
+        .upgrade-btn {
+            background: var(--gold-gradient); color: #000; border: none; border-radius: 8px;
+            padding: 8px 14px; font-weight: bold; font-size: 12px; cursor: pointer;
+        }
+
         .bottom-nav {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            height: 68px;
-            background: rgba(14, 14, 19, 0.94);
-            backdrop-filter: blur(16px);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 1000;
+            position: fixed; bottom: 0; left: 0; right: 0; height: 68px; background: rgba(14, 14, 19, 0.94);
+            backdrop-filter: blur(16px); border-top: 1px solid var(--border-color); display: flex;
+            justify-content: space-around; align-items: center; z-index: 1000;
         }
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 11px;
-            cursor: pointer;
-            flex: 1;
-            height: 100%;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 11px; cursor: pointer; flex: 1; height: 100%;
         }
         .nav-item.active { color: var(--gold-color); font-weight: bold; }
         .nav-item.tap-center { position: relative; top: -12px; }
         .tap-icon-circle {
-            width: 52px; height: 52px;
-            border-radius: 50%;
-            background: var(--gold-gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0b0b0e;
-            font-size: 24px;
-            font-weight: 900;
-            box-shadow: 0 4px 18px rgba(212, 175, 55, 0.45);
+            width: 52px; height: 52px; border-radius: 50%; background: var(--gold-gradient);
+            display: flex; align-items: center; justify-content: center; color: #0b0b0e;
+            font-size: 22px; font-weight: 900; box-shadow: 0 4px 18px rgba(212, 175, 55, 0.45);
             border: 3px solid #0c0c10;
         }
 
         .features-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .feat-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 16px;
-            padding: 14px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            cursor: pointer;
+            background: var(--card-bg); border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px; padding: 14px; display: flex; flex-direction: column;
+            align-items: center; text-align: center; cursor: pointer;
         }
         .feat-card .f-icon { font-size: 26px; margin-bottom: 6px; }
 
@@ -143,38 +199,6 @@
             width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent;
             border-top: 24px solid #ffffff; z-index: 10;
         }
-
-        .tap-stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px; }
-        .tap-stat-box { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 4px; text-align: center; }
-        .tap-stat-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-        .tap-stat-val { font-size: 16px; font-weight: bold; color: var(--gold-color); }
-
-        .tap-main-balance { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 10px 0 20px 0; }
-        .balance-s-coin {
-            width: 38px; height: 38px; border-radius: 50%; background: var(--gold-gradient);
-            color: #0b0b0e; font-size: 20px; font-weight: 900; display: flex; align-items: center; justify-content: center;
-        }
-        .balance-number { font-size: 38px; font-weight: 900; color: #fff; }
-
-        .coin-wrapper {
-            position: relative; width: 240px; height: 240px; margin: 10px auto 25px auto;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
-        .gold-coin {
-            width: 100%; height: 100%; border-radius: 50%;
-            background: radial-gradient(circle at 35% 35%, #fff5be 0%, #d4af37 40%, #996e08 85%, #594002 100%);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.35); border: 7px solid #f9e8a2;
-            display: flex; align-items: center; justify-content: center; transition: transform 0.08s ease;
-        }
-        .coin-inner-ring {
-            width: 80%; height: 80%; border-radius: 50%; border: 3px dashed rgba(89, 64, 2, 0.7);
-            display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at 40% 40%, #e2be49 0%, #b88a1b 100%);
-        }
-        .coin-letter-s { font-size: 96px; font-weight: 900; color: #4a3400; font-family: Arial, sans-serif; }
-
-        .energy-bar-wrap { width: 100%; max-width: 320px; margin: 0 auto; }
-        .energy-bar-bg { height: 10px; width: 100%; background: rgba(255,255,255,0.08); border-radius: 5px; overflow: hidden; margin-top: 6px; }
-        .energy-bar-fill { height: 100%; width: 100%; background: var(--gold-gradient); border-radius: 5px; }
 
         .task-card {
             background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
@@ -198,7 +222,7 @@
 </head>
 <body>
 
-    <!-- پنجره مودال پنل مدیریت ادمین -->
+    <!-- پنل مدیریت ادمین -->
     <div id="admin-modal" class="modal-overlay" style="display: none;">
         <div class="modal-box">
             <h3 style="color: var(--admin-color); margin: 0 0 6px 0;">👑 پنل مدیریت و ابزارهای تستی</h3>
@@ -229,8 +253,6 @@
 
     <!-- تب ۱: خانه -->
     <div id="tab-home" class="tab-content active">
-        
-        <!-- کارت دسترسی ادمین (فقط برای شما باز می‌شود) -->
         <div id="admin-badge-container" style="display: none;">
             <div class="admin-card" onclick="openAdminModal()">
                 <div>
@@ -268,20 +290,23 @@
                 <div style="height: 7px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden;">
                     <div id="level-progress-bar" style="background: var(--gold-gradient); height: 100%; width: 0%;"></div>
                 </div>
+                <div style="font-size: 10px; color: var(--gold-color); margin-top: 6px; text-align: left;">
+                    🎯 جایزه ویژه سطح ۵۰: ۲۰,۰۰۰ سکه
+                </div>
             </div>
         </div>
 
         <h3 style="font-size: 15px; margin: 15px 4px 10px;">بخش‌های اصلی</h3>
         <div class="features-grid">
+            <div class="feat-card" onclick="switchTab('tab-games')">
+                <div class="f-icon">🎮</div>
+                <div style="font-weight: bold; font-size: 14px;">مرکز بازی‌ها</div>
+                <div style="font-size: 11px; color: var(--text-muted);">تپ، اسلات و پوکر</div>
+            </div>
             <div class="feat-card" onclick="switchTab('tab-tasks')">
                 <div class="f-icon">🎯</div>
                 <div style="font-weight: bold; font-size: 14px;">ماموریت‌ها</div>
                 <div style="font-size: 11px; color: var(--text-muted);">کسب سکه و امتیاز</div>
-            </div>
-            <div class="feat-card" onclick="switchTab('tab-tap')">
-                <div class="f-icon">🪙</div>
-                <div style="font-weight: bold; font-size: 14px;">مینی گیم تپ</div>
-                <div style="font-size: 11px; color: var(--text-muted);">بازی سکه (S)</div>
             </div>
             <div class="feat-card" onclick="switchTab('tab-wheel')">
                 <div class="f-icon">🎡</div>
@@ -296,7 +321,119 @@
         </div>
     </div>
 
-    <!-- تب ۲: گردونه شانس -->
+    <!-- تب ۲: هاب بازی‌ها (Games Grid 3x4) -->
+    <div id="tab-games" class="tab-content">
+        <div class="hub-banner">
+            <img src="assets/banner.jpg" alt="Games Banner" onerror="this.style.display='none'">
+        </div>
+
+        <h3 class="gold-text" style="font-size: 16px; margin: 0 0 12px 0;">🎮 مرکز مینی‌گیم‌ها</h3>
+
+        <div class="games-grid-3x4">
+            <!-- ردیف اول: ۳ بازی اصلی و فعال -->
+            <div class="game-tile" onclick="openTapModal()">
+                <img src="assets/coin.png" alt="Coin Tap" onerror="this.src=''; this.alt='🪙'">
+                <span>تپ سکه S</span>
+            </div>
+            <div class="game-tile" onclick="alert('بازی اسلات در گام ۳ متصل خواهد شد.')">
+                <img src="assets/chest.png" alt="Slot Machine" onerror="this.src=''; this.alt='🎰'">
+                <span>رول اسلات</span>
+            </div>
+            <div class="game-tile" onclick="alert('بازی پوکر در گام ۳ متصل خواهد شد.')">
+                <img src="assets/poker-chip.png" alt="Poker" onerror="this.src=''; this.alt='♠️'">
+                <span>پوکر تگزاس</span>
+            </div>
+
+            <!-- ردیف‌های ۲ و ۳ و ۴: ۹ خانه خالی با علامت قفل و Coming Soon -->
+            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
+            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
+            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
+
+            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
+            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
+            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
+
+            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
+            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
+            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
+        </div>
+    </div>
+    <!-- پنجره بازی تپ سکه (سبک ۲.۵ بعدی سبک و روان) -->
+    <div id="tap-game-modal" class="fullscreen-game-modal" style="display: none;">
+        <div class="modal-back-bar">
+            <button class="back-hub-btn" onclick="closeTapModal()">↩️ بازگشت به بازی‌ها</button>
+            <span class="gold-text" style="font-size: 14px;">مینی‌گیم تپ سکه</span>
+        </div>
+
+        <div class="tap-stats-row">
+            <div class="tap-stat-box">
+                <div class="tap-stat-label">هر کلیک</div>
+                <div class="tap-stat-val" id="stat-per-tap">+0.001</div>
+            </div>
+            <div class="tap-stat-box">
+                <div class="tap-stat-label">قدرت تپ</div>
+                <div class="tap-stat-val" style="color: #34c759;">سطح <span id="tap-power-level">1</span></div>
+            </div>
+            <div class="tap-stat-box">
+                <div class="tap-stat-label">مجموع تپ‌ها</div>
+                <div class="tap-stat-val" id="stat-total-taps">0</div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin: 10px 0;">
+            <div class="gold-text" style="font-size: 34px; font-weight: 900;" id="tap-balance-display">0.000</div>
+            <div style="font-size: 12px; color: var(--text-muted);">S Coins</div>
+        </div>
+
+        <!-- سکه ۲.۵ بعدی بدون لگ و سنگینی -->
+        <div class="coin-wrapper" onclick="handleCoinTap(event)">
+            <div class="gold-coin-25d" id="coin-visual">
+                <div class="coin-inner-ring">
+                    <div class="coin-letter-s">S</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="energy-bar-wrap">
+            <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
+                <span>⚡ مخزن تپ</span>
+                <span id="tap-energy-text">2500 / 2500</span>
+            </div>
+            <div class="energy-bar-bg">
+                <div class="energy-bar-fill" id="tap-energy-bar-fill"></div>
+            </div>
+        </div>
+
+        <div class="tap-bottom-actions">
+            <button class="boost-trigger-btn" onclick="toggleBoostSheet(true)">
+                ⚡ ارتقاها و تقویت‌کننده‌ها
+            </button>
+        </div>
+    </div>
+
+    <!-- پنل کشویی بوسترها -->
+    <div id="boost-sheet" class="bottom-sheet" style="display: none;">
+        <div class="sheet-head">
+            <h4 class="gold-text" style="margin: 0;">⚡ ارتقا و بوستر</h4>
+            <button onclick="toggleBoostSheet(false)" style="background:none; border:none; color:#aaa; font-size:18px; cursor:pointer;">✕</button>
+        </div>
+        <div class="upgrade-card">
+            <div>
+                <b style="color: #fff; font-size: 13px;">افزایش قدرت کلیک</b>
+                <p>سطح <span id="sheet-tap-lvl">1</span>/10 (+0.001 به هر تپ)</p>
+            </div>
+            <button class="upgrade-btn" onclick="buyTapUpgrade()"><span id="tap-upgrade-cost">50</span> 🪙</button>
+        </div>
+        <div class="upgrade-card">
+            <div>
+                <b style="color: #fff; font-size: 13px;">شارژ کامل مخزن انرژی</b>
+                <p><span id="sheet-refills-left">3</span> بار سهمیه امروز</p>
+            </div>
+            <button class="upgrade-btn" onclick="buyFullRefill()">100 🪙</button>
+        </div>
+    </div>
+
+    <!-- تب ۳: گردونه شانس -->
     <div id="tab-wheel" class="tab-content">
         <div class="gold-card" style="text-align: center;">
             <h2 class="gold-text" style="margin: 0;">گردونه شانس طلایی 🎡</h2>
@@ -310,47 +447,6 @@
             <button class="gold-btn" id="spin-button" onclick="spinWheel()">چرخاندن گردونه 🎰</button>
             <div id="spin-countdown" style="font-size: 12px; color: var(--text-muted); margin-top: 12px;"></div>
             <div id="spin-result" style="font-weight: bold; font-size: 16px; color: var(--gold-color); margin-top: 10px;"></div>
-        </div>
-    </div>
-
-    <!-- تب ۳: تپ سکه -->
-    <div id="tab-tap" class="tab-content">
-        <div class="tap-stats-row">
-            <div class="tap-stat-box">
-                <div class="tap-stat-label">هر کلیک</div>
-                <div class="tap-stat-val" id="stat-per-tap">+0.001</div>
-            </div>
-            <div class="tap-stat-box">
-                <div class="tap-stat-label">مخزن تپ</div>
-                <div class="tap-stat-val" style="color: #34c759;">فعال ⚡</div>
-            </div>
-            <div class="tap-stat-box">
-                <div class="tap-stat-label">مجموع تپ‌ها</div>
-                <div class="tap-stat-val" id="stat-total-taps">0</div>
-            </div>
-        </div>
-
-        <div class="tap-main-balance">
-            <div class="balance-s-coin">S</div>
-            <div class="balance-number" id="tap-balance-display">0.000</div>
-        </div>
-
-        <div class="coin-wrapper" id="coin-tap-target" onclick="handleCoinTap(event)">
-            <div class="gold-coin" id="coin-visual">
-                <div class="coin-inner-ring">
-                    <div class="coin-letter-s">S</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="energy-bar-wrap">
-            <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: bold;">
-                <span>⚡ مخزن انرژی</span>
-                <span id="tap-energy-text">2500 / 2500</span>
-            </div>
-            <div class="energy-bar-bg">
-                <div class="energy-bar-fill" id="tap-energy-bar-fill"></div>
-            </div>
         </div>
     </div>
 
@@ -370,7 +466,7 @@
                     <h4>دعوت از ۳ رفرال فعال</h4>
                     <p>+۴۰ سکه 🪙</p>
                 </div>
-                <button class="task-btn" onclick="alert('در حال شمارش رفرال‌های شما...')">چک کردن</button>
+                <button class="task-btn" onclick="alert('تعداد رفرال‌های شما در حال بررسی است...')">چک کردن</button>
             </div>
             <div id="custom-tasks-area"></div>
         </div>
@@ -393,17 +489,17 @@
         </div>
     </div>
 
-    <!-- ناوبری پایین صفحه -->
+    <!-- ناوبری ۵ دکمه‌ای لوکس در پایین -->
     <div class="bottom-nav">
         <div class="nav-item active" id="nav-tab-home" onclick="switchTab('tab-home')"><span>🏠</span><span>خانه</span></div>
-        <div class="nav-item" id="nav-tab-wheel" onclick="switchTab('tab-wheel')"><span>🎡</span><span>گردونه</span></div>
-        <div class="nav-item tap-center" id="nav-tab-tap" onclick="switchTab('tab-tap')"><div class="tap-icon-circle">S</div><span>تپ سکه</span></div>
+        <div class="nav-item" id="nav-tab-games" onclick="switchTab('tab-games')"><span>🎮</span><span>بازی‌ها</span></div>
+        <div class="nav-item tap-center" onclick="openTapModal()"><div class="tap-icon-circle">S</div><span>تپ سکه</span></div>
         <div class="nav-item" id="nav-tab-tasks" onclick="switchTab('tab-tasks')"><span>🎯</span><span>تسک‌ها</span></div>
         <div class="nav-item" id="nav-tab-profile" onclick="switchTab('tab-profile')"><span>👤</span><span>حساب</span></div>
     </div>
 
     <script>
-        const ADMIN_ID = 702007470; // شناسه تلگرام اختصاصی شما
+        const ADMIN_ID = 702007470;
 
         const sectors = [
             { text: "پوچ", score: 0, color: "#141419", textCol: "#8e8e93", prob: 36 },
@@ -439,12 +535,16 @@
         const STORAGE_KEY_LAST_SPIN = 'simor_last_spin_' + autoUid;
         const STORAGE_KEY_TAP_ENERGY = 'simor_tap_energy_' + autoUid;
         const STORAGE_KEY_TOTAL_TAPS = 'simor_total_taps_' + autoUid;
+        const STORAGE_KEY_TAP_LVL = 'simor_tap_lvl_' + autoUid;
+        const STORAGE_KEY_REFILLS = 'simor_refills_' + autoUid;
 
         let coins = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '0');
         let totalTaps = parseInt(localStorage.getItem(STORAGE_KEY_TOTAL_TAPS) || '0');
         let currentEnergy = parseInt(localStorage.getItem(STORAGE_KEY_TAP_ENERGY) || '2500');
+        let tapPowerLvl = parseInt(localStorage.getItem(STORAGE_KEY_TAP_LVL) || '1');
+        let refillsLeft = parseInt(localStorage.getItem(STORAGE_KEY_REFILLS) || '3');
         let maxEnergy = 2500;
-        let perTap = 0.001;
+        let perTap = +(0.001 * tapPowerLvl).toFixed(3);
 
         function getLevelInfo(totalCoins) {
             let currentLevel = 1;
@@ -474,8 +574,13 @@
             document.getElementById('tap-energy-text').innerText = `${currentEnergy} / ${maxEnergy}`;
             document.getElementById('tap-energy-bar-fill').style.width = `${(currentEnergy / maxEnergy) * 100}%`;
             document.getElementById('stat-total-taps').innerText = totalTaps;
+            document.getElementById('stat-per-tap').innerText = `+${perTap}`;
+            document.getElementById('tap-power-level').innerText = tapPowerLvl;
+            document.getElementById('sheet-tap-lvl').innerText = tapPowerLvl;
+            document.getElementById('tap-upgrade-cost').innerText = tapPowerLvl * 50;
+            document.getElementById('sheet-refills-left').innerText = refillsLeft;
 
-            // نمایش کارت ادمین برای شما
+            // دسترسی ادمین
             if (currentUserId === ADMIN_ID || defaultName.includes('ALI')) {
                 document.getElementById('admin-badge-container').style.display = 'block';
             }
@@ -491,6 +596,18 @@
             if (tabId === 'tab-wheel') { initWheel(); checkDailySpinTimer(); }
         }
 
+        function openTapModal() {
+            document.getElementById('tap-game-modal').style.display = 'flex';
+        }
+
+        function closeTapModal() {
+            document.getElementById('tap-game-modal').style.display = 'none';
+        }
+
+        function toggleBoostSheet(show) {
+            document.getElementById('boost-sheet').style.display = show ? 'block' : 'none';
+        }
+
         function handleCoinTap(e) {
             if (currentEnergy < 1) return;
             if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
@@ -501,12 +618,52 @@
 
             const target = document.getElementById('coin-visual');
             target.style.transform = 'scale(0.96)';
-            setTimeout(() => { target.style.transform = 'scale(1)'; }, 70);
+            setTimeout(() => { target.style.transform = 'scale(1)'; }, 60);
+
+            const prevLvl = getLevelInfo(Math.floor(coins - perTap)).level;
+            const newLvl = getLevelInfo(Math.floor(coins)).level;
+            if (newLvl > prevLvl) {
+                const bonus = Math.round(LEVEL_THRESHOLDS[prevLvl] * 0.03);
+                coins += bonus;
+                if (newLvl === 50) coins += 20000;
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+            }
 
             localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
             localStorage.setItem(STORAGE_KEY_TAP_ENERGY, currentEnergy.toString());
             localStorage.setItem(STORAGE_KEY_TOTAL_TAPS, totalTaps.toString());
             updateDisplays();
+        }
+
+        function buyTapUpgrade() {
+            const cost = tapPowerLvl * 50;
+            if (coins >= cost && tapPowerLvl < 10) {
+                coins -= cost;
+                tapPowerLvl += 1;
+                perTap = +(0.001 * tapPowerLvl).toFixed(3);
+                localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
+                localStorage.setItem(STORAGE_KEY_TAP_LVL, tapPowerLvl.toString());
+                updateDisplays();
+                alert(`قدرت تپ به سطح ${tapPowerLvl} ارتقا یافت!`);
+            } else {
+                alert('سکه کافی نیست یا به حداکثر سطح رسیده‌اید.');
+            }
+        }
+
+        function buyFullRefill() {
+            if (coins >= 100 && refillsLeft > 0) {
+                coins -= 100;
+                currentEnergy = maxEnergy;
+                refillsLeft -= 1;
+                localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
+                localStorage.setItem(STORAGE_KEY_TAP_ENERGY, currentEnergy.toString());
+                localStorage.setItem(STORAGE_KEY_REFILLS, refillsLeft.toString());
+                updateDisplays();
+                toggleBoostSheet(false);
+                alert('مخزن تپ کامل شارژ شد!');
+            } else {
+                alert('سکه کافی نیست یا سهمیه شارژ امروز پایان یافته است.');
+            }
         }
 
         function initWheel() {
@@ -515,6 +672,7 @@
             const ctx = canvas.getContext('2d');
             const numSectors = sectors.length;
             const arc = (2 * Math.PI) / numSectors;
+
             ctx.clearRect(0, 0, 270, 270);
             for (let i = 0; i < numSectors; i++) {
                 const angle = i * arc;
@@ -524,6 +682,7 @@
                 ctx.arc(135, 135, 130, angle, angle + arc);
                 ctx.lineTo(135, 135);
                 ctx.fill();
+
                 ctx.save();
                 ctx.translate(135, 135);
                 ctx.rotate(angle + arc / 2);
@@ -589,37 +748,32 @@
             }, 2500);
         }
 
-        // توابع پنل ادمین
         function openAdminModal() { document.getElementById('admin-modal').style.display = 'flex'; }
         function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
-
         function adminAddCoins(amount) {
             coins += amount;
             localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
             updateDisplays();
             alert(`+${amount} سکه با موفقیت اضافه شد!`);
         }
-
         function adminResetCoins() {
             coins = 0;
             localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
             updateDisplays();
-            alert('موجودی سکه‌ها صفر شد.');
+            alert('موجودی صفر شد.');
         }
-
         function adminResetWheel() {
             localStorage.removeItem(STORAGE_KEY_LAST_SPIN);
             checkDailySpinTimer();
-            alert('تایمر گردونه شانس ریست شد و اکنون آماده چرخش است!');
+            alert('تایمر گردونه ریست شد!');
         }
-
         function adminSendCustomCoins() {
             const targetId = document.getElementById('admin-target-id').value;
             const amount = parseFloat(document.getElementById('admin-target-amount').value);
-            if (!targetId || !amount) return alert('لطفاً آیدی و مقدار سکه را وارد کنید.');
-            alert(`دستور واریز ${amount} سکه برای کاربر ${targetId} در سرور ثبت شد.`);
+            if (!targetId || !amount) parseFloat(document.getElementById('admin-target-amount').value);
+            if (!targetId || !amount) return alert('آیدی و مقدار را وارد کنید.');
+            alert(`دستور واریز ${amount} سکه برای کاربر ${targetId} ثبت شد.`);
         }
-
         function adminAddCustomTask() {
             const title = document.getElementById('custom-task-title').value;
             const url = document.getElementById('custom-task-url').value;
