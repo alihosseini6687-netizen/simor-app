@@ -24,7 +24,7 @@
 
     /* تب‌ها */
     .tab-content { display: none; padding: 14px; animation: fadeIn 0.2s ease; }
-    .tab-content.active { display: block; }
+    .tab-content.active { display: block !important; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
     /* کارت پروفایل خانه */
@@ -89,7 +89,7 @@
     .game-box span { font-size: 12px; font-weight: bold; }
     .game-box.empty { border: 1px dashed rgba(255,255,255,0.1); background: rgba(255,255,255,0.02); opacity: 0.35; cursor: default; }
 
-    /* مینی بازی تپ سکه */
+    /* تپ سکه درون تب بازی‌ها */
     .tap-container {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 16px; padding: 16px; margin-top: 16px; display: none; text-align: center;
@@ -104,7 +104,7 @@
     }
     .big-coin:active { transform: scale(0.94); }
 
-    /* گردونه شانس */
+    /* گردونه شانس درون تب بازی‌ها */
     .wheel-panel {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 16px; padding: 16px; margin-top: 16px; display: none; text-align: center;
@@ -390,7 +390,7 @@
       </div>
     </div>
 
-    <button class="btn-action" style="width: 100%; padding: 12px;" onclick="tg?.close()" id="btn-close-app">بستن اپلیکیشن</button>
+    <button class="btn-action" style="width: 100%; padding: 12px;" onclick="closeMiniApp()" id="btn-close-app">بستن اپلیکیشن</button>
   </div>
 
   <!-- مودال درباره ما و قوانین -->
@@ -459,26 +459,84 @@
   </nav>
 
   <script>
+    // کنترل امن و بدون خطای تلگرام
     const tg = window.Telegram?.WebApp;
 
-    if (tg) {
-      tg.ready();
-      tg.expand();
-      tg.BackButton.hide();
-      const u = tg.initDataUnsafe?.user;
-      if (u) {
-        const fullName = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'کاربر';
-        document.getElementById('home-name').innerText = fullName;
-        document.getElementById('p-name').innerText = fullName;
-        document.getElementById('p-username').innerText = u.username ? '@' + u.username : '@User';
-        document.getElementById('p-id').innerText = u.id || '702007470';
-        document.getElementById('p-gid').innerText = 's' + (u.id ? u.id.toString().slice(0, 7) : '7020074');
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg.BackButton) {
+          tg.BackButton.hide();
+        }
+        const u = tg.initDataUnsafe?.user;
+        if (u) {
+          const fullName = `${u.first_name || ''} ${u.last_name || ''}`.trim() || 'کاربر';
+          document.getElementById('home-name').innerText = fullName;
+          document.getElementById('p-name').innerText = fullName;
+          document.getElementById('p-username').innerText = u.username ? '@' + u.username : '@User';
+          document.getElementById('p-id').innerText = u.id || '702007470';
+          document.getElementById('p-gid').innerText = 's' + (u.id ? u.id.toString().slice(0, 7) : '7020074');
+        }
       }
+    } catch (e) {
+      console.warn('Telegram init safe fallback:', e);
     }
 
     let balance = 1000;
     let energy = 500;
-    let currentLang = localStorage.getItem('simor_lang') || 'fa';
+    let currentLang = 'fa';
+
+    try {
+      currentLang = localStorage.getItem('simor_lang') || 'fa';
+    } catch (e) {}
+
+    // ناوبری تب‌ها (کاملاً مستقل در بالا تعریف شده تا فوری در دسترس باشد)
+    window.switchNav = function(tab) {
+      try {
+        if (tg?.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg?.HapticFeedback) {
+          tg.HapticFeedback.impactOccurred('light');
+        }
+      } catch (e) {}
+
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+      const targetTab = document.getElementById('tab-' + tab);
+      if (targetTab) targetTab.classList.add('active');
+
+      const targetBtn = document.getElementById('btn-' + tab);
+      if (targetBtn) targetBtn.classList.add('active');
+    };
+
+    window.toggleSubGame = function(type) {
+      const tapBox = document.getElementById('subgame-tap');
+      const wheelBox = document.getElementById('subgame-wheel');
+      tapBox.style.display = 'none';
+      wheelBox.style.display = 'none';
+
+      if (type === 'tap') {
+        tapBox.style.display = 'block';
+      } else if (type === 'wheel') {
+        wheelBox.style.display = 'block';
+        drawWheel();
+      }
+    };
+
+    window.openModal = function(id) {
+      const m = document.getElementById(id);
+      if (m) m.classList.add('open');
+    };
+    window.closeModal = function(id) {
+      const m = document.getElementById(id);
+      if (m) m.classList.remove('open');
+    };
+    window.openGame = function(path) {
+      window.location.href = path;
+    };
+    window.closeMiniApp = function() {
+      try { tg?.close(); } catch(e) {}
+    };
 
     const translations = {
       fa: {
@@ -522,154 +580,136 @@
       }
     };
 
-    function applyLang(lang) {
-      currentLang = lang;
-      localStorage.setItem('simor_lang', lang);
-      const t = translations[lang] || translations['fa'];
-      document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
-
-      document.getElementById('txt-creator').innerText = t.creator;
-      document.getElementById('txt-role').innerText = t.role;
-      document.getElementById('txt-coins-title').innerText = t.coins;
-      document.getElementById('txt-level-title').innerText = t.level;
-      document.getElementById('txt-prog').innerText = t.prog;
-      document.getElementById('txt-streak-title').innerText = t.streak;
-      document.querySelectorAll('.d-txt').forEach(el => el.innerText = t.day);
-
-      document.getElementById('txt-mg-title').innerText = t.mgTitle;
-      document.getElementById('txt-mg-sub').innerText = t.mgSub;
-      document.getElementById('txt-tasks-title').innerText = t.tasksTitle;
-      document.getElementById('txt-tasks-sub').innerText = t.tasksSub;
-      document.getElementById('txt-about-title').innerText = t.aboutTitle;
-      document.getElementById('txt-about-sub').innerText = t.aboutSub;
-      document.getElementById('txt-prof-card').innerText = t.profCard;
-      document.getElementById('txt-prof-sub').innerText = t.profSub;
-
-      document.getElementById('txt-gh-head').innerText = t.ghHead;
-      document.getElementById('txt-gh-desc').innerText = t.ghDesc;
-      document.getElementById('txt-g-tap').innerText = t.gTap;
-      document.getElementById('txt-g-wheel').innerText = t.gWheel;
-      document.getElementById('txt-g-poker').innerText = t.gPoker;
-      document.getElementById('txt-per-tap').innerHTML = `${t.perTap}<b>+1</b>`;
-
-      document.getElementById('txt-task-h').innerText = t.taskH;
-      document.getElementById('txt-task-sub').innerText = t.taskSub;
-
-      document.getElementById('txt-fr-title').innerText = t.frTitle;
-      document.getElementById('txt-fr-sub').innerText = t.frSub;
-      document.getElementById('txt-fr-total').innerText = t.frTotal;
-      document.getElementById('txt-fr-active').innerText = t.frActive;
-      document.getElementById('txt-fr-coins').innerText = t.frEarned;
-      document.getElementById('btn-share').innerText = t.inviteBtn;
-      document.getElementById('btn-copy').innerText = t.copyBtn;
-      document.getElementById('txt-enter-code').innerText = t.enterCode;
-      document.getElementById('btn-submit-ref').innerText = t.submit;
-
-      document.getElementById('txt-prof-title').innerText = t.profTitle;
-      document.getElementById('txt-prof-name').innerText = t.profName;
-      document.getElementById('txt-prof-user').innerText = t.profUser;
-      document.getElementById('txt-prof-id').innerText = t.profId;
-      document.getElementById('txt-prof-gid').innerText = t.profGid;
-      document.getElementById('txt-prof-rank').innerText = t.profRank;
-      document.getElementById('txt-prof-lvl').innerText = t.profLvl;
-      document.getElementById('btn-close-app').innerText = t.closeApp;
-
-      document.getElementById('nb-home').innerText = t.home;
-      document.getElementById('nb-games').innerText = t.games;
-      document.getElementById('nb-tasks').innerText = t.tasks;
-      document.getElementById('nb-friends').innerText = t.friends;
-      document.getElementById('nb-profile').innerText = t.profile;
+    function safeSetText(id, text) {
+      const el = document.getElementById(id);
+      if (el) el.innerText = text;
     }
 
-    function setLanguage(lang) {
+    function applyLang(lang) {
+      try {
+        currentLang = lang;
+        localStorage.setItem('simor_lang', lang);
+        const t = translations[lang] || translations['fa'];
+        document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
+
+        safeSetText('txt-creator', t.creator);
+        safeSetText('txt-role', t.role);
+        safeSetText('txt-coins-title', t.coins);
+        safeSetText('txt-level-title', t.level);
+        safeSetText('txt-prog', t.prog);
+        safeSetText('txt-streak-title', t.streak);
+        document.querySelectorAll('.d-txt').forEach(el => el.innerText = t.day);
+
+        safeSetText('txt-mg-title', t.mgTitle);
+        safeSetText('txt-mg-sub', t.mgSub);
+        safeSetText('txt-tasks-title', t.tasksTitle);
+        safeSetText('txt-tasks-sub', t.tasksSub);
+        safeSetText('txt-about-title', t.aboutTitle);
+        safeSetText('txt-about-sub', t.aboutSub);
+        safeSetText('txt-prof-card', t.profCard);
+        safeSetText('txt-prof-sub', t.profSub);
+
+        safeSetText('txt-gh-head', t.ghHead);
+        safeSetText('txt-gh-desc', t.ghDesc);
+        safeSetText('txt-g-tap', t.gTap);
+        safeSetText('txt-g-wheel', t.gWheel);
+        safeSetText('txt-g-poker', t.gPoker);
+
+        const pt = document.getElementById('txt-per-tap');
+        if (pt) pt.innerHTML = `${t.perTap}<b>+1</b>`;
+
+        safeSetText('txt-task-h', t.taskH);
+        safeSetText('txt-task-sub', t.taskSub);
+
+        safeSetText('txt-fr-title', t.frTitle);
+        safeSetText('txt-fr-sub', t.frSub);
+        safeSetText('txt-fr-total', t.frTotal);
+        safeSetText('txt-fr-active', t.frActive);
+        safeSetText('txt-fr-coins', t.frEarned);
+        safeSetText('btn-share', t.inviteBtn);
+        safeSetText('btn-copy', t.copyBtn);
+        safeSetText('txt-enter-code', t.enterCode);
+        safeSetText('btn-submit-ref', t.submit);
+
+        safeSetText('txt-prof-title', t.profTitle);
+        safeSetText('txt-prof-name', t.profName);
+        safeSetText('txt-prof-user', t.profUser);
+        safeSetText('txt-prof-id', t.profId);
+        safeSetText('txt-prof-gid', t.profGid);
+        safeSetText('txt-prof-rank', t.profRank);
+        safeSetText('txt-prof-lvl', t.profLvl);
+        safeSetText('btn-close-app', t.closeApp);
+
+        safeSetText('nb-home', t.home);
+        safeSetText('nb-games', t.games);
+        safeSetText('nb-tasks', t.tasks);
+        safeSetText('nb-friends', t.friends);
+        safeSetText('nb-profile', t.profile);
+      } catch (e) {
+        console.error('Error applying lang:', e);
+      }
+    }
+
+    window.setLanguage = function(lang) {
       applyLang(lang);
       closeModal('modal-lang');
-    }
+    };
 
-    function showPopup(title, msg, icon = '🎉') {
-      document.getElementById('pop-icon').innerText = icon;
-      document.getElementById('pop-title').innerText = title;
-      document.getElementById('pop-msg').innerText = msg;
+    window.showPopup = function(title, msg, icon = '🎉') {
+      safeSetText('pop-icon', icon);
+      safeSetText('pop-title', title);
+      safeSetText('pop-msg', msg);
       openModal('modal-alert');
-    }
+    };
 
+    // ذخیره و بازیابی کاملاً امن سکه
     function loadBalance() {
-      if (tg?.CloudStorage) {
-        tg.CloudStorage.getItem('user_balance', (err, val) => {
-          if (!err && val) balance = parseInt(val);
-          updateUI();
-        });
-      } else {
+      try {
         balance = parseInt(localStorage.getItem('user_balance') || '1000');
+        updateUI();
+      } catch (e) {
+        balance = 1000;
         updateUI();
       }
     }
 
     function saveBalance() {
-      if (tg?.CloudStorage) {
-        tg.CloudStorage.setItem('user_balance', balance.toString());
-      } else {
+      try {
         localStorage.setItem('user_balance', balance.toString());
-      }
+      } catch (e) {}
       updateUI();
     }
 
     function updateUI() {
-      document.getElementById('home-coins').innerText = balance.toLocaleString();
-      document.getElementById('games-coin-val').innerText = balance.toLocaleString() + ' S';
-      document.getElementById('p-coins').innerText = balance.toLocaleString();
+      safeSetText('home-coins', balance.toLocaleString());
+      safeSetText('games-coin-val', balance.toLocaleString() + ' S');
+      safeSetText('p-coins', balance.toLocaleString());
     }
 
-    function switchNav(tab) {
-      tg?.HapticFeedback?.impactOccurred('light');
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-
-      const targetTab = document.getElementById('tab-' + tab);
-      if (targetTab) targetTab.classList.add('active');
-
-      const targetBtn = document.getElementById('btn-' + tab);
-      if (targetBtn) targetBtn.classList.add('active');
-    }
-
-    function toggleSubGame(type) {
-      const tapBox = document.getElementById('subgame-tap');
-      const wheelBox = document.getElementById('subgame-wheel');
-      tapBox.style.display = 'none';
-      wheelBox.style.display = 'none';
-
-      if (type === 'tap') {
-        tapBox.style.display = 'block';
-      } else if (type === 'wheel') {
-        wheelBox.style.display = 'block';
-        drawWheel();
-      }
-    }
-
-    function openModal(id) { document.getElementById(id).classList.add('open'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-    function openGame(path) { window.location.href = path; }
-
-    function handleTap(e) {
+    window.handleTap = function(e) {
       if (energy <= 0) return;
-      tg?.HapticFeedback?.impactOccurred('light');
       energy--;
       balance++;
-      document.getElementById('energy-text').innerText = `${energy} / 500`;
+      safeSetText('energy-text', `${energy} / 500`);
       updateUI();
       saveBalance();
-    }
+    };
 
-    function startTask(id, url, reward) {
-      if (tg?.openTelegramLink && url.includes('t.me')) {
-        tg.openTelegramLink(url);
-      } else if (tg?.openLink) {
-        tg.openLink(url);
-      } else {
+    window.startTask = function(id, url, reward) {
+      try {
+        if (tg?.openTelegramLink && url.includes('t.me')) {
+          tg.openTelegramLink(url);
+        } else if (tg?.openLink) {
+          tg.openLink(url);
+        } else {
+          window.open(url, '_blank');
+        }
+      } catch (e) {
         window.open(url, '_blank');
       }
 
       const btn = document.getElementById(id + '-btn');
+      if (!btn) return;
       btn.disabled = true;
       let left = 30;
       btn.innerText = left + 's';
@@ -692,29 +732,37 @@
           };
         }
       }, 1000);
-    }
+    };
 
-    function shareRefLink() {
+    window.shareRefLink = function() {
       const u = tg?.initDataUnsafe?.user;
       const gid = 's' + (u?.id ? u.id.toString().slice(0, 7) : '7020074');
       const shareText = `به مینی‌اپ سیمُر بپیوندید با کد معرف من: ${gid}!`;
       const shareUrl = `https://t.me/SimorApp_bot?start=${gid}`;
-      if (tg?.openTelegramLink) {
-        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
-      } else {
-        navigator.clipboard.writeText(shareUrl);
-        showPopup('کد معرف', 'لینک دعوت کپی شد!', '📋');
+      try {
+        if (tg?.openTelegramLink) {
+          tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`);
+        } else {
+          navigator.clipboard.writeText(shareUrl);
+          showPopup('کد معرف', 'لینک دعوت کپی شد!', '📋');
+        }
+      } catch (e) {
+        showPopup('کد معرف', shareUrl, '📋');
       }
-    }
+    };
 
-    function copyRefLink() {
+    window.copyRefLink = function() {
       const u = tg?.initDataUnsafe?.user;
       const gid = 's' + (u?.id ? u.id.toString().slice(0, 7) : '7020074');
-      navigator.clipboard.writeText(`https://t.me/SimorApp_bot?start=${gid}`);
-      showPopup('کد معرف', 'لینک دعوت در کلیپ‌بورد کپی شد!', '📋');
-    }
+      try {
+        navigator.clipboard.writeText(`https://t.me/SimorApp_bot?start=${gid}`);
+        showPopup('کد معرف', 'لینک دعوت در کلیپ‌بورد کپی شد!', '📋');
+      } catch (e) {
+        showPopup('کد معرف', `https://t.me/SimorApp_bot?start=${gid}`, '📋');
+      }
+    };
 
-    function applyReferral() {
+    window.applyReferral = function() {
       const code = document.getElementById('friend-code-input').value.trim();
       if (code.startsWith('s') && code.length >= 6) {
         balance += 25;
@@ -723,11 +771,11 @@
       } else {
         showPopup('خطا', 'کد معرف وارد شده معتبر نیست.', '⚠️');
       }
-    }
+    };
 
     // گردونه شانس
     const canvas = document.getElementById('wheel-canvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas ? canvas.getContext('2d') : null;
     const segments = [
       { label: '0 S', val: 0, weight: 35 },
       { label: '2 S', val: 2, weight: 30 },
@@ -741,6 +789,7 @@
     let spinning = false;
 
     function drawWheel() {
+      if (!ctx || !canvas) return;
       const arc = (2 * Math.PI) / segments.length;
       ctx.clearRect(0, 0, 250, 250);
       for (let i = 0; i < segments.length; i++) {
@@ -763,13 +812,16 @@
       }
     }
 
-    function spinWheel() {
+    window.spinWheel = function() {
       const now = new Date();
       const todayUTC = now.getUTCFullYear() + '-' + now.getUTCMonth() + '-' + now.getUTCDate();
-      if (localStorage.getItem('last_spin_day') === todayUTC) {
-        showPopup('محدودیت گردونه', 'هر ۲۴ ساعت یکبار مجاز هستید. ساعت ۰۰:۰۰ لندن ریست می‌شود.', '⏳');
-        return;
-      }
+      try {
+        if (localStorage.getItem('last_spin_day') === todayUTC) {
+          showPopup('محدودیت گردونه', 'هر ۲۴ ساعت یکبار مجاز هستید. ساعت ۰۰:۰۰ لندن ریست می‌شود.', '⏳');
+          return;
+        }
+      } catch (e) {}
+
       if (spinning) return;
       spinning = true;
 
@@ -806,18 +858,19 @@
             showPopup('چرخش مجدد', '🎉 یک شانس چرخش مجدد به شما تعلق گرفت!', '🎡');
           } else {
             balance += prize.val;
-            localStorage.setItem('last_spin_day', todayUTC);
+            try { localStorage.setItem('last_spin_day', todayUTC); } catch (e) {}
             saveBalance();
             showPopup('تبریک!', `🎉 شما برنده ${prize.label} سکه شدید!`, '🪙');
           }
         }
       }
       requestAnimationFrame(anim);
-    }
+    };
 
-    // شروع و بارگیری اولیه
+    // اجرا در آغاز
     applyLang(currentLang);
     loadBalance();
+    drawWheel();
   </script>
 </body>
 </html>
