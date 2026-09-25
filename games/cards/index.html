@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>صدور کارت هدیه بانکی</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0c0c10;
+      --card-bg: #14141b;
+      --card-inner: #1a1a24;
+      --gold: #e5c158;
+      --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
+      --text: #ffffff;
+      --text-muted: #8e8e98;
+      --border: rgba(212, 175, 55, 0.28);
+      --green: #34c759;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 12px; text-align: center; }
+
+    /* هدر */
+    .top-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 8px 12px; margin-bottom: 14px; font-size: 13px;
+    }
+    .btn-back {
+      background: #252532; color: var(--gold); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
+    }
+
+    /* پیش‌نمایش کارت بانکی واقعی (ابعاد کارت اعتباری) */
+    .card-preview-container {
+      perspective: 1000px; margin: 10px auto 16px; width: 100%; max-width: 320px;
+    }
+    .bank-card {
+      width: 100%; height: 195px; border-radius: 16px; padding: 16px;
+      position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+      display: flex; flex-direction: column; justify-content: space-between;
+      text-align: right; overflow: hidden; border: 1px solid rgba(255,255,255,0.2);
+      transition: background 0.3s ease;
+    }
+
+    /* پوسته‌های مختلف کارت بانکی */
+    .theme-gold {
+      background: radial-gradient(circle at 80% 20%, #2a2008, #0d0a04 80%);
+      border-color: var(--gold); color: #fff;
+    }
+    .theme-birthday {
+      background: linear-gradient(135deg, #4a154b, #1b0728);
+      border-color: #e056fd; color: #fff;
+    }
+    .theme-friend {
+      background: linear-gradient(135deg, #0f2b48, #05101a);
+      border-color: #00a8ff; color: #fff;
+    }
+    .theme-luck {
+      background: linear-gradient(135deg, #0b3c22, #04140b);
+      border-color: #4cd137; color: #fff;
+    }
+
+    .card-top { display: flex; justify-content: space-between; align-items: center; }
+    .card-logo { font-size: 14px; font-weight: 900; color: var(--gold); letter-spacing: 1px; }
+    .card-chip {
+      width: 38px; height: 28px; background: linear-gradient(135deg, #e6c875, #aa820a);
+      border-radius: 5px; border: 1px solid #795b00; margin-top: 6px;
+    }
+
+    .card-msg {
+      font-size: 13px; font-weight: 500; line-height: 1.4; color: #ffffff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8); margin: 6px 0;
+    }
+    .card-number {
+      font-family: monospace; font-size: 15px; letter-spacing: 2px;
+      color: rgba(255,255,255,0.85); text-shadow: 0 1px 2px #000;
+    }
+    .card-footer { display: flex; justify-content: space-between; align-items: flex-end; font-size: 11px; }
+    .card-holder { font-weight: bold; color: var(--gold); }
+
+    /* انتخاب پوسته */
+    .themes-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 14px; }
+    .theme-btn {
+      flex: 1; padding: 8px 4px; border-radius: 8px; font-size: 11px;
+      font-weight: bold; border: 1px solid var(--border); background: var(--card-inner);
+      color: var(--text-muted); cursor: pointer;
+    }
+    .theme-btn.active { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.15); }
+
+    /* فرم تکمیل کارت */
+    .form-box {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 14px; text-align: right; margin-bottom: 14px;
+    }
+    .input-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block; }
+    .card-input {
+      width: 100%; padding: 9px; background: var(--card-inner); border: 1px solid var(--border);
+      border-radius: 8px; color: white; font-size: 13px; margin-bottom: 10px; outline: none;
+    }
+    .card-input:focus { border-color: var(--gold); }
+
+    .btn-buy-card {
+      width: 100%; background: var(--gold-gradient); color: #000;
+      border: none; padding: 12px; border-radius: 10px; font-weight: bold;
+      font-size: 14px; cursor: pointer; margin-bottom: 10px;
+    }
+    .btn-buy-card:active { transform: scale(0.98); }
+
+    /* دکمه‌های بعد از خرید کارت */
+    .delivery-box {
+      display: none; background: rgba(52, 199, 89, 0.1); border: 1px solid var(--green);
+      border-radius: 14px; padding: 14px; margin-bottom: 14px;
+    }
+    .btn-send-pv {
+      width: 100%; background: #007aff; color: white; border: none;
+      padding: 12px; border-radius: 10px; font-weight: bold; font-size: 13px;
+      cursor: pointer; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-download {
+      width: 100%; background: #252532; color: var(--gold); border: 1px solid var(--gold);
+      padding: 10px; border-radius: 10px; font-weight: bold; font-size: 13px; cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- نوار بالای صفحه -->
+  <div class="top-bar">
+    <button class="btn-back" onclick="goBack()">🔙 لابی</button>
+    <div style="font-weight: bold; color: var(--gold);">💳 کارت تبریک بانکی</div>
+    <div style="color: var(--gold); font-weight: bold;">
+      🪙 <span id="user-bal">1,000</span>
+    </div>
+  </div>
+
+  <!-- انتخاب طرح کارت -->
+  <div class="themes-row">
+    <button class="theme-btn active" onclick="setTheme('gold', this)">🏆 VIP طلایی</button>
+    <button class="theme-btn" onclick="setTheme('birthday', this)">🎂 جشن تولد</button>
+    <button class="theme-btn" onclick="setTheme('friend', this)">🤝 رفاقتی</button>
+    <button class="theme-btn" onclick="setTheme('luck', this)">🍀 شانس زمردی</button>
+  </div>
+
+  <!-- پیش‌نمایش کارت بانکی -->
+  <div class="card-preview-container">
+    <div class="bank-card theme-gold" id="bank-card">
+      <div class="card-top">
+        <span class="card-logo">SIMOR GIFT CARD</span>
+        <span style="font-size: 11px; opacity: 0.7;">VIP 2026</span>
+      </div>
+      <div class="card-chip"></div>
+      <div class="card-msg" id="preview-msg">تولدت مبارک رفیق، همیشه برنده باشی! 🌸</div>
+      <div class="card-number" id="preview-number">6037 •••• 8821 7020</div>
+      <div class="card-footer">
+        <div>
+          <span style="font-size: 9px; opacity: 0.6; display:block;">به نام:</span>
+          <span class="card-holder" id="preview-to">دوست عزیز</span>
+        </div>
+        <div style="text-align: left;">
+          <span style="font-size: 9px; opacity: 0.6; display:block;">از طرف:</span>
+          <span style="color: white; font-weight: bold;" id="preview-from">علی</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- فرم ثبت اطلاعات -->
+  <div class="form-box">
+    <label class="input-label">نام دوست (دریافت‌کننده کارت):</label>
+    <input type="text" class="card-input" id="input-to" value="دوست عزیز" oninput="updateCardText()">
+
+    <label class="input-label">متن دلخواه تبریک:</label>
+    <input type="text" class="card-input" id="input-msg" value="تولدت مبارک رفیق، همیشه برنده باشی! 🌸" oninput="updateCardText()">
+
+    <label class="input-label">نام شما (فرستنده):</label>
+    <input type="text" class="card-input" id="input-from" value="علی" oninput="updateCardText()">
+
+    <button class="btn-buy-card" id="btn-buy" onclick="purchaseCard()">💳 خرید و صدور کارت (هزینه: ۵ سکه)</button>
+  </div>
+
+  <!-- بخش ارسال به پی‌وی بعد از خرید -->
+  <div class="delivery-box" id="delivery-box">
+    <h4 style="color: var(--green); margin-bottom: 6px;">🎉 کارت با موفقیت صادر شد!</h4>
+    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+      کارت فعال شد. اکنون بدون نیاز به تایپ آیدی، آن را در پی‌وی خود ارسال یا ذخیره کنید:
+    </p>
+
+    <!-- ارسال مستقیم به پیام‌های ذخیره‌شده (Saved Messages) یا چت خود -->
+    <button class="btn-send-pv" onclick="sendToMyPV()">
+      <span>🚀 ارسال به پی‌وی خود (Saved Messages)</span>
+    </button>
+
+    <!-- ذخیره مستقیم در گالری به صورت عکس باکیفیت -->
+    <button class="btn-download" onclick="downloadCardImage()">
+      <span>📥 ذخیره عکس کارت در گالری گوشی</span>
+    </button>
+  </div>
+
+  <!-- کنواس مخفی برای تولید عکس کارت -->
+  <canvas id="card-canvas" width="640" height="390" style="display:none;"></canvas>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(goBack);
+        }
+        if (tg.initDataUnsafe?.user?.first_name) {
+          document.getElementById('input-from').value = tg.initDataUnsafe.user.first_name;
+          updateCardText();
+        }
+      }
+    } catch(e) {}
+
+    function goBack() { window.location.href = '../../index.html'; }
+
+    let balance = 1000;
+    try { balance = parseInt(localStorage.getItem('user_balance') || '1000'); } catch(e) {}
+    function saveBalance() {
+      try { localStorage.setItem('user_balance', balance.toString()); } catch(e) {}
+      document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S';
+    }
+    document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S';
+
+    let currentTheme = 'theme-gold';
+
+    function setTheme(themeName, btn) {
+      document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const card = document.getElementById('bank-card');
+      card.className = `bank-card theme-${themeName}`;
+      currentTheme = `theme-${themeName}`;
+    }
+
+    function updateCardText() {
+      document.getElementById('preview-to').innerText = document.getElementById('input-to').value || 'دوست عزیز';
+      document.getElementById('preview-msg').innerText = document.getElementById('input-msg').value || 'تبریک!';
+      document.getElementById('preview-from').innerText = document.getElementById('input-from').value || 'شما';
+    }
+
+    function purchaseCard() {
+      if (balance < 5) {
+        alert('موجودی شما برای خرید کارت کافی نیست! (حداقل ۵ سکه نیاز است)');
+        return;
+      }
+
+      balance -= 5;
+      saveBalance();
+
+      // قفل فیلدها و باز شدن باکس ارسال
+      document.getElementById('btn-buy').style.display = 'none';
+      document.getElementById('delivery-box').style.display = 'block';
+      alert('🎉 ۵ سکه پرداخت شد و کارت شما صادر گردید!');
+    }
+
+    // ارسال مستقیم به پیام‌های ذخیره‌شده (Saved Messages) تلگرام بدون نیاز به تایپ آیدی
+    function sendToMyPV() {
+      const toName = document.getElementById('input-to').value;
+      const msg = document.getElementById('input-msg').value;
+      const fromName = document.getElementById('input-from').value;
+
+      const cardText = `💳 کارت هدیه سیمُر\n\n🌸 به نام: ${toName}\n💌 پیام: "${msg}"\n👤 از طرف: ${fromName}\n\n✨ صادر شده از مینی‌اپ سیمُر`;
+      const shareUrl = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/SimorMiniApp_bot')}&text=${encodeURIComponent(cardText)}`;
+
+      try {
+        if (tg?.openTelegramLink) {
+          tg.openTelegramLink(shareUrl);
+        } else {
+          window.open(shareUrl, '_blank');
+        }
+      } catch(e) {
+        window.open(shareUrl, '_blank');
+      }
+    }
+
+    // تولید و دانلود خودکار عکس کارت در گالری گوشی
+    function downloadCardImage() {
+      const canvas = document.getElementById('card-canvas');
+      const ctx = canvas.getContext('2d');
+
+      // رسم پس‌زمینه بر اساس تم
+      if (currentTheme.includes('gold')) {
+        const grad = ctx.createLinearGradient(0, 0, 640, 390);
+        grad.addColorStop(0, '#2a2008'); grad.addColorStop(1, '#0d0a04');
+        ctx.fillStyle = grad;
+      } else if (currentTheme.includes('birthday')) {
+        const grad = ctx.createLinearGradient(0, 0, 640, 390);
+        grad.addColorStop(0, '#4a154b'); grad.addColorStop(1, '#1b0728');
+        ctx.fillStyle = grad;
+      } else if (currentTheme.includes('friend')) {
+        const grad = ctx.createLinearGradient(0, 0, 640, 390);
+        grad.addColorStop(0, '#0f2b48'); grad.addColorStop(1, '#05101a');
+        ctx.fillStyle = grad;
+      } else {
+        const grad = ctx.createLinearGradient(0, 0, 640, 390);
+        grad.addColorStop(0, '#0b3c22'); grad.addColorStop(1, '#04140b');
+        ctx.fillStyle = grad;
+      }
+      ctx.fillRect(0, 0, 640, 390);
+
+      // کادر طلایی دور کارت
+      ctx.strokeStyle = '#e5c158';
+      ctx.lineWidth = 6;
+      ctx.strokeRect(10, 10, 620, 370);
+
+      // متن‌ها
+      ctx.direction = 'rtl';
+      ctx.textAlign = 'right';
+
+      ctx.fillStyle = '#e5c158';
+      ctx.font = 'bold 22px sans-serif';
+      ctx.fillText('SIMOR VIP GIFT CARD 💳', 600, 50);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 20px sans-serif';
+      ctx.fillText(document.getElementById('preview-msg').innerText, 600, 170);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.font = '18px monospace';
+      ctx.fillText('6037 •••• 8821 7020', 600, 240);
+
+      ctx.fillStyle = '#e5c158';
+      ctx.font = 'bold 18px sans-serif';
+      ctx.fillText('به نام: ' + document.getElementById('preview-to').innerText, 600, 320);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText('از طرف: ' + document.getElementById('preview-from').innerText, 200, 320);
+
+      // لینک دانلود
+      const link = document.createElement('a');
+      link.download = 'Simor-Gift-Card.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+</body>
+</html>
