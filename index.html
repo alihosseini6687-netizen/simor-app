@@ -109,14 +109,67 @@
         .blank-tile-icon { font-size: 26px; color: #777; margin-bottom: 6px; }
         .game-tile.blank-tile span { font-size: 10px; color: #888; }
 
+        /* مودال تمام‌صفحه بازی‌ها */
         .fullscreen-game-modal {
             position: fixed; inset: 0; background: var(--bg-color); z-index: 2500;
-            display: flex; flex-direction: column; padding: 16px;
+            display: flex; flex-direction: column; padding: 16px; overflow-y: auto;
         }
         .modal-back-bar { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
         .back-hub-btn {
             background: rgba(255,255,255,0.08); color: #fff; border: 1px solid var(--border-color);
             border-radius: 10px; padding: 8px 14px; font-size: 12px; font-weight: bold; cursor: pointer;
+        }
+
+        /* استایل اسلات ماشین */
+        .slot-machine-box {
+            background: #14141f; border: 2px solid var(--gold-color); border-radius: 20px;
+            padding: 16px; margin: 20px auto; max-width: 330px; text-align: center;
+            box-shadow: 0 8px 30px rgba(212, 175, 55, 0.25);
+        }
+        .slot-reels-row {
+            display: flex; justify-content: center; gap: 10px; margin: 18px 0;
+        }
+        .slot-reel {
+            width: 80px; height: 90px; background: #08080c; border: 2px solid #d4af37;
+            border-radius: 14px; display: flex; align-items: center; justify-content: center;
+            font-size: 40px; box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+            transition: transform 0.1s;
+        }
+        .bet-buttons-row {
+            display: flex; justify-content: center; gap: 8px; margin-bottom: 16px;
+        }
+        .bet-btn {
+            background: rgba(255,255,255,0.06); border: 1px solid var(--border-color);
+            color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;
+        }
+        .bet-btn.active { background: var(--gold-gradient); color: #000; border-color: #fff; }
+
+        /* استایل میز پوکر */
+        .poker-table-wrapper {
+            background: radial-gradient(circle, #0b4522 0%, #042411 80%, #021309 100%);
+            border: 8px solid #3d2810; border-radius: 120px; padding: 20px 10px;
+            margin: 15px auto; width: 100%; max-width: 350px; min-height: 380px;
+            position: relative; box-shadow: 0 10px 35px rgba(0,0,0,0.8), inset 0 0 25px rgba(0,0,0,0.6);
+            display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+        }
+        .poker-player {
+            display: flex; flex-direction: column; align-items: center; font-size: 11px; color: #ddd;
+        }
+        .poker-cards-pair { display: flex; gap: 4px; margin-top: 4px; }
+        .poker-card {
+            width: 32px; height: 46px; background: #fff; color: #000; border-radius: 4px;
+            display: flex; align-items: center; justify-content: center; font-size: 12px;
+            font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .poker-card.red { color: #d00; }
+        .poker-card.back { background: #8b0000; color: #fff; border: 1px solid #ff9999; }
+        .community-cards-row {
+            display: flex; gap: 5px; background: rgba(0,0,0,0.35); padding: 8px 12px;
+            border-radius: 10px; border: 1px dashed rgba(255,255,255,0.2); margin: 10px 0;
+        }
+        .pot-display {
+            font-size: 12px; color: var(--gold-color); font-weight: bold; margin-bottom: 4px;
+            display: flex; align-items: center; gap: 5px;
         }
 
         .coin-wrapper {
@@ -227,7 +280,6 @@
         <div class="modal-box">
             <h3 style="color: var(--admin-color); margin: 0 0 6px 0;">👑 پنل مدیریت و ابزارهای تستی</h3>
             <p style="font-size: 12px; color: #aaa; margin: 0 0 16px 0;">شناسه شما به عنوان ادمین کل تایید شد.</p>
-
             <b style="font-size: 13px; color: #fff;">⚙️ ابزارهای تست سریع:</b>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 16px 0;">
                 <button class="gold-btn" onclick="adminAddCoins(500)">+۵۰۰ سکه</button>
@@ -235,18 +287,15 @@
                 <button class="admin-btn" style="background:#555;" onclick="adminResetCoins()">صفر کردن موجودی</button>
                 <button class="admin-btn" onclick="adminResetWheel()">ریست تایمر گردونه</button>
             </div>
-
             <b style="font-size: 13px; color: #fff;">💳 شارژ دستی سکه برای دیگران:</b>
             <input type="text" id="admin-target-id" class="admin-input" placeholder="آیدی عددی تلگرام کاربر">
             <input type="number" id="admin-target-amount" class="admin-input" placeholder="تعداد سکه">
             <button class="gold-btn" style="margin-bottom: 16px;" onclick="adminSendCustomCoins()">واریز دستی سکه 🚀</button>
-
             <b style="font-size: 13px; color: #fff;">➕ افزودن تسک سفارشی:</b>
             <input type="text" id="custom-task-title" class="admin-input" placeholder="عنوان تسک">
             <input type="text" id="custom-task-url" class="admin-input" placeholder="لینک (کانال/پیج)">
             <input type="number" id="custom-task-reward" class="admin-input" placeholder="مقدار پاداش (سکه)">
             <button class="gold-btn" onclick="adminAddCustomTask()">ثبت تسک جدید</button>
-
             <button class="gold-btn" style="background:#222; color:#fff; margin-top: 16px;" onclick="closeAdminModal()">بستن پنل ✕</button>
         </div>
     </div>
@@ -311,54 +360,8 @@
             <div class="feat-card" onclick="switchTab('tab-wheel')">
                 <div class="f-icon">🎡</div>
                 <div style="font-weight: bold; font-size: 14px;">گردونه شانس</div>
-                <div style="font-size: 11px; color: var(--text-muted);">شانس روزانه</div>
-            </div>
-            <div class="feat-card" onclick="switchTab('tab-profile')">
-                <div class="f-icon">🏆</div>
-                <div style="font-weight: bold; font-size: 14px;">لیدربورد</div>
-                <div style="font-size: 11px; color: var(--text-muted);">رتبه و حساب</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- تب ۲: هاب بازی‌ها (Games Grid 3x4) -->
-    <div id="tab-games" class="tab-content">
-        <div class="hub-banner">
-            <img src="assets/banner.jpg" alt="Games Banner" onerror="this.style.display='none'">
-        </div>
-
-        <h3 class="gold-text" style="font-size: 16px; margin: 0 0 12px 0;">🎮 مرکز مینی‌گیم‌ها</h3>
-
-        <div class="games-grid-3x4">
-            <!-- ردیف اول: ۳ بازی اصلی و فعال -->
-            <div class="game-tile" onclick="openTapModal()">
-                <img src="assets/coin.png" alt="Coin Tap" onerror="this.src=''; this.alt='🪙'">
-                <span>تپ سکه S</span>
-            </div>
-            <div class="game-tile" onclick="alert('بازی اسلات در گام ۳ متصل خواهد شد.')">
-                <img src="assets/chest.png" alt="Slot Machine" onerror="this.src=''; this.alt='🎰'">
-                <span>رول اسلات</span>
-            </div>
-            <div class="game-tile" onclick="alert('بازی پوکر در گام ۳ متصل خواهد شد.')">
-                <img src="assets/poker-chip.png" alt="Poker" onerror="this.src=''; this.alt='♠️'">
-                <span>پوکر تگزاس</span>
-            </div>
-
-            <!-- ردیف‌های ۲ و ۳ و ۴: ۹ خانه خالی با علامت قفل و Coming Soon -->
-            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
-            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
-            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
-
-            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
-            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
-            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
-
-            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
-            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
-            <div class="game-tile blank-tile"><div class="blank-tile-icon">🔒</div><span>Coming Soon</span></div>
-        </div>
-    </div>
-    <!-- پنجره بازی تپ سکه (سبک ۲.۵ بعدی سبک و روان) -->
+                <div style="font-size: 11px; color: var(--text-muted);">شانس روزانه
+                    <!-- ۳. پنجره بازی تپ سکه ۲.۵ بعدی -->
     <div id="tap-game-modal" class="fullscreen-game-modal" style="display: none;">
         <div class="modal-back-bar">
             <button class="back-hub-btn" onclick="closeTapModal()">↩️ بازگشت به بازی‌ها</button>
@@ -385,7 +388,6 @@
             <div style="font-size: 12px; color: var(--text-muted);">S Coins</div>
         </div>
 
-        <!-- سکه ۲.۵ بعدی بدون لگ و سنگینی -->
         <div class="coin-wrapper" onclick="handleCoinTap(event)">
             <div class="gold-coin-25d" id="coin-visual">
                 <div class="coin-inner-ring">
@@ -489,7 +491,7 @@
         </div>
     </div>
 
-    <!-- ناوبری ۵ دکمه‌ای لوکس در پایین -->
+    <!-- ناوبری پایین -->
     <div class="bottom-nav">
         <div class="nav-item active" id="nav-tab-home" onclick="switchTab('tab-home')"><span>🏠</span><span>خانه</span></div>
         <div class="nav-item" id="nav-tab-games" onclick="switchTab('tab-games')"><span>🎮</span><span>بازی‌ها</span></div>
@@ -520,9 +522,7 @@
         }
 
         const tg = window.Telegram?.WebApp;
-        if (tg) {
-            try { tg.ready(); tg.expand(); } catch(e) {}
-        }
+        if (tg) { try { tg.ready(); tg.expand(); } catch(e) {} }
 
         const tgUser = tg?.initDataUnsafe?.user;
         const currentUserId = tgUser?.id || 702007470;
@@ -580,7 +580,6 @@
             document.getElementById('tap-upgrade-cost').innerText = tapPowerLvl * 50;
             document.getElementById('sheet-refills-left').innerText = refillsLeft;
 
-            // دسترسی ادمین
             if (currentUserId === ADMIN_ID || defaultName.includes('ALI')) {
                 document.getElementById('admin-badge-container').style.display = 'block';
             }
@@ -596,17 +595,9 @@
             if (tabId === 'tab-wheel') { initWheel(); checkDailySpinTimer(); }
         }
 
-        function openTapModal() {
-            document.getElementById('tap-game-modal').style.display = 'flex';
-        }
-
-        function closeTapModal() {
-            document.getElementById('tap-game-modal').style.display = 'none';
-        }
-
-        function toggleBoostSheet(show) {
-            document.getElementById('boost-sheet').style.display = show ? 'block' : 'none';
-        }
+        function openTapModal() { document.getElementById('tap-game-modal').style.display = 'flex'; }
+        function closeTapModal() { document.getElementById('tap-game-modal').style.display = 'none'; }
+        function toggleBoostSheet(show) { document.getElementById('boost-sheet').style.display = show ? 'block' : 'none'; }
 
         function handleCoinTap(e) {
             if (currentEnergy < 1) return;
@@ -666,130 +657,79 @@
             }
         }
 
-        function initWheel() {
-            const canvas = document.getElementById('wheel-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            const numSectors = sectors.length;
-            const arc = (2 * Math.PI) / numSectors;
+        // ==========================================
+        // منطق مینی‌گیم اسلات ماشین
+        // ==========================================
+        let slotBet = 1;
+        let isSlotSpinning = false;
+        const slotSymbols = ['🎁', '💎', '⚡', '7️⃣'];
 
-            ctx.clearRect(0, 0, 270, 270);
-            for (let i = 0; i < numSectors; i++) {
-                const angle = i * arc;
-                ctx.beginPath();
-                ctx.fillStyle = sectors[i].color;
-                ctx.moveTo(135, 135);
-                ctx.arc(135, 135, 130, angle, angle + arc);
-                ctx.lineTo(135, 135);
-                ctx.fill();
+        function openSlotModal() { document.getElementById('slot-game-modal').style.display = 'flex'; }
+        function closeSlotModal() { document.getElementById('slot-game-modal').style.display = 'none'; }
 
-                ctx.save();
-                ctx.translate(135, 135);
-                ctx.rotate(angle + arc / 2);
-                ctx.textAlign = "right";
-                ctx.fillStyle = sectors[i].textCol;
-                ctx.font = "bold 13px system-ui";
-                ctx.fillText(sectors[i].text, 115, 5);
-                ctx.restore();
-            }
+        function setSlotBet(val, el) {
+            slotBet = val;
+            document.querySelectorAll('.bet-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
         }
 
-        function checkDailySpinTimer() {
-            const lastSpin = parseInt(localStorage.getItem(STORAGE_KEY_LAST_SPIN) || '0');
-            const now = new Date();
-            const nextMidnightUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0));
-            const lastSpinDate = new Date(lastSpin);
-            const isSameUTCDay = lastSpin && (lastSpinDate.getUTCFullYear() === now.getUTCFullYear() && 
-                                              lastSpinDate.getUTCMonth() === now.getUTCMonth() && 
-                                              lastSpinDate.getUTCDate() === now.getUTCDate());
-            const btn = document.getElementById('spin-button');
-            const countdownEl = document.getElementById('spin-countdown');
-            if (!btn || !countdownEl) return;
-            if (isSameUTCDay) {
-                btn.disabled = true;
-                const remaining = nextMidnightUTC.getTime() - now.getTime();
-                const hrs = Math.floor(remaining / (1000 * 60 * 60));
-                const mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-                countdownEl.innerHTML = `⏳ ریست گردونه ساعت ۱۲ شب انگلیس (${hrs} ساعت و ${mins} دقیقه)`;
-            } else {
+        function spinSlotReels() {
+            if (isSlotSpinning) return;
+            if (coins < slotBet) return alert('سکه کافی برای این شرط ندارید!');
+
+            isSlotSpinning = true;
+            coins -= slotBet;
+            updateDisplays();
+            localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
+
+            const btn = document.getElementById('slot-spin-btn');
+            btn.disabled = true;
+            document.getElementById('slot-status-msg').innerText = 'در حال چرخش...';
+
+            const r1 = document.getElementById('reel-1');
+            const r2 = document.getElementById('reel-2');
+            const r3 = document.getElementById('reel-3');
+
+            let timer = setInterval(() => {
+                r1.innerText = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+                r2.innerText = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+                r3.innerText = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+            }, 80);
+
+            setTimeout(() => {
+                clearInterval(timer);
+                isSlotSpinning = false;
                 btn.disabled = false;
-                countdownEl.innerHTML = `🎉 شانس چرخش رایگان امروز فعال است!`;
-            }
-        }
 
-        let isSpinning = false;
-        function spinWheel() {
-            if (isSpinning) return;
-            isSpinning = true;
-            document.getElementById('spin-button').disabled = true;
-            const canvas = document.getElementById('wheel-canvas');
-            const deg = 1800 + Math.floor(Math.random() * 360);
-            canvas.style.transition = 'transform 3.5s cubic-bezier(0.15, 0.9, 0.2, 1)';
-            canvas.style.transform = `rotate(${deg}deg)`;
-            setTimeout(() => {
-                isSpinning = false;
-                coins += 2;
-                localStorage.setItem(STORAGE_KEY_LAST_SPIN, Date.now().toString());
-                localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
-                document.getElementById('spin-result').innerText = '🎉 شما برنده ۲ امتیاز شدید!';
+                const res1 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+                const res2 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+                const res3 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+
+                r1.innerText = res1;
+                r2.innerText = res2;
+                r3.innerText = res3;
+
+                if (res1 === res2 && res2 === res3) {
+                    const win = slotBet * 15;
+                    coins += win;
+                    document.getElementById('slot-status-msg').innerHTML = `<span style="color:#34c759;">🎉 جک‌پات! برنده ${win} سکه شدید!</span>`;
+                    if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                } else if (res1 === res2 || res2 === res3 || res1 === res3) {
+                    const win = slotBet * 2;
+                    coins += win;
+                    document.getElementById('slot-status-msg').innerHTML = `<span style="color:#e5c158;">✨ دو نماد جفت شد! برنده ${win} سکه شدید!</span>`;
+                } else {
+                    document.getElementById('slot-status-msg').innerText = 'این بار برنده نشدید. دوباره شانس خود را امتحان کنید!';
+                }
+
                 updateDisplays();
-                checkDailySpinTimer();
-            }, 3600);
-        }
-
-        function startTask(id, url, reward) {
-            window.open(url, '_blank');
-            setTimeout(() => {
-                coins += reward;
                 localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
-                updateDisplays();
-                const btn = document.getElementById('btn-task-' + id);
-                if (btn) { btn.innerText = 'انجام شد ✓'; btn.disabled = true; }
-            }, 2500);
+            }, 2000);
         }
 
-        function openAdminModal() { document.getElementById('admin-modal').style.display = 'flex'; }
-        function closeAdminModal() { document.getElementById('admin-modal').style.display = 'none'; }
-        function adminAddCoins(amount) {
-            coins += amount;
-            localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
-            updateDisplays();
-            alert(`+${amount} سکه با موفقیت اضافه شد!`);
-        }
-        function adminResetCoins() {
-            coins = 0;
-            localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
-            updateDisplays();
-            alert('موجودی صفر شد.');
-        }
-        function adminResetWheel() {
-            localStorage.removeItem(STORAGE_KEY_LAST_SPIN);
-            checkDailySpinTimer();
-            alert('تایمر گردونه ریست شد!');
-        }
-        function adminSendCustomCoins() {
-            const targetId = document.getElementById('admin-target-id').value;
-            const amount = parseFloat(document.getElementById('admin-target-amount').value);
-            if (!targetId || !amount) parseFloat(document.getElementById('admin-target-amount').value);
-            if (!targetId || !amount) return alert('آیدی و مقدار را وارد کنید.');
-            alert(`دستور واریز ${amount} سکه برای کاربر ${targetId} ثبت شد.`);
-        }
-        function adminAddCustomTask() {
-            const title = document.getElementById('custom-task-title').value;
-            const url = document.getElementById('custom-task-url').value;
-            const reward = document.getElementById('custom-task-reward').value;
-            if (!title) return alert('عنوان تسک را وارد کنید.');
-            const card = document.createElement('div');
-            card.className = 'task-card';
-            card.innerHTML = `<div class="task-info"><h4>${title}</h4><p>+${reward} سکه 🪙</p></div><button class="task-btn" onclick="startTask('cust', '${url}', ${reward})">شروع</button>`;
-            document.getElementById('custom-tasks-area').appendChild(card);
-            alert('تسک با موفقیت اضافه شد!');
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            updateDisplays();
-            setInterval(checkDailySpinTimer, 30000);
-        });
-    </script>
-</body>
-</html>
+        // ==========================================
+        // منطق مینی‌گیم پوکر تگزاس هولدم
+        // ==========================================
+        let pokerPot = 8;
+        function openPokerModal() { document.getElementById('poker-game-modal').style.display = 'flex'; }
+        function closePokerModal() { document.getElementById('poker-game-modal').style
