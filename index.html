@@ -363,9 +363,12 @@
   <!-- تب ۵: حساب کاربری -->
   <div id="tab-profile" class="tab-content">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-      <h3 style="color: var(--gold);" id="txt-prof-title">مشخصات حساب کاربری</h3>
-      <button onclick="openModal('modal-lang')" style="background: none; border: none; font-size: 22px; cursor: pointer;">⚙️</button>
-    </div>
+  <h3 style="color: var(--gold);" id="txt-prof-title">مشخصات حساب کاربری</h3>
+  <div style="display: flex; gap: 8px; align-items: center;">
+    <button onclick="openGame('admin/index.html')" style="background: rgba(255,59,48,0.15); border: 1px solid var(--red); color: var(--red); padding: 4px 10px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer;">👑 مدیریت</button>
+    <button onclick="openModal('modal-lang')" style="background: none; border: none; font-size: 22px; cursor: pointer;">⚙️</button>
+  </div>
+</div>
 
     <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px; padding: 16px; margin-bottom: 16px;">
       <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13px;">
