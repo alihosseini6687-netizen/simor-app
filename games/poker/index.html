@@ -13,6 +13,7 @@
       --gold: #e5c158;
       --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
       --card-bg: #14141b;
+      --card-inner: #1a1a24;
       --text: #ffffff;
       --text-muted: #8e8e98;
       --red: #ff3b30;
@@ -106,7 +107,7 @@
     .game-status-text {
       font-size: 13px; color: var(--gold); margin-bottom: 8px; font-weight: bold;
     }
-    .action-btn-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 6px; }
+    .action-btn-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 8px; }
     .poker-btn {
       flex: 1; padding: 10px 4px; border-radius: 8px; font-size: 12px;
       font-weight: bold; border: none; cursor: pointer; transition: transform 0.08s;
@@ -119,13 +120,26 @@
     .btn-call { background: #1a3a22; color: #4cd964; border: 1px solid #34c759; }
     .btn-raise { background: var(--gold-gradient); color: black; }
 
-    /* دکمه‌های مقدار افزایش شرط */
-    .raise-chips-row {
-      display: flex; gap: 6px; justify-content: center; margin-top: 6px;
+    /* کادر تایپ دستی و کلیدهای سریع افزایش شرط */
+    .raise-controls {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      background: var(--card-inner); border: 1px solid var(--border);
+      border-radius: 10px; padding: 6px 10px; margin-top: 6px;
+    }
+    .raise-input {
+      width: 70px; background: #0c0c10; border: 1px solid var(--gold);
+      border-radius: 6px; color: var(--gold); font-size: 13px; font-weight: bold;
+      padding: 5px; text-align: center; outline: none;
     }
     .btn-chip-amt {
-      background: var(--card-inner); border: 1px solid var(--border);
-      color: var(--gold); padding: 4px 8px; border-radius: 6px; font-size: 11px;
+      background: #252532; border: 1px solid var(--border);
+      color: var(--gold); padding: 5px 8px; border-radius: 6px; font-size: 11px;
+      font-weight: bold; cursor: pointer;
+    }
+    .btn-chip-amt:active { transform: scale(0.95); }
+    .btn-allin {
+      background: rgba(255, 59, 48, 0.2); border: 1px solid var(--red);
+      color: #ff3b30; padding: 5px 8px; border-radius: 6px; font-size: 11px;
       font-weight: bold; cursor: pointer;
     }
 
@@ -235,13 +249,14 @@
       <button class="poker-btn btn-raise" id="btn-raise" onclick="userAction('raise')" disabled>افزایش (Raise)</button>
     </div>
 
-    <!-- مقادیر افزایش شرط -->
-    <div class="raise-chips-row" id="raise-selectors">
-      <span style="font-size: 11px; color: var(--text-muted); align-self: center;">مقدار افزایش:</span>
-      <button class="btn-chip-amt" onclick="setRaiseAmount(2)">+۲ S</button>
-      <button class="btn-chip-amt" onclick="setRaiseAmount(5)">+۵ S</button>
-      <button class="btn-chip-amt" onclick="setRaiseAmount(10)">+۱۰ S</button>
-      <button class="btn-chip-amt" style="border-color: var(--gold); color: white;" onclick="setRaiseAmount(25)">+۲۵ S</button>
+    <!-- کادر تایپ دستی و کلیدهای سریع افزایش شرط -->
+    <div class="raise-controls">
+      <span style="font-size: 11px; color: var(--text-muted);">مبلغ افزایش:</span>
+      <input type="number" class="raise-input" id="custom-raise-input" value="4" min="1" oninput="onCustomRaiseInput(this.value)">
+      <button class="btn-chip-amt" onclick="setRaiseAmount(5)">+۵</button>
+      <button class="btn-chip-amt" onclick="setRaiseAmount(10)">+۱۰</button>
+      <button class="btn-chip-amt" onclick="setRaiseAmount(25)">+۲۵</button>
+      <button class="btn-allin" onclick="setAllIn()">All-in</button>
     </div>
 
     <button class="poker-btn btn-raise" id="btn-start" style="width: 100%; margin-top: 10px; padding: 12px; font-size: 14px;" onclick="startNewHand()">🎲 پخش کارت و شروع دست جدید</button>
@@ -304,10 +319,8 @@
     let currentHighestBet = 2;
     let selectedRaiseAmt = 4;
 
-    // کارت‌های زمین
     let cCard1 = null, cCard2 = null, cCard3 = null, cCard4 = null, cCard5 = null;
 
-    // بازیکنان با دو کارت کاملاً مجزا (card1 و card2)
     let pUser = { id: 'user', name: 'شما', bet: 0, folded: false, card1: null, card2: null };
     let pBot1 = { id: 'bot1', name: 'سارا', bet: 0, folded: false, card1: null, card2: null };
     let pBot2 = { id: 'bot2', name: 'آریا', bet: 0, folded: false, card1: null, card2: null };
@@ -333,9 +346,28 @@
       return `<div class="card ${card.color}">${card.rank}<br><span style="font-size:11px;">${card.suit}</span></div>`;
     }
 
-    function setRaiseAmount(amt) {
+    // کنترل ورودی تایپ دستی شرط
+    function onCustomRaiseInput(val) {
+      let amt = parseInt(val) || 1;
+      if (amt > balance) amt = Math.max(1, balance);
+      if (amt < 1) amt = 1;
       selectedRaiseAmt = amt;
-      document.getElementById('btn-raise').innerText = `افزایش (+${amt} S)`;
+      document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} S)`;
+    }
+
+    function setRaiseAmount(amt) {
+      let finalAmt = Math.min(amt, Math.max(1, balance));
+      selectedRaiseAmt = finalAmt;
+      const inp = document.getElementById('custom-raise-input');
+      if (inp) inp.value = finalAmt;
+      document.getElementById('btn-raise').innerText = `افزایش (+${finalAmt} S)`;
+    }
+
+    function setAllIn() {
+      selectedRaiseAmt = Math.max(1, balance);
+      const inp = document.getElementById('custom-raise-input');
+      if (inp) inp.value = selectedRaiseAmt;
+      document.getElementById('btn-raise').innerText = `افزایش (All-in ${selectedRaiseAmt} S)`;
     }
 
     function setButtonsState() {
@@ -370,12 +402,10 @@
       document.getElementById('chips-bot2').innerText = `${pBot2.bet} S`;
       document.getElementById('chips-bot3').innerText = `${pBot3.bet} S`;
 
-      // کارت‌های هر دو دست کاربر
       if (pUser.card1 && pUser.card2) {
         document.getElementById('cards-user').innerHTML = renderCard(pUser.card1) + renderCard(pUser.card2);
       }
 
-      // کارت‌های ربات‌ها
       const showBots = (stage === 4);
       if (pBot1.card1 && pBot1.card2) {
         document.getElementById('cards-bot1').innerHTML = renderCard(pBot1.card1, !showBots) + renderCard(pBot1.card2, !showBots);
@@ -387,7 +417,6 @@
         document.getElementById('cards-bot3').innerHTML = renderCard(pBot3.card1, !showBots) + renderCard(pBot3.card2, !showBots);
       }
 
-      // کارت‌های زمین در مراحل مختلف
       let commHtml = '';
       commHtml += (stage >= 1) ? renderCard(cCard1) : renderCard(null, true);
       commHtml += (stage >= 1) ? renderCard(cCard2) : renderCard(null, true);
@@ -397,7 +426,6 @@
       document.getElementById('community-cards').innerHTML = commHtml;
     }
 
-    // شروع دست جدید
     function startNewHand() {
       if (balance < 2) {
         alert('موجودی سکه برای ورود به دست کافی نیست!');
@@ -408,7 +436,6 @@
       stage = 0;
       currentHighestBet = 2;
 
-      // پخش دو کارت به هر بازیکن
       pUser = { id: 'user', name: 'شما', bet: 2, folded: false, card1: deck.pop(), card2: deck.pop() };
       pBot1 = { id: 'bot1', name: 'سارا', bet: 1, folded: false, card1: deck.pop(), card2: deck.pop() };
       pBot2 = { id: 'bot2', name: 'آریا', bet: 2, folded: false, card1: deck.pop(), card2: deck.pop() };
@@ -418,7 +445,7 @@
       cCard4 = deck.pop(); cCard5 = deck.pop();
 
       balance -= 2;
-      pot = 7; // مجموع بلایندها
+      pot = 7;
       saveBalance();
 
       document.getElementById('act-user').innerText = 'شرط: ۲S';
@@ -432,7 +459,6 @@
       document.getElementById('status-text').innerText = 'مرحله Pre-Flop: نوبت شماست';
     }
 
-    // نوبت کاربر
     function userAction(action) {
       disableAllButtons();
 
@@ -455,13 +481,16 @@
         document.getElementById('act-user').style.color = '#34c759';
       } else if (action === 'raise') {
         const toCall = currentHighestBet - pUser.bet;
-        const totalRaise = toCall + selectedRaiseAmt;
-        balance -= totalRaise;
-        pot += totalRaise;
-        pUser.bet += totalRaise;
+        let actualRaise = selectedRaiseAmt;
+        if (balance < toCall + actualRaise) actualRaise = Math.max(1, balance - toCall);
+
+        const totalCost = toCall + actualRaise;
+        balance -= totalCost;
+        pot += totalCost;
+        pUser.bet += totalCost;
         currentHighestBet = pUser.bet;
         saveBalance();
-        document.getElementById('act-user').innerText = `افزایش (+${selectedRaiseAmt}S)`;
+        document.getElementById('act-user').innerText = `افزایش (+${actualRaise}S)`;
         document.getElementById('act-user').style.color = '#ffd700';
       }
 
@@ -470,7 +499,6 @@
       setTimeout(botTurns, 650);
     }
 
-    // نوبت هوش مصنوعی
     function botTurns() {
       const bots = [pBot1, pBot2, pBot3];
 
@@ -506,7 +534,7 @@
           actEl.innerText = 'کال';
           actEl.style.color = '#34c759';
         } else if (act === 'raise') {
-          const raiseAmt = (difficulty === 'hard') ? 4 : 2;
+          const raiseAmt = (difficulty === 'hard') ? 5 : 2;
           const toCall = Math.max(0, currentHighestBet - bot.bet);
           pot += (toCall + raiseAmt);
           bot.bet += (toCall + raiseAmt);
@@ -538,7 +566,6 @@
       }
     }
 
-    // موتور ارزیابی دست بر اساس قوانین ۲۱ ترکیبی پوکر
     function eval5(c) {
       const vals = c.map(x => x.val).sort((a,b) => b-a);
       const suitsMap = c.map(x => x.suit);
@@ -572,11 +599,9 @@
         return;
       }
 
-      // کارت‌های ۷ گانه کاربر
       const u7 = [pUser.card1, pUser.card2, cCard1, cCard2, cCard3, cCard4, cCard5];
       let bestUser = { score: -1, name: '' };
 
-      // محاسبه ترکیب‌های ۵تایی
       for (let i = 0; i < 7; i++) {
         for (let j = i + 1; j < 7; j++) {
           const combo = u7.filter((_, idx) => idx !== i && idx !== j);
@@ -585,11 +610,10 @@
         }
       }
 
-      // شانس رقابت بات‌ها بر مبنای سختی
       let botMaxScore = 0;
-      if (difficulty === 'easy') botMaxScore = Math.floor(Math.random() * 2); // نهایتا یک جفت
-      else if (difficulty === 'medium') botMaxScore = Math.floor(Math.random() * 3); // نهایتا دو جفت
-      else botMaxScore = Math.floor(Math.random() * 5); // تا رنگ و استریت
+      if (difficulty === 'easy') botMaxScore = Math.floor(Math.random() * 2);
+      else if (difficulty === 'medium') botMaxScore = Math.floor(Math.random() * 3);
+      else botMaxScore = Math.floor(Math.random() * 5);
 
       if (bestUser.score >= botMaxScore) {
         balance += pot;
