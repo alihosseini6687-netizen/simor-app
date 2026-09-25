@@ -28,34 +28,46 @@
     .top-bar {
       display: flex; justify-content: space-between; align-items: center;
       background: rgba(25,12,38,0.85); border: 1px solid rgba(212,175,55,0.3);
-      border-radius: 12px; padding: 8px 12px; margin-bottom: 10px; font-size: 13px;
+      border-radius: 12px; padding: 8px 12px; margin-bottom: 8px; font-size: 13px;
     }
     .btn-back {
       background: #25163a; color: var(--gold); border: 1px solid rgba(212,175,55,0.3);
       padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
     }
 
-    /* باکس نمایش برد بزرگ در بالا */
+    /* باکس نمایش نتیجه برد/باخت */
     .win-display-box {
-      background: #1f0b0b; border: 2px solid #ff9f0a;
-      box-shadow: 0 0 15px rgba(255,159,10,0.4);
-      border-radius: 14px; padding: 10px 14px; margin: 0 auto 12px;
+      background: #170707; border: 2px solid #ff9f0a;
+      box-shadow: 0 0 15px rgba(255,159,10,0.3);
+      border-radius: 14px; padding: 8px 14px; margin: 0 auto 10px;
       max-width: 320px; display: flex; align-items: center; justify-content: center; gap: 8px;
     }
-    .win-amount { font-size: 26px; font-weight: 900; color: #ffd700; font-family: monospace; }
+    .win-amount { font-size: 24px; font-weight: 900; color: #ffd700; font-family: monospace; }
+    .win-amount.negative { color: var(--red) !important; }
 
-    /* قاب چوبی ماشین اسلات ۳ رول (برگرفته از Boinkers) */
+    /* قاب چوبی ماشین اسلات ۳ رول (با دو تبر و قلک خوک) */
     .slot-machine-frame {
-      position: relative; width: 100%; max-width: 330px; margin: 0 auto;
+      position: relative; width: 100%; max-width: 330px; margin: 18px auto 0;
       background: linear-gradient(180deg, var(--wood-light), var(--wood-dark));
       border: 6px solid #241206; border-radius: 24px; padding: 18px 12px 14px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 2px 5px rgba(255,255,255,0.2);
     }
+
+    /* تبرهای متقاطع بالای سقف */
+    .axes-decor {
+      position: absolute; top: -28px; left: 50%; transform: translateX(-50%);
+      width: 75px; z-index: 10; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8));
+    }
     .roof-decor {
-      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-      background: #ffd700; color: #000; font-weight: 900; font-size: 12px;
-      padding: 3px 18px; border-radius: 12px; border: 2px solid #5a3212;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+      background: #ffd700; color: #000; font-weight: 900; font-size: 11px;
+      padding: 2px 16px; border-radius: 10px; border: 2px solid #5a3212; z-index: 11;
+    }
+
+    /* قلک خوک گوشه دستگاه */
+    .piggy-decor {
+      position: absolute; bottom: -12px; right: -10px; width: 44px; z-index: 10;
+      filter: drop-shadow(0 3px 5px rgba(0,0,0,0.7));
     }
 
     /* کانتینر رول‌ها */
@@ -74,7 +86,7 @@
     /* هر ستون رول */
     .reel-window {
       width: 90px; height: 110px; overflow: hidden; position: relative;
-      background: #181822; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);
+      background: #161622; border-radius: 10px; border: 1px solid rgba(255,255,255,0.08);
     }
     .reel-strip {
       display: flex; flex-direction: column; align-items: center;
@@ -82,7 +94,7 @@
     }
     .slot-item {
       width: 90px; height: 110px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; font-size: 38px;
+      align-items: center; justify-content: center;
     }
     .slot-item img { width: 55px; height: 55px; object-fit: contain; }
     .slot-item span { font-size: 10px; font-weight: bold; color: var(--gold); margin-top: 2px; }
@@ -100,10 +112,10 @@
     }
     .btn-multi.active { background: var(--gold-gradient); color: #000; }
 
-    /* دکمه بزرگ لوزی‌شکل چرخش (SPIN) مشابه Boinkers */
-    .spin-btn-container { margin: 10px auto; }
+    /* دکمه چرخش */
+    .spin-btn-container { margin: 8px auto; }
     .btn-spin-main {
-      width: 140px; height: 58px; background: var(--gold-gradient);
+      width: 140px; height: 56px; background: var(--gold-gradient);
       border: 3px solid #ffd700; border-radius: 20px; color: #000;
       font-size: 18px; font-weight: 900; cursor: pointer;
       box-shadow: 0 0 25px rgba(212,175,55,0.5); transition: transform 0.08s;
@@ -119,25 +131,26 @@
     }
     .btn-auto.active { border-color: var(--red); color: var(--red); }
 
-    /* جدول جوایز */
+    /* جدول جوایز و قوانین */
     .payout-card {
-      max-width: 330px; margin: 14px auto 0; background: rgba(25,12,38,0.8);
+      max-width: 330px; margin: 12px auto 0; background: rgba(25,12,38,0.85);
       border: 1px solid rgba(212,175,55,0.25); border-radius: 12px; padding: 10px; font-size: 11px;
     }
     .payout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; text-align: right; }
-    .payout-item { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 4px 8px; border-radius: 6px; }
+    .payout-item { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.35); padding: 4px 8px; border-radius: 6px; }
 
-    /* پاپ‌آپ جک‌پات */
+    /* مودال پیام و انفجار بمب */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
       z-index: 1000; align-items: center; justify-content: center; padding: 16px;
     }
     .modal-overlay.open { display: flex; }
-    .jackpot-modal {
+    .alert-modal-box {
       background: radial-gradient(circle, #3a1555, #140522); border: 2px solid var(--gold);
-      border-radius: 20px; padding: 25px 15px; width: 100%; max-width: 310px; text-align: center;
-      animation: popIn 0.25s ease;
+      border-radius: 20px; padding: 22px 14px; width: 100%; max-width: 310px; text-align: center;
+      animation: popIn 0.2s ease;
     }
+    .alert-modal-box.danger { border-color: var(--red); }
     @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
   </style>
 </head>
@@ -152,14 +165,16 @@
     </div>
   </div>
 
-  <!-- کادر رقم برد -->
+  <!-- کادر وضعیت پاداش / خسارت -->
   <div class="win-display-box">
-    <span style="font-size: 18px;">🪙</span>
+    <span style="font-size: 18px;" id="win-icon">🪙</span>
     <span class="win-amount" id="win-display">۰</span>
   </div>
 
-  <!-- ماشین اسلات ۳ ردیفه (قاب چوبی) -->
+  <!-- ماشین اسلات ۳ ردیفه (قاب وایکینگی Boinkers) -->
   <div class="slot-machine-frame">
+    <!-- تبرهای متقاطع بالای سقف -->
+    <img src="../../assets/axes.png" class="axes-decor" onerror="this.style.display='none'">
     <div class="roof-decor">SIMOR ROLLER</div>
 
     <div class="reels-container">
@@ -168,7 +183,7 @@
       <!-- رول ۱ -->
       <div class="reel-window">
         <div class="reel-strip" id="strip-1">
-          <div class="slot-item"><img src="../../assets/chest.png"><span>صندوق</span></div>
+          <div class="slot-item"><img src="../../assets/chest-slot.png" onerror="this.src='../../assets/chest.png'"><span>صندوق</span></div>
         </div>
       </div>
 
@@ -182,10 +197,13 @@
       <!-- رول ۳ -->
       <div class="reel-window">
         <div class="reel-strip" id="strip-3">
-          <div class="slot-item"><span>💎</span><span>الماس</span></div>
+          <div class="slot-item"><img src="../../assets/diamond.png"><span>الماس</span></div>
         </div>
       </div>
     </div>
+
+    <!-- قلک خوک طلایی پایین دستگاه -->
+    <img src="../../assets/piggy.png" class="piggy-decor" onerror="this.style.display='none'">
   </div>
 
   <!-- نوار تنظیم ضریب و شرط -->
@@ -212,27 +230,32 @@
     <button class="btn-auto" id="btn-auto" onclick="toggleAutoSpin()">🔄 چرخش خودکار (Auto)</button>
   </div>
 
-  <!-- جدول جوایز و ضرایب -->
+  <!-- جدول راهنمای جوایز، پوچ و بمب منفی -->
   <div class="payout-card">
-    <b style="color: var(--gold);">📜 راهنمای جوایز (۳ نماد یکسان):</b>
+    <b style="color: var(--gold);">📜 جدول جوایز و قوانین (۳ نماد یکسان):</b>
     <div class="payout-grid">
-      <div class="payout-item"><span>📦 ۳ صندوق گنج</span><b style="color: #ffd700;">x50 (جک‌پات)</b></div>
-      <div class="payout-item"><span>💎 ۳ الماس</span><b style="color: #5ac8fa;">x30</b></div>
+      <div class="payout-item"><span>📦 ۳ صندوق طلا</span><b style="color: #ffd700;">x50 (جک‌پات)</b></div>
+      <div class="payout-item"><span>💎 ۳ الماس آبی</span><b style="color: #5ac8fa;">x30</b></div>
       <div class="payout-item"><span>🔴 ۳ هفت سرخ</span><b style="color: #ff3b30;">x20</b></div>
       <div class="payout-item"><span>💰 ۳ سکه طلا</span><b style="color: #ffd700;">x10</b></div>
       <div class="payout-item"><span>⚡ ۳ انرژی</span><b style="color: #34c759;">+۲۰ سکه</b></div>
+      <div class="payout-item"><span>🟢 ۳ چیپ</span><b style="color: var(--gold);">x5</b></div>
       <div class="payout-item"><span>✨ ۲ نماد همسان</span><b style="color: #ffffff;">x2</b></div>
+      <div class="payout-item"><span>👖 ۳ شلوار / 💀 جمجمه</span><b style="color: #8e8e98;">پوچ (x0)</b></div>
+      <div class="payout-item" style="grid-column: span 2; border: 1px dashed var(--red);">
+        <span>💣 ۳ بمب انفجاری</span><b style="color: var(--red);">-۱۰ سکه (خسارت منفی!)</b>
+      </div>
     </div>
   </div>
 
-  <!-- پاپ‌آپ جک‌پات و برد بزرگ -->
-  <div class="modal-overlay" id="jackpot-modal">
-    <div class="jackpot-modal">
-      <div style="font-size: 55px; margin-bottom: 6px;">🎉</div>
-      <h2 style="color: var(--gold); margin-bottom: 6px;" id="jp-title">BIG WIN!</h2>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="jp-desc">شما برنده جایزه بزرگ شدید!</p>
-      <div style="font-size: 32px; font-weight: 900; color: #ffd700; margin-bottom: 16px;" id="jp-amount">+500 S</div>
-      <button class="btn-back" style="width: 100%; padding: 12px; background: var(--gold-gradient); color: #000; border: none; font-weight: bold;" onclick="closeJackpotModal()">ادامه بازی 🎰</button>
+  <!-- پاپ‌آپ جک‌پات و هشدار بمب -->
+  <div class="modal-overlay" id="alert-modal">
+    <div class="alert-modal-box" id="alert-box">
+      <div style="font-size: 50px; margin-bottom: 6px;" id="modal-icon">🎉</div>
+      <h2 style="color: var(--gold); margin-bottom: 6px;" id="modal-title">BIG WIN!</h2>
+      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="modal-desc">شما برنده جایزه بزرگ شدید!</p>
+      <div style="font-size: 28px; font-weight: 900; color: #ffd700; margin-bottom: 16px;" id="modal-amount">+500 S</div>
+      <button class="btn-back" style="width: 100%; padding: 12px; background: var(--gold-gradient); color: #000; border: none; font-weight: bold;" onclick="closeAlertModal()">تایید و ادامه 🎰</button>
     </div>
   </div>
 
@@ -273,14 +296,17 @@
       document.getElementById('bet-cost-text').innerText = `${baseCost * multiplier} سکه`;
     }
 
-    // تعریف نمادهای اسلات
+    // تعریف دقیق نمادها همراه با وزن (احتمال) و حالت‌های منفی/پوچ
     const symbols = [
-      { id: 'chest', html: '<img src="../../assets/chest.png"><span>صندوق</span>', mult: 50, weight: 2 },
-      { id: 'diamond', html: '<span>💎</span><span>الماس</span>', mult: 30, weight: 4 },
-      { id: 'seven', html: '<span style="color:red; font-weight:900;">7</span><span>هفت سرخ</span>', mult: 20, weight: 6 },
-      { id: 'coin', html: '<img src="../../assets/coin.png"><span>سکه</span>', mult: 10, weight: 10 },
-      { id: 'energy', html: '<span style="color:#ffd700;">⚡</span><span>انرژی</span>', mult: 8, weight: 14 },
-      { id: 'chip', html: '<img src="../../assets/poker-chip.png"><span>چیپ</span>', mult: 5, weight: 18 }
+      { id: 'chest', html: '<img src="../../assets/chest-slot.png" onerror="this.src=\'../../assets/chest.png\'"><span>صندوق</span>', mult: 50, weight: 2 },
+      { id: 'diamond', html: '<img src="../../assets/diamond.png"><span>الماس</span>', mult: 30, weight: 3 },
+      { id: 'seven', html: '<img src="../../assets/seven.png"><span>هفت سرخ</span>', mult: 20, weight: 5 },
+      { id: 'coin', html: '<img src="../../assets/coin.png"><span>سکه</span>', mult: 10, weight: 8 },
+      { id: 'energy', html: '<img src="../../assets/energy.png"><span>انرژی</span>', mult: 10, weight: 10 },
+      { id: 'chip', html: '<img src="../../assets/poker-chip.png"><span>چیپ</span>', mult: 5, weight: 12 },
+      { id: 'pants', html: '<img src="../../assets/pants.png"><span>شلوار</span>', mult: 0, weight: 25 }, // نماد پوچ
+      { id: 'skull', html: '<img src="../../assets/skull.png"><span>جمجمه</span>', mult: 0, weight: 20 }, // نماد پوچ
+      { id: 'bomb', html: '<img src="../../assets/bomb.png"><span>بمب خطر</span>', mult: -10, weight: 15 } // نماد منفی
     ];
 
     function getRandomSymbol() {
@@ -293,10 +319,9 @@
       return symbols[0];
     }
 
-    // رندر آیتم در استریپ
     function createReelItems(stripEl) {
       stripEl.innerHTML = '';
-      for (let i = 0; i < 20; i++) {
+      for (let i = 0; i < 24; i++) {
         const s = symbols[Math.floor(Math.random() * symbols.length)];
         const div = document.createElement('div');
         div.className = 'slot-item';
@@ -330,20 +355,19 @@
         }
       } catch(e) {}
 
-      // نتایج رول‌ها
       const res1 = getRandomSymbol();
       const res2 = getRandomSymbol();
       const res3 = getRandomSymbol();
 
-      animateReel('strip-1', res1, 1000);
-      animateReel('strip-2', res2, 1400);
-      animateReel('strip-3', res3, 1800, () => {
+      animateReel('strip-1', res1, 950);
+      animateReel('strip-2', res2, 1350);
+      animateReel('strip-3', res3, 1750, () => {
         isSpinning = false;
         document.getElementById('btn-spin').disabled = false;
         checkWin(res1, res2, res3);
 
         if (autoSpinActive) {
-          setTimeout(spinSlot, 800);
+          setTimeout(spinSlot, 900);
         }
       });
     }
@@ -351,7 +375,6 @@
     function animateReel(stripId, targetSymbol, duration, onComplete) {
       const strip = document.getElementById(stripId);
       const items = strip.children;
-      // قرار دادن نماد هدف در انتهای رول
       items[items.length - 1].innerHTML = targetSymbol.html;
 
       strip.style.transition = `transform ${duration}ms cubic-bezier(0.1, 0.9, 0.2, 1)`;
@@ -359,7 +382,6 @@
       strip.style.transform = `translateY(${targetY}px)`;
 
       setTimeout(() => {
-        // بازنشانی موقعیت برای چرخش بعدی
         strip.style.transition = 'none';
         items[0].innerHTML = targetSymbol.html;
         strip.style.transform = 'translateY(0px)';
@@ -367,39 +389,67 @@
       }, duration + 50);
     }
 
+    // بررسی دقیق نتایج برد، پوچ و بمب منفی
     function checkWin(s1, s2, s3) {
-      let winMultiplier = 0;
-      let title = '';
+      const winDisplay = document.getElementById('win-display');
+      winDisplay.className = 'win-amount';
 
-      if (s1.id === s2.id && s2.id === s3.id) {
-        winMultiplier = s1.mult;
-        title = (s1.id === 'chest') ? '🔥 JACKPOT گنج طلایی!' : '🎉 برد بزرگ ۳ تایی!';
-      } else if (s1.id === s2.id || s2.id === s3.id || s1.id === s3.id) {
-        winMultiplier = 2;
-        title = '✨ برد جفت (۲ نماد یکسان)';
-      }
-
-      if (winMultiplier > 0) {
-        const winCoins = (baseCost * multiplier) * winMultiplier;
-        balance += winCoins;
+      // ۱. شرط منفی: ۳ تا بمب
+      if (s1.id === 'bomb' && s2.id === 'bomb' && s3.id === 'bomb') {
+        const penalty = 10 * multiplier;
+        balance = Math.max(0, balance - penalty);
         saveBalance();
 
-        document.getElementById('win-display').innerText = `+${winCoins.toLocaleString()}`;
+        winDisplay.classList.add('negative');
+        winDisplay.innerText = `-${penalty} S`;
 
         try {
           if (tg?.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg?.HapticFeedback) {
-            tg.HapticFeedback.notificationOccurred('success');
+            tg.HapticFeedback.notificationOccurred('error');
           }
         } catch(e) {}
 
-        if (winMultiplier >= 10) {
-          document.getElementById('jp-title').innerText = title;
-          document.getElementById('jp-amount').innerText = `+${winCoins.toLocaleString()} S`;
-          document.getElementById('jackpot-modal').classList.add('open');
-        }
-      } else {
-        document.getElementById('win-display').innerText = '۰';
+        showAlertModal('💥 انفجار بمب!', `۳ بمب ظاهر شد و ${penalty} سکه از حساب شما کسر گردید!`, `-${penalty} S`, true);
+        return;
       }
+
+      // ۲. شرط ۳ نماد یکسان
+      if (s1.id === s2.id && s2.id === s3.id) {
+        if (s1.mult > 0) {
+          const winCoins = (baseCost * multiplier) * s1.mult;
+          balance += winCoins;
+          saveBalance();
+          winDisplay.innerText = `+${winCoins.toLocaleString()} S`;
+
+          try {
+            if (tg?.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg?.HapticFeedback) {
+              tg.HapticFeedback.notificationOccurred('success');
+            }
+          } catch(e) {}
+
+          if (s1.mult >= 10) {
+            const title = (s1.id === 'chest') ? '🔥 JACKPOT گنج طلایی!' : '🎉 برد بزرگ ۳ تایی!';
+            showAlertModal(title, `شما برنده پاداش ${s1.mult} برابری شدید!`, `+${winCoins.toLocaleString()} S`, false);
+          }
+        } else {
+          // ۳ تا شلوار یا ۳ تا جمجمه = پوچ کامل
+          winDisplay.innerText = 'پوچ (۰)';
+        }
+        return;
+      }
+
+      // ۳. شرط ۲ نماد همسان مثبت
+      const isPositive = (s) => s.id !== 'bomb' && s.id !== 'skull' && s.id !== 'pants';
+      if ((s1.id === s2.id && isPositive(s1)) || (s2.id === s3.id && isPositive(s2)) || (s1.id === s3.id && isPositive(s1))) {
+        const winCoins = (baseCost * multiplier) * 2;
+        balance += winCoins;
+        saveBalance();
+        winDisplay.innerText = `+${winCoins.toLocaleString()} S`;
+        return;
+      }
+
+      // ۴. در بقیه حالت‌ها = پوچ
+      winDisplay.innerText = '۰';
     }
 
     function toggleAutoSpin() {
@@ -415,8 +465,26 @@
       }
     }
 
-    function closeJackpotModal() {
-      document.getElementById('jackpot-modal').classList.remove('open');
+    function showAlertModal(title, desc, amount, isDanger) {
+      const box = document.getElementById('alert-box');
+      if (isDanger) {
+        box.classList.add('danger');
+        document.getElementById('modal-icon').innerText = '💣';
+        document.getElementById('modal-amount').style.color = '#ff3b30';
+      } else {
+        box.classList.remove('danger');
+        document.getElementById('modal-icon').innerText = '🎉';
+        document.getElementById('modal-amount').style.color = '#ffd700';
+      }
+
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-desc').innerText = desc;
+      document.getElementById('modal-amount').innerText = amount;
+      document.getElementById('alert-modal').classList.add('open');
+    }
+
+    function closeAlertModal() {
+      document.getElementById('alert-modal').classList.remove('open');
     }
   </script>
 </body>
