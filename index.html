@@ -59,7 +59,7 @@
       display: flex; align-items: center; gap: 5px;
     }
 
-    /* کادر پروفایل */
+    /* کادر مشخصات کاربر */
     .profile-card {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 14px; padding: 12px 14px; margin-bottom: 10px;
@@ -107,7 +107,7 @@
     .grid-box span.label { font-size: 12px; font-weight: bold; color: var(--gold); }
     .grid-box span.sub { font-size: 9.5px; color: var(--text-muted); }
 
-    /* کلیدهای کپسولی */
+    /* دکمه‌های کپسولی */
     .action-bars { display: flex; flex-direction: column; gap: 8px; }
     .action-btn {
       background: var(--card-bg); border: 1px solid var(--border);
@@ -163,7 +163,7 @@
     .nav-tab .tab-icon { font-size: 19px; }
     .nav-tab .tab-title { font-size: 11px; font-weight: bold; }
 
-    /* پنجره مودال */
+    /* مودال‌ها */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.85);
       display: none; align-items: center; justify-content: center; z-index: 200; padding: 16px;
@@ -240,7 +240,7 @@
         </div>
       </div>
 
-      <!-- ۳ مربع ردیف میانی -->
+      <!-- ۳ مربع ردیف میانی (رفرال، سواپ، دستیار صوتی) -->
       <div class="three-grid">
         <a href="friends/index.html" class="grid-box">
           <span class="icon">👥</span>
@@ -252,10 +252,10 @@
           <span class="label" id="txt-swap">سواپ</span>
           <span class="sub" id="txt-swap-sub">تبدیل دارایی</span>
         </a>
-        <a href="miner/index.html" class="grid-box">
-          <span class="icon">⛏️</span>
-          <span class="label" id="txt-miner">ماینر</span>
-          <span class="sub" id="txt-miner-sub">استخراج خودکار</span>
+        <a href="ai/index.html" class="grid-box">
+          <span class="icon">🎙️</span>
+          <span class="label" id="txt-ai">دستیار صوتی</span>
+          <span class="sub" id="txt-ai-sub">هوش مصنوعی</span>
         </a>
       </div>
 
@@ -413,7 +413,6 @@
       }
     }
 
-    // دیتابیس بازی‌ها با ترجمه اختصاصی و خالص در هر زبان
     const gamesDatabase = [
       {
         id: 1, icon: '🃏', url: 'games/poker/index.html', active: true,
@@ -491,7 +490,7 @@
         id: 13, icon: '🧨', url: '#', active: false,
         fa: { title: 'بمب شانس', sub: 'شمارش معکوس انفجار' },
         en: { title: 'Bomb Defuse', sub: 'Countdown Rush' },
-        ru: { title: 'Бомба Удачи', sub: 'Обратный отсчёт' }
+        ru: { title: 'Боمба Удачи', sub: 'Обратный отсчёт' }
       },
       {
         id: 14, icon: '⚡', url: '#', active: false,
@@ -557,7 +556,6 @@
       document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
     }
 
-    // دیکشنری جامع ۳ زبانه (کاملاً یکدست و بدون ادغام زبان‌ها)
     const dict = {
       fa: {
         lblTg: 'شناسه تلگرام:',
@@ -566,7 +564,7 @@
         copied: 'کپی شد!',
         ref: 'رفرال', refSub: 'دعوت دوستان',
         swap: 'سواپ', swapSub: 'تبدیل دارایی',
-        miner: 'ماینر', minerSub: 'استخراج خودکار',
+        ai: 'دستیار صوتی', aiSub: 'هوش مصنوعی',
         support: 'پشتیبانی تلگرام',
         about: 'درباره ما و اهداف',
         rules: 'آموزش و قوانین بازی‌ها',
@@ -585,7 +583,7 @@
         copied: 'Copied!',
         ref: 'Referral', refSub: 'Invite Friends',
         swap: 'Swap', swapSub: 'Exchange Assets',
-        miner: 'Miner', minerSub: 'Auto Farming',
+        ai: 'AI Voice', aiSub: 'Smart Assistant',
         support: 'Telegram Support',
         about: 'About & Vision',
         rules: 'Rules & Tutorial',
@@ -604,9 +602,9 @@
         copied: 'Скопировано!',
         ref: 'Рефералы', refSub: 'Пригласить друзей',
         swap: 'Обмен', swapSub: 'Конвертация фишек',
-        miner: 'Майнер', minerSub: 'Авто-добыча',
+        ai: 'Голосовой ИИ', aiSub: 'Умный ассистент',
         support: 'Поддержка Telegram',
-        about: 'О проекте SIMAB',
+        about: 'О проекته SIMAB',
         rules: 'Правила и обучение',
         admin: 'Панель управления (Admin)',
         home: 'Главная', games: 'Игры', tasks: 'Задания',
@@ -622,39 +620,33 @@
       const d = dict[lang] || dict['fa'];
       currentToastText = d.copied;
 
-      // شناسه و کپی
       document.getElementById('lbl-tg-id').innerText = d.lblTg;
       document.getElementById('lbl-game-id').innerText = d.lblGame;
       document.getElementById('btn-copy-1').innerText = d.copy;
       document.getElementById('btn-copy-2').innerText = d.copy;
 
-      // ۳ مربع
       document.getElementById('txt-ref').innerText = d.ref;
       document.getElementById('txt-ref-sub').innerText = d.refSub;
       document.getElementById('txt-swap').innerText = d.swap;
       document.getElementById('txt-swap-sub').innerText = d.swapSub;
-      document.getElementById('txt-miner').innerText = d.miner;
-      document.getElementById('txt-miner-sub').innerText = d.minerSub;
+      document.getElementById('txt-ai').innerText = d.ai;
+      document.getElementById('txt-ai-sub').innerText = d.aiSub;
 
-      // کلیدهای کپسولی
       document.getElementById('txt-support').innerText = d.support;
       document.getElementById('txt-about').innerText = d.about;
       document.getElementById('txt-rules').innerText = d.rules;
       document.getElementById('txt-admin').innerText = d.admin;
 
-      // جهت فلش‌ها متناسب با RTL / LTR
       const arrowSymbol = (lang === 'fa') ? '◀' : '▶';
       document.getElementById('arrow-1').innerText = arrowSymbol;
       document.getElementById('arrow-2').innerText = arrowSymbol;
       document.getElementById('arrow-3').innerText = arrowSymbol;
       document.getElementById('arrow-4').innerText = arrowSymbol;
 
-      // نوار پایین
       document.getElementById('nav-txt-home').innerText = d.home;
       document.getElementById('nav-txt-games').innerText = d.games;
       document.getElementById('nav-txt-tasks').innerText = d.tasks;
 
-      // مودال‌ها
       document.getElementById('m-about-title').innerText = d.aboutTitle;
       document.getElementById('m-about-desc').innerHTML = d.aboutDesc;
       document.getElementById('btn-close-about').innerText = d.closeBtn;
@@ -662,11 +654,9 @@
       document.getElementById('m-rules-desc').innerHTML = d.rulesDesc;
       document.getElementById('btn-close-rules').innerText = d.closeBtn;
 
-      // جهت چینش کل سند
       document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
       document.documentElement.lang = lang;
 
-      // بازسازی و رندر فوری لیست بازی‌ها متناسب با زبان
       renderGames(lang);
     }
 
