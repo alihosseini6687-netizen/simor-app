@@ -41,7 +41,6 @@
       box-shadow: 0 0 35px rgba(0,0,0,0.9);
     }
 
-    /* هدر */
     .top-bar {
       display: flex; justify-content: space-between; align-items: center;
       background: var(--card-bg); border: 1px solid var(--border);
@@ -57,7 +56,6 @@
       padding: 4px 8px; border-radius: 8px; font-size: 12px; cursor: pointer;
     }
 
-    /* وضعیت هوش مصنوعی */
     .status-badge {
       align-self: center; background: rgba(168, 85, 247, 0.12);
       border: 1px solid rgba(168, 85, 247, 0.35); color: #d8b4fe;
@@ -70,23 +68,13 @@
     }
     @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
-    /* کانتینر کره نوری */
     .orb-container {
-      width: 100%;
-      height: 240px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      margin-bottom: 8px;
+      width: 100%; height: 240px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; margin-bottom: 8px;
     }
-    #orbCanvas {
-      width: 240px;
-      height: 240px;
-      border-radius: 50%;
-    }
+    #orbCanvas { width: 240px; height: 240px; border-radius: 50%; }
 
-    /* کادر متن مکالمه */
     .dialogue-box {
       flex: 1; min-height: 120px; max-height: 170px;
       background: var(--card-bg); border: 1px solid var(--border);
@@ -101,8 +89,10 @@
       background: var(--card-inner); color: #fff; padding: 8px 12px; border-radius: 10px 10px 10px 0;
       align-self: flex-end; max-width: 90%; border: 1px solid rgba(212, 175, 55, 0.25);
     }
+    .ai-bubble.error-bubble {
+      border-color: #ef4444; color: #fca5a5; background: #2a1215;
+    }
 
-    /* کلید اصلی میکروفون */
     .mic-control-area {
       display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 6px;
     }
@@ -123,7 +113,6 @@
     @keyframes micPulse { from { transform: scale(1); } to { transform: scale(1.08); } }
     .mic-hint { font-size: 11px; color: var(--text-muted); }
 
-    /* مودال تنظیم کلید جمینای */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.85);
       display: none; align-items: center; justify-content: center; z-index: 200; padding: 16px;
@@ -145,47 +134,41 @@
 <body>
 
   <div class="app-wrapper">
-    <!-- هدر -->
     <div class="top-bar">
       <button class="btn-back" onclick="goBack()">🔙 لابی</button>
       <div class="header-title">🎙️ دستیار جمینای SIMAB</div>
       <button class="btn-key-setup" onclick="openKeyModal()">🔑 کلید</button>
     </div>
 
-    <!-- وضعیت هوش مصنوعی -->
     <div class="status-badge" id="ai-status">
       <div class="pulse-dot" id="dot-indicator"></div>
       <span id="status-text">آماده شنیدن صدا</span>
     </div>
 
-    <!-- کره نوری انیمیشنی -->
     <div class="orb-container">
       <canvas id="orbCanvas" width="500" height="500"></canvas>
     </div>
 
-    <!-- کادر چت -->
     <div class="dialogue-box" id="chatBox">
       <div class="ai-bubble">
         سلام! من متصل به جمینای هستم. دکمه میکروفون را لمس کنید و سوالتان را بپرسید 🌸
       </div>
     </div>
 
-    <!-- دکمه میکروفون -->
     <div class="mic-control-area">
       <button class="btn-mic" id="btnMic" onclick="toggleListening()">🎙️</button>
       <div class="mic-hint" id="micHint">برای صحبت لمس کنید</div>
     </div>
   </div>
 
-  <!-- مودال وارد کردن کلید جمینای -->
   <div class="modal-overlay" id="modal-key">
     <div class="modal-box">
       <div style="font-size:14px; font-weight:bold; color:var(--gold);">🔑 فعال‌سازی هوش مصنوعی Gemini</div>
       <div style="font-size:11px; color:var(--text-muted); margin-top:6px; line-height:1.5;">
-        کلید API شما فقط روی گوشی خودتان ذخیره می‌شود و در گیت‌هاب آپلود نمی‌شود تا باطل نشود:
+        کلید API شما فقط روی گوشی خودتان ذخیره می‌شود:
       </div>
-      <input type="text" class="modal-input" id="apiKeyInput" placeholder="کلید AQ.Ab8... را اینجا پیست کنید">
-      <button class="btn-save-key" onclick="saveApiKey()">ذخیره و فعال‌سازی دستیار 🚀</button>
+      <input type="text" class="modal-input" id="apiKeyInput" placeholder="کلید را اینجا پیست کنید">
+      <button class="btn-save-key" onclick="saveApiKey()">ذخیره و فعال‌سازی 🚀</button>
     </div>
   </div>
 
@@ -204,7 +187,6 @@
 
     function goBack() { window.location.href = '../index.html'; }
 
-    // بررسی وجود کلید ذخیره‌شده
     let geminiKey = localStorage.getItem('simab_gemini_api_key');
     if (!geminiKey) {
       document.getElementById('modal-key').style.display = 'flex';
@@ -224,10 +206,10 @@
       geminiKey = val;
       localStorage.setItem('simab_gemini_api_key', val);
       document.getElementById('modal-key').style.display = 'none';
-      alert('✅ کلید با موفقیت در گوشی شما فعال شد!');
+      alert('✅ کلید ذخیره شد!');
     }
 
-    // انیمیشن سه‌بعدی کره نوری
+    // انیمیشن کره نوری
     const canvas = document.getElementById('orbCanvas');
     const ctx = canvas.getContext('2d');
     let orbMode = 'idle';
@@ -287,7 +269,7 @@
     }
     drawOrb();
 
-    // تشخیص گفتار کاربر
+    // تشخیص گفتار
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
     let isListening = false;
@@ -341,16 +323,16 @@
       document.getElementById('micHint').innerText = 'برای صحبت لمس کنید';
     }
 
-    function addBubble(text, sender) {
+    function addBubble(text, sender, isError = false) {
       const box = document.getElementById('chatBox');
       const b = document.createElement('div');
-      b.className = sender === 'user' ? 'user-bubble' : 'ai-bubble';
+      b.className = (sender === 'user' ? 'user-bubble' : 'ai-bubble') + (isError ? ' error-bubble' : '');
       b.innerText = text;
       box.appendChild(b);
       box.scrollTop = box.scrollHeight;
     }
 
-    // ارسال مستقیم به جمینای با کلید امن گوشی شما
+    // ارسال مستقیم به جمینای با شفاف‌سازی خطا
     async function sendToGemini(userText) {
       orbMode = 'speaking';
       document.getElementById('status-text').innerText = 'در حال پردازش هوش مصنوعی...';
@@ -370,14 +352,31 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+
         const data = await res.json();
-        const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'پاسخی دریافت نشد.';
+
+        // اگر گوگل پیام خطا فرستاد
+        if (data.error) {
+          const errDetail = data.error.message || data.error.status || 'خطای ناشناخته در کلید یا سرور گوگل';
+          addBubble(`⚠️ خطای گوگل: ${errDetail}`, 'ai', true);
+          orbMode = 'idle';
+          document.getElementById('status-text').innerText = 'خطا در ارتباط با گوگل';
+          return;
+        }
+
+        const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!aiText) {
+          addBubble('گوگل پاسخی برنگرداند.', 'ai', true);
+          orbMode = 'idle';
+          return;
+        }
+
         addBubble(aiText, 'ai');
         speakText(aiText);
       } catch(err) {
-        const errReply = 'متاسفانه خطایی در ارتباط رخ داد. لطفاً کلید API را بررسی فرمایید.';
-        addBubble(errReply, 'ai');
-        speakText(errReply);
+        addBubble(`⚠️ خطای اینترنت/فیلترشکن: ${err.message}`, 'ai', true);
+        orbMode = 'idle';
+        document.getElementById('status-text').innerText = 'خطا در اتصال شبکه';
       }
     }
 
