@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SIMAB - تسک‌ها و جوایز</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0c0c14;
+            --card-bg: rgba(22, 22, 32, 0.85);
+            --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
+            --gold-color: #f5cf62;
+            --cyan-neon: #00f2fe;
+            --purple-neon: #9d4edd;
+            --green-color: #00f5d4;
+            --text-color: #ffffff;
+            --text-muted: #9595a8;
+            --border-color: rgba(212, 175, 55, 0.25);
+            --border-glow: 0 0 15px rgba(212, 175, 55, 0.2);
+            --btn-shadow: 0 4px 18px rgba(212, 175, 55, 0.35);
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            margin: 0; padding: 0;
+            background: radial-gradient(circle at 50% 10%, #1e1338 0%, #0c0c14 70%);
+            color: var(--text-color);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* کانتینر استاندارد موبایل ۴۴۰ پیکسل */
+        .app-container {
+            width: 100%;
+            max-width: 440px;
+            min-height: 100vh;
+            padding: 14px 14px 85px 14px;
+            position: relative;
+            background: rgba(12, 12, 20, 0.6);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(255,255,255,0.05);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* هدر شیک برند سیماب */
+        .top-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 0 14px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 14px;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            width: 38px; height: 38px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .header-btn:active { transform: scale(0.92); }
+
+        .header-title-box { text-align: center; }
+        .brand-name {
+            font-size: 19px;
+            font-weight: 900;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1.5px;
+        }
+        .brand-sub {
+            font-size: 11px;
+            color: var(--cyan-neon);
+            margin-top: 1px;
+            letter-spacing: 0.5px;
+        }
+
+        /* کارت موجودی سکه */
+        .balance-card {
+            background: linear-gradient(135deg, rgba(30, 20, 50, 0.8), rgba(15, 15, 25, 0.9));
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        .balance-info { display: flex; align-items: center; gap: 12px; }
+        .s-coin-icon {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--gold-gradient);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 24px; color: #352100;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+            border: 2px solid #fff3be;
+            font-family: Arial, sans-serif;
+            animation: pulseCoin 2.5s infinite;
+        }
+        @keyframes pulseCoin {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 25px rgba(212, 175, 55, 0.85); }
+        }
+        .balance-details { display: flex; flex-direction: column; }
+        .balance-title { font-size: 11px; color: var(--text-muted); text-transform: uppercase; }
+        .balance-amount { font-size: 24px; font-weight: 900; color: #fff; }
+
+        /* سوییچر تب‌های داخلی */
+        .subtabs-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            background: rgba(255,255,255,0.04);
+            padding: 5px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 16px;
+        }
+        .subtab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 2px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+        .subtab-btn span.tab-icon { font-size: 16px; }
+        .subtab-btn.active {
+            background: var(--gold-gradient);
+            color: #1a1200;
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.4);
+        }
+
+        /* کارت‌های محتوا */
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            position: relative;
+        }
+        .card-header-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--gold-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+        .card-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            line-height: 1.5;
+        }
+
+        /* پاداش روزانه (Streak) */
+        .streak-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .streak-day-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 10px 4px;
+            text-align: center;
+            position: relative;
+            transition: all 0.2s;
+        }
+        .streak-day-box.claimed {
+            background: rgba(0, 245, 212, 0.08);
+            border-color: var(--green-color);
+        }
+        .streak-day-box.ready {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: var(--gold-color);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+            animation: pulseGlow 1.8s infinite;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .streak-day-box.day-7 {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(157, 78, 221, 0.2), rgba(212, 175, 55, 0.2));
+            border-color: var(--purple-neon);
+        }
+        .streak-day-num { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+        .streak-day-icon { font-size: 20px; margin-bottom: 2px; }
+        .streak-day-reward { font-size: 12px; font-weight: 800; color: var(--gold-color); }
+
+        .action-btn {
+            background: var(--gold-gradient);
+            color: #171000;
+            border: none;
+            border-radius: 14px;
+            padding: 12px;
+            width: 100%;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: var(--btn-shadow);
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .action-btn:active { transform: scale(0.97); }
+        .action-btn:disabled {
+            background: #252530 !important;
+            color: #606070 !important;
+            box-shadow: none !important;
+            cursor: not-allowed;
+        }
+
+        /* گردونه شانس */
+        .wheel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            padding: 10px 0;
+        }
+        .wheel-pointer {
+            width: 0; height: 0;
+            border-left: 14px solid transparent;
+            border-right: 14px solid transparent;
+            border-top: 24px solid #ff3b30;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+            z-index: 10;
+            margin-bottom: -12px;
+        }
+        .wheel-canvas-wrap {
+            position: relative;
+            width: 270px; height: 270px;
+            border-radius: 50%;
+            border: 6px solid #d4af37;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(0,0,0,0.8);
+            background: #111;
+            overflow: hidden;
+        }
+        #wheelCanvas {
+            width: 100%;
+            height: 100%;
+            transition: transform 4.5s cubic-bezier(0.15, 0.9, 0.2, 1);
+        }
+        .wheel-center-pin {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 48px; height: 48px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff2ad 0%, #d4af37 60%, #593f00 100%);
+            border: 3px solid #14141e;
+            box-shadow: 0 0 12px rgba(0,0,0,0.8);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: 900; color: #221400;
+            z-index: 5;
+        }
+        .wheel-info-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin: 14px 0 10px 0;
+        }
+
+        /* ماینر خودکار */
+        .miner-display {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .miner-animation-ring {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            border: 3px dashed var(--cyan-neon);
+            margin: 0 auto 10px auto;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px;
+            animation: rotateRig 8s linear infinite;
+        }
+        @keyframes rotateRig { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .miner-rate-tag {
+            font-size: 12px;
+            color: var(--cyan-neon);
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .miner-pool-amount {
+            font-size: 28px;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .miner-progress-bg {
+            width: 100%;
+            height: 10px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 6px;
+        }
+        .miner-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--cyan-neon), var(--green-color));
+            border-radius: 6px;
+            transition: width 0.3s;
+        }
+        .miner-capacity-text {
+            font-size: 10px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* لیست ماموریت‌ها */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .task-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+        .task-item:hover { border-color: rgba(212, 175, 55, 0.3); }
+        .task-left { display: flex; align-items: center; gap: 10px; }
+        .task-icon-box {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+        .task-text-box { display: flex; flex-direction: column; }
+        .task-name { font-size: 13px; font-weight: bold; color: #fff; }
+        .task-reward { font-size: 11px; color: var(--gold-color); font-weight: 700; margin-top: 2px; }
+        .task-btn {
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid var(--gold-color);
+            color: var(--gold-color);
+            padding: 7px 14px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .task-btn:active { transform: scale(0.94); }
+        .task-btn.completed {
+            background: rgba(0, 245, 212, 0.1);
+            border-color: var(--green-color);
+            color: var(--green-color);
+            cursor: default;
+        }
+
+        /* نوار ناوبری پایین */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 440px;
+            height: 68px;
+            background: rgba(14, 14, 22, 0.96);
+            backdrop-filter: blur(15px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 10px;
+            font-weight: bold;
+            flex: 1;
+            transition: all 0.2s;
+        }
+        .nav-btn .nav-icon { font-size: 20px; margin-bottom: 2px; }
+        .nav-btn.active { color: var(--gold-color); }
+        .nav-btn.active .nav-icon {
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6));
+        }
+
+        /* مدال انتخاب زبان */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+        .modal-card {
+            background: #14141e;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+        }
+        .lang-options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .lang-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .lang-btn.active {
+            background: var(--gold-gradient);
+            color: #1a1200;
+            border-color: #f9e8a2;
+        }
+
+        /* توست پیام */
+        .toast-msg {
+            position: fixed;
+            top: 20px; left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--gold-gradient);
+            color: #1a1200;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 900;
+            box-shadow: 0 5px 25px rgba(212, 175, 55, 0.6);
+            z-index: 300;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+        }
+        .toast-msg.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- هدر بالای صفحه -->
+        <header class="top-header">
+            <a href="../index.html" class="header-btn" title="بازگشت به خانه">
+                <span id="back-arrow-icon">➔</span>
+            </a>
+            <div class="header-title-box">
+                <div class="brand-name">SIMAB</div>
+                <div class="brand-sub" id="header-sub-text">تسک‌ها و جوایز</div>
+            </div>
+            <button class="header-btn" onclick="openLangModal()" title="تنظیم زبان">⚙️</button>
+        </header>
+
+        <!-- کارت موجودی سکه کاربر -->
+        <div class="balance-card">
+            <div class="balance-info">
+                <div class="s-coin-icon">S</div>
+                <div class="balance-details">
+                    <span class="balance-title" id="t-balance-title">موجودی سکه سیماب</span>
+                    <span class="balance-amount" id="user-coins-display">0</span>
+                </div>
+            </div>
+            <a href="../swap/index.html" class="header-btn" style="width: auto; padding: 0 12px; font-size: 11px; font-weight: bold; color: var(--gold-color);">
+                <span id="t-swap-link">تبدیل 🔄</span>
+            </a>
+        </div>
+
+        <!-- سوییچر تب‌های ۴ گانه -->
+        <div class="subtabs-container">
+            <button class="subtab-btn active" id="tab-btn-streak" onclick="switchSection('streak')">
+                <span class="tab-icon">🎁</span>
+                <span id="t-tab-streak">روزانه</span>
+            </button>
+            <button class="subtab-btn" id="tab-btn-wheel" onclick="switchSection('wheel')">
+                <span class="tab-icon">🎡</span>
+                <span id="t-tab-wheel">گردونه</span>
+            </button>
+            <button class="subtab-btn" id="tab-btn-miner" onclick="switchSection('miner')">
+                <span class="tab-icon">⚡</span>
+                <span id="t-tab-miner">ماینر</span>
+            </button>
+            <button class="subtab-btn" id="tab-btn-quests" onclick="switchSection('quests')">
+                <span class="tab-icon">📋</span>
+                <span id="t-tab-quests">ماموریت‌ها</span>
+            </button>
+        </div>
+
+        <!-- بخش ۱: پاداش ورود روزانه (Streak) -->
+        <div id="section-streak" class="content-card">
+            <div class="card-header-title">
+                <span>🎁</span>
+                <span id="t-streak-title">پاداش ورود روزانه (Streak)</span>
+            </div>
+            <div class="card-desc" id="t-streak-desc">
+                هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. در صورت از دست دادن یک روز، شمارنده از نو شروع می‌شود!
+            </div>
+            <div class="streak-grid" id="streak-grid"></div>
+            <button class="action-btn" id="btn-claim-streak" onclick="claimDailyStreak()">
+                <span id="t-claim-streak-btn">دریافت پاداش امروز ✨</span>
+            </button>
+            <div id="streak-cooldown-text" style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px;"></div>
+        </div>
+
+        <!-- بخش ۲: گردونه شانس سیماب -->
+        <div id="section-wheel" class="content-card" style="display: none;">
+            <div class="card-header-title">
+                <span>🎡</span>
+                <span id="t-wheel-title">گردونه شانس طلایی</span>
+            </div>
+            <div class="card-desc" id="t-wheel-desc">
+                شانس خود را امتحان کنید! گردونه را بچرخانید و جوایز نقدی تا ۱۰۰۰ سکه برنده شوید.
+            </div>
+            <div class="wheel-container">
+                <div class="wheel-pointer"></div>
+                <div class="wheel-canvas-wrap">
+                    <canvas id="wheelCanvas" width="270" height="270"></canvas>
+                    <div class="wheel-center-pin">S</div>
+                </div>
+            </div>
+            <div class="wheel-info-row">
+                <span id="t-spins-left-label">چرخش‌های رایگان باقی‌مانده:</span>
+                <span id="spins-count-display" style="color: var(--gold-color); font-weight: bold;">3 / 3</span>
+            </div>
+            <button class="action-btn" id="btn-spin-wheel" onclick="spinLuckyWheel()">
+                <span id="t-spin-btn">چرخش گردونه (SPIN) 🎲</span>
+            </button>
+            <div id="wheel-cooldown-text" style="font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px;"></div>
+        </div>
+
+        <!-- بخش ۳: ماینر ابری خودکار -->
+        <div id="section-miner" class="content-card" style="display: none;">
+            <div class="card-header-title">
+                <span>⚡</span>
+                <span id="t-miner-title">ماینر خودکار توکن سیماب</span>
+            </div>
+            <div class="card-desc" id="t-miner-desc">
+                این دستگاه حتی زمانی که آفلاین هستید برای شما سکه استخراج می‌کند! هر زمان مخزن پر شد، آن را برداشت کنید.
+            </div>
+            <div class="miner-display">
+                <div class="miner-animation-ring">⚙️</div>
+                <div class="miner-rate-tag" id="miner-speed-text">سرعت: ۱ سکه در هر ۲ دقیقه</div>
+                <div class="miner-pool-amount" id="miner-accumulated-display">0.00 S</div>
+                <div class="miner-progress-bg">
+                    <div class="miner-progress-fill" id="miner-progress-bar"></div>
+                </div>
+                <div class="miner-capacity-text">
+                    <span id="t-miner-stored">ذخیره شده</span>
+                    <span id="miner-capacity-display">حداکثر ۱۰۰ سکه</span>
+                </div>
+            </div>
+            <button class="action-btn" id="btn-claim-miner" onclick="claimMinerCoins()">
+                <span id="t-miner-claim-btn">تخلیه و برداشت به حساب 📥</span>
+            </button>
+            <div style="margin-top: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <div style="font-size: 12px; font-weight: bold;" id="t-miner-upgrade-title">ارتقای سطح ماینر</div>
+                    <div style="font-size: 10px; color: var(--text-muted);" id="miner-level-text">سطح ۱ (ظرفیت ۱۰۰)</div>
+                </div>
+                <button class="task-btn" onclick="upgradeMiner()" id="btn-upgrade-miner">ارتقا (۳۰۰ 🪙)</button>
+            </div>
+        </div>
+
+        <!-- بخش ۴: ماموریت‌های اجتماعی و ویژه -->
+        <div id="section-quests" class="content-card" style="display: none;">
+            <div class="card-header-title">
+                <span>📋</span>
+                <span id="t-quests-title">ماموریت‌های ویژه و شبکه‌ها</span>
+            </div>
+            <div class="card-desc" id="t-quests-desc">
+                با عضویت در شبکه‌های رسمی و فعالیت در بخش‌های سیماب، جوایز فوری دریافت کنید:
+            </div>
+            <div class="task-list" id="quests-container"></div>
+        </div>
+    </div>
+
+    <!-- نوار ناوبری پایین -->
+    <nav class="bottom-nav">
+        <a href="../index.html" class="nav-btn">
+            <span class="nav-icon">🏠</span>
+            <span id="t-nav-home">خانه</span>
+        </a>
+        <a href="../index.html#games" class="nav-btn">
+            <span class="nav-icon">🎮</span>
+            <span id="t-nav-games">بازی‌ها</span>
+        </a>
+        <a href="index.html" class="nav-btn active">
+            <span class="nav-icon">📋</span>
+            <span id="t-nav-tasks">تسک‌ها</span>
+        </a>
+        <a href="../ai/index.html" class="nav-btn">
+            <span class="nav-icon">🎙️</span>
+            <span id="t-nav-ai">دستیار</span>
+        </a>
+        <a href="../friends/index.html" class="nav-btn">
+            <span class="nav-icon">👥</span>
+            <span id="t-nav-friends">دوستان</span>
+        </a>
+    </nav>
+
+    <!-- مدال انتخاب زبان -->
+    <div class="modal-overlay" id="langModal">
+        <div class="modal-card">
+            <h3 style="margin-top: 0; color: var(--gold-color);" id="t-modal-lang-title">انتخاب زبان / Language</h3>
+            <div class="lang-options-grid">
+                <button class="lang-btn" onclick="selectLanguage('fa')">
+                    <span>🇮🇷 فارسی</span>
+                    <span id="check-fa">✓</span>
+                </button>
+                <button class="lang-btn" onclick="selectLanguage('en')">
+                    <span>🇬🇧 English</span>
+                    <span id="check-en"></span>
+                </button>
+                <button class="lang-btn" onclick="selectLanguage('ru')">
+                    <span>🇷🇺 Русский</span>
+                    <span id="check-ru"></span>
+                </button>
+            </div>
+            <button class="action-btn" onclick="closeLangModal()" id="t-modal-close">بستن</button>
+        </div>
+    </div>
+
+    <!-- توست پیام موفقیت -->
+    <div class="toast-msg" id="toastMsg"></div>
+
+    <script>
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            try { tg.ready(); tg.expand(); } catch(e) {}
+        }
+        const tgUser = tg?.initDataUnsafe?.user;
+        const uid = tgUser?.id ? tgUser.id.toString() : "guest";
+
+        const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+        const STORAGE_KEY_TASKS = 'simor_tasks_' + uid;
+        const STORAGE_KEY_SPINS_COUNT = 'simor_spins_count_' + uid;
+        const STORAGE_KEY_CHECKIN = 'simor_checkin_' + uid;
+        const STORAGE_KEY_MINER = 'simor_miner_' + uid;
+        const STORAGE_KEY_CUSTOM_TASKS = 'simor_custom_tasks';
+        const STORAGE_KEY_LANG = 'simab_language';
+
+        let coins = parseInt(localStorage.getItem(STORAGE_KEY_COINS) || '0');
+        let completedTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_TASKS) || '{}');
+        let currentLang = localStorage.getItem(STORAGE_KEY_LANG) || 'fa';
+
+        const STREAK_REWARDS = [50, 100, 200, 350, 500, 750, 1500];
+        let checkinData = JSON.parse(localStorage.getItem(STORAGE_KEY_CHECKIN) || '{"lastDate":"","streak":0}');
+
+        const WHEEL_SECTORS = [
+            { label: '50 🪙', val: 50, color: '#9d4edd', text: '#fff' },
+            { label: '100 🪙', val: 100, color: '#d4af37', text: '#111' },
+            { label: '20 🪙', val: 20, color: '#1f1f2e', text: '#fff' },
+            { label: '500 🌟', val: 500, color: '#00f5d4', text: '#111' },
+            { label: 'پوچ 💨', val: 0, color: '#3a2020', text: '#ff7b72' },
+            { label: '250 🪙', val: 250, color: '#d4af37', text: '#111' },
+            { label: '1000 👑', val: 1000, color: '#ff3b30', text: '#fff' },
+            { label: '150 🪙', val: 150, color: '#2a1b40', text: '#fff' }
+        ];
+        let wheelRotation = 0;
+        let isSpinningWheel = false;
+
+        let minerData = JSON.parse(localStorage.getItem(STORAGE_KEY_MINER) || '{"level":1,"lastClaim":' + Date.now() + '}');
+
+        const I18N = {
+            fa: {
+                dir: 'rtl',
+                headerSub: 'تسک‌ها و جوایز',
+                balanceTitle: 'موجودی سکه سیماب',
+                swapLink: 'تبدیل 🔄',
+                tabStreak: 'روزانه',
+                tabWheel: 'گردونه',
+                tabMiner: 'ماینر',
+                tabQuests: 'ماموریت‌ها',
+                streakTitle: 'پاداش ورود روزانه (Streak)',
+                streakDesc: 'هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. اگر یک روز غیبت کنید، شمارنده از اول شروع می‌شود!',
+                claimStreakBtn: 'دریافت پاداش امروز ✨',
+                claimedToday: 'امروز پاداش دریافت شد ✅',
+                streakCooldown: 'پاداش بعدی فردا ساعت ۰۰:۰۰ فعال می‌شود',
+                wheelTitle: 'گردونه شانس طلایی',
+                wheelDesc: 'شانس خود را امتحان کنید! گردونه را بچرخانید و جوایز نقدی تا ۱۰۰۰ سکه برنده شوید.',
+                spinsLeftLabel: 'چرخش‌های رایگان باقی‌مانده:',
+                spinBtn: 'چرخش گردونه (SPIN) 🎲',
+                noSpinsLeft: 'چرخش‌های امروز تمام شد! فردا بازگردید.',
+                minerTitle: 'ماینر خودکار توکن سیماب',
+                minerDesc: 'این دستگاه حتی زمانی که آفلاین هستید برای شما سکه استخراج می‌کند! هر زمان مخزن پر شد، آن را برداشت کنید.',
+                minerStored: 'ذخیره شده',
+                minerCapacity: 'حداکثر {cap} سکه',
+                minerClaimBtn: 'تخلیه و برداشت به حساب 📥',
+                minerUpgradeTitle: 'ارتقای سطح ماینر',
+                minerSpeedText: 'سرعت: {rate} سکه در هر دقیقه',
+                questsTitle: 'ماموریت‌های ویژه و شبکه‌ها',
+                questsDesc: 'با عضویت در شبکه‌های رسمی و فعالیت در بخش‌های سیماب، جوایز فوری دریافت کنید:',
+                navHome: 'خانه',
+                navGames: 'بازی‌ها',
+                navTasks: 'تسک‌ها',
+                navAi: 'دستیار',
+                navFriends: 'دوستان',
+                modalLangTitle: 'انتخاب زبان / Language',
+                modalClose: 'بستن',
+                day: 'روز',
+                taskStart: 'شروع',
+                taskClaim: 'دریافت پاداش',
+                taskDone: 'انجام شد ✅',
+                taskTimer: 'لطفاً {sec} ثانیه صبر کنید...',
+                upgradedMsg: 'ماینر به سطح {lvl} ارتقا یافت! 🚀',
+                notEnoughCoins: 'موجودی سکه کافی نیست!',
+                winMsg: 'تبریک! شما {coins} سکه برنده شدید! 🎉'
+            },
+            en: {
+                dir: 'ltr',
+                headerSub: 'Tasks & Rewards',
+                balanceTitle: 'SIMAB Coin Balance',
+                swapLink: 'Swap 🔄',
+                tabStreak: 'Daily',
+                tabWheel: 'Wheel',
+                tabMiner: 'Miner',
+                tabQuests: 'Quests',
+                streakTitle: 'Daily Login Reward (Streak)',
+                streakDesc: 'Visit SIMAB every day and claim progressive bonuses. Missing a day resets your streak!',
+                claimStreakBtn: 'Claim Today Reward ✨',
+                claimedToday: 'Claimed for Today ✅',
+                streakCooldown: 'Next reward available tomorrow',
+                wheelTitle: 'Golden Lucky Wheel',
+                wheelDesc: 'Test your luck! Spin the wheel and win cash rewards up to 1,000 coins.',
+                spinsLeftLabel: 'Free spins remaining today:',
+                spinBtn: 'Spin the Wheel 🎲',
+                noSpinsLeft: 'Daily spins finished! Come back tomorrow.',
+                minerTitle: 'Auto SIMAB Cloud Miner',
+                minerDesc: 'This rig mines coins even when you are offline! Claim into your wallet whenever it fills up.',
+                minerStored: 'Stored',
+                minerCapacity: 'Max {cap} Coins',
+                minerClaimBtn: 'Collect Coins into Wallet 📥',
+                minerUpgradeTitle: 'Upgrade Miner Rig',
+                minerSpeedText: 'Rate: {rate} Coins/min',
+                questsTitle: 'Special Quests & Socials',
+                questsDesc: 'Join our official channels and explore SIMAB features to earn instant rewards:',
+                navHome: 'Home',
+                navGames: 'Games',
+                navTasks: 'Tasks',
+                navAi: 'Voice AI',
+                navFriends: 'Friends',
+                modalLangTitle: 'Select Language',
+                modalClose: 'Close',
+                day: 'Day',
+                taskStart: 'Start',
+                taskClaim: 'Claim',
+                taskDone: 'Completed ✅',
+                taskTimer: 'Wait {sec}s...',
+                upgradedMsg: 'Miner upgraded to Level {lvl}! 🚀',
+                notEnoughCoins: 'Not enough coins!',
+                winMsg: 'Congrats! You won {coins} Coins! 🎉'
+            },
+            ru: {
+                dir: 'ltr',
+                headerSub: 'Задания и Награды',
+                balanceTitle: 'Баланс монет SIMAB',
+                swapLink: 'Обмен 🔄',
+                tabStreak: 'Ежедневно',
+                tabWheel: 'Колесо',
+                tabMiner: 'Майнер',
+                tabQuests: 'Квесты',
+                streakTitle: 'Ежедневная награда (Серия)',
+                streakDesc: 'Заходите в SIMAB каждый день и забирайте растущие бонусы. Пропуск дня сбрасывает серию!',
+                claimStreakBtn: 'Забрать награду ✨',
+                claimedToday: 'Награда получена ✅',
+                streakCooldown: 'Следующая награда завтра',
+                wheelTitle: 'Золотое Колесо Удачи',
+                wheelDesc: 'Испытайте удачу! Вращайте колесо и выигрывайте призы до 1 000 монет.',
+                spinsLeftLabel: 'Осталось бесплатных вращений:',
+                spinBtn: 'Крутить колесо 🎲',
+                noSpinsLeft: 'Вращения на сегодня закончились!',
+                minerTitle: 'Автоматический облачный майнер',
+                minerDesc: 'Майнер добывает монеты даже офлайн! Забирайте монеты на баланс по мере накопления.',
+                minerStored: 'Накоплено',
+                minerCapacity: 'Макс {cap} монет',
+                minerClaimBtn: 'Собрать на баланс 📥',
+                minerUpgradeTitle: 'Улучшить майнер',
+                minerSpeedText: 'Скорость: {rate} монет/мин',
+                questsTitle: 'Специальные задания и соцсети',
+                questsDesc: 'Подписывайтесь на каналы и используйте функции SIMAB для мгновенных наград:',
+                navHome: 'Главная',
+                navGames: 'Игры',
+                navTasks: 'Задания',
+                navAi: 'Ассистент',
+                navFriends: 'Друзья',
+                modalLangTitle: 'Выберите язык',
+                modalClose: 'Закрыть',
+                day: 'День',
+                taskStart: 'Старт',
+                taskClaim: 'Забрать',
+                taskDone: 'Выполнено ✅',
+                taskTimer: 'Подождите {sec} сек...',
+                upgradedMsg: 'Майнер улучшен до уровня {lvl}! 🚀',
+                notEnoughCoins: 'Недостаточно монет!',
+                winMsg: 'Поздравляем! Вы выиграли {coins} монет! 🎉'
+            }
+        };
+
+        const DEFAULT_QUESTS = [
+            {
+                id: 'join_channel',
+                icon: '📢',
+                title: { fa: 'عضویت در کانال رسمی تلگرام', en: 'Join Official Telegram Channel', ru: 'Подписаться на канал Telegram' },
+                reward: 250,
+                url: 'https://t.me/SimorApp'
+            },
+            {
+                id: 'use_ai_assistant',
+                icon: '🎙️',
+                title: { fa: 'تست دستیار صوتی سیماب', en: 'Test SIMAB Voice Assistant', ru: 'Попробовать голосовой ИИ' },
+                reward: 150,
+                url: '../ai/index.html'
+            },
+            {
+                id: 'visit_instagram',
+                icon: '📸',
+                title: { fa: 'دنبال کردن اینستاگرام مدیریت', en: 'Follow Admin Instagram', ru: 'Подписаться на Instagram' },
+                reward: 100,
+                url: 'https://www.instagram.com/ali.hosseini.v/'
+            },
+            {
+                id: 'invite_friends_quest',
+                icon: '👥',
+                title: { fa: 'دعوت ۳ دوست به بازی', en: 'Invite 3 Friends to SIMAB', ru: 'Пригласить 3 друзей' },
+                reward: 500,
+                url: '../friends/index.html'
+            }
+        ];
+
+        function triggerHaptic(type = 'medium') {
+            try {
+                if (tg?.HapticFeedback) {
+                    if (type === 'success' || type === 'error' || type === 'warning') {
+                        tg.HapticFeedback.notificationOccurred(type);
+                    } else {
+                        tg.HapticFeedback.impactOccurred(type);
+                    }
+                }
+            } catch(e) {}
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toastMsg');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        function updateCoinsDisplay() {
+            document.getElementById('user-coins-display').innerText = coins.toLocaleString();
+            localStorage.setItem(STORAGE_KEY_COINS, coins.toString());
+        }
+
+        function addCoins(amount) {
+            coins += amount;
+            updateCoinsDisplay();
+            triggerHaptic('success');
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem(STORAGE_KEY_LANG, lang);
+            const dict = I18N[lang];
+            document.documentElement.lang = lang;
+            document.documentElement.dir = dict.dir;
+
+            document.getElementById('header-sub-text').innerText = dict.headerSub;
+            document.getElementById('t-balance-title').innerText = dict.balanceTitle;
+            document.getElementById('t-swap-link').innerText = dict.swapLink;
+            document.getElementById('back-arrow-icon').innerText = dict.dir === 'rtl' ? '➔' : '⬅';
+
+            document.getElementById('t-tab-streak').innerText = dict.tabStreak;
+            document.getElementById('t-tab-wheel').innerText = dict.tabWheel;
+            document.getElementById('t-tab-miner').innerText = dict.tabMiner;
+            document.getElementById('t-tab-quests').innerText = dict.tabQuests;
+
+            document.getElementById('t-streak-title').innerText = dict.streakTitle;
+            document.getElementById('t-streak-desc').innerText = dict.streakDesc;
+            
+            document.getElementById('t-wheel-title').innerText = dict.wheelTitle;
+            document.getElementById('t-wheel-desc').innerText = dict.wheelDesc;
+            document.getElementById('t-spins-left-label').innerText = dict.spinsLeftLabel;
+            document.getElementById('t-spin-btn').innerText = dict.spinBtn;
+
+            document.getElementById('t-miner-title').innerText = dict.minerTitle;
+            document.getElementById('t-miner-desc').innerText = dict.minerDesc;
+            document.getElementById('t-miner-stored').innerText = dict.minerStored;
+            document.getElementById('t-miner-claim-btn').innerText = dict.minerClaimBtn;
+            document.getElementById('t-miner-upgrade-title').innerText = dict.minerUpgradeTitle;
+
+            document.getElementById('t-quests-title').innerText = dict.questsTitle;
+            document.getElementById('t-quests-desc').innerText = dict.questsDesc;
+
+            document.getElementById('t-nav-home').innerText = dict.navHome;
+            document.getElementById('t-nav-games').innerText = dict.navGames;
+            document.getElementById('t-nav-tasks').innerText = dict.navTasks;
+            document.getElementById('t-nav-ai').innerText = dict.navAi;
+            document.getElementById('t-nav-friends').innerText = dict.navFriends;
+
+            document.getElementById('t-modal-lang-title').innerText = dict.modalLangTitle;
+            document.getElementById('t-modal-close').innerText = dict.modalClose;
+            document.getElementById('check-fa').innerText = lang === 'fa' ? '✓' : '';
+            document.getElementById('check-en').innerText = lang === 'en' ? '✓' : '';
+            document.getElementById('check-ru').innerText = lang === 'ru' ? '✓' : '';
+
+            renderStreakGrid();
+            renderQuests();
+            updateMinerDisplay();
+            drawWheel();
+        }
+
+        function openLangModal() { document.getElementById('langModal').style.display = 'flex'; }
+        function closeLangModal() { document.getElementById('langModal').style.display = 'none'; }
+        function selectLanguage(lang) { setLanguage(lang); closeLangModal(); }
+
+        function switchSection(sec) {
+            triggerHaptic('light');
+            ['streak', 'wheel', 'miner', 'quests'].forEach(s => {
+                document.getElementById('section-' + s).style.display = (s === sec) ? 'block' : 'none';
+                document.getElementById('tab-btn-' + s).classList.toggle('active', s === sec);
+            });
+            if (sec === 'wheel') drawWheel();
+        }
+
+        function getTodayString() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        function getYesterdayString() {
+            const d = new Date();
+            d.setDate(d.getDate() - 1);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        function renderStreakGrid() {
+            const grid = document.getElementById('streak-grid');
+            grid.innerHTML = '';
+            const today = getTodayString();
+            const yesterday = getYesterdayString();
+            const dict = I18N[currentLang];
+
+            if (checkinData.lastDate && checkinData.lastDate !== today && checkinData.lastDate !== yesterday) {
+                checkinData.streak = 0;
+            }
+
+            const isClaimedToday = (checkinData.lastDate === today);
+
+            for (let i = 0; i < 7; i++) {
+                const box = document.createElement('div');
+                box.className = 'streak-day-box' + (i === 6 ? ' day-7' : '');
+                
+                if (i < checkinData.streak) {
+                    box.classList.add('claimed');
+                } else if (i === checkinData.streak && !isClaimedToday) {
+                    box.classList.add('ready');
+                }
+
+                box.innerHTML = `
+                    <div class="streak-day-num">${dict.day} ${i + 1}</div>
+                    <div class="streak-day-icon">${i < checkinData.streak ? '✅' : (i === 6 ? '👑' : '🎁')}</div>
+                    <div class="streak-day-reward">+${STREAK_REWARDS[i]}</div>
+                `;
+                grid.appendChild(box);
+            }
+
+            const claimBtn = document.getElementById('btn-claim-streak');
+            const cooldownText = document.getElementById('streak-cooldown-text');
+
+            if (isClaimedToday) {
+                claimBtn.disabled = true;
+                claimBtn.innerHTML = `<span>${dict.claimedToday}</span>`;
+                cooldownText.innerText = dict.streakCooldown;
+            } else {
+                claimBtn.disabled = false;
+                claimBtn.innerHTML = `<span>${dict.claimStreakBtn} (+${STREAK_REWARDS[checkinData.streak % 7]} 🪙)</span>`;
+                cooldownText.innerText = '';
+            }
+        }
+
+        function claimDailyStreak() {
+            const today = getTodayString();
+            if (checkinData.lastDate === today) return;
+
+            const reward = STREAK_REWARDS[checkinData.streak % 7];
+            checkinData.streak = (checkinData.streak % 7) + 1;
+            checkinData.lastDate = today;
+
+            localStorage.setItem(STORAGE_KEY_CHECKIN, JSON.stringify(checkinData));
+            addCoins(reward);
+            showToast(`+${reward} سکه پاداش روزانه دریافت شد!`);
+            renderStreakGrid();
+        }
+
+        function drawWheel() {
+            const canvas = document.getElementById('wheelCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const numSectors = WHEEL_SECTORS.length;
+            const arc = (2 * Math.PI) / numSectors;
+            const radius = canvas.width / 2;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            WHEEL_SECTORS.forEach((sec, i) => {
+                const angle = i * arc;
+                ctx.beginPath();
+                ctx.fillStyle = sec.color;
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius, angle, angle + arc);
+                ctx.lineTo(radius, radius);
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                ctx.save();
+                ctx.fillStyle = sec.text;
+                ctx.font = 'bold 12px sans-serif';
+                ctx.translate(radius, radius);
+                ctx.rotate(angle + arc / 2);
+                ctx.textAlign = 'right';
+                ctx.fillText(sec.label, radius - 20, 4);
+                ctx.restore();
+            });
+
+            updateWheelSpinsDisplay();
+        }
+
+        function getDailySpins() {
+            const today = getTodayString();
+            const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_SPINS_COUNT) || '{"date":"","count":3}');
+            if (saved.date !== today) {
+                return { date: today, count: 3 };
+            }
+            return saved;
+        }
+
+        function updateWheelSpinsDisplay() {
+            const spins = getDailySpins();
+            document.getElementById('spins-count-display').innerText = `${spins.count} / 3`;
+            const spinBtn = document.getElementById('btn-spin-wheel');
+            const cooldownText = document.getElementById('wheel-cooldown-text');
+            const dict = I18N[currentLang];
+
+            if (spins.count <= 0) {
+                spinBtn.disabled = true;
+                cooldownText.innerText = dict.noSpinsLeft;
+            } else {
+                spinBtn.disabled = false;
+                cooldownText.innerText = '';
+            }
+        }
+
+        function spinLuckyWheel() {
+            if (isSpinningWheel) return;
+            const spins = getDailySpins();
+            if (spins.count <= 0) return;
+
+            isSpinningWheel = true;
+            triggerHaptic('heavy');
+            document.getElementById('btn-spin-wheel').disabled = true;
+
+            const winningIndex = Math.floor(Math.random() * WHEEL_SECTORS.length);
+            const numSectors = WHEEL_SECTORS.length;
+            const sectorAngle = 360 / numSectors;
+
+            const extraSpins = 5 * 360;
+            const targetSectorCenter = (winningIndex * sectorAngle) + (sectorAngle / 2);
+            const stopAngle = extraSpins + (270 - targetSectorCenter) + (Math.random() * 10 - 5);
+
+            wheelRotation += stopAngle;
+            const canvas = document.getElementById('wheelCanvas');
+            canvas.style.transform = `rotate(${wheelRotation}deg)`;
+
+            spins.count -= 1;
+            localStorage.setItem(STORAGE_KEY_SPINS_COUNT, JSON.stringify(spins));
+
+            setTimeout(() => {
+                isSpinningWheel = false;
+                const won = WHEEL_SECTORS[winningIndex];
+                if (won.val > 0) {
+                    addCoins(won.val);
+                    showToast(I18N[currentLang].winMsg.replace('{coins}', won.val));
+                } else {
+                    triggerHaptic('warning');
+                    showToast('پوچ! شانس خود را دوباره امتحان کنید.');
+                }
+                updateWheelSpinsDisplay();
+            }, 4600);
+        }
+
+        const MINER_CONFIG = {
+            1: { ratePerMin: 0.5, capacity: 100, upgradeCost: 300 },
+            2: { ratePerMin: 1.0, capacity: 250, upgradeCost: 800 },
+            3: { ratePerMin: 2.5, capacity: 600, upgradeCost: 2000 },
+            4: { ratePerMin: 5.0, capacity: 1500, upgradeCost: null }
+        };
+
+        function getMinedAmount() {
+            const cfg = MINER_CONFIG[minerData.level] || MINER_CONFIG[1];
+            const elapsedMinutes = (Date.now() - minerData.lastClaim) / (1000 * 60);
+            const mined = elapsedMinutes * cfg.ratePerMin;
+            return Math.min(mined, cfg.capacity);
+        }
+
+        function updateMinerDisplay() {
+            const cfg = MINER_CONFIG[minerData.level] || MINER_CONFIG[1];
+            const mined = getMinedAmount();
+            const pct = Math.min(100, (mined / cfg.capacity) * 100);
+
+            document.getElementById('miner-accumulated-display').innerText = mined.toFixed(2) + ' S';
+            document.getElementById('miner-progress-bar').style.width = pct + '%';
+            document.getElementById('miner-capacity-display').innerText = I18N[currentLang].minerCapacity.replace('{cap}', cfg.capacity);
+            document.getElementById('miner-speed-text').innerText = I18N[currentLang].minerSpeedText.replace('{rate}', cfg.ratePerMin);
+            document.getElementById('miner-level-text').innerText = `Level ${minerData.level} (Cap: ${cfg.capacity})`;
+
+            const upBtn = document.getElementById('btn-upgrade-miner');
+            if (cfg.upgradeCost) {
+                upBtn.innerText = `ارتقا (${cfg.upgradeCost} 🪙)`;
+                upBtn.style.display = 'block';
+            } else {
+                upBtn.style.display = 'none';
+            }
+        }
+
+        function claimMinerCoins() {
+            const mined = Math.floor(getMinedAmount());
+            if (mined <= 0) return;
+
+            addCoins(mined);
+            minerData.lastClaim = Date.now();
+            localStorage.setItem(STORAGE_KEY_MINER, JSON.stringify(minerData));
+            showToast(`+${mined} سکه از ماینر برداشت شد! 📥`);
+            updateMinerDisplay();
+        }
+
+        function upgradeMiner() {
+            const cfg = MINER_CONFIG[minerData.level];
+            if (!cfg || !cfg.upgradeCost) return;
+
+            if (coins < cfg.upgradeCost) {
+                triggerHaptic('error');
+                showToast(I18N[currentLang].notEnoughCoins);
+                return;
+            }
+
+            coins -= cfg.upgradeCost;
+            minerData.level += 1;
+            localStorage.setItem(STORAGE_KEY_MINER, JSON.stringify(minerData));
+            updateCoinsDisplay();
+            showToast(I18N[currentLang].upgradedMsg.replace('{lvl}', minerData.level));
+            updateMinerDisplay();
+        }
+
+        function renderQuests() {
+            const container = document.getElementById('quests-container');
+            container.innerHTML = '';
+            const dict = I18N[currentLang];
+
+            let customTasks = [];
+            try {
+                customTasks = JSON.parse(localStorage.getItem(STORAGE_KEY_CUSTOM_TASKS) || '[]');
+            } catch(e) {}
+
+            const allQuests = [...DEFAULT_QUESTS, ...customTasks.map(ct => ({
+                id: 'custom_' + ct.id,
+                icon: '⭐',
+                title: { fa: ct.title, en: ct.title, ru: ct.title },
+                reward: ct.reward || 50,
+                url: ct.url || '#'
+            }))];
+
+            allQuests.forEach(q => {
+                const isDone = completedTasks[q.id];
+                const item = document.createElement('div');
+                item.className = 'task-item';
+                
+                const titleText = q.title[currentLang] || q.title.fa || q.title;
+
+                item.innerHTML = `
+                    <div class="task-left">
+                        <div class="task-icon-box">${q.icon}</div>
+                        <div class="task-text-box">
+                            <span class="task-name">${titleText}</span>
+                            <span class="task-reward">+${q.reward} سکه 🪙</span>
+                        </div>
+                    </div>
+                    <div>
+                        ${isDone ? 
+                            `<button class="task-btn completed">${dict.taskDone}</button>` : 
+                            `<button class="task-btn" id="btn-q-${q.id}" onclick="startQuest('${q.id}', '${q.url}', ${q.reward})">${dict.taskStart}</button>`
+                        }
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function startQuest(id, url, reward) {
+            triggerHaptic('light');
+            if (url && url !== '#') {
+                if (url.startsWith('http')) {
+                    if (tg?.openLink) tg.openLink(url);
+                    else window.open(url, '_blank');
+                } else {
+                    window.location.href = url;
+                    return;
+                }
+            }
+
+            const btn = document.getElementById('btn-q-' + id);
+            if (!btn) return;
+
+            let countdown = 8;
+            btn.disabled = true;
+            btn.innerText = I18N[currentLang].taskTimer.replace('{sec}', countdown);
+
+            const timer = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    btn.innerText = I18N[currentLang].taskTimer.replace('{sec}', countdown);
+                } else {
+                    clearInterval(timer);
+                    completedTasks[id] = true;
+                    localStorage.setItem(STORAGE_KEY_TASKS, JSON.stringify(completedTasks));
+                    addCoins(reward);
+                    showToast(`+${reward} سکه ماموریت به حساب شما اضافه شد! 🎉`);
+                    renderQuests();
+                }
+            }, 1000);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateCoinsDisplay();
+            setLanguage(currentLang);
+            renderStreakGrid();
+            renderQuests();
+            updateMinerDisplay();
+            drawWheel();
+
+            setInterval(updateMinerDisplay, 3000);
+        });
+    </script>
+</body>
+</html>
