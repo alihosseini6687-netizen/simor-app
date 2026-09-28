@@ -8,8 +8,8 @@
   <style>
     :root {
       --bg: #0c0c14;
-      --card-bg: rgba(20, 20, 32, 0.92);
-      --card-inner: rgba(28, 28, 44, 0.85);
+      --card-bg: rgba(20, 20, 32, 0.94);
+      --card-inner: rgba(28, 28, 44, 0.88);
       --gold: #f5cf62;
       --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
       --cyan-neon: #00f2fe;
@@ -40,14 +40,14 @@
       overflow-x: hidden;
     }
 
-    /* کانتینر اپلیکیشن: در موبایل و تلگرام ۱۰۰٪ کامل، در دسکتاپ اندازه فریم موبایل */
+    /* کانتینر اصلی اپ: در موبایل و تلگرام ۱۰۰٪ کامل و بدون حاشیه خالی */
     .app-wrapper {
       width: 100%;
       max-width: 100%;
       min-height: 100vh;
       background: rgba(12, 12, 20, 0.65);
       backdrop-filter: blur(12px);
-      padding: 8px 8px 80px 8px;
+      padding: 8px 8px 85px 8px;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -62,7 +62,7 @@
       }
     }
 
-    /* هدر */
+    /* هدر بالای صفحه */
     .top-header {
       display: flex; justify-content: space-between; align-items: center;
       background: var(--card-bg); border: 1px solid var(--border);
@@ -136,7 +136,7 @@
     }
     .btn-copy:active { transform: scale(0.92); }
 
-    /* ۳ مربع ردیف میانی: رفرال راست | به‌زودی وسط | دستیار صوتی چپ */
+    /* ۳ مربع ردیف میانی سربرگ خانه */
     .three-grid { display: flex; gap: 8px; margin-bottom: 10px; }
     .grid-box {
       flex: 1; aspect-ratio: 1; background: var(--card-bg); border: 1px solid var(--border);
@@ -154,7 +154,7 @@
       font-size: 8px; font-weight: 900; padding: 1px 5px; border-radius: 6px;
     }
 
-    /* دکمه‌های کپسولی */
+    /* دکمه‌های کپسولی خانه */
     .action-bars { display: flex; flex-direction: column; gap: 9px; }
     .action-btn {
       background: var(--card-bg); border: 1px solid var(--border);
@@ -173,58 +173,57 @@
     }
     .action-btn.admin-bar .btn-txt { color: var(--gold); }
 
-    /* سربرگ بازی‌ها: بنر و ۲ بازی در هر سطر */
+    /* ================= سربرگ بازی‌ها: با ارتفاع کمتر برای کاهش رول ================= */
     .games-banner-box {
-      width: 100%; height: 125px; border-radius: 16px;
+      width: 100%; height: 115px; border-radius: 16px;
       position: relative; overflow: hidden; border: 1px solid var(--border);
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       background: linear-gradient(135deg, #2c1254 0%, #150a29 55%, #0d0617 100%);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
       display: flex; align-items: center; justify-content: center;
     }
     .games-banner-overlay {
-      position: relative; z-index: 2; text-align: center; padding: 10px; width: 100%;
+      position: relative; z-index: 2; text-align: center; padding: 8px; width: 100%;
     }
     .banner-badge {
       display: inline-block; background: rgba(212, 175, 55, 0.2); border: 1px solid var(--gold);
-      color: var(--gold); font-size: 10px; font-weight: 900; padding: 3px 10px;
-      border-radius: 12px; margin-bottom: 4px; text-transform: uppercase;
+      color: var(--gold); font-size: 9.5px; font-weight: 900; padding: 2px 8px;
+      border-radius: 10px; margin-bottom: 3px; text-transform: uppercase;
     }
     .banner-title {
-      font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 3px;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 2px;
     }
     .banner-sub {
-      font-size: 10.5px; color: var(--cyan-neon);
-      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+      font-size: 10px; color: var(--cyan-neon);
     }
 
-    /* شبکه ۲ بازی در هر سطر */
+    /* شبکه ۲ ستونه بازی‌ها با ارتفاع کاهش‌یافته و رول کمتر */
     .games-grid-2col {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+      gap: 7px;
       padding-bottom: 10px;
     }
     .game-card {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 10px; display: flex; flex-direction: column;
-      justify-content: space-between; min-height: 110px; cursor: pointer; transition: 0.15s;
+      border-radius: 13px; padding: 8px 9px; display: flex; flex-direction: column;
+      justify-content: space-between; min-height: 82px;
+      cursor: pointer; transition: 0.15s;
       position: relative; overflow: hidden; text-decoration: none; color: inherit;
     }
     .game-card:active { transform: scale(0.96); border-color: var(--gold); }
     .game-card:hover { border-color: rgba(212, 175, 55, 0.5); }
     
     .game-card-top {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;
     }
     .game-card-icon {
-      width: 36px; height: 36px; border-radius: 10px;
+      width: 30px; height: 30px; border-radius: 8px;
       background: var(--card-inner); display: flex; align-items: center; justify-content: center;
-      font-size: 20px; border: 1px solid rgba(255,255,255,0.08);
+      font-size: 17px; border: 1px solid rgba(255,255,255,0.08);
     }
     .game-badge {
-      font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px;
+      font-size: 8.5px; font-weight: 800; padding: 2px 5px; border-radius: 5px;
     }
     .badge-soon {
       background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.18);
@@ -235,81 +234,179 @@
       color: var(--green);
     }
     .game-card-title {
-      font-size: 13px; font-weight: 800; color: #ffffff; margin-bottom: 2px;
+      font-size: 12px; font-weight: 800; color: #ffffff; margin-bottom: 1px;
     }
     .game-card-sub {
-      font-size: 10px; color: var(--text-muted); line-height: 1.3;
+      font-size: 9px; color: var(--text-muted); line-height: 1.2;
     }
 
-    /* ================= سربرگ تسک‌ها: دموی تمیز ۴ بخش ================= */
-    .tasks-header-card {
-      background: var(--card-bg);
+    /* ================= سربرگ تسک‌ها: طراحی دقیق مطابق تصویر ۴ ================= */
+    .task-balance-card {
+      background: linear-gradient(135deg, rgba(30, 20, 50, 0.85), rgba(15, 15, 25, 0.95));
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px 14px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .tasks-demo-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .task-demo-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 14px;
+      border-radius: 18px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      text-decoration: none;
-      color: inherit;
+      margin-bottom: 10px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+    .task-balance-info { display: flex; align-items: center; gap: 10px; }
+    .task-coin-circle {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 22px; color: #352100;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+      border: 2px solid #fff3be;
+      font-family: Arial, sans-serif;
+    }
+    .task-balance-text { display: flex; flex-direction: column; }
+    .task-balance-label { font-size: 10.5px; color: var(--text-muted); }
+    .task-balance-val { font-size: 24px; font-weight: 900; color: #fff; }
+    .btn-task-swap {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       transition: 0.15s;
     }
-    .task-demo-card:active { transform: scale(0.98); border-color: var(--gold); }
-    .task-demo-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .btn-task-swap:active { transform: scale(0.94); border-color: var(--gold); }
+
+    /* ۴ سربرگ بالای صفحه */
+    .task-subtabs-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: rgba(255,255,255,0.04);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 12px;
     }
-    .task-demo-icon {
-      width: 46px; height: 46px;
-      border-radius: 12px;
-      background: var(--card-inner);
-      border: 1px solid rgba(255,255,255,0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      flex-shrink: 0;
-    }
-    .task-demo-info {
+    .task-subtab-box {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 2px;
+      font-size: 11px;
+      font-weight: bold;
+      border-radius: 10px;
+      cursor: pointer;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      align-items: center;
+      gap: 4px;
+      transition: 0.15s;
     }
-    .task-demo-title {
-      font-size: 14px; font-weight: 800; color: #fff;
+    .task-subtab-box span.t-icon { font-size: 17px; }
+    .task-subtab-box.active {
+      background: var(--gold-gradient);
+      color: #1a1200;
+      box-shadow: 0 2px 10px rgba(212, 175, 55, 0.4);
     }
-    .task-demo-sub {
-      font-size: 11px; color: var(--text-muted); line-height: 1.4;
+
+    /* کارت محتوای باز شده زیر هر سربرگ */
+    .task-main-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+      margin-bottom: 10px;
     }
-    .task-demo-btn {
+    .task-card-title {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .task-card-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    /* پاداش روزانه Streak */
+    .streak-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .streak-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 8px 2px;
+      text-align: center;
+    }
+    .streak-box.ready {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.35);
+    }
+    .streak-box.day-7 {
+      grid-column: span 2;
+      background: linear-gradient(135deg, rgba(157, 78, 221, 0.2), rgba(212, 175, 55, 0.2));
+      border-color: var(--purple-neon);
+    }
+    .streak-box-num { font-size: 9.5px; color: var(--text-muted); margin-bottom: 3px; }
+    .streak-box-icon { font-size: 19px; margin-bottom: 2px; }
+    .streak-box-reward { font-size: 11.5px; font-weight: 800; color: var(--gold); }
+
+    .btn-streak-claim {
       background: var(--gold-gradient);
       color: #171000;
       border: none;
-      border-radius: 10px;
-      padding: 8px 14px;
-      font-size: 11.5px;
+      border-radius: 12px;
+      padding: 11px;
+      width: 100%;
+      font-size: 13.5px;
       font-weight: 800;
-      white-space: nowrap;
       cursor: pointer;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35);
+    }
+    .btn-streak-claim:active { transform: scale(0.97); }
+
+    /* ماژول‌های گردونه، ماینر و ماموریت‌ها */
+    .module-soon-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(212, 175, 55, 0.4);
+      border-radius: 14px;
+      padding: 24px 16px;
+      text-align: center;
+    }
+    .module-soon-icon { font-size: 38px; margin-bottom: 8px; }
+    .module-soon-title { font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 6px; }
+    .module-soon-sub { font-size: 11px; color: var(--gold); margin-bottom: 14px; }
+    .btn-enter-index {
+      background: var(--gold-gradient);
+      color: #150f00;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
     }
 
-    /* ================= نوار پایین: قفل و چسبیده به کف صفحه ================= */
+    /* ================= نوار پایین: قفل، چسبیده و بدون پرش ================= */
     .bottom-nav {
       position: fixed !important;
       bottom: 0 !important;
@@ -390,7 +487,7 @@
       </div>
     </header>
 
-    <!-- سربرگ ۱: خانه -->
+    <!-- سربرگ ۱: خانه (مطابق عکس ۱) -->
     <div id="tab-home-content">
       <div class="profile-card">
         <div class="profile-top">
@@ -463,7 +560,7 @@
       </div>
     </div>
 
-    <!-- سربرگ ۲: بازی‌ها (۲ بازی در هر سطر) -->
+    <!-- سربرگ ۲: بازی‌ها (۲ بازی در هر سطر با ارتفاع کاهش‌یافته) -->
     <div id="tab-games-content" style="display:none;">
       <div class="games-banner-box">
         <div class="games-banner-overlay">
@@ -475,67 +572,142 @@
       <div class="games-grid-2col" id="games-container"></div>
     </div>
 
-    <!-- سربرگ ۳: دموی شمایل ۴ بخش تسک‌ها (جهت اتصال به ایندکس‌های اختصاصی) -->
+    <!-- سربرگ ۳: تسک‌ها (طراحی دقیق طبق عکس ۴) -->
     <div id="tab-tasks-content" style="display:none;">
-      <div class="tasks-header-card">
-        <div>
-          <div style="font-size:14px; font-weight:900; color:var(--gold);">📋 مرکز تسک‌ها و جوایز</div>
-          <div style="font-size:11px; color:var(--text-muted);">دموی بخش‌های جوایز، گردونه، ماینر و ماموریت‌ها</div>
+      <!-- مستطیل موجودی و دکمه تبدیل با پنجره مودال به‌زودی -->
+      <div class="task-balance-card">
+        <div class="task-balance-info">
+          <div class="task-coin-circle">S</div>
+          <div class="task-balance-text">
+            <span class="task-balance-label">موجودی سکه سیماب</span>
+            <span class="task-balance-val" id="tasks-balance-num">50</span>
+          </div>
         </div>
-        <div class="coin-badge" style="cursor:default;">
-          <div class="coin-badge-s">S</div>
-          <span id="tasks-badge-val">50</span>
+        <button class="btn-task-swap" onclick="openSwapModal()">
+          <span>تبدیل 🔄</span>
+        </button>
+      </div>
+
+      <!-- ۴ سربرگ بالای صفحه: روزانه | گردونه | ماینر | ماموریت‌ها -->
+      <div class="task-subtabs-row">
+        <button class="task-subtab-box active" id="btn-sub-streak" onclick="switchTaskTab('streak')">
+          <span class="t-icon">🎁</span>
+          <span>روزانه</span>
+        </button>
+        <button class="task-subtab-box" id="btn-sub-wheel" onclick="switchTaskTab('wheel')">
+          <span class="t-icon">🎡</span>
+          <span>گردونه</span>
+        </button>
+        <button class="task-subtab-box" id="btn-sub-miner" onclick="switchTaskTab('miner')">
+          <span class="t-icon">⚡</span>
+          <span>ماینر</span>
+        </button>
+        <button class="task-subtab-box" id="btn-sub-quests" onclick="switchTaskTab('quests')">
+          <span class="t-icon">📋</span>
+          <span>ماموریت‌ها</span>
+        </button>
+      </div>
+
+      <!-- ۱. زیر‌بخش روزانه (Streak) - دقیقاً مطابق تصویر ۴ -->
+      <div id="task-view-streak" class="task-main-card">
+        <div class="task-card-title">
+          <span>🎁</span>
+          <span>پاداش ورود روزانه (Streak)</span>
+        </div>
+        <div class="task-card-desc">
+          هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. اگر یک روز غیبت کنید، شمارنده از اول شروع می‌شود!
+        </div>
+        <div class="streak-grid">
+          <div class="streak-box ready">
+            <div class="streak-box-num">روز ۱</div>
+            <div class="streak-box-icon">🎁</div>
+            <div class="streak-box-reward">+50</div>
+          </div>
+          <div class="streak-box">
+            <div class="streak-box-num">روز ۲</div>
+            <div class="streak-box-icon">🎁</div>
+            <div class="streak-box-reward">+100</div>
+          </div>
+          <div class="streak-box">
+            <div class="streak-box-num">روز ۳</div>
+            <div class="streak-box-icon">🎁</div>
+            <div class="streak-box-reward">+200</div>
+          </div>
+          <div class="streak-box">
+            <div class="streak-box-num">روز ۴</div>
+            <div class="streak-box-icon">🎁</div>
+            <div class="streak-box-reward">+350</div>
+          </div>
+          <div class="streak-box">
+            <div class="streak-box-num">روز ۵</div>
+            <div class="streak-box-icon">🎁</div>
+            <div class="streak-box-reward">+500</div>
+          </div>
+          <div class="streak-box">
+            <div class="streak-box-num">روز ۶</div>
+            <div class="streak-box-icon">🎁</div>
+            <div class="streak-box-reward">+750</div>
+          </div>
+          <div class="streak-box day-7">
+            <div class="streak-box-num">روز ۷ (پاداش ویژه)</div>
+            <div class="streak-box-icon">👑</div>
+            <div class="streak-box-reward">+1500</div>
+          </div>
+        </div>
+        <button class="btn-streak-claim" onclick="claimStreakDemo()">
+          <span>( 🪙 +50 ) ✨ دریافت پاداش امروز</span>
+        </button>
+      </div>
+
+      <!-- ۲. زیر‌بخش گردونه شانس -->
+      <div id="task-view-wheel" class="task-main-card" style="display:none;">
+        <div class="task-card-title">
+          <span>🎡</span>
+          <span>گردونه شانس طلایی</span>
+        </div>
+        <div class="task-card-desc">
+          شانس خود را امتحان کنید! گردونه را بچرخانید و جوایز نقدی تا ۱۰۰۰ سکه برنده شوید.
+        </div>
+        <div class="module-soon-box">
+          <div class="module-soon-icon">🎡</div>
+          <div class="module-soon-title">بازی گردونه شانس سیماب</div>
+          <div class="module-soon-sub">این بخش در ایندکس اختصاصی در حال راه‌اندازی است</div>
+          <button class="btn-enter-index" onclick="openIndexOrSoon('tasks/wheel/index.html', 'گردونه شانس')">ورود به ایندکس گردونه ➔</button>
         </div>
       </div>
 
-      <div class="tasks-demo-grid">
-        <!-- دمو ۱: پاداش روزانه -->
-        <a href="tasks/streak/index.html" class="task-demo-card">
-          <div class="task-demo-left">
-            <div class="task-demo-icon">🎁</div>
-            <div class="task-demo-info">
-              <span class="task-demo-title">پاداش ورود روزانه (Streak)</span>
-              <span class="task-demo-sub">دریافت پاداش افزایشی ورود روزانه تا ۱۵۰۰ سکه</span>
-            </div>
-          </div>
-          <button class="task-demo-btn">ورود ➔</button>
-        </a>
+      <!-- ۳. زیر‌بخش ماینر -->
+      <div id="task-view-miner" class="task-main-card" style="display:none;">
+        <div class="task-card-title">
+          <span>⚡</span>
+          <span>ماینر خودکار توکن سیماب</span>
+        </div>
+        <div class="task-card-desc">
+          استخراج ابری اتوماتیک توکن حتی در حالت آفلاین؛ هر زمان پر شد آن را برداشت کنید.
+        </div>
+        <div class="module-soon-box">
+          <div class="module-soon-icon">⚡</div>
+          <div class="module-soon-title">ماینر ابری توکن سیماب</div>
+          <div class="module-soon-sub">این بخش در ایندکس اختصاصی در حال راه‌اندازی است</div>
+          <button class="btn-enter-index" onclick="openIndexOrSoon('tasks/miner/index.html', 'ماینر خودکار')">ورود به ایندکس ماینر ➔</button>
+        </div>
+      </div>
 
-        <!-- دمو ۲: گردونه شانس -->
-        <a href="tasks/wheel/index.html" class="task-demo-card">
-          <div class="task-demo-left">
-            <div class="task-demo-icon">🎡</div>
-            <div class="task-demo-info">
-              <span class="task-demo-title">گردونه شانس طلایی</span>
-              <span class="task-demo-sub">۳ چرخش رایگان روزانه با جوایز ۱۰۰۰ سکه</span>
-            </div>
-          </div>
-          <button class="task-demo-btn">چرخش ➔</button>
-        </a>
-
-        <!-- دمو ۳: ماینر ابری -->
-        <a href="tasks/miner/index.html" class="task-demo-card">
-          <div class="task-demo-left">
-            <div class="task-demo-icon">⚡</div>
-            <div class="task-demo-info">
-              <span class="task-demo-title">ماینر خودکار توکن سیماب</span>
-              <span class="task-demo-sub">استخراج ابری اتوماتیک توکن و ارتقای سطح ماینر</span>
-            </div>
-          </div>
-          <button class="task-demo-btn">ماینینگ ➔</button>
-        </a>
-
-        <!-- دمو ۴: ماموریت‌های اجتماعی -->
-        <a href="tasks/quests/index.html" class="task-demo-card">
-          <div class="task-demo-left">
-            <div class="task-demo-icon">📢</div>
-            <div class="task-demo-info">
-              <span class="task-demo-title">ماموریت‌های ویژه و شبکه‌ها</span>
-              <span class="task-demo-sub">عضویت در کانال‌ها و فعالیت با پاداش‌های نقدی فوری</span>
-            </div>
-          </div>
-          <button class="task-demo-btn">مشاهده ➔</button>
-        </a>
+      <!-- ۴. زیر‌بخش ماموریت‌ها -->
+      <div id="task-view-quests" class="task-main-card" style="display:none;">
+        <div class="task-card-title">
+          <span>📋</span>
+          <span>ماموریت‌های ویژه و شبکه‌ها</span>
+        </div>
+        <div class="task-card-desc">
+          با عضویت در شبکه‌های رسمی و فعالیت در بخش‌های سیماب، جوایز فوری دریافت کنید:
+        </div>
+        <div class="module-soon-box">
+          <div class="module-soon-icon">📋</div>
+          <div class="module-soon-title">ماموریت‌های رسمی و شبکه‌ها</div>
+          <div class="module-soon-sub">این بخش در ایندکس اختصاصی در حال راه‌اندازی است</div>
+          <button class="btn-enter-index" onclick="openIndexOrSoon('tasks/quests/index.html', 'ماموریت‌ها')">ورود به ایندکس ماموریت‌ها ➔</button>
+        </div>
       </div>
     </div>
 
@@ -556,7 +728,18 @@
     </nav>
   </div>
 
-  <!-- مودال‌ها -->
+  <!-- پنجره مودال تبدیل (به زودی) -->
+  <div class="modal-overlay" id="modal-swap">
+    <div class="modal-box">
+      <div class="modal-title">🔄 صرافی و تبدیل دارایی</div>
+      <div class="modal-content" style="text-align:center;">
+        بخش تبدیل دارایی و سواپ توکن‌ها به زودی در آپدیت بعدی فعال می‌شود!
+      </div>
+      <button class="btn-modal-close" onclick="closeModals()">متوجه شدم</button>
+    </div>
+  </div>
+
+  <!-- مودال درباره ما -->
   <div class="modal-overlay" id="modal-about">
     <div class="modal-box">
       <div class="modal-title" id="m-about-title">⭐ درباره سیماب (SIMAB)</div>
@@ -565,6 +748,7 @@
     </div>
   </div>
 
+  <!-- مودال قوانین -->
   <div class="modal-overlay" id="modal-rules">
     <div class="modal-box">
       <div class="modal-title" id="m-rules-title">💡 قوانین و آموزش</div>
@@ -573,6 +757,7 @@
     </div>
   </div>
 
+  <!-- مودال انتخاب زبان -->
   <div class="modal-overlay" id="modal-lang">
     <div class="modal-box">
       <div class="modal-title">🌐 انتخاب زبان / Language</div>
@@ -628,7 +813,7 @@
 
     /* سکه‌ها برای تمام کاربران روی ۵۰ ریست و تثبیت می‌شوند */
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    const RESET_KEY = 'simab_v50_final_reset_' + uid;
+    const RESET_KEY = 'simab_v50_v4_reset_' + uid;
     let balance = 50;
 
     if (!localStorage.getItem(RESET_KEY)) {
@@ -642,8 +827,8 @@
 
     function renderCoins() {
       document.getElementById('user-balance-txt').innerText = balance.toLocaleString();
-      const b2 = document.getElementById('tasks-badge-val');
-      if (b2) b2.innerText = balance.toLocaleString();
+      const bTasks = document.getElementById('tasks-balance-num');
+      if (bTasks) bTasks.innerText = balance.toLocaleString();
     }
     renderCoins();
 
@@ -699,7 +884,39 @@
       }
     }
 
-    /* لیست ۱۶ بازی (۲ بازی در هر سطر) */
+    function openSwapModal() {
+      triggerHaptic('light');
+      document.getElementById('modal-swap').style.display = 'flex';
+    }
+
+    function openIndexOrSoon(url, name) {
+      triggerHaptic('light');
+      fetch(url, { method: 'HEAD' }).then(res => {
+        if (res.ok) window.location.href = url;
+        else alertComingSoon(name);
+      }).catch(() => {
+        alertComingSoon(name);
+      });
+    }
+
+    function claimStreakDemo() {
+      triggerHaptic('success');
+      balance += 50;
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      renderCoins();
+      showToast('پاداش ۵۰ سکه روزانه دریافت شد! ✨');
+    }
+
+    /* سوییچ ۴ سربرگ بالای بخش تسک‌ها (روزانه، گردونه، ماینر، ماموریت‌ها) */
+    function switchTaskTab(tabName) {
+      triggerHaptic('light');
+      ['streak', 'wheel', 'miner', 'quests'].forEach(t => {
+        document.getElementById('task-view-' + t).style.display = (t === tabName) ? 'block' : 'none';
+        document.getElementById('btn-sub-' + t).classList.toggle('active', t === tabName);
+      });
+    }
+
+    /* لیست ۱۶ بازی (۲ بازی در هر سطر با ارتفاع کاهش‌یافته) */
     const gamesDatabase = [
       {
         id: 1, icon: '🃏', url: 'games/poker/index.html', active: true,
@@ -741,7 +958,7 @@
         id: 7, icon: '🐍', url: 'games/snakes/index.html', active: false,
         fa: { title: 'مارپله مسابقه‌ای', sub: 'رقابت شانس و تاس' },
         en: { title: 'Snakes & Ladders', sub: 'Dice Race' },
-        ru: { title: 'Змеи и Лестницы', sub: 'Гонка на куبیках' }
+        ru: { title: 'Змеи и Лестницы', sub: 'Гонка на кубиках' }
       },
       {
         id: 8, icon: '🎲', url: 'games/dice/index.html', active: false,
@@ -783,7 +1000,7 @@
         id: 14, icon: '🧨', url: 'games/bomb/index.html', active: false,
         fa: { title: 'بمب شانس', sub: 'شمارش معکوس انفجار' },
         en: { title: 'Bomb Defuse', sub: 'Countdown Rush' },
-        ru: { title: 'Бомба Удачи', sub: 'Обратный отсчёт' }
+        ru: { title: 'Боمба Удачи', sub: 'Обратный отсчёт' }
       },
       {
         id: 15, icon: '⚡', url: 'games/speed/index.html', active: false,
@@ -830,7 +1047,7 @@
       });
     }
 
-    /* ناوبری سربرگ‌های اصلی */
+    /* سوییچ ۳ سربرگ اصلی نوار پایین */
     function switchNavTab(tab) {
       triggerHaptic('light');
       document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -918,7 +1135,7 @@
         admin: 'Панель управления (Admin)',
         bannerBadge: '🎮 ИГРОВОЙ ХАБ SIMAB',
         bannerTitle: 'Онлайн турниры и битвы',
-        bannerSub: 'Играйте, выигрывайте жетоны و побеждайте соперников',
+        bannerSub: 'Играйте, выигрывайте жетоны и побеждайте соперников',
         home: 'Главная', games: 'Игры', tasks: 'Задания',
         aboutTitle: '⭐ О проекте SIMAB',
         aboutDesc: 'Интерактивная игровая платформа SIMAB для онлайн-соревнований и наград.',
