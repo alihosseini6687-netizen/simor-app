@@ -621,7 +621,10 @@ updateBalanceDisplay();
         btnClaim.disabled = true;
         btnClaim.innerHTML = `<span>حداقل برداشت: ۰.۰۱ سکه (در حال استخراج... ⏳)</span>`;
       }
+    } // <--- این آکولاد بسته جا افتاده بود
 
+    function handleMinerAction() {
+      
     function handleMinerAction() {
       if (currentTier === 0) return;
       const cfg = MINER_TIERS[currentTier];
