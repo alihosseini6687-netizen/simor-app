@@ -9,7 +9,7 @@
     :root {
       --bg: #0c0c14;
       --card-bg: rgba(20, 20, 32, 0.92);
-      --card-inner: rgba(28, 28, 44, 0.88);
+      --card-inner: rgba(28, 28, 44, 0.85);
       --gold: #f5cf62;
       --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
       --cyan-neon: #00f2fe;
@@ -17,7 +17,8 @@
       --green: #00f5d4;
       --text: #ffffff;
       --text-muted: #9595a8;
-      --border: rgba(212, 175, 55, 0.25);
+      --border: rgba(212, 175, 55, 0.22);
+      --border-glow: 0 0 15px rgba(212, 175, 55, 0.2);
     }
     * { 
       box-sizing: border-box; 
@@ -30,643 +31,345 @@
     
     html, body {
       width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: radial-gradient(circle at 50% 8%, #1e1338 0%, #0c0c14 70%);
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 10%, #1e1338 0%, #0c0c14 70%);
       color: var(--text);
-    }
-
-    body {
       display: flex;
       justify-content: center;
       text-align: start;
+      overflow-x: hidden;
     }
 
-    /* کانتینر اصلی اپلیکیشن با اسکرول کنترل‌شده */
+    /* کانتینر اپلیکیشن: در موبایل و تلگرام ۱۰۰٪ کامل، در دسکتاپ اندازه فریم موبایل */
     .app-wrapper {
       width: 100%;
-      max-width: 440px;
-      height: 100vh;
-      background: rgba(12, 12, 20, 0.7);
+      max-width: 100%;
+      min-height: 100vh;
+      background: rgba(12, 12, 20, 0.65);
       backdrop-filter: blur(12px);
+      padding: 8px 8px 80px 8px;
       position: relative;
-      box-shadow: 0 0 35px rgba(0,0,0,0.9);
-      border-left: 1px solid rgba(255,255,255,0.06);
-      border-right: 1px solid rgba(255,255,255,0.06);
       display: flex;
       flex-direction: column;
     }
 
-    /* ناحیه اسکرول‌شونده محتوا (بدون حرکت کردن هدر و نوار پایین) */
-    .scrollable-content {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
-      -webkit-overflow-scrolling: touch;
-      padding: 8px 10px 80px 10px;
+    @media (min-width: 500px) {
+      .app-wrapper {
+        max-width: 440px;
+        box-shadow: 0 0 35px rgba(0,0,0,0.9);
+        border-left: 1px solid rgba(255,255,255,0.05);
+        border-right: 1px solid rgba(255,255,255,0.05);
+      }
     }
 
     /* هدر */
     .top-header {
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center;
-      background: var(--card-bg); 
-      border: 1px solid var(--border);
-      border-radius: 14px; 
-      padding: 8px 12px; 
-      margin-bottom: 10px;
-      box-shadow: 0 4px 18px rgba(0,0,0,0.5);
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 8px 12px; margin-bottom: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     .header-start { display: flex; align-items: center; gap: 8px; }
     .btn-gear {
-      background: rgba(255, 255, 255, 0.06); 
-      border: 1px solid var(--border); 
-      color: var(--gold);
-      width: 34px; height: 34px; 
-      border-radius: 10px; 
-      font-size: 16px;
-      cursor: pointer; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); color: var(--gold);
+      width: 34px; height: 34px; border-radius: 10px; font-size: 16px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
       transition: 0.15s;
     }
     .btn-gear:active { transform: scale(0.92); }
     .brand-title {
-      font-size: 19px; 
-      font-weight: 900; 
-      letter-spacing: 1.5px;
+      font-size: 19px; font-weight: 900; letter-spacing: 1.5px;
       background: var(--gold-gradient);
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     .coin-badge {
-      background: rgba(212, 175, 55, 0.12); 
-      border: 1px solid var(--border);
-      padding: 5px 12px; 
-      border-radius: 20px; 
-      font-size: 13px; 
-      font-weight: bold; 
-      color: var(--gold);
-      display: flex; 
-      align-items: center; 
-      gap: 6px; 
-      cursor: pointer;
+      background: rgba(212, 175, 55, 0.12); border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; color: var(--gold);
+      display: flex; align-items: center; gap: 6px; cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
     }
     .coin-badge-s {
-      width: 20px; height: 20px; 
-      border-radius: 50%;
-      background: var(--gold-gradient); 
-      color: #221400;
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      font-size: 12px; 
-      font-weight: 900; 
-      font-family: Arial, sans-serif;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: var(--gold-gradient); color: #221400;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 900; font-family: Arial, sans-serif;
     }
 
-    /* کارت پروفایل کاربر */
+    /* مشخصات کاربر در سربرگ خانه */
     .profile-card {
-      background: var(--card-bg); 
-      border: 1px solid var(--border);
-      border-radius: 16px; 
-      padding: 12px; 
-      margin-bottom: 10px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 18px; padding: 14px 16px; margin-bottom: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
     .profile-top {
-      display: flex; 
-      align-items: center; 
-      gap: 12px; 
-      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
     }
     .user-avatar {
-      width: 48px; height: 48px; 
-      border-radius: 50%;
+      width: 50px; height: 50px; border-radius: 50%;
       border: 2px solid var(--gold);
       background: radial-gradient(circle, #3d2366 0%, #1c1130 100%);
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      font-size: 22px; 
-      overflow: hidden; 
-      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; overflow: hidden; flex-shrink: 0;
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.35);
     }
     .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .user-name { font-size: 15px; font-weight: 900; color: #fff; }
-    .user-username { font-size: 11px; color: var(--text-muted); direction: ltr; text-align: right; }
+    .user-name { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 2px; }
+    .user-username { font-size: 11.5px; color: var(--text-muted); direction: ltr; text-align: right; }
     
     .ids-container {
-      background: var(--card-inner); 
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px; 
-      padding: 8px 10px; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 7px;
+      background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;
     }
     .id-row {
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      font-size: 12px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 12px;
     }
-    .id-label { color: var(--text-muted); font-size: 11px; }
+    .id-label { color: var(--text-muted); font-size: 11.5px; }
     .id-value {
-      font-weight: bold; 
-      color: #fff; 
-      display: flex; 
-      align-items: center; 
-      gap: 8px;
-      font-family: monospace; 
-      font-size: 12.5px; 
-      direction: ltr;
+      font-weight: bold; color: #fff; display: flex; align-items: center; gap: 8px;
+      font-family: monospace; font-size: 13px; direction: ltr;
     }
     .id-game-val { color: var(--gold); }
     .btn-copy {
-      background: rgba(255,255,255,0.08); 
-      border: 1px solid var(--border); 
-      color: var(--gold);
-      padding: 2px 7px; 
-      border-radius: 6px; 
-      font-size: 10px; 
-      font-weight: bold; 
-      cursor: pointer;
-    }
-
-    /* ۳ مربع ردیف میانی */
-    .three-grid { 
-      display: grid; 
-      grid-template-columns: repeat(3, 1fr); 
-      gap: 7px; 
-      margin-bottom: 10px; 
-    }
-    .grid-box {
-      aspect-ratio: 1; 
-      background: var(--card-bg); 
-      border: 1px solid var(--border);
-      border-radius: 14px; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center;
-      gap: 4px; 
-      cursor: pointer; 
-      text-decoration: none; 
-      color: inherit; 
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--gold);
+      padding: 2px 8px; border-radius: 6px; font-size: 10.5px; font-weight: bold; cursor: pointer;
       transition: 0.15s;
+    }
+    .btn-copy:active { transform: scale(0.92); }
+
+    /* ۳ مربع ردیف میانی: رفرال راست | به‌زودی وسط | دستیار صوتی چپ */
+    .three-grid { display: flex; gap: 8px; margin-bottom: 10px; }
+    .grid-box {
+      flex: 1; aspect-ratio: 1; background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px; cursor: pointer; text-decoration: none; color: inherit; transition: 0.15s;
       position: relative;
-      text-align: center;
-      padding: 4px;
     }
     .grid-box:active { transform: scale(0.96); border-color: var(--gold); }
-    .grid-box span.icon { font-size: 22px; }
-    .grid-box span.label { font-size: 12px; font-weight: 800; color: var(--gold); }
-    .grid-box span.sub { font-size: 9.5px; color: var(--text-muted); }
-    .badge-soon-tag {
-      background: rgba(255, 179, 0, 0.18); 
-      border: 1px solid rgba(255, 179, 0, 0.6); 
-      color: #ffd166;
-      font-size: 9px; 
-      font-weight: 900; 
-      padding: 2px 6px; 
-      border-radius: 8px;
-      margin-top: 2px;
+    .grid-box span.icon { font-size: 24px; }
+    .grid-box span.label { font-size: 12.5px; font-weight: 800; color: var(--gold); }
+    .grid-box span.sub { font-size: 10px; color: var(--text-muted); }
+    .badge-soon-mini {
+      position: absolute; top: 6px; right: 6px;
+      background: rgba(255, 59, 48, 0.2); border: 1px solid #ff3b30; color: #ff7b72;
+      font-size: 8px; font-weight: 900; padding: 1px 5px; border-radius: 6px;
     }
 
     /* دکمه‌های کپسولی */
-    .action-bars { display: flex; flex-direction: column; gap: 8px; }
+    .action-bars { display: flex; flex-direction: column; gap: 9px; }
     .action-btn {
-      background: var(--card-bg); 
-      border: 1px solid var(--border);
-      border-radius: 12px; 
-      padding: 10px 12px; 
-      display: flex; 
-      align-items: center;
-      gap: 10px; 
-      cursor: pointer; 
-      color: inherit; 
-      text-decoration: none; 
-      transition: 0.15s;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px 14px; display: flex; align-items: center;
+      gap: 12px; cursor: pointer; color: inherit; text-decoration: none; transition: 0.15s;
     }
-    .action-btn:active { background: var(--card-inner); border-color: var(--gold); }
+    .action-btn:active { background: var(--card-inner); border-color: var(--gold); transform: scale(0.98); }
     .action-btn .btn-icon {
-      font-size: 17px; 
-      width: 32px; height: 32px; 
-      border-radius: 8px;
-      background: var(--card-inner); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      flex-shrink: 0;
+      font-size: 18px; width: 34px; height: 34px; border-radius: 10px;
+      background: var(--card-inner); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .action-btn .btn-txt { font-size: 12.5px; font-weight: bold; flex: 1; }
+    .action-btn .btn-txt { font-size: 13px; font-weight: bold; flex: 1; text-align: start; }
     .action-btn .arrow { font-size: 11px; color: var(--text-muted); }
     .action-btn.admin-bar {
-      border-color: var(--gold); 
-      background: rgba(212, 175, 55, 0.08);
+      border-color: var(--gold); background: rgba(212, 175, 55, 0.08);
     }
     .action-btn.admin-bar .btn-txt { color: var(--gold); }
 
-    /* سربرگ بازی‌ها - بنر و شبکه ۲ تایی */
+    /* سربرگ بازی‌ها: بنر و ۲ بازی در هر سطر */
     .games-banner-box {
-      width: 100%; 
-      height: 120px; 
-      border-radius: 14px;
-      position: relative; 
-      overflow: hidden; 
-      border: 1px solid var(--border);
+      width: 100%; height: 125px; border-radius: 16px;
+      position: relative; overflow: hidden; border: 1px solid var(--border);
       margin-bottom: 10px;
       background: linear-gradient(135deg, #2c1254 0%, #150a29 55%, #0d0617 100%);
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      text-align: center;
-      padding: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .games-banner-overlay {
+      position: relative; z-index: 2; text-align: center; padding: 10px; width: 100%;
     }
     .banner-badge {
-      display: inline-block; 
-      background: rgba(212, 175, 55, 0.2); 
-      border: 1px solid var(--gold);
-      color: var(--gold); 
-      font-size: 10px; 
-      font-weight: 900; 
-      padding: 2px 8px;
-      border-radius: 10px; 
-      margin-bottom: 4px;
+      display: inline-block; background: rgba(212, 175, 55, 0.2); border: 1px solid var(--gold);
+      color: var(--gold); font-size: 10px; font-weight: 900; padding: 3px 10px;
+      border-radius: 12px; margin-bottom: 4px; text-transform: uppercase;
     }
-    .banner-title { font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 2px; }
-    .banner-sub { font-size: 11px; color: var(--cyan-neon); }
+    .banner-title {
+      font-size: 16px; font-weight: 900; color: #fff; margin-bottom: 3px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+    .banner-sub {
+      font-size: 10.5px; color: var(--cyan-neon);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
 
-    /* در هر سطر ۲ بازی */
+    /* شبکه ۲ بازی در هر سطر */
     .games-grid-2col {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
-      padding-bottom: 12px;
+      padding-bottom: 10px;
     }
     .game-card {
-      background: var(--card-bg); 
-      border: 1px solid var(--border);
-      border-radius: 14px; 
-      padding: 10px; 
-      display: flex; 
-      flex-direction: column;
-      justify-content: space-between; 
-      min-height: 110px; 
-      cursor: pointer; 
-      transition: 0.15s;
-      position: relative; 
-      overflow: hidden; 
-      text-decoration: none; 
-      color: inherit;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px; display: flex; flex-direction: column;
+      justify-content: space-between; min-height: 110px; cursor: pointer; transition: 0.15s;
+      position: relative; overflow: hidden; text-decoration: none; color: inherit;
     }
     .game-card:active { transform: scale(0.96); border-color: var(--gold); }
     .game-card:hover { border-color: rgba(212, 175, 55, 0.5); }
     
     .game-card-top {
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      margin-bottom: 6px;
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;
     }
     .game-card-icon {
-      width: 36px; height: 36px; 
-      border-radius: 10px;
-      background: var(--card-inner); 
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      font-size: 20px; 
-      border: 1px solid rgba(255,255,255,0.08);
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--card-inner); display: flex; align-items: center; justify-content: center;
+      font-size: 20px; border: 1px solid rgba(255,255,255,0.08);
     }
     .game-badge {
-      font-size: 9px; 
-      font-weight: 800; 
-      padding: 2px 6px; 
-      border-radius: 6px;
+      font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px;
     }
-    .badge-soon { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.18); color: #d1d1db; }
-    .badge-live { background: rgba(0, 245, 212, 0.15); border: 1px solid var(--green); color: var(--green); }
-    .game-card-title { font-size: 13px; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
-    .game-card-sub { font-size: 9.5px; color: var(--text-muted); line-height: 1.3; }
+    .badge-soon {
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.18);
+      color: #d1d1db;
+    }
+    .badge-live {
+      background: rgba(0, 245, 212, 0.15); border: 1px solid var(--green);
+      color: var(--green);
+    }
+    .game-card-title {
+      font-size: 13px; font-weight: 800; color: #ffffff; margin-bottom: 2px;
+    }
+    .game-card-sub {
+      font-size: 10px; color: var(--text-muted); line-height: 1.3;
+    }
 
-    /* سربرگ ۳: استایل‌های اختصاصی دمو تسک‌ها */
-    .tasks-subtabs-container {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 5px;
-      background: rgba(255,255,255,0.04);
-      padding: 4px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.06);
+    /* ================= سربرگ تسک‌ها: دموی تمیز ۴ بخش ================= */
+    .tasks-header-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
       margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .tasks-subtab-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 7px 2px;
-      font-size: 11px;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
+    .tasks-demo-grid {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      transition: 0.15s;
+      gap: 10px;
     }
-    .tasks-subtab-btn span.tab-icon { font-size: 16px; }
-    .tasks-subtab-btn.active {
-      background: var(--gold-gradient);
-      color: #1a1200;
-      box-shadow: 0 2px 10px rgba(212, 175, 55, 0.4);
-    }
-    .task-content-card {
+    .task-demo-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-    }
-    .task-header-title {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--gold);
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 4px;
+      justify-content: space-between;
+      text-decoration: none;
+      color: inherit;
+      transition: 0.15s;
     }
-    .task-desc {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 12px;
-      line-height: 1.5;
+    .task-demo-card:active { transform: scale(0.98); border-color: var(--gold); }
+    .task-demo-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
-    .streak-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      margin-bottom: 12px;
+    .task-demo-icon {
+      width: 46px; height: 46px;
+      border-radius: 12px;
+      background: var(--card-inner);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
     }
-    .streak-day-box {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 8px 2px;
-      text-align: center;
+    .task-demo-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
-    .streak-day-box.ready {
-      background: rgba(212, 175, 55, 0.15);
-      border-color: var(--gold);
+    .task-demo-title {
+      font-size: 14px; font-weight: 800; color: #fff;
     }
-    .streak-day-box.day-7 {
-      grid-column: span 2;
-      background: linear-gradient(135deg, rgba(157, 78, 221, 0.2), rgba(212, 175, 55, 0.2));
-      border-color: var(--purple-neon);
+    .task-demo-sub {
+      font-size: 11px; color: var(--text-muted); line-height: 1.4;
     }
-    .streak-day-num { font-size: 9.5px; color: var(--text-muted); margin-bottom: 2px; }
-    .streak-day-icon { font-size: 18px; margin-bottom: 2px; }
-    .streak-day-reward { font-size: 11px; font-weight: 800; color: var(--gold); }
-    
-    .action-btn-gold {
+    .task-demo-btn {
       background: var(--gold-gradient);
       color: #171000;
       border: none;
-      border-radius: 12px;
-      padding: 10px;
-      width: 100%;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    .action-btn-gold:active { transform: scale(0.97); }
-
-    /* گردونه */
-    .wheel-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      padding: 6px 0;
-    }
-    .wheel-pointer {
-      width: 0; height: 0;
-      border-left: 12px solid transparent;
-      border-right: 12px solid transparent;
-      border-top: 20px solid #ff3b30;
-      z-index: 10;
-      margin-bottom: -10px;
-    }
-    .wheel-canvas-wrap {
-      position: relative;
-      width: 230px; height: 230px;
-      border-radius: 50%;
-      border: 5px solid #d4af37;
-      box-shadow: 0 0 25px rgba(212, 175, 55, 0.35);
-      background: #111;
-      overflow: hidden;
-    }
-    #wheelCanvas {
-      width: 100%; height: 100%;
-      transition: transform 4.5s cubic-bezier(0.15, 0.9, 0.2, 1);
-    }
-    .wheel-center-pin {
-      position: absolute;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #fff2ad 0%, #d4af37 60%, #593f00 100%);
-      border: 2px solid #14141e;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 17px; font-weight: 900; color: #221400;
-      z-index: 5;
-    }
-    .wheel-info-row {
-      display: flex;
-      justify-content: space-between;
-      width: 100%;
-      font-size: 11px;
-      color: var(--text-muted);
-      margin: 10px 0;
-    }
-
-    /* ماینر */
-    .miner-display {
-      background: rgba(0, 0, 0, 0.35);
-      border: 1px solid rgba(0, 242, 254, 0.2);
-      border-radius: 14px;
-      padding: 12px;
-      margin-bottom: 12px;
-      text-align: center;
-    }
-    .miner-animation-ring {
-      width: 64px; height: 64px;
-      border-radius: 50%;
-      border: 3px dashed var(--cyan-neon);
-      margin: 0 auto 8px auto;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 28px;
-      animation: rotateRig 8s linear infinite;
-    }
-    @keyframes rotateRig { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .miner-rate-tag { font-size: 11px; color: var(--cyan-neon); font-weight: 700; margin-bottom: 4px; }
-    .miner-pool-amount { font-size: 24px; font-weight: 900; color: #fff; margin-bottom: 6px; }
-    .miner-progress-bg {
-      width: 100%; height: 8px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 5px;
-      overflow: hidden;
-      margin-bottom: 6px;
-    }
-    .miner-progress-fill {
-      height: 100%; width: 35%;
-      background: linear-gradient(90deg, var(--cyan-neon), var(--green));
-    }
-    .miner-capacity-text {
-      font-size: 9.5px; color: var(--text-muted); display: flex; justify-content: space-between;
-    }
-
-    /* ماموریت‌ها */
-    .task-item-row {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      border-radius: 12px;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    .task-item-left { display: flex; align-items: center; gap: 8px; }
-    .task-item-icon {
-      width: 36px; height: 36px;
       border-radius: 10px;
-      background: rgba(255, 255, 255, 0.05);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
-    }
-    .task-item-title { font-size: 12px; font-weight: bold; color: #fff; }
-    .task-item-reward { font-size: 10.5px; color: var(--gold); font-weight: 700; }
-    .task-item-btn {
-      background: rgba(212, 175, 55, 0.15);
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      padding: 5px 12px;
-      border-radius: 8px;
-      font-size: 10.5px;
+      padding: 8px 14px;
+      font-size: 11.5px;
       font-weight: 800;
+      white-space: nowrap;
       cursor: pointer;
     }
 
-    /* نوار ناوبری پایین - چسبیده و ثابت بدون پرش هنگام اسکرول */
+    /* ================= نوار پایین: قفل و چسبیده به کف صفحه ================= */
     .bottom-nav {
-      position: fixed; 
-      bottom: 0; left: 50%; 
-      transform: translateX(-50%);
-      width: 100%; 
-      max-width: 440px; 
-      height: 60px;
-      background: rgba(14, 14, 22, 0.98); 
-      backdrop-filter: blur(15px);
-      border-top: 1px solid var(--border);
-      display: flex; 
-      justify-content: space-around; 
-      align-items: center; 
-      z-index: 1000;
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 64px !important;
+      background: #0e0e16 !important;
+      border-top: 1px solid var(--border) !important;
+      display: flex !important;
+      justify-content: space-around !important;
+      align-items: center !important;
+      z-index: 99999 !important;
+      box-shadow: 0 -4px 25px rgba(0,0,0,0.85) !important;
+    }
+    @media (min-width: 500px) {
+      .bottom-nav {
+        max-width: 440px !important;
+      }
     }
     .nav-tab {
-      flex: 1; 
-      height: 100%; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center;
-      gap: 2px; 
-      color: var(--text-muted); 
-      cursor: pointer; 
-      background: transparent; 
-      border: none;
+      flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: 0.15s;
+      background: transparent; border: none;
     }
     .nav-tab.active { color: var(--gold); }
     .nav-tab.active .tab-icon {
-      transform: scale(1.15); 
-      filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6));
+      transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6));
     }
-    .nav-tab .tab-icon { font-size: 20px; }
-    .nav-tab .tab-title { font-size: 10.5px; font-weight: bold; }
+    .nav-tab .tab-icon { font-size: 21px; }
+    .nav-tab .tab-title { font-size: 11px; font-weight: bold; }
 
     /* مودال‌ها */
     .modal-overlay {
-      position: fixed; inset: 0; 
-      background: rgba(0,0,0,0.85); 
-      backdrop-filter: blur(6px);
-      display: none; 
-      align-items: center; 
-      justify-content: center; 
-      z-index: 2000; 
-      padding: 16px;
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; z-index: 100000; padding: 16px;
     }
     .modal-box {
-      background: var(--card-bg); 
-      border: 1px solid var(--gold);
-      border-radius: 18px; 
-      padding: 18px; 
-      width: 100%; 
-      max-width: 330px; 
-      text-align: center;
+      background: var(--card-bg); border: 1px solid var(--gold);
+      border-radius: 20px; padding: 20px; width: 100%; max-width: 340px; text-align: center;
       box-shadow: 0 10px 40px rgba(0,0,0,0.9);
     }
-    .modal-title { font-size: 15px; font-weight: 800; color: var(--gold); margin-bottom: 10px; }
-    .modal-content { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 14px; text-align: start; }
+    .modal-title { font-size: 16px; font-weight: 800; color: var(--gold); margin-bottom: 10px; }
+    .modal-content { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; text-align: start; }
     .btn-modal-close {
-      width: 100%; 
-      background: var(--gold-gradient); 
-      color: #150f00;
-      border: none; 
-      padding: 10px; 
-      border-radius: 10px; 
-      font-weight: 900; 
-      font-size: 12.5px; 
-      cursor: pointer;
+      width: 100%; background: var(--gold-gradient); color: #150f00;
+      border: none; padding: 12px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer;
     }
-    .lang-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+    .lang-options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }
     .btn-lang-select {
-      background: var(--card-inner); 
-      border: 1px solid var(--border); 
-      color: #fff;
-      padding: 10px; 
-      border-radius: 10px; 
-      font-size: 13px; 
-      font-weight: bold; 
-      cursor: pointer;
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center;
+      background: var(--card-inner); border: 1px solid var(--border); color: #fff;
+      padding: 12px; border-radius: 12px; font-size: 13.5px; font-weight: bold; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
     }
     .toast-msg {
-      position: fixed; 
-      top: 15px; left: 50%; 
-      transform: translateX(-50%) translateY(-100px);
-      background: var(--gold-gradient); 
-      color: #1a1200; 
-      padding: 8px 18px; 
-      border-radius: 20px;
-      font-size: 12px; 
-      font-weight: 900; 
-      z-index: 3000; 
-      transition: transform 0.3s ease; 
-      pointer-events: none;
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient); color: #1a1200; padding: 8px 20px; border-radius: 25px;
+      font-size: 12.5px; font-weight: 900; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
     }
     .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
@@ -675,280 +378,168 @@
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
 
   <div class="app-wrapper">
-    <!-- بخش دارای اسکرول اختصاصی -->
-    <div class="scrollable-content" id="main-scroll-box">
-      <!-- هدر بالای صفحه -->
-      <header class="top-header">
-        <div class="coin-badge" onclick="switchNavTab('tasks')">
-          <div class="coin-badge-s">S</div>
-          <span id="user-balance-txt">50</span>
-        </div>
-        <div class="header-start">
-          <div class="brand-title">SIMAB</div>
-          <button class="btn-gear" onclick="openLangModal()" title="تنظیم زبان">⚙️</button>
-        </div>
-      </header>
-
-      <!-- سربرگ ۱: خانه -->
-      <div id="tab-home-content">
-        <div class="profile-card">
-          <div class="profile-top">
-            <div class="user-avatar" id="avatar-container">👤</div>
-            <div>
-              <div class="user-name" id="user-name-txt">کاربر سیماب</div>
-              <div class="user-username" id="user-tg-username">@User</div>
-            </div>
-          </div>
-          <div class="ids-container">
-            <div class="id-row">
-              <span class="id-label" id="lbl-tg-id">شناسه تلگرام:</span>
-              <span class="id-value">
-                <span id="user-num-id">00000000</span>
-                <button class="btn-copy" id="btn-copy-1" onclick="copyText('user-num-id')">کپی</button>
-              </span>
-            </div>
-            <div class="id-row">
-              <span class="id-label" id="lbl-game-id">شناسه بازی:</span>
-              <span class="id-value id-game-val">
-                <span id="user-game-id">S0000000</span>
-                <button class="btn-copy" id="btn-copy-2" onclick="copyText('user-game-id')">کپی</button>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <!-- ۳ مربع میانی: رفرال (راست) | به‌زودی (وسط) | دستیار صوتی (چپ) -->
-        <div class="three-grid">
-          <a href="friends/index.html" class="grid-box">
-            <span class="icon">👥</span>
-            <span class="label" id="txt-ref">رفرال</span>
-            <span class="sub" id="txt-ref-sub">دعوت دوستان</span>
-          </a>
-          <div class="grid-box" onclick="alertComingSoon('این بخش')">
-            <span class="icon">⏳</span>
-            <span class="label" id="txt-soon-title">به‌زودی</span>
-            <span class="badge-soon-tag">Coming Soon</span>
-          </div>
-          <a href="ai/index.html" class="grid-box">
-            <span class="icon">🎙️</span>
-            <span class="label" id="txt-ai">دستیار صوتی</span>
-            <span class="sub" id="txt-ai-sub">هوش مصنوعی</span>
-          </a>
-        </div>
-
-        <!-- دکمه‌های کپسولی خانه -->
-        <div class="action-bars">
-          <div class="action-btn" onclick="openSupport()">
-            <div class="btn-icon">📞</div>
-            <div class="btn-txt" id="txt-support">پشتیبانی تلگرام</div>
-            <div class="arrow" id="arrow-1">◀</div>
-          </div>
-          <div class="action-btn" onclick="openAboutModal()">
-            <div class="btn-icon">⭐</div>
-            <div class="btn-txt" id="txt-about">درباره ما و اهداف</div>
-            <div class="arrow" id="arrow-2">◀</div>
-          </div>
-          <div class="action-btn" onclick="openRulesModal()">
-            <div class="btn-icon">💡</div>
-            <div class="btn-txt" id="txt-rules">آموزش و قوانین بازی‌ها</div>
-            <div class="arrow" id="arrow-3">◀</div>
-          </div>
-          <div class="action-btn admin-bar" id="btn-admin-bar" style="display:none;" onclick="location.href='admin/index.html'">
-            <div class="btn-icon">👑</div>
-            <div class="btn-txt" id="txt-admin">ورود به پنل مدیریت (استاد حسینی)</div>
-            <div class="arrow" id="arrow-4" style="color:var(--gold);">◀</div>
-          </div>
-        </div>
+    <!-- هدر بالای صفحه -->
+    <header class="top-header">
+      <div class="coin-badge" onclick="switchNavTab('tasks')">
+        <div class="coin-badge-s">S</div>
+        <span id="user-balance-txt">50</span>
       </div>
+      <div class="header-start">
+        <div class="brand-title">SIMAB</div>
+        <button class="btn-gear" onclick="openLangModal()" title="تنظیم زبان">⚙️</button>
+      </div>
+    </header>
 
-      <!-- سربرگ ۲: بازی‌ها (۲ بازی در هر سطر) -->
-      <div id="tab-games-content" style="display:none;">
-        <div class="games-banner-box">
+    <!-- سربرگ ۱: خانه -->
+    <div id="tab-home-content">
+      <div class="profile-card">
+        <div class="profile-top">
+          <div class="user-avatar" id="avatar-container">👤</div>
           <div>
-            <span class="banner-badge" id="t-banner-badge">🎮 SIMAB GAMING</span>
-            <div class="banner-title" id="t-banner-title">مسابقات و رقابت‌های آنلاین</div>
-            <div class="banner-sub" id="t-banner-sub">بازی کنید، ژتون ببرید و با دیگران رقابت کنید</div>
+            <div class="user-name" id="user-name-txt">کاربر سیماب</div>
+            <div class="user-username" id="user-tg-username">@User</div>
           </div>
         </div>
-        <div class="games-grid-2col" id="games-container"></div>
+        <div class="ids-container">
+          <div class="id-row">
+            <span class="id-label" id="lbl-tg-id">شناسه تلگرام:</span>
+            <span class="id-value">
+              <span id="user-num-id">00000000</span>
+              <button class="btn-copy" id="btn-copy-1" onclick="copyText('user-num-id')">کپی</button>
+            </span>
+          </div>
+          <div class="id-row">
+            <span class="id-label" id="lbl-game-id">شناسه بازی:</span>
+            <span class="id-value id-game-val">
+              <span id="user-game-id">S0000000</span>
+              <button class="btn-copy" id="btn-copy-2" onclick="copyText('user-game-id')">کپی</button>
+            </span>
+          </div>
+        </div>
       </div>
 
-      <!-- سربرگ ۳: دمو تسک‌ها (با ۴ زیر‌بخش کامل) -->
-      <div id="tab-tasks-content" style="display:none;">
-        <!-- سوییچر ۴ تایی تب‌های تسک -->
-        <div class="tasks-subtabs-container">
-          <button class="tasks-subtab-btn active" id="btn-ts-streak" onclick="switchTaskSection('streak')">
-            <span class="tab-icon">🎁</span>
-            <span>روزانه</span>
-          </button>
-          <button class="tasks-subtab-btn" id="btn-ts-wheel" onclick="switchTaskSection('wheel')">
-            <span class="tab-icon">🎡</span>
-            <span>گردونه</span>
-          </button>
-          <button class="tasks-subtab-btn" id="btn-ts-miner" onclick="switchTaskSection('miner')">
-            <span class="tab-icon">⚡</span>
-            <span>ماینر</span>
-          </button>
-          <button class="tasks-subtab-btn" id="btn-ts-quests" onclick="switchTaskSection('quests')">
-            <span class="tab-icon">📋</span>
-            <span>ماموریت‌ها</span>
-          </button>
+      <!-- ۳ مربع میانی -->
+      <div class="three-grid">
+        <a href="friends/index.html" class="grid-box">
+          <span class="icon">👥</span>
+          <span class="label" id="txt-ref">رفرال</span>
+          <span class="sub" id="txt-ref-sub">دعوت دوستان</span>
+        </a>
+        <div class="grid-box" onclick="alertComingSoon('این بخش')">
+          <span class="badge-soon-mini">به‌زودی</span>
+          <span class="icon">⏳</span>
+          <span class="label" id="txt-swap">به‌زودی</span>
+          <span class="sub" id="txt-swap-sub">در آپدیت بعد</span>
         </div>
+        <a href="ai/index.html" class="grid-box">
+          <span class="icon">🎙️</span>
+          <span class="label" id="txt-ai">دستیار صوتی</span>
+          <span class="sub" id="txt-ai-sub">هوش مصنوعی</span>
+        </a>
+      </div>
 
-        <!-- بخش ۱ تسک: ورود روزانه (Streak) -->
-        <div id="task-sec-streak" class="task-content-card">
-          <div class="task-header-title">
-            <span>🎁</span>
-            <span>پاداش ورود روزانه (Streak)</span>
-          </div>
-          <div class="task-desc">
-            هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. در صورت غیبت، شمارنده از اول شروع می‌شود!
-          </div>
-          <div class="streak-grid">
-            <div class="streak-day-box ready">
-              <div class="streak-day-num">روز ۱</div>
-              <div class="streak-day-icon">🎁</div>
-              <div class="streak-day-reward">+50</div>
-            </div>
-            <div class="streak-day-box">
-              <div class="streak-day-num">روز ۲</div>
-              <div class="streak-day-icon">🎁</div>
-              <div class="streak-day-reward">+100</div>
-            </div>
-            <div class="streak-day-box">
-              <div class="streak-day-num">روز ۳</div>
-              <div class="streak-day-icon">🎁</div>
-              <div class="streak-day-reward">+200</div>
-            </div>
-            <div class="streak-day-box">
-              <div class="streak-day-num">روز ۴</div>
-              <div class="streak-day-icon">🎁</div>
-              <div class="streak-day-reward">+350</div>
-            </div>
-            <div class="streak-day-box">
-              <div class="streak-day-num">روز ۵</div>
-              <div class="streak-day-icon">🎁</div>
-              <div class="streak-day-reward">+500</div>
-            </div>
-            <div class="streak-day-box">
-              <div class="streak-day-num">روز ۶</div>
-              <div class="streak-day-icon">🎁</div>
-              <div class="streak-day-reward">+750</div>
-            </div>
-            <div class="streak-day-box day-7">
-              <div class="streak-day-num">روز ۷ (ویژه)</div>
-              <div class="streak-day-icon">👑</div>
-              <div class="streak-day-reward">+1500</div>
-            </div>
-          </div>
-          <button class="action-btn-gold" onclick="claimStreakDemo()">دریافت پاداش امروز ✨ (+50 🪙)</button>
+      <!-- دکمه‌های کپسولی -->
+      <div class="action-bars">
+        <div class="action-btn" onclick="openSupport()">
+          <div class="btn-icon">📞</div>
+          <div class="btn-txt" id="txt-support">پشتیبانی تلگرام</div>
+          <div class="arrow" id="arrow-1">◀</div>
         </div>
-
-        <!-- بخش ۲ تسک: گردونه شانس -->
-        <div id="task-sec-wheel" class="task-content-card" style="display:none;">
-          <div class="task-header-title">
-            <span>🎡</span>
-            <span>گردونه شانس طلایی</span>
-          </div>
-          <div class="task-desc">
-            شانس خود را امتحان کنید! گردونه را بچرخانید و جوایز نقدی تا ۱۰۰۰ سکه برنده شوید.
-          </div>
-          <div class="wheel-container">
-            <div class="wheel-pointer"></div>
-            <div class="wheel-canvas-wrap">
-              <canvas id="wheelCanvas" width="230" height="230"></canvas>
-              <div class="wheel-center-pin">S</div>
-            </div>
-          </div>
-          <div class="wheel-info-row">
-            <span>چرخش‌های رایگان باقی‌مانده:</span>
-            <span style="color:var(--gold); font-weight:bold;">۳ از ۳</span>
-          </div>
-          <button class="action-btn-gold" onclick="spinWheelDemo()">چرخش گردونه (SPIN) 🎲</button>
+        <div class="action-btn" onclick="openAboutModal()">
+          <div class="btn-icon">⭐</div>
+          <div class="btn-txt" id="txt-about">درباره ما و اهداف</div>
+          <div class="arrow" id="arrow-2">◀</div>
         </div>
-
-        <!-- بخش ۳ تسک: ماینر ابری -->
-        <div id="task-sec-miner" class="task-content-card" style="display:none;">
-          <div class="task-header-title">
-            <span>⚡</span>
-            <span>ماینر خودکار توکن سیماب</span>
-          </div>
-          <div class="task-desc">
-            این دستگاه حتی در زمان آفلاین بودن برای شما سکه استخراج می‌کند! هر زمان پر شد آن را برداشت کنید.
-          </div>
-          <div class="miner-display">
-            <div class="miner-animation-ring">⚙️</div>
-            <div class="miner-rate-tag">سرعت: ۱ سکه در هر ۲ دقیقه</div>
-            <div class="miner-pool-amount" id="miner-demo-amount">18.50 S</div>
-            <div class="miner-progress-bg">
-              <div class="miner-progress-fill" style="width: 35%;"></div>
-            </div>
-            <div class="miner-capacity-text">
-              <span>ذخیره شده</span>
-              <span>حداکثر ۱۰۰ سکه</span>
-            </div>
-          </div>
-          <button class="action-btn-gold" onclick="claimMinerDemo()">تخلیه و برداشت به حساب 📥</button>
+        <div class="action-btn" onclick="openRulesModal()">
+          <div class="btn-icon">💡</div>
+          <div class="btn-txt" id="txt-rules">آموزش و قوانین بازی‌ها</div>
+          <div class="arrow" id="arrow-3">◀</div>
         </div>
-
-        <!-- بخش ۴ تسک: ماموریت‌ها -->
-        <div id="task-sec-quests" class="task-content-card" style="display:none;">
-          <div class="task-header-title">
-            <span>📋</span>
-            <span>ماموریت‌های ویژه و شبکه‌ها</span>
-          </div>
-          <div class="task-desc">
-            با عضویت در شبکه‌های رسمی و فعالیت در سیماب، جوایز فوری دریافت کنید:
-          </div>
-          
-          <div class="task-item-row">
-            <div class="task-item-left">
-              <div class="task-item-icon">📢</div>
-              <div>
-                <div class="task-item-title">عضویت در کانال رسمی تلگرام</div>
-                <div class="task-item-reward">+250 سکه 🪙</div>
-              </div>
-            </div>
-            <button class="task-item-btn" onclick="startQuestDemo('کانال تلگرام', 250)">شروع</button>
-          </div>
-
-          <div class="task-item-row">
-            <div class="task-item-left">
-              <div class="task-item-icon">🎙️</div>
-              <div>
-                <div class="task-item-title">تست دستیار صوتی سیماب</div>
-                <div class="task-item-reward">+150 سکه 🪙</div>
-              </div>
-            </div>
-            <button class="task-item-btn" onclick="startQuestDemo('دستیار صوتی', 150)">شروع</button>
-          </div>
-
-          <div class="task-item-row">
-            <div class="task-item-left">
-              <div class="task-item-icon">📸</div>
-              <div>
-                <div class="task-item-title">دنبال کردن اینستاگرام مدیریت</div>
-                <div class="task-item-reward">+100 سکه 🪙</div>
-              </div>
-            </div>
-            <button class="task-item-btn" onclick="startQuestDemo('اینستاگرام', 100)">شروع</button>
-          </div>
-
-          <div class="task-item-row">
-            <div class="task-item-left">
-              <div class="task-item-icon">👥</div>
-              <div>
-                <div class="task-item-title">دعوت ۳ دوست به بازی</div>
-                <div class="task-item-reward">+500 سکه 🪙</div>
-              </div>
-            </div>
-            <button class="task-item-btn" onclick="startQuestDemo('دعوت دوستان', 500)">شروع</button>
-          </div>
+        <div class="action-btn admin-bar" id="btn-admin-bar" style="display:none;" onclick="location.href='admin/index.html'">
+          <div class="btn-icon">👑</div>
+          <div class="btn-txt" id="txt-admin">ورود به پنل مدیریت (استاد حسینی)</div>
+          <div class="arrow" id="arrow-4" style="color:var(--gold);">◀</div>
         </div>
       </div>
     </div>
 
-    <!-- سربرگ پایین صفحه (چسبیده و بدون پرش) -->
+    <!-- سربرگ ۲: بازی‌ها (۲ بازی در هر سطر) -->
+    <div id="tab-games-content" style="display:none;">
+      <div class="games-banner-box">
+        <div class="games-banner-overlay">
+          <span class="banner-badge" id="t-banner-badge">🎮 SIMAB GAMING</span>
+          <div class="banner-title" id="t-banner-title">مسابقات و رقابت‌های آنلاین</div>
+          <div class="banner-sub" id="t-banner-sub">بازی کنید، ژتون ببرید و با دیگران رقابت کنید</div>
+        </div>
+      </div>
+      <div class="games-grid-2col" id="games-container"></div>
+    </div>
+
+    <!-- سربرگ ۳: دموی شمایل ۴ بخش تسک‌ها (جهت اتصال به ایندکس‌های اختصاصی) -->
+    <div id="tab-tasks-content" style="display:none;">
+      <div class="tasks-header-card">
+        <div>
+          <div style="font-size:14px; font-weight:900; color:var(--gold);">📋 مرکز تسک‌ها و جوایز</div>
+          <div style="font-size:11px; color:var(--text-muted);">دموی بخش‌های جوایز، گردونه، ماینر و ماموریت‌ها</div>
+        </div>
+        <div class="coin-badge" style="cursor:default;">
+          <div class="coin-badge-s">S</div>
+          <span id="tasks-badge-val">50</span>
+        </div>
+      </div>
+
+      <div class="tasks-demo-grid">
+        <!-- دمو ۱: پاداش روزانه -->
+        <a href="tasks/streak/index.html" class="task-demo-card">
+          <div class="task-demo-left">
+            <div class="task-demo-icon">🎁</div>
+            <div class="task-demo-info">
+              <span class="task-demo-title">پاداش ورود روزانه (Streak)</span>
+              <span class="task-demo-sub">دریافت پاداش افزایشی ورود روزانه تا ۱۵۰۰ سکه</span>
+            </div>
+          </div>
+          <button class="task-demo-btn">ورود ➔</button>
+        </a>
+
+        <!-- دمو ۲: گردونه شانس -->
+        <a href="tasks/wheel/index.html" class="task-demo-card">
+          <div class="task-demo-left">
+            <div class="task-demo-icon">🎡</div>
+            <div class="task-demo-info">
+              <span class="task-demo-title">گردونه شانس طلایی</span>
+              <span class="task-demo-sub">۳ چرخش رایگان روزانه با جوایز ۱۰۰۰ سکه</span>
+            </div>
+          </div>
+          <button class="task-demo-btn">چرخش ➔</button>
+        </a>
+
+        <!-- دمو ۳: ماینر ابری -->
+        <a href="tasks/miner/index.html" class="task-demo-card">
+          <div class="task-demo-left">
+            <div class="task-demo-icon">⚡</div>
+            <div class="task-demo-info">
+              <span class="task-demo-title">ماینر خودکار توکن سیماب</span>
+              <span class="task-demo-sub">استخراج ابری اتوماتیک توکن و ارتقای سطح ماینر</span>
+            </div>
+          </div>
+          <button class="task-demo-btn">ماینینگ ➔</button>
+        </a>
+
+        <!-- دمو ۴: ماموریت‌های اجتماعی -->
+        <a href="tasks/quests/index.html" class="task-demo-card">
+          <div class="task-demo-left">
+            <div class="task-demo-icon">📢</div>
+            <div class="task-demo-info">
+              <span class="task-demo-title">ماموریت‌های ویژه و شبکه‌ها</span>
+              <span class="task-demo-sub">عضویت در کانال‌ها و فعالیت با پاداش‌های نقدی فوری</span>
+            </div>
+          </div>
+          <button class="task-demo-btn">مشاهده ➔</button>
+        </a>
+      </div>
+    </div>
+
+    <!-- ================= نوار پایین چسبیده و ثابت ================= -->
     <nav class="bottom-nav">
       <div class="nav-tab active" id="tab-btn-home" onclick="switchNavTab('home')">
         <div class="tab-icon">🏠</div>
@@ -1035,9 +626,9 @@
       }
     } catch(e) {}
 
-    /* سکه‌ها برای تمام کاربران روی ۵۰ تنظیم و ریست می‌شوند */
+    /* سکه‌ها برای تمام کاربران روی ۵۰ ریست و تثبیت می‌شوند */
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    const RESET_KEY = 'simab_v50_fix_' + uid;
+    const RESET_KEY = 'simab_v50_final_reset_' + uid;
     let balance = 50;
 
     if (!localStorage.getItem(RESET_KEY)) {
@@ -1049,10 +640,12 @@
       balance = parseInt(localStorage.getItem(STORAGE_KEY_COINS) || '50', 10);
     }
 
-    function updateBalanceUI() {
+    function renderCoins() {
       document.getElementById('user-balance-txt').innerText = balance.toLocaleString();
+      const b2 = document.getElementById('tasks-badge-val');
+      if (b2) b2.innerText = balance.toLocaleString();
     }
-    updateBalanceUI();
+    renderCoins();
 
     if (realUserId === 702007470 || uid === "702007470") {
       document.getElementById('btn-admin-bar').style.display = 'flex';
@@ -1106,7 +699,7 @@
       }
     }
 
-    /* دیتابیس ۱۶ تایی بازی‌ها (۲ بازی در هر سطر) */
+    /* لیست ۱۶ بازی (۲ بازی در هر سطر) */
     const gamesDatabase = [
       {
         id: 1, icon: '🃏', url: 'games/poker/index.html', active: true,
@@ -1148,7 +741,7 @@
         id: 7, icon: '🐍', url: 'games/snakes/index.html', active: false,
         fa: { title: 'مارپله مسابقه‌ای', sub: 'رقابت شانس و تاس' },
         en: { title: 'Snakes & Ladders', sub: 'Dice Race' },
-        ru: { title: 'Змеи и Лестницы', sub: 'Гонка на кубиках' }
+        ru: { title: 'Змеи и Лестницы', sub: 'Гонка на куبیках' }
       },
       {
         id: 8, icon: '🎲', url: 'games/dice/index.html', active: false,
@@ -1206,7 +799,6 @@
       }
     ];
 
-    /* رندر بازی‌ها در ۲ ستون (هر سطر ۲ بازی) */
     function renderGames(lang) {
       const box = document.getElementById('games-container');
       box.innerHTML = '';
@@ -1238,7 +830,7 @@
       });
     }
 
-    /* کنترل سربرگ‌های پایین با اسکرول مستقل */
+    /* ناوبری سربرگ‌های اصلی */
     function switchNavTab(tab) {
       triggerHaptic('light');
       document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -1256,106 +848,8 @@
       } else if (tab === 'tasks') {
         document.getElementById('tab-btn-tasks').classList.add('active');
         document.getElementById('tab-tasks-content').style.display = 'block';
-        drawWheelDemo();
       }
-      /* اسکرول را به بالای بخش هدایت کن */
-      document.getElementById('main-scroll-box').scrollTop = 0;
-    }
-
-    /* سوییچ زیر‌بخش‌های دمو تسک‌ها */
-    function switchTaskSection(sec) {
-      triggerHaptic('light');
-      ['streak', 'wheel', 'miner', 'quests'].forEach(s => {
-        document.getElementById('task-sec-' + s).style.display = (s === sec) ? 'block' : 'none';
-        document.getElementById('btn-ts-' + s).classList.toggle('active', s === sec);
-      });
-      if (sec === 'wheel') drawWheelDemo();
-    }
-
-    /* عملکردهای دمو تسک‌ها */
-    function claimStreakDemo() {
-      triggerHaptic('success');
-      balance += 50;
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      updateBalanceUI();
-      showToast('+50 سکه پاداش روزانه اضافه شد! 🎉');
-    }
-
-    function claimMinerDemo() {
-      triggerHaptic('success');
-      balance += 18;
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      updateBalanceUI();
-      document.getElementById('miner-demo-amount').innerText = '0.00 S';
-      showToast('+18 سکه از ماینر تخلیه شد! 📥');
-    }
-
-    function startQuestDemo(name, reward) {
-      triggerHaptic('success');
-      balance += reward;
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      updateBalanceUI();
-      showToast(`+${reward} سکه ماموریت ${name} دریافت شد! ✨`);
-    }
-
-    /* رسم گردونه شانس دمو */
-    const WHEEL_SECTORS = [
-      { label: '50 🪙', color: '#9d4edd', text: '#fff' },
-      { label: '100 🪙', color: '#d4af37', text: '#111' },
-      { label: '20 🪙', color: '#1f1f2e', text: '#fff' },
-      { label: '500 🌟', color: '#00f5d4', text: '#111' },
-      { label: 'پوچ 💨', color: '#3a2020', text: '#ff7b72' },
-      { label: '250 🪙', color: '#d4af37', text: '#111' },
-      { label: '1000 👑', color: '#ff3b30', text: '#fff' },
-      { label: '150 🪙', color: '#2a1b40', text: '#fff' }
-    ];
-    let wheelRotation = 0;
-    let isSpinning = false;
-
-    function drawWheelDemo() {
-      const canvas = document.getElementById('wheelCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const numSectors = WHEEL_SECTORS.length;
-      const arc = (2 * Math.PI) / numSectors;
-      const radius = canvas.width / 2;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      WHEEL_SECTORS.forEach((sec, i) => {
-        const angle = i * arc;
-        ctx.beginPath();
-        ctx.fillStyle = sec.color;
-        ctx.moveTo(radius, radius);
-        ctx.arc(radius, radius, radius, angle, angle + arc);
-        ctx.lineTo(radius, radius);
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        ctx.save();
-        ctx.fillStyle = sec.text;
-        ctx.font = 'bold 11px sans-serif';
-        ctx.translate(radius, radius);
-        ctx.rotate(angle + arc / 2);
-        ctx.textAlign = 'right';
-        ctx.fillText(sec.label, radius - 16, 4);
-        ctx.restore();
-      });
-    }
-
-    function spinWheelDemo() {
-      if (isSpinning) return;
-      isSpinning = true;
-      triggerHaptic('heavy');
-      wheelRotation += (5 * 360) + Math.floor(Math.random() * 360);
-      const canvas = document.getElementById('wheelCanvas');
-      canvas.style.transform = `rotate(${wheelRotation}deg)`;
-      setTimeout(() => {
-        isSpinning = false;
-        balance += 100;
-        localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-        updateBalanceUI();
-        showToast('تبریک! ۱۰۰ سکه برنده شدید! 🎉');
-      }, 4600);
+      window.scrollTo(0, 0);
     }
 
     function openAboutModal() { triggerHaptic('light'); document.getElementById('modal-about').style.display = 'flex'; }
@@ -1373,7 +867,7 @@
         copied: 'کپی شد!',
         ref: 'رفرال', refSub: 'دعوت دوستان',
         ai: 'دستیار صوتی', aiSub: 'هوش مصنوعی',
-        soonTitle: 'به‌زودی',
+        swap: 'به‌زودی', swapSub: 'در آپدیت بعد',
         support: 'پشتیبانی تلگرام',
         about: 'درباره ما و اهداف',
         rules: 'آموزش و قوانین بازی‌ها',
@@ -1395,7 +889,7 @@
         copied: 'Copied!',
         ref: 'Referral', refSub: 'Invite Friends',
         ai: 'AI Voice', aiSub: 'Smart Assistant',
-        soonTitle: 'Coming Soon',
+        swap: 'Coming Soon', swapSub: 'Next Update',
         support: 'Telegram Support',
         about: 'About & Vision',
         rules: 'Rules & Tutorial',
@@ -1405,9 +899,9 @@
         bannerSub: 'Play matches, win tokens, and climb leaderboards',
         home: 'Home', games: 'Games', tasks: 'Tasks',
         aboutTitle: '⭐ About SIMAB',
-        aboutDesc: 'SIMAB is an interactive gaming and entertainment hub featuring skill games, online competitions, and rewards.',
+        aboutDesc: 'SIMAB is an interactive gaming hub featuring skill games, online competitions, and rewards.',
         rulesTitle: '💡 Rules & Guides',
-        rulesDesc: 'Tournament rules, fair play systems and guides are placed here.',
+        rulesDesc: 'Tournament rules and fair play instructions are placed here.',
         closeBtn: 'Got it'
       },
       ru: {
@@ -1417,17 +911,17 @@
         copied: 'Скопировано!',
         ref: 'Рефералы', refSub: 'Пригласить друзей',
         ai: 'Голосовой ИИ', aiSub: 'Умный ассистент',
-        soonTitle: 'Скоро',
+        swap: 'Скоро', swapSub: 'В обновлении',
         support: 'Поддержка Telegram',
         about: 'О проекте SIMAB',
         rules: 'Правила и обучение',
         admin: 'Панель управления (Admin)',
         bannerBadge: '🎮 ИГРОВОЙ ХАБ SIMAB',
         bannerTitle: 'Онлайн турниры и битвы',
-        bannerSub: 'Играйте, выигрывайте жетоны и побеждайте соперников',
+        bannerSub: 'Играйте, выигрывайте жетоны و побеждайте соперников',
         home: 'Главная', games: 'Игры', tasks: 'Задания',
         aboutTitle: '⭐ О проекте SIMAB',
-        aboutDesc: 'Интерактивная игровая платформа SIMAB создана для онлайн-игр, соревнований и наград.',
+        aboutDesc: 'Интерактивная игровая платформа SIMAB для онлайн-соревнований и наград.',
         rulesTitle: '💡 Правила и обучение',
         rulesDesc: 'Правила турниров и инструкции размещены здесь.',
         closeBtn: 'Понятно'
@@ -1443,7 +937,8 @@
       document.getElementById('btn-copy-2').innerText = d.copy;
       document.getElementById('txt-ref').innerText = d.ref;
       document.getElementById('txt-ref-sub').innerText = d.refSub;
-      document.getElementById('txt-soon-title').innerText = d.soonTitle;
+      document.getElementById('txt-swap').innerText = d.swap;
+      document.getElementById('txt-swap-sub').innerText = d.swapSub;
       document.getElementById('txt-ai').innerText = d.ai;
       document.getElementById('txt-ai-sub').innerText = d.aiSub;
       document.getElementById('txt-support').innerText = d.support;
@@ -1484,9 +979,6 @@
 
     const savedLang = localStorage.getItem('simab_lang') || localStorage.getItem('simab_language') || 'fa';
     applyLanguage(savedLang);
-    window.addEventListener('DOMContentLoaded', () => {
-      drawWheelDemo();
-    });
   </script>
 </body>
 </html>
