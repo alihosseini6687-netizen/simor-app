@@ -596,8 +596,8 @@
       dailyBar.style.width = `${cyclePct}%`;
 
       const cycleMined = Math.min(cfg.daily, Math.min(tankRemaining, (elapsed / CYCLE_DURATION_MS) * cfg.daily));
-      minedTxt.innerText = `${cycleMined.toFixed(2)} S`;
-      cycleMinedTxt.innerText = `${cycleMined.toFixed(1)} / ${cfg.daily} سکه`;
+      minedTxt.innerText = `${cycleMined.toFixed(5)} S`;
+      cycleMinedTxt.innerText = `${cycleMined.toFixed(4)} / ${cfg.daily} سکه`;
 
       if (isCycleFinished) {
         gear.classList.add('paused');
@@ -716,7 +716,7 @@
 
     syncShopUI();
     updateMinerEngine();
-    setInterval(updateMinerEngine, 1000);
+    setInterval(updateMinerEngine, 500);
   </script>
 </body>
 </html>
