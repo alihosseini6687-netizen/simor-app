@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SIMAB | دستیار صوتی هوشمند</title>
+  <title>SIMAB | دستیار صوتی جمینای</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -52,6 +52,10 @@
       padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;
     }
     .header-title { font-size: 14px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 6px; }
+    .btn-key-setup {
+      background: #20202e; border: 1px solid var(--border); color: var(--gold);
+      padding: 4px 8px; border-radius: 8px; font-size: 12px; cursor: pointer;
+    }
 
     /* وضعیت هوش مصنوعی */
     .status-badge {
@@ -66,27 +70,27 @@
     }
     @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
 
-    /* کانتینر کره نوری (Orb Canvas) */
+    /* کانتینر کره نوری */
     .orb-container {
       width: 100%;
-      height: 250px;
+      height: 240px;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     #orbCanvas {
-      width: 250px;
-      height: 250px;
+      width: 240px;
+      height: 240px;
       border-radius: 50%;
     }
 
     /* کادر متن مکالمه */
     .dialogue-box {
-      flex: 1; min-height: 120px; max-height: 160px;
+      flex: 1; min-height: 120px; max-height: 170px;
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 12px; margin-bottom: 14px;
+      border-radius: 14px; padding: 12px; margin-bottom: 12px;
       display: flex; flex-direction: column; gap: 8px; overflow-y: auto; font-size: 12.5px; line-height: 1.5;
     }
     .user-bubble {
@@ -100,10 +104,10 @@
 
     /* کلید اصلی میکروفون */
     .mic-control-area {
-      display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 6px;
     }
     .btn-mic {
-      width: 68px; height: 68px; border-radius: 50%;
+      width: 66px; height: 66px; border-radius: 50%;
       background: radial-gradient(circle, #c084fc, #7e22ce);
       border: 3px solid rgba(255, 255, 255, 0.3);
       color: #fff; font-size: 28px; cursor: pointer;
@@ -119,57 +123,69 @@
     @keyframes micPulse { from { transform: scale(1); } to { transform: scale(1.08); } }
     .mic-hint { font-size: 11px; color: var(--text-muted); }
 
-    /* پیشنهادات گفتگو */
-    .quick-chips {
-      display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;
+    /* مودال تنظیم کلید جمینای */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: none; align-items: center; justify-content: center; z-index: 200; padding: 16px;
     }
-    .chip {
-      background: var(--card-bg); border: 1px solid var(--border);
-      padding: 6px 10px; border-radius: 16px; font-size: 11px; color: var(--gold);
-      white-space: nowrap; cursor: pointer;
+    .modal-box {
+      background: var(--card-bg); border: 1px solid var(--gold);
+      border-radius: 16px; padding: 18px; width: 100%; max-width: 330px; text-align: center;
     }
-    .chip:active { background: var(--card-inner); }
+    .modal-input {
+      width: 100%; padding: 10px; background: var(--card-inner); border: 1px solid var(--border);
+      border-radius: 8px; color: #fff; font-size: 12px; margin: 12px 0; outline: none; font-family: monospace;
+    }
+    .btn-save-key {
+      width: 100%; background: var(--gold-gradient); color: #000; border: none;
+      padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;
+    }
   </style>
 </head>
 <body>
 
   <div class="app-wrapper">
-    <!-- هدر بالای صفحه -->
+    <!-- هدر -->
     <div class="top-bar">
       <button class="btn-back" onclick="goBack()">🔙 لابی</button>
-      <div class="header-title">🎙️ دستیار هوشمند سیماب</div>
-      <div style="font-size: 12px; color: var(--gold); font-weight: bold;">AI v2</div>
+      <div class="header-title">🎙️ دستیار جمینای SIMAB</div>
+      <button class="btn-key-setup" onclick="openKeyModal()">🔑 کلید</button>
     </div>
 
-    <!-- نشانگر وضعیت هوش مصنوعی -->
+    <!-- وضعیت هوش مصنوعی -->
     <div class="status-badge" id="ai-status">
       <div class="pulse-dot" id="dot-indicator"></div>
       <span id="status-text">آماده شنیدن صدا</span>
     </div>
 
-    <!-- کره نوری نئونی انیمیشنی (مشابه عکس‌های سیستم) -->
+    <!-- کره نوری انیمیشنی -->
     <div class="orb-container">
       <canvas id="orbCanvas" width="500" height="500"></canvas>
     </div>
 
-    <!-- کادر گفتگو و پاسخ‌ها -->
+    <!-- کادر چت -->
     <div class="dialogue-box" id="chatBox">
       <div class="ai-bubble">
-        سلام! من دستیار هوشمند سیماب هستم. برای گفتگو دکمه میکروفون را لمس کنید و سوالتان را بپرسید 🌸
+        سلام! من متصل به جمینای هستم. دکمه میکروفون را لمس کنید و سوالتان را بپرسید 🌸
       </div>
     </div>
 
-    <!-- پیشنهادات سریع -->
-    <div class="quick-chips">
-      <div class="chip" onclick="askPreset('وضعیت سکه‌های من چطوره؟')">🪙 موجودی سکه‌ها</div>
-      <div class="chip" onclick="askPreset('چه بازی‌هایی داریم؟')">🎮 لیست بازی‌ها</div>
-      <div class="chip" onclick="askPreset('چطور ژتون پوکر بگیرم؟')">🔄 نحوه سواپ</div>
-    </div>
-
-    <!-- کلید اصلی میکروفون -->
+    <!-- دکمه میکروفون -->
     <div class="mic-control-area">
       <button class="btn-mic" id="btnMic" onclick="toggleListening()">🎙️</button>
       <div class="mic-hint" id="micHint">برای صحبت لمس کنید</div>
+    </div>
+  </div>
+
+  <!-- مودال وارد کردن کلید جمینای -->
+  <div class="modal-overlay" id="modal-key">
+    <div class="modal-box">
+      <div style="font-size:14px; font-weight:bold; color:var(--gold);">🔑 فعال‌سازی هوش مصنوعی Gemini</div>
+      <div style="font-size:11px; color:var(--text-muted); margin-top:6px; line-height:1.5;">
+        کلید API شما فقط روی گوشی خودتان ذخیره می‌شود و در گیت‌هاب آپلود نمی‌شود تا باطل نشود:
+      </div>
+      <input type="text" class="modal-input" id="apiKeyInput" placeholder="کلید AQ.Ab8... را اینجا پیست کنید">
+      <button class="btn-save-key" onclick="saveApiKey()">ذخیره و فعال‌سازی دستیار 🚀</button>
     </div>
   </div>
 
@@ -186,17 +202,35 @@
       }
     } catch(e) {}
 
-    function goBack() {
-      window.location.href = '../index.html';
+    function goBack() { window.location.href = '../index.html'; }
+
+    // بررسی وجود کلید ذخیره‌شده
+    let geminiKey = localStorage.getItem('simab_gemini_api_key');
+    if (!geminiKey) {
+      document.getElementById('modal-key').style.display = 'flex';
     }
 
-    // خواندن موجودی برای پاسخ‌های هوش مصنوعی
-    let userBalance = localStorage.getItem('user_balance') || '1,000';
+    function openKeyModal() {
+      document.getElementById('apiKeyInput').value = geminiKey || '';
+      document.getElementById('modal-key').style.display = 'flex';
+    }
 
-    // انیمیشن سه‌بعدی و پالس‌های کره نوری (Visualizer Canvas)
+    function saveApiKey() {
+      const val = document.getElementById('apiKeyInput').value.trim();
+      if (val.length < 10) {
+        alert('لطفاً یک کلید معتبر وارد کنید.');
+        return;
+      }
+      geminiKey = val;
+      localStorage.setItem('simab_gemini_api_key', val);
+      document.getElementById('modal-key').style.display = 'none';
+      alert('✅ کلید با موفقیت در گوشی شما فعال شد!');
+    }
+
+    // انیمیشن سه‌بعدی کره نوری
     const canvas = document.getElementById('orbCanvas');
     const ctx = canvas.getContext('2d');
-    let orbMode = 'idle'; // 'idle', 'listening', 'speaking'
+    let orbMode = 'idle';
     let angle = 0;
 
     function drawOrb() {
@@ -204,7 +238,6 @@
       const cx = 250, cy = 250;
       angle += (orbMode === 'listening' ? 0.04 : (orbMode === 'speaking' ? 0.03 : 0.015));
 
-      // هاله بیرونی نرم
       const glowGrad = ctx.createRadialGradient(cx, cy, 30, cx, cy, orbMode === 'listening' ? 180 : 140);
       if (orbMode === 'listening') {
         glowGrad.addColorStop(0, 'rgba(239, 68, 68, 0.4)');
@@ -224,32 +257,22 @@
       ctx.arc(cx, cy, 220, 0, Math.PI * 2);
       ctx.fill();
 
-      // رسم حلقه‌های نئونی مداری چندگانه (Orb Rings)
       for (let i = 0; i < 4; i++) {
         ctx.save();
         ctx.translate(cx, cy);
         ctx.rotate(angle * (i % 2 === 0 ? 1 : -1) + (i * Math.PI / 4));
-        
         ctx.beginPath();
         const rx = 85 + (i * 12) + (orbMode === 'listening' ? Math.sin(angle * 4 + i) * 15 : 0);
         const ry = 60 + (i * 8);
         ctx.ellipse(0, 0, rx, ry, (i * Math.PI) / 6, 0, Math.PI * 2);
-        
         ctx.lineWidth = (i === 1 || i === 2) ? 3.5 : 2;
-        if (orbMode === 'listening') {
-          ctx.strokeStyle = i % 2 === 0 ? '#f87171' : '#f5cf68';
-        } else if (orbMode === 'speaking') {
-          ctx.strokeStyle = i % 2 === 0 ? '#38bdf8' : '#c084fc';
-        } else {
-          ctx.strokeStyle = i % 2 === 0 ? '#c084fc' : '#f5cf68';
-        }
+        ctx.strokeStyle = (orbMode === 'listening') ? (i % 2 === 0 ? '#f87171' : '#f5cf68') : (orbMode === 'speaking' ? (i % 2 === 0 ? '#38bdf8' : '#c084fc') : (i % 2 === 0 ? '#c084fc' : '#f5cf68'));
         ctx.shadowColor = ctx.strokeStyle;
         ctx.shadowBlur = 12;
         ctx.stroke();
         ctx.restore();
       }
 
-      // هسته مرکزی پرانرژی
       ctx.beginPath();
       const coreR = 38 + (orbMode === 'speaking' ? Math.sin(angle * 6) * 8 : (orbMode === 'listening' ? Math.sin(angle * 8) * 10 : Math.sin(angle * 2) * 3));
       const coreGrad = ctx.createRadialGradient(cx, cy, 5, cx, cy, coreR);
@@ -264,14 +287,14 @@
     }
     drawOrb();
 
-    // موتور تشخیص گفتار (Web Speech API)
+    // تشخیص گفتار کاربر
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
     let isListening = false;
 
     if (SpeechRecognition) {
       recognition = new SpeechRecognition();
-      recognition.lang = 'fa-IR'; // زبان فارسی
+      recognition.lang = 'fa-IR';
       recognition.continuous = false;
       recognition.interimResults = false;
 
@@ -279,38 +302,35 @@
         isListening = true;
         orbMode = 'listening';
         document.getElementById('btnMic').classList.add('listening');
-        document.getElementById('status-text').innerText = 'در حال شنیدن صدای شما...';
+        document.getElementById('status-text').innerText = 'در حال شنیدن...';
         document.getElementById('micHint').innerText = 'صحبت کنید...';
       };
 
       recognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        addBubble(transcript, 'user');
-        processAIResponse(transcript);
+        const text = event.results[0][0].transcript;
+        addBubble(text, 'user');
+        sendToGemini(text);
       };
 
-      recognition.onerror = function() {
-        stopListeningState();
-      };
-
-      recognition.onend = function() {
-        stopListeningState();
-      };
+      recognition.onerror = function() { stopListeningState(); };
+      recognition.onend = function() { stopListeningState(); };
     }
 
     function toggleListening() {
-      if (!recognition) {
-        alert('مرورگر شما از ورودی مستقیم صوتی پشتیبانی نمی‌کند. می‌توانید از دکمه‌های آماده زیر استفاده کنید.');
+      if (!geminiKey) {
+        openKeyModal();
         return;
       }
-      try {
-        if (isListening) {
-          recognition.stop();
-          stopListeningState();
-        } else {
-          recognition.start();
-        }
-      } catch(e) {}
+      if (!recognition) {
+        alert('میکروفون مرورگر فعال نیست.');
+        return;
+      }
+      if (isListening) {
+        recognition.stop();
+        stopListeningState();
+      } else {
+        recognition.start();
+      }
     }
 
     function stopListeningState() {
@@ -330,40 +350,37 @@
       box.scrollTop = box.scrollHeight;
     }
 
-    function askPreset(q) {
-      addBubble(q, 'user');
-      processAIResponse(q);
-    }
-
-    // مغز پاسخگوی دستیار سیماب
-    function processAIResponse(query) {
+    // ارسال مستقیم به جمینای با کلید امن گوشی شما
+    async function sendToGemini(userText) {
       orbMode = 'speaking';
-      document.getElementById('status-text').innerText = 'در حال پاسخگویی...';
+      document.getElementById('status-text').innerText = 'در حال پردازش هوش مصنوعی...';
 
-      let reply = '';
-      const q = query.toLowerCase();
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
+      const payload = {
+        contents: [{
+          parts: [{
+            text: `تو دستیار صوتی هوشمند گیمینگ‌هاب SIMAB هستی. به صورت صمیمی، کوتاه، رسا و به زبان فارسی پاسخ بده: ${userText}`
+          }]
+        }]
+      };
 
-      if (q.includes('سکه') || q.includes('موجودی') || q.includes('امتیاز')) {
-        reply = `موجودی شما در حال حاضر ${userBalance} سکه سیماب است. برای کسب سکه بیشتر می‌توانید تسک‌ها را انجام دهید یا در گردونه روزانه شرکت کنید.`;
-      } else if (q.includes('بازی') || q.includes('چی داریم')) {
-        reply = 'در حال حاضر بازی‌های پوکر تگزاس، رول شانس (اسلات)، تخته نرد، حکم، ۲۱، منچ و مارپله در حال توسعه هستند.';
-      } else if (q.includes('سواپ') || q.includes('تبدیل') || q.includes('ژتون')) {
-        reply = 'در بخش سواپ می‌توانید سکه‌های سیماب را به ژتون پوکر تبدیل کنید و برعکس؛ همچنین امکان ارسال مستقیم سکه به دوستان هم وجود دارد.';
-      } else if (q.includes('سلام') || q.includes('درود')) {
-        reply = 'سلام دوست من! خوش اومدی به گیمینگ‌هاب سیماب. چطور می‌تونم راهنماییت کنم؟';
-      } else if (q.includes('مدیر') || q.includes('استاد') || q.includes('حسینی')) {
-        reply = 'پلتفرم سیماب با مدیریت استاد سید علی حسینی توسعه یافته است. برای پشتیبانی می‌توانید از بخش پشتیبانی تلگرام پیام ارسال کنید.';
-      } else {
-        reply = 'پیام شما دریافت شد. من همواره در کنار شما در مینی‌اپ سیماب هستم تا سوالات بازی‌ها و دارایی‌هایتان را بررسی کنم!';
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'پاسخی دریافت نشد.';
+        addBubble(aiText, 'ai');
+        speakText(aiText);
+      } catch(err) {
+        const errReply = 'متاسفانه خطایی در ارتباط رخ داد. لطفاً کلید API را بررسی فرمایید.';
+        addBubble(errReply, 'ai');
+        speakText(errReply);
       }
-
-      setTimeout(() => {
-        addBubble(reply, 'ai');
-        speakText(reply);
-      }, 700);
     }
 
-    // موتور تلفظ صوتی پاسخ
     function speakText(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
