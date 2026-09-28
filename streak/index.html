@@ -108,7 +108,7 @@
       font-weight: 900;
     }
 
-    /* کارت معرفی پاداش */
+    /* کارت معرفی */
     .hero-card {
       background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
       border: 1px solid var(--border);
@@ -221,7 +221,7 @@
       border-radius: 6px;
     }
 
-    /* دکمه اصلی دریافت */
+    /* دکمه دریافت */
     .claim-action-box {
       margin-top: 6px;
     }
@@ -253,7 +253,7 @@
       border: 1px solid rgba(255,255,255,0.06);
     }
 
-    /* هشدار از دست دادن استریک */
+    /* هشدار غیبت */
     .warning-box {
       background: rgba(255, 59, 48, 0.08);
       border: 1px solid rgba(255, 59, 48, 0.3);
@@ -290,9 +290,9 @@
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
 
   <div class="app-wrapper">
-    <!-- هدر -->
+    <!-- هدر با لینک بازگشت به لابی مادر -->
     <header class="top-header">
-      <a href="../../index.html" class="btn-back" id="back-link" title="بازگشت به لابی">➔</a>
+      <a href="../index.html" class="btn-back" title="بازگشت به لابی">➔</a>
       <div class="header-title">پاداش ورود روزانه (Streak)</div>
       <div class="coin-badge">
         <div class="coin-badge-s">S</div>
@@ -305,7 +305,7 @@
       <div class="hero-icon">🎁</div>
       <div class="hero-title">پاداش‌های متوالی سیماب</div>
       <div class="hero-desc">
-        هر روز سر بزنید تا جوایز بزرگ‌تر شوند! اگر حتی ۱ روز غیبت کنید، روز شمار صفر شده و از روز اول شروع خواهد شد.
+        هر روز سر بزنید تا جوایز بزرگ‌تر شوند! اگر حتی ۱ روز غیبت کنید، زنجیره روزها صفر شده و از روز اول شروع خواهد شد.
       </div>
     </div>
 
@@ -315,7 +315,7 @@
         <span class="streak-lbl">زنجیره روزهای متوالی شما:</span>
         <span class="streak-val" id="streak-counter-txt">روز ۰ از ۷</span>
       </div>
-      <div class="streak-fire-badge" id="streak-badge-icon">🔥</div>
+      <div class="streak-fire-badge">🔥</div>
     </div>
 
     <!-- شبکه کارت‌های ۷ روز -->
@@ -343,15 +343,6 @@
       }
     } catch(e) {}
 
-    // تنظیم خودکار لینک بازگشت (در صورت قرار گرفتن در ریشه یا پوشه tasks)
-    try {
-      if (location.pathname.includes('/tasks/')) {
-        document.getElementById('back-link').href = '../../index.html';
-      } else {
-        document.getElementById('back-link').href = '../index.html';
-      }
-    } catch(e) {}
-
     let uid = "user_guest";
     try {
       if (tg?.initDataUnsafe?.user?.id) {
@@ -367,7 +358,7 @@
     }
     updateBalanceDisplay();
 
-    // مقادیر دقیق پاداش برای ۷ روز طبق درخواست شما
+    // مقادیر دقیق پاداش برای ۷ روز طبق دستور شما
     const streakRewards = [
       { day: 1, reward: 1, icon: '🪙' },
       { day: 2, reward: 3, icon: '🎁' },
@@ -400,21 +391,20 @@
     let isClaimableToday = false;
     let isStreakBroken = false;
 
-    // ارزیابی وضعیت استریک
+    // بررسی استریک و غیبت
     if (!lastDate) {
-      // اولین بار ورود
       isClaimableToday = true;
       currentDay = 0;
     } else {
       const diff = getDaysDifference(lastDate, today);
       if (diff === 0) {
-        // امروز قبلاً پاداش گرفته است
+        // امروز قبلاً پاداش گرفته
         isClaimableToday = false;
       } else if (diff === 1) {
-        // دقیقاً روز بعد آمده است (استریک حفظ شده)
+        // روز بعد آمده (حفظ استریک)
         isClaimableToday = true;
       } else {
-        // بیش از ۱ روز فاصله افتاده (غیبت داشته و جریمه می‌شود)
+        // بیش از ۱ روز فاصله افتاده (غیبت و جریمه صفر شدن)
         isStreakBroken = true;
         currentDay = 0;
         localStorage.setItem(STORAGE_KEY_STREAK, '0');
@@ -491,7 +481,6 @@
       currentDay = nextDay;
       balance += reward;
 
-      // ذخیره سازی دائمی
       localStorage.setItem(STORAGE_KEY_STREAK, currentDay.toString());
       localStorage.setItem(STORAGE_KEY_LAST_DATE, today);
       localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
