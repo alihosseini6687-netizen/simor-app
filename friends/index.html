@@ -52,7 +52,6 @@
         border-right: 1px solid rgba(255,255,255,0.05);
       }
     }
-    /* هدر */
     .top-header {
       display: flex;
       justify-content: space-between;
@@ -106,8 +105,6 @@
       font-size: 11px;
       font-weight: 900;
     }
-
-    /* کارت معرفی و لینک */
     .ref-hero-card {
       background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
       border: 1px solid var(--border);
@@ -183,8 +180,6 @@
       font-weight: bold;
       cursor: pointer;
     }
-
-    /* آمار دعوت‌ها */
     .ref-stats-row {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -207,8 +202,6 @@
       font-size: 10.5px;
       color: var(--text-muted);
     }
-
-    /* لیست جوایز پلکانی */
     .section-title {
       font-size: 14px;
       font-weight: 800;
@@ -273,7 +266,6 @@
       color: var(--green);
       border: 1px solid var(--green);
     }
-
     .toast-msg {
       position: fixed;
       top: 20px;
@@ -297,9 +289,7 @@
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">کپی شد!</div>
-
   <div class="app-wrapper">
-    <!-- هدر -->
     <header class="top-header">
       <a href="../index.html" class="btn-back" title="بازگشت به خانه">➔</a>
       <div class="header-title">دعوت دوستان (رفرال)</div>
@@ -309,17 +299,14 @@
       </div>
     </header>
 
-    <!-- کارت لینک رفرال -->
     <div class="ref-hero-card">
       <div class="ref-icon">👥</div>
       <div class="ref-title">دوستانت را دعوت کن، سکه بگیر!</div>
       <div class="ref-desc">با ارسال کد و لینک اختصاصی خود، دوستانتان را به سیماب بیاورید و جوایز میلیونی دریافت کنید.</div>
-
       <div class="ref-code-box">
         <span class="ref-code-label">شناسه اختصاصی شما:</span>
         <span class="ref-code-val" id="my-game-id">S0000000</span>
       </div>
-
       <div class="ref-actions">
         <button class="btn-ref-primary" onclick="shareTelegram()">
           <span>ارسال به دوستان 🚀</span>
@@ -328,7 +315,6 @@
       </div>
     </div>
 
-    <!-- آمار دعوت‌ها -->
     <div class="ref-stats-row">
       <div class="stat-card">
         <div class="stat-num" id="total-invites-count">0</div>
@@ -340,12 +326,10 @@
       </div>
     </div>
 
-    <!-- لیست جوایز پلکانی بر اساس تعداد دعوت -->
     <div class="section-title">
       <span>🎁</span>
       <span>جوایز پلکانی دعوت دوستان</span>
     </div>
-
     <div class="tasks-list" id="tasks-container"></div>
   </div>
 
@@ -358,7 +342,6 @@
       }
     } catch(e) {}
 
-    // شناسه کاربر
     let uid = "user_guest";
     try {
       if (tg?.initDataUnsafe?.user?.id) {
@@ -366,11 +349,14 @@
       }
     } catch(e) {}
 
-    // شناسه بازی اختصاصی کاربر
-    let gameId = localStorage.getItem('simab_game_id') || 'S' + Math.floor(1000000 + Math.random() * 9000000);
+    // شناسه بازی اختصاصی کاربر (ثابت و دائمی در حافظه)
+    let gameId = localStorage.getItem('simab_game_id');
+    if (!gameId) {
+      gameId = 'S' + Math.floor(1000000 + Math.random() * 9000000);
+      localStorage.setItem('simab_game_id', gameId);
+    }
     document.getElementById('my-game-id').innerText = gameId;
 
-    // همگام‌سازی موجودی سکه با لابی مادر
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
     let balance = parseInt(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50', 10);
     function updateBalanceDisplay() {
@@ -378,11 +364,9 @@
     }
     updateBalanceDisplay();
 
-    // دریافت تعداد دعوت‌ها از حافظه
     const STORAGE_KEY_INVITES = 'simab_ref_count_' + uid;
     let inviteCount = parseInt(localStorage.getItem(STORAGE_KEY_INVITES) || '0', 10);
 
-    // لیست مراحل و جوایز دقیق
     const referralMilestones = [
       { count: 1, reward: 10 },
       { count: 3, reward: 35 },
@@ -404,20 +388,15 @@
       document.getElementById('total-invites-count').innerText = inviteCount;
       const container = document.getElementById('tasks-container');
       container.innerHTML = '';
-
       let totalEarned = 0;
 
       referralMilestones.forEach(m => {
         const claimKey = `simab_ref_claimed_${m.count}_${uid}`;
         const isClaimed = localStorage.getItem(claimKey) === 'true';
-
         if (isClaimed) totalEarned += m.reward;
-
         const item = document.createElement('div');
         item.className = 'task-item';
-
         const canClaim = inviteCount >= m.count && !isClaimed;
-
         let btnHtml = '';
         if (isClaimed) {
           btnHtml = `<button class="btn-claim claimed" disabled>دریافت شد ✓</button>`;
@@ -426,7 +405,6 @@
         } else {
           btnHtml = `<button class="btn-claim" disabled>قفل (${inviteCount}/${m.count}) 🔒</button>`;
         }
-
         item.innerHTML = `
           <div class="task-info">
             <div class="task-target">دعوت ${m.count} دوست</div>
@@ -436,23 +414,18 @@
         `;
         container.appendChild(item);
       });
-
       document.getElementById('total-earned-coins').innerText = totalEarned.toLocaleString();
     }
 
     function claimReward(targetCount, rewardCoins) {
       if (inviteCount < targetCount) return;
-
       const claimKey = `simab_ref_claimed_${targetCount}_${uid}`;
       localStorage.setItem(claimKey, 'true');
-
       balance += rewardCoins;
       localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
       localStorage.setItem('user_balance', balance.toString());
-
       updateBalanceDisplay();
       renderTasks();
-
       if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
       showToast(`پاداش ${rewardCoins.toLocaleString()} سکه دریافت شد! 🎉`);
     }
@@ -473,7 +446,6 @@
       const link = getRefLink();
       const text = encodeURIComponent(`سلام! در گیمینگ هاب سیماب عضو شو و با کد اختصاصی من ۵۰ سکه رایگان بگیر: ${link}`);
       const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${text}`;
-      
       if (tg && tg.openTelegramLink) {
         tg.openTelegramLink(shareUrl);
       } else {
