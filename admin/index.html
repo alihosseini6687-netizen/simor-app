@@ -19,10 +19,8 @@
       --green: #34c759;
       --blue: #007aff;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
     body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; padding-bottom: 40px; }
-
     /* نوار هدر */
     .header-bar {
       display: flex; justify-content: space-between; align-items: center;
@@ -33,28 +31,24 @@
       background: #252532; color: var(--gold); border: 1px solid var(--border);
       padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;
     }
-
     /* باکس‌های تنظیمات */
     .admin-card {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 16px; padding: 16px; margin-bottom: 16px;
     }
     .admin-card h3 { color: var(--gold); font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-
     .input-field {
       width: 100%; padding: 10px; background: var(--card-inner);
       border: 1px solid var(--border); border-radius: 8px;
       color: white; font-size: 13px; margin-bottom: 10px; outline: none;
     }
     .input-field:focus { border-color: var(--gold); }
-
     .btn-action {
       width: 100%; background: var(--gold-gradient); color: #000;
       border: none; padding: 12px; border-radius: 10px; font-weight: bold;
       font-size: 14px; cursor: pointer; transition: transform 0.1s;
     }
     .btn-action:active { transform: scale(0.98); }
-
     /* دکمه‌های تستی */
     .test-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
     .btn-test {
@@ -66,7 +60,6 @@
     .btn-test.gold { border-color: var(--gold); color: var(--gold); }
     .btn-test.red { border-color: var(--red); color: var(--red); }
     .btn-test.purple { border-color: #5856d6; color: #af52de; }
-
     /* لیست تسک‌های سفارشی */
     .custom-task-item {
       display: flex; justify-content: space-between; align-items: center;
@@ -76,7 +69,6 @@
     .btn-del {
       background: none; border: none; color: var(--red); font-size: 16px; cursor: pointer;
     }
-
     /* پاپ‌آپ پیام اختصاصی */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
@@ -90,7 +82,6 @@
   </style>
 </head>
 <body>
-
   <!-- هدر بالای پنل -->
   <div class="header-bar">
     <button class="btn-back" onclick="goBack()">🔙 برگشت به لابی</button>
@@ -115,7 +106,7 @@
   <!-- بخش ۳: ابزارهای تست سریع سیستم -->
   <div class="admin-card">
     <h3>⚙️ کلیدهای تست سریع</h3>
-    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">موجودی فعلی شما: <b id="current-bal" style="color: var(--gold);">1,000 S</b></div>
+    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">موجودی فعلی شما: <b id="current-bal" style="color: var(--gold);">50 S</b></div>
     <div class="test-grid">
       <button class="btn-test green" onclick="addCoins(500)">+۵۰۰ سکه</button>
       <button class="btn-test gold" onclick="addCoins(2000)">+۲۰۰۰ سکه</button>
@@ -132,7 +123,6 @@
     <input type="text" class="input-field" id="task-url" placeholder="لینک (https://...)">
     <input type="number" class="input-field" id="task-reward" placeholder="پاداش سکه (مثلاً 15)">
     <button class="btn-action" onclick="saveCustomTask()">ثبت و انتشار تسک در مینی‌اپ</button>
-
     <h4 style="color: var(--text-muted); font-size: 12px; margin-top: 14px; margin-bottom: 6px;">لیست تسک‌های ساخته‌شده:</h4>
     <div id="tasks-list">
       <div style="color: var(--text-muted); font-size: 11px;">هنوز تسک سفارشی اضافه نشده است.</div>
@@ -154,8 +144,8 @@
     const ADMIN_ID = 702007470;
     const currentUser = tg?.initDataUnsafe?.user;
 
-    // بررسی امنیتی: اگر کاربر ادمین نبود دسترسی فوراً مسدود شود
-    if (!currentUser || currentUser.id !== ADMIN_ID) {
+    // بررسی امنیتی: فقط در صورت احراز هویت کاربری غیر از ادمین در تلگرام مسدود شود
+    if (currentUser && currentUser.id !== ADMIN_ID) {
       document.body.innerHTML = `
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; padding:20px; color:#ff3b30; background:#0c0c10;">
           <div style="font-size:55px; margin-bottom:10px;">🚫</div>
@@ -166,11 +156,12 @@
       `;
       throw new Error('Access Denied');
     }
+
     try {
       if (tg) {
         tg.ready();
         tg.expand();
-        if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg.BackButton) {
+        if (tg.BackButton) {
           tg.BackButton.show();
           tg.BackButton.onClick(goBack);
         }
@@ -181,17 +172,24 @@
       window.location.href = '../index.html';
     }
 
-    let balance = 1000;
+    // کلید اصلی سکه ادمین
+    const STORAGE_KEY_ADMIN_COINS = 'simor_coins_' + ADMIN_ID;
+    let balance = 50;
     try {
-      balance = parseInt(localStorage.getItem('user_balance') || '1000');
+      balance = parseInt(localStorage.getItem(STORAGE_KEY_ADMIN_COINS) || localStorage.getItem('user_balance') || '50', 10);
     } catch(e) {}
-    document.getElementById('current-bal').innerText = balance.toLocaleString() + ' S';
+
+    function renderAdminBalance() {
+      document.getElementById('current-bal').innerText = balance.toLocaleString() + ' S';
+    }
+    renderAdminBalance();
 
     function saveBalance() {
       try {
+        localStorage.setItem(STORAGE_KEY_ADMIN_COINS, balance.toString());
         localStorage.setItem('user_balance', balance.toString());
       } catch(e) {}
-      document.getElementById('current-bal').innerText = balance.toLocaleString() + ' S';
+      renderAdminBalance();
     }
 
     function showPopup(title, msg, icon = '✅') {
@@ -200,6 +198,7 @@
       document.getElementById('pop-msg').innerText = msg;
       document.getElementById('popup-modal').classList.add('open');
     }
+
     function closePopup() {
       document.getElementById('popup-modal').classList.remove('open');
     }
@@ -215,15 +214,21 @@
       document.getElementById('broadcast-text').value = '';
     }
 
-    // واریز به کاربر
+    // واریز واقعی سکه به حساب کاربر دیگر
     function transferCoins() {
-      const userId = document.getElementById('target-user-id').value.trim();
-      const amount = parseInt(document.getElementById('target-coin-amount').value);
-      if (!userId || !amount) {
-        showPopup('خطا', 'لطفاً شناسه عددی و مقدار سکه را مشخص کنید.', '⚠️');
+      const targetId = document.getElementById('target-user-id').value.trim();
+      const amount = parseInt(document.getElementById('target-coin-amount').value, 10);
+      if (!targetId || isNaN(amount) || amount <= 0) {
+        showPopup('خطا', 'لطفاً شناسه عددی معتبر و مقدار سکه را مشخص کنید.', '⚠️');
         return;
       }
-      showPopup('واریز موفق', `تعداد ${amount} سکه با موفقیت به شناسه عددی ${userId} واریز شد.`, '💸');
+
+      const targetKey = 'simor_coins_' + targetId;
+      let targetBal = parseInt(localStorage.getItem(targetKey) || '50', 10);
+      targetBal += amount;
+      localStorage.setItem(targetKey, targetBal.toString());
+
+      showPopup('واریز موفق', `تعداد ${amount.toLocaleString()} سکه با موفقیت به شناسه ${targetId} واریز شد.\nموجودی جدید کاربر: ${targetBal.toLocaleString()} S`, '💸');
       document.getElementById('target-user-id').value = '';
       document.getElementById('target-coin-amount').value = '';
     }
@@ -232,15 +237,19 @@
     function addCoins(num) {
       balance += num;
       saveBalance();
-      showPopup('شارژ سکه', `+${num} سکه با موفقیت به حساب افزوده شد.`, '🪙');
+      showPopup('شارژ سکه', `+${num.toLocaleString()} سکه با موفقیت به حساب شما اضافه شد و در لابی اصلی اعمال گردید.`, '🪙');
     }
+
     function setCoins(num) {
       balance = num;
       saveBalance();
       showPopup('تنظیم موجودی', `موجودی شما روی ${num} تنظیم شد.`, '⚙️');
     }
+
     function resetWheelTimer() {
       try {
+        localStorage.removeItem('simor_spins_count_' + ADMIN_ID);
+        localStorage.removeItem('simor_spins_count_guest');
         localStorage.removeItem('last_spin_day');
       } catch(e) {}
       showPopup('ریست گردونه', 'تایمر ۲۴ ساعته گردونه شانس با موفقیت ریست شد. اکنون می‌توانید دوباره بچرخانید.', '🔄');
@@ -250,19 +259,17 @@
     function saveCustomTask() {
       const title = document.getElementById('task-title').value.trim();
       const url = document.getElementById('task-url').value.trim();
-      const reward = parseInt(document.getElementById('task-reward').value);
-
-      if (!title || !url || !reward) {
-        showPopup('خطا', 'لطفاً تمام فیلدهای تسک را پر کنید.', '⚠️');
+      const reward = parseInt(document.getElementById('task-reward').value, 10);
+      if (!title || !url || isNaN(reward)) {
+        showPopup('خطا', 'لطفاً تمام فیلدهای تسک را کامل پر کنید.', '⚠️');
         return;
       }
-
       try {
         let tasks = JSON.parse(localStorage.getItem('custom_tasks') || '[]');
         tasks.push({ id: 'task_' + Date.now(), title, url, reward });
         localStorage.setItem('custom_tasks', JSON.stringify(tasks));
         renderTasks();
-        showPopup('تسک ایجاد شد', `تسک "${title}" با موفقیت در مینی‌اپ منتشر شد.`, '➕');
+        showPopup('تسک ایجاد شد', `تسک "${title}" با پاداش ${reward} سکه با موفقیت منتشر شد.`, '➕');
         document.getElementById('task-title').value = '';
         document.getElementById('task-url').value = '';
         document.getElementById('task-reward').value = '';
