@@ -211,20 +211,46 @@
     .task-card-title { font-size: 14.5px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .task-card-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
 
-    /* پاداش روزانه */
+    /* ================= طراحی اختصاصی پاداش روزانه زنده ================= */
+    .streak-status-bar {
+      background: var(--card-inner);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
     .streak-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
     .streak-box {
       background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px; padding: 8px 2px; text-align: center;
+      border-radius: 10px; padding: 8px 2px; text-align: center; transition: all 0.2s;
     }
-    .streak-box.ready { background: rgba(212, 175, 55, 0.15); border-color: var(--gold); }
+    .streak-box.claimed { background: rgba(0, 245, 212, 0.08); border-color: var(--green); }
+    .streak-box.ready {
+      background: rgba(212, 175, 55, 0.15); border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.35);
+    }
     .streak-box.day-7 { grid-column: span 2; border-color: var(--purple-neon); }
     .streak-box-num { font-size: 9.5px; color: var(--text-muted); margin-bottom: 3px; }
     .streak-box-icon { font-size: 19px; margin-bottom: 2px; }
     .streak-box-reward { font-size: 11.5px; font-weight: 800; color: var(--gold); }
+    .streak-done-badge { font-size: 9px; font-weight: 800; color: var(--green); margin-top: 2px; }
     .btn-streak-claim {
       background: var(--gold-gradient); color: #171000; border: none; border-radius: 12px;
-      padding: 11px; width: 100%; font-size: 13.5px; font-weight: 800; cursor: pointer;
+      padding: 12px; width: 100%; font-size: 13.5px; font-weight: 800; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35); transition: 0.15s;
+    }
+    .btn-streak-claim:active { transform: scale(0.97); }
+    .btn-streak-claim:disabled {
+      background: rgba(255, 255, 255, 0.08) !important; color: var(--text-muted) !important;
+      cursor: not-allowed; box-shadow: none !important; border: 1px solid rgba(255,255,255,0.06);
+    }
+    .warning-box {
+      background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.3);
+      border-radius: 12px; padding: 8px 12px; font-size: 10.5px; color: #ff9f97;
+      line-height: 1.5; text-align: center; margin-top: 10px;
     }
 
     /* ماینر و ماموریت‌ها */
@@ -242,19 +268,10 @@
 
     /* نوار پایین دکمه‌ای و قفل */
     .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-      max-width: 100%;
-      height: 64px;
-      background: #0e0e16;
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 99999;
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 100%; height: 64px; background: #0e0e16;
+      border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+      align-items: center; z-index: 99999;
     }
     @media (min-width: 500px) { .bottom-nav { max-width: 440px; } }
     .nav-btn-box {
@@ -417,55 +434,37 @@
         </button>
       </div>
 
-      <!-- ۱. زیر‌بخش روزانه -->
+      <!-- ۱. زیر‌بخش روزانه (Streak) - کاملاً زنده و عملیاتی بدون نیاز به صفحه جدا -->
       <div id="task-view-streak" class="task-main-card">
         <div class="task-card-title">
           <span>🎁</span>
           <span>پاداش ورود روزانه (Streak)</span>
         </div>
         <div class="task-card-desc">
-          هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. در صورت ۱ روز غیبت، شمارنده صفر می‌شود!
+          هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. اگر یک روز غیبت کنید، شمارنده صفر می‌شود!
         </div>
-        <div class="streak-grid">
-          <div class="streak-box ready">
-            <div class="streak-box-num">روز ۱</div>
-            <div class="streak-box-icon">🪙</div>
-            <div class="streak-box-reward">+1</div>
+
+        <!-- نوار وضعیت روزهای متوالی -->
+        <div class="streak-status-bar">
+          <div style="text-align:start;">
+            <div style="font-size:10px; color:var(--text-muted);">زنجیره روزهای متوالی شما:</div>
+            <div style="font-size:14px; font-weight:900; color:var(--cyan-neon);" id="streak-counter-txt">روز ۰ از ۷</div>
           </div>
-          <div class="streak-box">
-            <div class="streak-box-num">روز ۲</div>
-            <div class="streak-box-icon">🎁</div>
-            <div class="streak-box-reward">+3</div>
-          </div>
-          <div class="streak-box">
-            <div class="streak-box-num">روز ۳</div>
-            <div class="streak-box-icon">💎</div>
-            <div class="streak-box-reward">+7</div>
-          </div>
-          <div class="streak-box">
-            <div class="streak-box-num">روز ۴</div>
-            <div class="streak-box-icon">⚡</div>
-            <div class="streak-box-reward">+15</div>
-          </div>
-          <div class="streak-box">
-            <div class="streak-box-num">روز ۵</div>
-            <div class="streak-box-icon">🔥</div>
-            <div class="streak-box-reward">+29</div>
-          </div>
-          <div class="streak-box">
-            <div class="streak-box-num">روز ۶</div>
-            <div class="streak-box-icon">🌟</div>
-            <div class="streak-box-reward">+41</div>
-          </div>
-          <div class="streak-box day-7">
-            <div class="streak-box-num">روز ۷ (پاداش ویژه)</div>
-            <div class="streak-box-icon">👑</div>
-            <div class="streak-box-reward">+69</div>
-          </div>
+          <div style="font-size:24px;">🔥</div>
         </div>
-        <button class="btn-streak-claim" onclick="window.location.href='streak/index.html'">
-          <span>ورود به ایندکس پاداش روزانه و دریافت ✨</span>
+
+        <!-- شبکه ۷ روز با تیک‌های سبز -->
+        <div class="streak-grid" id="streak-days-container"></div>
+
+        <!-- دکمه مستقیم دریافت یا قفل ۲۴ ساعته -->
+        <button class="btn-streak-claim" id="btn-streak-claim" onclick="claimDailyReward()">
+          <span>دریافت پاداش امروز ✨</span>
         </button>
+
+        <!-- هشدار غیبت -->
+        <div class="warning-box">
+          ⚠️ توجه: بین هر پاداش باید ۲۴ ساعت بگذرد. در صورتی که بیش از ۴۸ ساعت فاصله بیفتد، تمام روزهای متوالی شما صفر می‌شود.
+        </div>
       </div>
 
       <!-- ۲. زیر‌بخش گردونه -->
@@ -673,6 +672,123 @@
         document.getElementById('task-view-' + t).style.display = (t === tabName) ? 'block' : 'none';
         document.getElementById('btn-sub-' + t).classList.toggle('active', t === tabName);
       });
+      if (tabName === 'streak') {
+        renderStreakUI();
+      }
+    }
+
+    /* ================= پاداش روزانه زنده و مستقیم ================= */
+    const streakRewards = [
+      { day: 1, reward: 1, icon: '🪙' },
+      { day: 2, reward: 3, icon: '🎁' },
+      { day: 3, reward: 7, icon: '💎' },
+      { day: 4, reward: 15, icon: '⚡' },
+      { day: 5, reward: 29, icon: '🔥' },
+      { day: 6, reward: 41, icon: '🌟' },
+      { day: 7, reward: 69, icon: '👑' }
+    ];
+
+    const STORAGE_KEY_STREAK = 'simab_streak_day_' + uid;
+    const STORAGE_KEY_LAST_DATE = 'simab_streak_last_date_' + uid;
+
+    function getTodayString() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    }
+
+    function getDaysDifference(dateStr1, dateStr2) {
+      const d1 = new Date(dateStr1);
+      const d2 = new Date(dateStr2);
+      const diffTime = d2.getTime() - d1.getTime();
+      return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    function renderStreakUI() {
+      const counterEl = document.getElementById('streak-counter-txt');
+      const container = document.getElementById('streak-days-container');
+      const btn = document.getElementById('btn-streak-claim');
+      if (!container || !btn) return;
+
+      const today = getTodayString();
+      let currentDay = parseInt(localStorage.getItem(STORAGE_KEY_STREAK) || '0', 10);
+      let lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
+
+      let isClaimableToday = false;
+
+      if (!lastDate) {
+        isClaimableToday = true;
+        currentDay = 0;
+      } else {
+        const diff = getDaysDifference(lastDate, today);
+        if (diff === 0) {
+          isClaimableToday = false;
+        } else if (diff === 1) {
+          isClaimableToday = true;
+        } else {
+          currentDay = 0;
+          localStorage.setItem(STORAGE_KEY_STREAK, '0');
+          isClaimableToday = true;
+        }
+      }
+
+      counterEl.innerText = `روز ${currentDay} از ۷`;
+      container.innerHTML = '';
+
+      const targetDay = isClaimableToday ? ((currentDay % 7) + 1) : null;
+
+      streakRewards.forEach(item => {
+        const isDay7 = (item.day === 7);
+        const isClaimed = (item.day <= currentDay);
+        const isReady = (item.day === targetDay);
+
+        const card = document.createElement('div');
+        card.className = `streak-box ${isDay7 ? 'day-7' : ''} ${isClaimed ? 'claimed' : ''} ${isReady ? 'ready' : ''}`;
+
+        card.innerHTML = `
+          <div class="streak-box-num">روز ${item.day}${isDay7 ? ' (ویژه)' : ''}</div>
+          <div class="streak-box-icon">${item.icon}</div>
+          <div class="streak-box-reward">+${item.reward}</div>
+          ${isClaimed ? '<div class="streak-done-badge">انجام شد ✓</div>' : (isReady ? '<div class="streak-done-badge" style="color:var(--gold);">امروز ✨</div>' : '')}
+        `;
+        container.appendChild(card);
+      });
+
+      if (isClaimableToday) {
+        const nextReward = streakRewards[(currentDay % 7)].reward;
+        btn.disabled = false;
+        btn.innerHTML = `<span>( 🪙 +${nextReward} ) ✨ دریافت پاداش امروز</span>`;
+      } else {
+        btn.disabled = true;
+        btn.innerHTML = `<span>فردا برای پاداش بعدی سر بزنید ⏳</span>`;
+      }
+    }
+
+    function claimDailyReward() {
+      const today = getTodayString();
+      let currentDay = parseInt(localStorage.getItem(STORAGE_KEY_STREAK) || '0', 10);
+      let lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
+
+      if (lastDate) {
+        const diff = getDaysDifference(lastDate, today);
+        if (diff === 0) return;
+        if (diff > 1) currentDay = 0;
+      }
+
+      const nextDay = (currentDay % 7) + 1;
+      const reward = streakRewards[nextDay - 1].reward;
+
+      currentDay = nextDay;
+      balance = parseFloat((balance + reward).toFixed(2));
+
+      localStorage.setItem(STORAGE_KEY_STREAK, currentDay.toString());
+      localStorage.setItem(STORAGE_KEY_LAST_DATE, today);
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+
+      renderCoins();
+      renderStreakUI();
+      triggerHaptic('success');
+      showToast(`پاداش ${reward} سکه دریافت شد! 🎉`);
     }
 
     const gamesDatabase = [
@@ -720,7 +836,6 @@
       });
     }
 
-    /* سوییچ قطعی و بدون لگ تب‌های پایین */
     function switchNavTab(tab) {
       triggerHaptic('light');
       try { localStorage.setItem('simab_active_tab', tab); } catch(e) {}
@@ -739,13 +854,13 @@
       } else if (tab === 'tasks') {
         document.getElementById('tab-btn-tasks').classList.add('active');
         document.getElementById('tab-tasks-content').style.display = 'block';
+        renderStreakUI();
       }
       window.scrollTo(0, 0);
     }
 
     renderGames();
 
-    // اجرای تضمینی در لحظه لود
     const startTab = localStorage.getItem('simab_active_tab') || 'home';
     switchNavTab(startTab);
   </script>
