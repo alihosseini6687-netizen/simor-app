@@ -493,13 +493,14 @@
       else window.location.href = '../../index.html';
     };
 
-    // موجودی سکه
-    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
-    function updateBalanceDisplay() {
-      document.getElementById('user-balance').innerText = balance.toLocaleString();
-    }
-    updateBalanceDisplay();
+    // موجودی سکه //
+const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+
+function updateBalanceDisplay() {
+  document.getElementById('user-balance').innerText = balance.toLocaleString(undefined, { maximumFractionDigits: 3 });
+}
+updateBalanceDisplay();
 
     // تنظیمات ۴ ماینر
     const MINER_TIERS = {
@@ -599,33 +600,43 @@
       minedTxt.innerText = `${cycleMined.toFixed(5)} S`;
       cycleMinedTxt.innerText = `${cycleMined.toFixed(4)} / ${cfg.daily} سکه`;
 
+      const remainingMs = Math.max(0, CYCLE_DURATION_MS - elapsed);
+      const hrs = Math.floor(remainingMs / (1000 * 60 * 60));
+      const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((remainingMs % (1000 * 60)) / 1000);
+
       if (isCycleFinished) {
         gear.classList.add('paused');
-        timerTxt.innerText = 'آماده برداشت ✅';
-        btnClaim.disabled = false;
-        btnClaim.innerHTML = `<span>برداشت ${cycleMined.toFixed(0)} سکه و شروع دوره بعدی ✨</span>`;
+        timerTxt.innerText = 'دوره کامل شد (مخزن متوقف) ✅';
       } else {
         gear.classList.remove('paused');
-        const remainingMs = CYCLE_DURATION_MS - elapsed;
-        const hrs = Math.floor(remainingMs / (1000 * 60 * 60));
-        const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-        const secs = Math.floor((remainingMs % (1000 * 60)) / 1000);
         timerTxt.innerText = `${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')} مانده`;
-        btnClaim.disabled = true;
-        btnClaim.innerHTML = `<span>در حال استخراج خودکار... ⏳</span>`;
       }
-    }
+
+      // شرط جدید: فعال شدن دکمه با رسیدن به حداقل ۰.۰۱ سکه
+      if (cycleMined >= 0.01) {
+        btnClaim.disabled = false;
+        btnClaim.innerHTML = `<span>برداشت ${cycleMined.toFixed(4)} سکه و استارت مجدد ✨</span>`;
+      } else {
+        btnClaim.disabled = true;
+        btnClaim.innerHTML = `<span>حداقل برداشت: ۰.۰۱ سکه (در حال استخراج... ⏳)</span>`;
+      }
 
     function handleMinerAction() {
       if (currentTier === 0) return;
       const cfg = MINER_TIERS[currentTier];
       const now = Date.now();
       const elapsed = Math.max(0, now - cycleStart);
-      if (elapsed < CYCLE_DURATION_MS || tankRemaining <= 0) return;
+      const cycleMined = Math.min(cfg.daily, Math.min(tankRemaining, (elapsed / CYCLE_DURATION_MS) * cfg.daily));
 
-      const claimAmount = Math.min(cfg.daily, tankRemaining);
-      balance = parseFloat((balance + claimAmount).toFixed(2));
-      tankRemaining = parseFloat((tankRemaining - claimAmount).toFixed(2));
+      // اگر مقدار کمتر از 0.01 باشد یا مخزن تمام شده باشد اجازه برداشت نده
+      if (cycleMined < 0.01 || tankRemaining <= 0) return;
+
+      const claimAmount = cycleMined;
+      balance = parseFloat((balance + claimAmount).toFixed(4));
+      tankRemaining = parseFloat(Math.max(0, tankRemaining - claimAmount).toFixed(4));
+      
+      // استارت دوباره چرخه ۲۴ ساعته از همین لحظه
       cycleStart = Date.now();
 
       localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
@@ -637,7 +648,7 @@
       updateMinerEngine();
       syncShopUI();
       if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-      showToast(`+${claimAmount} سکه با موفقیت برداشت شد! 🎉`);
+      showToast(`+${claimAmount.toFixed(4)} سکه برداشت شد و دوره جدید استارت خورد! 🎉`);
     }
 
     function rechargeMinerTank() {
