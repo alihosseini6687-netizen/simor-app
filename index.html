@@ -442,4 +442,798 @@
     }
     .btn-spin:active { transform: scale(0.97); }
     .btn-spin:disabled {
-      background: rgba(255, 25
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: var(--text-muted) !important;
+      cursor: not-allowed;
+      box-shadow: none !important;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .prizes-legend {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .legend-item {
+      background: var(--card-inner);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 6px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    /* ماینر و ماموریت‌ها */
+    .module-soon-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed rgba(212, 175, 55, 0.4);
+      border-radius: 14px;
+      padding: 24px 16px;
+      text-align: center;
+    }
+    .module-soon-icon { font-size: 38px; margin-bottom: 8px; }
+    .module-soon-title { font-size: 14px; font-weight: bold; color: #fff; margin-bottom: 6px; }
+    .module-soon-sub { font-size: 11px; color: var(--gold); margin-bottom: 14px; }
+    .btn-enter-index {
+      background: var(--gold-gradient);
+      color: #150f00;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    /* نوار پایین */
+    .bottom-nav {
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 64px !important;
+      background: #0e0e16 !important;
+      border-top: 1px solid var(--border) !important;
+      display: flex !important;
+      justify-content: space-around !important;
+      align-items: center !important;
+      z-index: 99999 !important;
+      box-shadow: 0 -4px 25px rgba(0,0,0,0.85) !important;
+    }
+    @media (min-width: 500px) {
+      .bottom-nav {
+        max-width: 440px !important;
+      }
+    }
+    .nav-tab {
+      flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: 0.15s;
+      background: transparent; border: none;
+    }
+    .nav-tab.active { color: var(--gold); }
+    .nav-tab.active .tab-icon {
+      transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.6));
+    }
+    .nav-tab .tab-icon { font-size: 21px; }
+    .nav-tab .tab-title { font-size: 11px; font-weight: bold; }
+
+    /* مودال‌ها */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; z-index: 100000; padding: 16px;
+    }
+    .modal-box {
+      background: var(--card-bg); border: 1px solid var(--gold);
+      border-radius: 20px; padding: 20px; width: 100%; max-width: 340px; text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+    }
+    .modal-title { font-size: 16px; font-weight: 800; color: var(--gold); margin-bottom: 10px; }
+    .modal-content { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; text-align: start; }
+    .btn-modal-close {
+      width: 100%; background: var(--gold-gradient); color: #150f00;
+      border: none; padding: 12px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer;
+    }
+    .lang-options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 14px; }
+    .btn-lang-select {
+      background: var(--card-inner); border: 1px solid var(--border); color: #fff;
+      padding: 12px; border-radius: 12px; font-size: 13.5px; font-weight: bold; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .toast-msg {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient); color: #1a1200; padding: 8px 20px; border-radius: 25px;
+      font-size: 12.5px; font-weight: 900; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="toast-msg" id="toast-msg">انجام شد!</div>
+  <div class="app-wrapper">
+    <!-- هدر بالای صفحه -->
+    <header class="top-header">
+      <div class="coin-badge" onclick="switchNavTab('tasks')">
+        <div class="coin-badge-s">S</div>
+        <span id="user-balance-txt">50</span>
+      </div>
+      <div class="header-start">
+        <div class="brand-title">SIMAB</div>
+        <button class="btn-gear" onclick="openLangModal()" title="تنظیم زبان">⚙️</button>
+      </div>
+    </header>
+
+    <!-- سربرگ ۱: خانه -->
+    <div id="tab-home-content">
+      <div class="profile-card">
+        <div class="profile-top">
+          <div class="user-avatar" id="avatar-container">👤</div>
+          <div>
+            <div class="user-name" id="user-name-txt">کاربر سیماب</div>
+            <div class="user-username" id="user-tg-username">@User</div>
+          </div>
+        </div>
+        <div class="ids-container">
+          <div class="id-row">
+            <span class="id-label" id="lbl-tg-id">شناسه تلگرام:</span>
+            <span class="id-value">
+              <span id="user-num-id">00000000</span>
+              <button class="btn-copy" id="btn-copy-1" onclick="copyText('user-num-id')">کپی</button>
+            </span>
+          </div>
+          <div class="id-row">
+            <span class="id-label" id="lbl-game-id">شناسه بازی:</span>
+            <span class="id-value id-game-val">
+              <span id="user-game-id">S0000000</span>
+              <button class="btn-copy" id="btn-copy-2" onclick="copyText('user-game-id')">کپی</button>
+            </span>
+          </div>
+        </div>
+      </div>
+      <!-- ۳ مربع میانی -->
+      <div class="three-grid">
+        <a href="friends/index.html" class="grid-box">
+          <span class="icon">👥</span>
+          <span class="label" id="txt-ref">رفرال</span>
+          <span class="sub" id="txt-ref-sub">دعوت دوستان</span>
+        </a>
+        <div class="grid-box" onclick="alertComingSoon('این بخش')">
+          <span class="badge-soon-mini">به‌زودی</span>
+          <span class="icon">⏳</span>
+          <span class="label" id="txt-swap">به‌زودی</span>
+          <span class="sub" id="txt-swap-sub">در آپدیت بعد</span>
+        </div>
+        <a href="ai/index.html" class="grid-box">
+          <span class="icon">🎙️</span>
+          <span class="label" id="txt-ai">دستیار صوتی</span>
+          <span class="sub" id="txt-ai-sub">هوش مصنوعی</span>
+        </a>
+      </div>
+      <!-- دکمه‌های کپسولی -->
+      <div class="action-bars">
+        <div class="action-btn" onclick="openSupport()">
+          <div class="btn-icon">📞</div>
+          <div class="btn-txt" id="txt-support">پشتیبانی تلگرام</div>
+          <div class="arrow" id="arrow-1">◀</div>
+        </div>
+        <div class="action-btn" onclick="openAboutModal()">
+          <div class="btn-icon">⭐</div>
+          <div class="btn-txt" id="txt-about">درباره ما و اهداف</div>
+          <div class="arrow" id="arrow-2">◀</div>
+        </div>
+        <div class="action-btn" onclick="openRulesModal()">
+          <div class="btn-icon">💡</div>
+          <div class="btn-txt" id="txt-rules">آموزش و قوانین بازی‌ها</div>
+          <div class="arrow" id="arrow-3">◀</div>
+        </div>
+        <div class="action-btn admin-bar" id="btn-admin-bar" style="display:none;" onclick="location.href='admin/index.html'">
+          <div class="btn-icon">👑</div>
+          <div class="btn-txt" id="txt-admin">ورود به پنل مدیریت (استاد حسینی)</div>
+          <div class="arrow" id="arrow-4" style="color:var(--gold);">◀</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- سربرگ ۲: بازی‌ها -->
+    <div id="tab-games-content" style="display:none;">
+      <div class="games-banner-box">
+        <div class="games-banner-overlay">
+          <span class="banner-badge" id="t-banner-badge">🎮 SIMAB GAMING</span>
+          <div class="banner-title" id="t-banner-title">مسابقات و رقابت‌های آنلاین</div>
+          <div class="banner-sub" id="t-banner-sub">بازی کنید، ژتون ببرید و با دیگران رقابت کنید</div>
+        </div>
+      </div>
+      <div class="games-grid-2col" id="games-container"></div>
+    </div>
+
+    <!-- سربرگ ۳: تسک‌ها -->
+    <div id="tab-tasks-content" style="display:none;">
+      <div class="task-balance-card">
+        <div class="task-balance-info">
+          <div class="task-coin-circle">S</div>
+          <div class="task-balance-text">
+            <span class="task-balance-label">موجودی سکه سیماب</span>
+            <span class="task-balance-val" id="tasks-balance-num">50</span>
+          </div>
+        </div>
+        <button class="btn-task-swap" onclick="openSwapModal()">
+          <span>تبدیل 🔄</span>
+        </button>
+      </div>
+
+      <!-- ۴ سربرگ بالای صفحه -->
+      <div class="task-subtabs-row">
+        <button class="task-subtab-box active" id="btn-sub-streak" onclick="switchTaskTab('streak')">
+          <span class="t-icon">🎁</span>
+          <span>روزانه</span>
+        </button>
+        <button class="task-subtab-box" id="btn-sub-wheel" onclick="switchTaskTab('wheel')">
+          <span class="t-icon">🎡</span>
+          <span>گردونه</span>
+        </button>
+        <button class="task-subtab-box" id="btn-sub-miner" onclick="switchTaskTab('miner')">
+          <span class="t-icon">⚡</span>
+          <span>ماینر</span>
+        </button>
+        <button class="task-subtab-box" id="btn-sub-quests" onclick="switchTaskTab('quests')">
+          <span class="t-icon">📋</span>
+          <span>ماموریت‌ها</span>
+        </button>
+      </div>
+
+      <!-- ۱. زیر‌بخش روزانه (Streak) -->
+      <div id="task-view-streak" class="task-main-card">
+        <div class="task-card-title">
+          <span>🎁</span>
+          <span>پاداش ورود روزانه (Streak)</span>
+        </div>
+        <div class="task-card-desc">
+          هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. در صورت ۱ روز غیبت، شمارنده از اول شروع می‌شود!
+        </div>
+        <div class="streak-grid">
+          <div class="streak-box ready">
+            <div class="streak-box-num">روز ۱</div>
+            <div class="streak-box-icon">🪙</div>
+            <div class="streak-box-reward">+1</div>
+          </div>
+          <div class="streak-box">
+            <div class="streak-box-num">روز ۲</div>
+            <div class="streak-box-icon">🎁</div>
+            <div class="streak-box-reward">+3</div>
+          </div>
+          <div class="streak-box">
+            <div class="streak-box-num">روز ۳</div>
+            <div class="streak-box-icon">💎</div>
+            <div class="streak-box-reward">+7</div>
+          </div>
+          <div class="streak-box">
+            <div class="streak-box-num">روز ۴</div>
+            <div class="streak-box-icon">⚡</div>
+            <div class="streak-box-reward">+15</div>
+          </div>
+          <div class="streak-box">
+            <div class="streak-box-num">روز ۵</div>
+            <div class="streak-box-icon">🔥</div>
+            <div class="streak-box-reward">+29</div>
+          </div>
+          <div class="streak-box">
+            <div class="streak-box-num">روز ۶</div>
+            <div class="streak-box-icon">🌟</div>
+            <div class="streak-box-reward">+41</div>
+          </div>
+          <div class="streak-box day-7">
+            <div class="streak-box-num">روز ۷ (پاداش ویژه)</div>
+            <div class="streak-box-icon">👑</div>
+            <div class="streak-box-reward">+69</div>
+          </div>
+        </div>
+        <button class="btn-streak-claim" onclick="window.location.href='streak/index.html'">
+          <span>( 🪙 +1 ) ✨ ورود و دریافت پاداش روزانه</span>
+        </button>
+      </div>
+
+      <!-- ۲. زیر‌بخش گردونه شانس طلایی (کاملاً زنده و عملیاتی داخل کارت) -->
+      <div id="task-view-wheel" class="task-main-card" style="display:none;">
+        <div class="task-card-title">
+          <span>🎡</span>
+          <span>گردونه شانس طلایی</span>
+        </div>
+        <div class="task-card-desc">
+          گردونه را بچرخانید و جوایز نقدی تا ۵۰ سکه برنده شوید.
+        </div>
+
+        <!-- صحنه چرخ گردونه و عقربه -->
+        <div class="wheel-stage">
+          <div class="wheel-pointer"></div>
+          <div class="canvas-wrap">
+            <canvas id="wheelCanvas" width="250" height="250"></canvas>
+            <div class="wheel-center-badge">S</div>
+          </div>
+        </div>
+
+        <!-- دکمه چرخش -->
+        <button class="btn-spin" id="btn-spin-action" onclick="spinWheel()">
+          <span>چرخش گردونه (SPIN) 🎲</span>
+        </button>
+
+        <!-- لیست ۶ قطاع جوایز -->
+        <div class="prizes-legend">
+          <div class="legend-item" style="color:#ff7b72;">💨 پوچ</div>
+          <div class="legend-item" style="color:var(--gold);">🪙 0.7 سکه</div>
+          <div class="legend-item" style="color:var(--green);">🪙 1 سکه</div>
+          <div class="legend-item" style="color:var(--cyan);">🪙 1.7 سکه</div>
+          <div class="legend-item" style="color:#fce8b3;">🪙 10 سکه (۲۵٪)</div>
+          <div class="legend-item" style="color:#ffd700;">👑 50 سکه (۱۵٪)</div>
+        </div>
+      </div>
+
+      <!-- ۳. زیر‌بخش ماینر -->
+      <div id="task-view-miner" class="task-main-card" style="display:none;">
+        <div class="task-card-title">
+          <span>⚡</span>
+          <span>ماینر خودکار توکن سیماب</span>
+        </div>
+        <div class="task-card-desc">
+          استخراج ابری اتوماتیک توکن حتی در حالت آفلاین؛ هر زمان پر شد آن را برداشت کنید.
+        </div>
+        <div class="module-soon-box">
+          <div class="module-soon-icon">⚡</div>
+          <div class="module-soon-title">ماینر ابری توکن سیماب</div>
+          <div class="module-soon-sub">این بخش در ایندکس اختصاصی در حال راه‌اندازی است</div>
+          <button class="btn-enter-index" onclick="openIndexOrSoon('tasks/miner/index.html', 'ماینر خودکار')">ورود به ایندکس ماینر ➔</button>
+        </div>
+      </div>
+
+      <!-- ۴. زیر‌بخش ماموریت‌ها -->
+      <div id="task-view-quests" class="task-main-card" style="display:none;">
+        <div class="task-card-title">
+          <span>📋</span>
+          <span>ماموریت‌های ویژه و شبکه‌ها</span>
+        </div>
+        <div class="task-card-desc">
+          با عضویت در شبکه‌های رسمی و فعالیت در بخش‌های سیماب، جوایز فوری دریافت کنید:
+        </div>
+        <div class="module-soon-box">
+          <div class="module-soon-icon">📋</div>
+          <div class="module-soon-title">ماموریت‌های رسمی و شبکه‌ها</div>
+          <div class="module-soon-sub">این بخش در ایندکس اختصاصی در حال راه‌اندازی است</div>
+          <button class="btn-enter-index" onclick="openIndexOrSoon('tasks/quests/index.html', 'ماموریت‌ها')">ورود به ایندکس ماموریت‌ها ➔</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- نوار پایین چسبیده -->
+    <nav class="bottom-nav">
+      <div class="nav-tab active" id="tab-btn-home" onclick="switchNavTab('home')">
+        <div class="tab-icon">🏠</div>
+        <div class="tab-title" id="nav-txt-home">خانه</div>
+      </div>
+      <div class="nav-tab" id="tab-btn-games" onclick="switchNavTab('games')">
+        <div class="tab-icon">🎮</div>
+        <div class="tab-title" id="nav-txt-games">بازی‌ها</div>
+      </div>
+      <div class="nav-tab" id="tab-btn-tasks" onclick="switchNavTab('tasks')">
+        <div class="tab-icon">📋</div>
+        <div class="tab-title" id="nav-txt-tasks">تسک‌ها</div>
+      </div>
+    </nav>
+  </div>
+
+  <!-- مودال سواپ -->
+  <div class="modal-overlay" id="modal-swap">
+    <div class="modal-box">
+      <div class="modal-title">🔄 صرافی و تبدیل دارایی</div>
+      <div class="modal-content" style="text-align:center;">
+        بخش تبدیل دارایی و سواپ توکن‌ها به زودی در آپدیت بعدی فعال می‌شود!
+      </div>
+      <button class="btn-modal-close" onclick="closeModals()">متوجه شدم</button>
+    </div>
+  </div>
+
+  <!-- مودال درباره ما -->
+  <div class="modal-overlay" id="modal-about">
+    <div class="modal-box">
+      <div class="modal-title" id="m-about-title">⭐ درباره سیماب (SIMAB)</div>
+      <div class="modal-content" id="m-about-desc"></div>
+      <button class="btn-modal-close" id="btn-close-about" onclick="closeModals()">متوجه شدم</button>
+    </div>
+  </div>
+
+  <!-- مودال قوانین -->
+  <div class="modal-overlay" id="modal-rules">
+    <div class="modal-box">
+      <div class="modal-title" id="m-rules-title">💡 قوانین و آموزش</div>
+      <div class="modal-content" id="m-rules-desc"></div>
+      <button class="btn-modal-close" id="btn-close-rules" onclick="closeModals()">متوجه شدم</button>
+    </div>
+  </div>
+
+  <!-- مودال زبان -->
+  <div class="modal-overlay" id="modal-lang">
+    <div class="modal-box">
+      <div class="modal-title">🌐 انتخاب زبان / Language</div>
+      <div class="lang-options">
+        <button class="btn-lang-select" onclick="setLanguage('fa')">
+          <span>🇮🇷 فارسی</span><span>Persian</span>
+        </button>
+        <button class="btn-lang-select" onclick="setLanguage('en')">
+          <span>🇬🇧 English</span><span>English</span>
+        </button>
+        <button class="btn-lang-select" onclick="setLanguage('ru')">
+          <span>🇷🇺 Русский</span><span>Русский</span>
+        </button>
+      </div>
+      <button class="btn-modal-close" onclick="closeModals()">بستن / Close</button>
+    </div>
+  </div>
+
+  <!-- مودال برنده شدن گردونه -->
+  <div class="modal-overlay" id="modal-wheel-result">
+    <div class="modal-box">
+      <div style="font-size:48px; margin-bottom:8px;" id="wheel-res-icon">🎉</div>
+      <div class="modal-title" id="wheel-res-title">نتیجه گردونه</div>
+      <div class="modal-content" id="wheel-res-msg" style="text-align:center;"></div>
+      <button class="btn-modal-close" onclick="closeModals()">متوجه شدم</button>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+      }
+    } catch(e) {}
+
+    let realUserId = null;
+    let uid = "702007470";
+    try {
+      if (tg?.initDataUnsafe?.user) {
+        const u = tg.initDataUnsafe.user;
+        realUserId = u.id;
+        uid = u.id.toString();
+        document.getElementById('user-name-txt').innerText = u.first_name || 'کاربر سیماب';
+        document.getElementById('user-tg-username').innerText = u.username ? '@' + u.username : '';
+        document.getElementById('user-num-id').innerText = u.id;
+        let savedGameId = localStorage.getItem('simab_game_id');
+        if (!savedGameId) {
+          savedGameId = 'S' + Math.floor(1000000 + Math.random() * 9000000);
+          localStorage.setItem('simab_game_id', savedGameId);
+        }
+        document.getElementById('user-game-id').innerText = savedGameId;
+        if (u.photo_url) {
+          document.getElementById('avatar-container').innerHTML = `<img src="${u.photo_url}" alt="Avatar">`;
+        }
+      } else {
+        document.getElementById('user-num-id').innerText = uid;
+        let savedGameId = localStorage.getItem('simab_game_id') || 'S1069276';
+        document.getElementById('user-game-id').innerText = savedGameId;
+      }
+    } catch(e) {}
+
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    const RESET_KEY = 'simab_v50_v4_reset_' + uid;
+    let balance = 50;
+    if (!localStorage.getItem(RESET_KEY)) {
+      balance = 50;
+      localStorage.setItem(STORAGE_KEY_COINS, '50');
+      localStorage.setItem('user_balance', '50');
+      localStorage.setItem(RESET_KEY, 'true');
+    } else {
+      balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '50');
+    }
+
+    function renderCoins() {
+      document.getElementById('user-balance-txt').innerText = balance.toLocaleString();
+      const bTasks = document.getElementById('tasks-balance-num');
+      if (bTasks) bTasks.innerText = balance.toLocaleString();
+    }
+    renderCoins();
+
+    if (realUserId === 702007470 || uid === "702007470") {
+      document.getElementById('btn-admin-bar').style.display = 'flex';
+    } else {
+      document.getElementById('btn-admin-bar').style.display = 'none';
+    }
+
+    function triggerHaptic(type = 'light') {
+      try {
+        if (tg?.HapticFeedback) {
+          if (type === 'success' || type === 'error' || type === 'warning') {
+            tg.HapticFeedback.notificationOccurred(type);
+          } else {
+            tg.HapticFeedback.impactOccurred(type);
+          }
+        }
+      } catch(e) {}
+    }
+
+    let currentToastText = 'کپی شد!';
+    function showToast(msg) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => { t.classList.remove('show'); }, 2000);
+    }
+
+    function copyText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        triggerHaptic('success');
+        showToast(currentToastText);
+      });
+    }
+
+    function alertComingSoon(name) {
+      triggerHaptic('warning');
+      const lang = localStorage.getItem('simab_lang') || 'fa';
+      const msg = (lang === 'fa') ? `${name} به‌زودی در آپدیت بعدی فعال می‌شود!` :
+                  (lang === 'ru') ? `${name} скоро будет доступно!` : `${name} is coming soon!`;
+      showToast(msg);
+    }
+
+    function openSupport() {
+      triggerHaptic('medium');
+      const link = 'https://t.me/Alihosseiniv';
+      if (tg && tg.openTelegramLink) tg.openTelegramLink(link);
+      else window.open(link, '_blank');
+    }
+
+    function openSwapModal() {
+      triggerHaptic('light');
+      document.getElementById('modal-swap').style.display = 'flex';
+    }
+
+    function openAboutModal() { triggerHaptic('light'); document.getElementById('modal-about').style.display = 'flex'; }
+    function openRulesModal() { triggerHaptic('light'); document.getElementById('modal-rules').style.display = 'flex'; }
+    function openLangModal() { triggerHaptic('light'); document.getElementById('modal-lang').style.display = 'flex'; }
+    function closeModals() {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    }
+
+    function openIndexOrSoon(url, name) {
+      triggerHaptic('light');
+      fetch(url, { method: 'HEAD' }).then(res => {
+        if (res.ok) window.location.href = url;
+        else alertComingSoon(name);
+      }).catch(() => { alertComingSoon(name); });
+    }
+
+    /* سوییچ ۴ سربرگ تسک‌ها */
+    function switchTaskTab(tabName) {
+      triggerHaptic('light');
+      ['streak', 'wheel', 'miner', 'quests'].forEach(t => {
+        document.getElementById('task-view-' + t).style.display = (t === tabName) ? 'block' : 'none';
+        document.getElementById('btn-sub-' + t).classList.toggle('active', t === tabName);
+      });
+      if (tabName === 'wheel') {
+        setTimeout(() => {
+          drawWheel();
+          checkSpinStatus();
+        }, 50);
+      }
+    }
+
+    /* ================= منطق گردونه شانس طلایی ================= */
+    const WHEEL_SECTORS = [
+      { label: 'پوچ 💨', val: 0, color: '#2d1519', text: '#ff7b72', icon: '💨' },
+      { label: '0.7 🪙', val: 0.7, color: '#4a1e75', text: '#ffffff', icon: '🎁' },
+      { label: '1 🪙', val: 1.0, color: '#1a233a', text: '#00f5d4', icon: '🪙' },
+      { label: '1.7 🪙', val: 1.7, color: '#0d3d38', text: '#ffffff', icon: '💎' },
+      { label: '10 🪙', val: 10.0, color: '#664506', text: '#fce8b3', icon: '🌟' },
+      { label: '50 👑', val: 50.0, color: '#d4af37', text: '#111111', icon: '👑' }
+    ];
+
+    function getWheelCycleKey() {
+      const now = new Date();
+      // شیفت ۱۲ ساعته جهت ریست سر ساعت ۱۲:۰۰ ظهر به وقت انگلیس (12:00 UTC)
+      const shifted = new Date(now.getTime() - (12 * 60 * 60 * 1000));
+      return `simab_wheel_${shifted.getUTCFullYear()}_${shifted.getUTCMonth()+1}_${shifted.getUTCDate()}_${uid}`;
+    }
+
+    function checkSpinStatus() {
+      const btn = document.getElementById('btn-spin-action');
+      if (!btn) return;
+      const cycleKey = getWheelCycleKey();
+      const hasSpun = (localStorage.getItem(cycleKey) === 'true');
+      if (hasSpun) {
+        btn.disabled = true;
+        btn.innerHTML = `<span>فردا امتحان کنین ⏳</span>`;
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = `<span>چرخش گردونه (SPIN) 🎲</span>`;
+      }
+    }
+
+    function drawWheel() {
+      const canvas = document.getElementById('wheelCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const num = WHEEL_SECTORS.length;
+      const arc = (2 * Math.PI) / num;
+      const radius = canvas.width / 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      WHEEL_SECTORS.forEach((sec, i) => {
+        const angle = i * arc;
+        ctx.beginPath();
+        ctx.fillStyle = sec.color;
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius, angle, angle + arc);
+        ctx.lineTo(radius, radius);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.fillStyle = sec.text;
+        ctx.font = 'bold 12px sans-serif';
+        ctx.translate(radius, radius);
+        ctx.rotate(angle + arc / 2);
+        ctx.textAlign = 'right';
+        ctx.fillText(sec.label, radius - 16, 4);
+        ctx.restore();
+      });
+    }
+
+    let wheelRotation = 0;
+    let isSpinningWheel = false;
+
+    function pickWheelIndex() {
+      const rand = Math.random() * 100;
+      if (rand < 20) return 0;       // پوچ: ۲۰٪
+      else if (rand < 35) return 1;  // 0.7: ۱۵٪
+      else if (rand < 50) return 2;  // 1.0: ۱۵٪
+      else if (rand < 60) return 3;  // 1.7: ۱۰٪
+      else if (rand < 85) return 4;  // 10: ۲۵٪
+      else return 5;                 // 50: ۱۵٪
+    }
+
+    function spinWheel() {
+      const cycleKey = getWheelCycleKey();
+      if (isSpinningWheel || localStorage.getItem(cycleKey) === 'true') return;
+      isSpinningWheel = true;
+
+      const btn = document.getElementById('btn-spin-action');
+      btn.disabled = true;
+      triggerHaptic('heavy');
+
+      const winningIndex = pickWheelIndex();
+      const num = WHEEL_SECTORS.length;
+      const sectorDeg = 360 / num;
+      const targetCenter = (winningIndex * sectorDeg) + (sectorDeg / 2);
+      const extraSpins = 5 * 360;
+
+      const stopAngle = extraSpins + ((270 - targetCenter - (wheelRotation % 360) + 720) % 360);
+      wheelRotation += stopAngle;
+
+      const canvas = document.getElementById('wheelCanvas');
+      canvas.style.transform = `rotate(${wheelRotation}deg)`;
+
+      localStorage.setItem(cycleKey, 'true');
+
+      setTimeout(() => {
+        isSpinningWheel = false;
+        const won = WHEEL_SECTORS[winningIndex];
+
+        if (won.val > 0) {
+          balance = parseFloat((balance + won.val).toFixed(2));
+          localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+          localStorage.setItem('user_balance', balance.toString());
+          renderCoins();
+
+          triggerHaptic('success');
+          document.getElementById('wheel-res-icon').innerText = won.icon;
+          document.getElementById('wheel-res-title').innerText = 'تبریک! برنده شدید 🎉';
+          document.getElementById('wheel-res-msg').innerHTML = `شما برنده <b>+${won.val} سکه</b> شدید!`;
+        } else {
+          triggerHaptic('warning');
+          document.getElementById('wheel-res-icon').innerText = '💨';
+          document.getElementById('wheel-res-title').innerText = 'پوچ شد!';
+          document.getElementById('wheel-res-msg').innerHTML = 'متاسفانه این بار شانسی نداشتید. فردا دوباره امتحان کنین!';
+        }
+
+        document.getElementById('modal-wheel-result').style.display = 'flex';
+        checkSpinStatus();
+      }, 4600);
+    }
+
+    /* لیست بازی‌ها */
+    const gamesDatabase = [
+      { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, fa: { title: 'پوکر تگزاس', sub: 'هولدم ۶ نفره آنلاین' } },
+      { id: 2, icon: '🎰', url: 'games/slot/index.html', active: true, fa: { title: 'رول شانس', sub: 'ماشین اسلات ۳ رول' } },
+      { id: 3, icon: '🎲', url: 'games/backgammon/index.html', active: false, fa: { title: 'تخته نرد', sub: 'مسابقات ۲ نفره' } },
+      { id: 4, icon: '🎴', url: 'games/hokm/index.html', active: false, fa: { title: 'ورق (حکم)', sub: 'مسابقه پاسور ۴ نفره' } },
+      { id: 5, icon: '♠️', url: 'games/blackjack/index.html', active: false, fa: { title: 'ورق (۲۱)', sub: 'بلک‌جک کازینو' } },
+      { id: 6, icon: '🔴', url: 'games/mensch/index.html', active: false, fa: { title: 'منچ آنلاین', sub: 'نبرد ۴ نفره دورهمی' } },
+      { id: 7, icon: '🐍', url: 'games/snakes/index.html', active: false, fa: { title: 'مارپله مسابقه‌ای', sub: 'رقابت شانس و تاس' } },
+      { id: 8, icon: '🎲', url: 'games/dice/index.html', active: false, fa: { title: 'تاس طلایی', sub: 'پرتاب شانس بزرگ' } },
+      { id: 9, icon: '💣', url: 'games/mines/index.html', active: false, fa: { title: 'میدان مین', sub: 'استراتژی خنثی‌سازی' } },
+      { id: 10, icon: '🎡', url: '#', active: true, fa: { title: 'گردونه شانس', sub: 'اسپین و قرعه‌کشی روزانه' }, isWheel: true },
+      { id: 11, icon: '🀄', url: 'games/domino/index.html', active: false, fa: { title: 'دومینو حرفه‌ای', sub: 'دوئل سرعتی کاشی‌ها' } },
+      { id: 12, icon: '✂️', url: 'games/rps/index.html', active: false, fa: { title: 'سنگ کاغذ قیچی', sub: 'دوئل واکنشی سریع' } },
+      { id: 13, icon: '⚽', url: 'games/penalty/index.html', active: false, fa: { title: 'شوت پنالتی', sub: 'چالش گلزنی آنلاین' } },
+      { id: 14, icon: '🧨', url: 'games/bomb/index.html', active: false, fa: { title: 'بمب شانس', sub: 'شمارش معکوس انفجار' } },
+      { id: 15, icon: '⚡', url: 'games/speed/index.html', active: false, fa: { title: 'دوئل تند و تیز', sub: 'تست سرعت و واکنش' } },
+      { id: 16, icon: '🏆', url: 'games/jackpot/index.html', active: false, fa: { title: 'جک‌پات هفتگی', sub: 'صندوق جوایز طلایی' } }
+    ];
+
+    function renderGames() {
+      const box = document.getElementById('games-container');
+      box.innerHTML = '';
+      gamesDatabase.forEach(g => {
+        const item = document.createElement(g.active && !g.isWheel ? 'a' : 'div');
+        item.className = 'game-card';
+        if (g.isWheel) {
+          item.onclick = () => {
+            switchNavTab('tasks');
+            switchTaskTab('wheel');
+          };
+        } else if (g.active) {
+          item.href = g.url;
+        } else {
+          item.onclick = () => alertComingSoon(g.fa.title);
+        }
+        item.innerHTML = `
+          <div class="game-card-top">
+            <div class="game-card-icon">${g.icon}</div>
+            <span class="game-badge ${g.active ? 'badge-live' : 'badge-soon'}">${g.active ? 'فعال' : 'به‌زودی'}</span>
+          </div>
+          <div>
+            <div class="game-card-title">${g.fa.title}</div>
+            <div class="game-card-sub">${g.fa.sub}</div>
+          </div>
+        `;
+        box.appendChild(item);
+      });
+    }
+
+    /* سوییچ هوشمند تب‌ها + ذخیره در حافظه جهت برگشت به سربرگ قبلی */
+    function switchNavTab(tab) {
+      triggerHaptic('light');
+      try {
+        localStorage.setItem('simab_active_tab', tab);
+      } catch(e) {}
+
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-home-content').style.display = 'none';
+      document.getElementById('tab-games-content').style.display = 'none';
+      document.getElementById('tab-tasks-content').style.display = 'none';
+
+      if (tab === 'home') {
+        document.getElementById('tab-btn-home').classList.add('active');
+        document.getElementById('tab-home-content').style.display = 'block';
+      } else if (tab === 'games') {
+        document.getElementById('tab-btn-games').classList.add('active');
+        document.getElementById('tab-games-content').style.display = 'block';
+      } else if (tab === 'tasks') {
+        document.getElementById('tab-btn-tasks').classList.add('active');
+        document.getElementById('tab-tasks-content').style.display = 'block';
+      }
+      window.scrollTo(0, 0);
+    }
+
+    function setLanguage(lang) {
+      try { localStorage.setItem('simab_lang', lang); } catch(e) {}
+      closeModals();
+    }
+
+    renderGames();
+
+    // بازیابی هوشمند تب فعال قبلی هنگام برگشت به لابی
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTab = localStorage.getItem('simab_active_tab') || 'home';
+      switchNavTab(savedTab);
+      drawWheel();
+      checkSpinStatus();
+    });
+  </script>
+</body>
+</html>
