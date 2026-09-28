@@ -208,7 +208,7 @@
       color: var(--text-muted);
     }
 
-    /* لیست تسک‌های دعوت */
+    /* لیست جوایز پلکانی */
     .section-title {
       font-size: 14px;
       font-weight: 800;
@@ -272,28 +272,6 @@
       background: rgba(0, 245, 212, 0.12);
       color: var(--green);
       border: 1px solid var(--green);
-    }
-
-    /* بخش تست ادمین */
-    .test-box {
-      margin-top: 10px;
-      background: rgba(255,255,255,0.03);
-      border: 1px dashed rgba(255,255,255,0.15);
-      border-radius: 12px;
-      padding: 10px;
-      text-align: center;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .btn-test {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid var(--border);
-      color: var(--gold);
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 11px;
-      cursor: pointer;
     }
 
     .toast-msg {
@@ -369,13 +347,6 @@
     </div>
 
     <div class="tasks-list" id="tasks-container"></div>
-
-    <!-- ابزار تست برای ادمین -->
-    <div class="test-box" id="admin-test-box">
-      <span style="font-size:11px; color:var(--text-muted);">ابزار تست (افزایش دعوت):</span>
-      <button class="btn-test" onclick="simulateInvite()">+۱ دعوت آزمایشی</button>
-      <button class="btn-test" onclick="resetInvites()" style="color:#ff7b72;">ریست</button>
-    </div>
   </div>
 
   <script>
@@ -387,18 +358,19 @@
       }
     } catch(e) {}
 
-    // دریافت اطلاعات کاربر و شناسه بازی مطابق ایندکس مادر
-    let uid = "702007470";
+    // شناسه کاربر
+    let uid = "user_guest";
     try {
       if (tg?.initDataUnsafe?.user?.id) {
         uid = tg.initDataUnsafe.user.id.toString();
       }
     } catch(e) {}
 
+    // شناسه بازی اختصاصی کاربر
     let gameId = localStorage.getItem('simab_game_id') || 'S' + Math.floor(1000000 + Math.random() * 9000000);
     document.getElementById('my-game-id').innerText = gameId;
 
-    // اتصال موجودی سکه همگام با ایندکس مادر
+    // همگام‌سازی موجودی سکه با لابی مادر
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
     let balance = parseInt(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50', 10);
     function updateBalanceDisplay() {
@@ -406,11 +378,11 @@
     }
     updateBalanceDisplay();
 
-    // ذخیره تعداد دعوت‌ها
+    // دریافت تعداد دعوت‌ها از حافظه
     const STORAGE_KEY_INVITES = 'simab_ref_count_' + uid;
     let inviteCount = parseInt(localStorage.getItem(STORAGE_KEY_INVITES) || '0', 10);
 
-    // لیست تسک‌ها مطابق درخواست دقیق شما
+    // لیست مراحل و جوایز دقیق
     const referralMilestones = [
       { count: 1, reward: 10 },
       { count: 3, reward: 35 },
@@ -482,7 +454,7 @@
       renderTasks();
 
       if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-      showToast(`پاداش ${rewardCoins} سکه با موفقیت دریافت شد! 🎉`);
+      showToast(`پاداش ${rewardCoins.toLocaleString()} سکه دریافت شد! 🎉`);
     }
 
     function getRefLink() {
@@ -507,24 +479,6 @@
       } else {
         window.open(shareUrl, '_blank');
       }
-    }
-
-    // توابع تست ادمین
-    function simulateInvite() {
-      inviteCount += 1;
-      localStorage.setItem(STORAGE_KEY_INVITES, inviteCount.toString());
-      renderTasks();
-      showToast(`یک دعوت شبیه‌سازی شد! (مجموع: ${inviteCount})`);
-    }
-
-    function resetInvites() {
-      inviteCount = 0;
-      localStorage.setItem(STORAGE_KEY_INVITES, '0');
-      referralMilestones.forEach(m => {
-        localStorage.removeItem(`simab_ref_claimed_${m.count}_${uid}`);
-      });
-      renderTasks();
-      showToast('دعوت‌ها و تسک‌ها ریست شدند.');
     }
 
     renderTasks();
