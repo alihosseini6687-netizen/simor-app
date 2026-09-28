@@ -211,16 +211,10 @@
     .task-card-title { font-size: 14.5px; font-weight: 800; color: var(--gold); display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
     .task-card-desc { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
 
-    /* ================= طراحی اختصاصی پاداش روزانه زنده ================= */
+    /* پاداش روزانه زنده */
     .streak-status-bar {
-      background: var(--card-inner);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 14px;
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
+      background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06); border-radius: 14px;
+      padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
     }
     .streak-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 12px; }
     .streak-box {
@@ -242,15 +236,50 @@
       padding: 12px; width: 100%; font-size: 13.5px; font-weight: 800; cursor: pointer;
       box-shadow: 0 4px 15px rgba(212, 175, 55, 0.35); transition: 0.15s;
     }
-    .btn-streak-claim:active { transform: scale(0.97); }
     .btn-streak-claim:disabled {
       background: rgba(255, 255, 255, 0.08) !important; color: var(--text-muted) !important;
       cursor: not-allowed; box-shadow: none !important; border: 1px solid rgba(255,255,255,0.06);
     }
-    .warning-box {
-      background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.3);
-      border-radius: 12px; padding: 8px 12px; font-size: 10.5px; color: #ff9f97;
-      line-height: 1.5; text-align: center; margin-top: 10px;
+
+    /* ================= استایل‌های اختصاصی گردونه زنده داخل کارت ================= */
+    .wheel-stage {
+      position: relative; width: 270px; height: 270px;
+      display: flex; align-items: center; justify-content: center; margin: 10px auto 14px auto;
+    }
+    .wheel-pointer {
+      position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+      width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent;
+      border-top: 24px solid #ff3b30; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8)); z-index: 20;
+    }
+    .canvas-wrap {
+      width: 250px; height: 250px; border-radius: 50%; border: 5px solid #d4af37;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(0,0,0,0.9);
+      overflow: hidden; position: relative; background: #111;
+    }
+    #wheelCanvas { width: 100%; height: 100%; transition: transform 4.5s cubic-bezier(0.12, 0.9, 0.15, 1); }
+    .wheel-center-badge {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 44px; height: 44px; border-radius: 50%;
+      background: radial-gradient(circle, #fff2ad 0%, #d4af37 60%, #593f00 100%);
+      border: 3px solid #14141e; box-shadow: 0 0 12px rgba(0,0,0,0.8);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 900; color: #221400; z-index: 10;
+    }
+    .btn-spin {
+      width: 100%; background: var(--gold-gradient); color: #171000; border: none;
+      padding: 13px; border-radius: 14px; font-size: 14.5px; font-weight: 900;
+      cursor: pointer; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4); transition: 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;
+    }
+    .btn-spin:active { transform: scale(0.97); }
+    .btn-spin:disabled {
+      background: rgba(255, 255, 255, 0.08) !important; color: var(--text-muted) !important;
+      cursor: not-allowed; box-shadow: none !important; border: 1px solid rgba(255,255,255,0.06);
+    }
+    .prizes-legend { width: 100%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 14px; }
+    .legend-item {
+      background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px; padding: 6px; text-align: center; font-size: 11px; font-weight: bold;
     }
 
     /* ماینر و ماموریت‌ها */
@@ -265,8 +294,13 @@
       background: var(--gold-gradient); color: #150f00; border: none; padding: 9px 18px;
       border-radius: 10px; font-weight: 800; font-size: 12px; cursor: pointer; text-decoration: none; display: inline-block;
     }
+    .warning-box {
+      background: rgba(255, 59, 48, 0.08); border: 1px solid rgba(255, 59, 48, 0.3);
+      border-radius: 12px; padding: 8px 12px; font-size: 10.5px; color: #ff9f97;
+      line-height: 1.5; text-align: center; margin-top: 10px;
+    }
 
-    /* نوار پایین دکمه‌ای و قفل */
+    /* نوار پایین دکمه‌ای */
     .bottom-nav {
       position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 100%; height: 64px; background: #0e0e16;
@@ -434,17 +468,15 @@
         </button>
       </div>
 
-      <!-- ۱. زیر‌بخش روزانه (Streak) - کاملاً زنده و عملیاتی بدون نیاز به صفحه جدا -->
+      <!-- ۱. زیر‌بخش روزانه (Streak) زنده -->
       <div id="task-view-streak" class="task-main-card">
         <div class="task-card-title">
           <span>🎁</span>
           <span>پاداش ورود روزانه (Streak)</span>
         </div>
         <div class="task-card-desc">
-          هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. اگر یک روز غیبت کنید، شمارنده صفر می‌شود!
+          هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. در صورت ۱ روز غیبت، شمارنده صفر می‌شود!
         </div>
-
-        <!-- نوار وضعیت روزهای متوالی -->
         <div class="streak-status-bar">
           <div style="text-align:start;">
             <div style="font-size:10px; color:var(--text-muted);">زنجیره روزهای متوالی شما:</div>
@@ -452,35 +484,61 @@
           </div>
           <div style="font-size:24px;">🔥</div>
         </div>
-
-        <!-- شبکه ۷ روز با تیک‌های سبز -->
         <div class="streak-grid" id="streak-days-container"></div>
-
-        <!-- دکمه مستقیم دریافت یا قفل ۲۴ ساعته -->
         <button class="btn-streak-claim" id="btn-streak-claim" onclick="claimDailyReward()">
           <span>دریافت پاداش امروز ✨</span>
         </button>
-
-        <!-- هشدار غیبت -->
         <div class="warning-box">
           ⚠️ توجه: بین هر پاداش باید ۲۴ ساعت بگذرد. در صورتی که بیش از ۴۸ ساعت فاصله بیفتد، تمام روزهای متوالی شما صفر می‌شود.
         </div>
       </div>
 
-      <!-- ۲. زیر‌بخش گردونه -->
+      <!-- ۲. زیر‌بخش گردونه شانس طلایی (کاملاً زنده و عملیاتی داخل همین کارت) -->
       <div id="task-view-wheel" class="task-main-card" style="display:none;">
         <div class="task-card-title">
           <span>🎡</span>
           <span>گردونه شانس طلایی</span>
         </div>
         <div class="task-card-desc">
-          شانس خود را امتحان کنید و جوایز نقدی تا ۵۰ سکه برنده شوید.
+          هر ۲۴ ساعت یک شانس چرخش رایگان؛ جوایز نقدی تا ۵۰ سکه برنده شوید.
         </div>
-        <div class="module-soon-box">
-          <div class="module-soon-icon">🎡</div>
-          <div class="module-soon-title">گردونه شانس ۶ قطاعی</div>
-          <div class="module-soon-sub">شانس ۲۵٪ برای ۱۰ سکه و ۱۵٪ برای ۵۰ سکه</div>
-          <button class="btn-enter-index" onclick="window.location.href='games/tap/index.html'">ورود به گردونه شانس ➔</button>
+
+        <div class="wheel-stage">
+          <div class="wheel-pointer"></div>
+          <div class="canvas-wrap">
+            <canvas id="wheelCanvas" width="250" height="250"></canvas>
+            <div class="wheel-center-badge">S</div>
+          </div>
+        </div>
+
+        <button class="btn-spin" id="btn-spin-action" onclick="spinWheel()">
+          <span>🎰 چرخاندن گردونه</span>
+        </button>
+        <div id="wheel-timer-status" style="font-size:11.5px; color:#ff9f0a; font-weight:bold; margin-bottom:12px;">آماده چرخش رایگان!</div>
+
+        <div class="prizes-legend">
+          <div class="legend-item" style="color:#ff7b72;">💨 پوچ</div>
+          <div class="legend-item" style="color:var(--gold);">🪙 0.7 سکه</div>
+          <div class="legend-item" style="color:var(--green);">🪙 1 سکه</div>
+          <div class="legend-item" style="color:var(--cyan-neon);">🪙 1.7 سکه</div>
+          <div class="legend-item" style="color:#fce8b3;">🪙 10 سکه (۲۵٪)</div>
+          <div class="legend-item" style="color:#ffd700;">👑 50 سکه (۱۵٪)</div>
+        </div>
+
+        <!-- جدول تاریخچه جوایز ۱۰ چرخش اخیر -->
+        <div style="background:var(--card-inner); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:10px; text-align:start;">
+          <div style="font-size:11.5px; font-weight:bold; color:var(--gold); margin-bottom:6px;">📜 تاریخچه جوایز اخیر شما (۱۰ چرخش گذشته)</div>
+          <table style="width:100%; border-collapse:collapse; font-size:11px; text-align:center;">
+            <thead>
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.1); color:var(--text-muted);">
+                <th style="padding:4px;">تاریخ و ساعت</th>
+                <th style="padding:4px;">جایزه دریافتی</th>
+              </tr>
+            </thead>
+            <tbody id="history-body">
+              <tr><td colspan="2" style="color:var(--text-muted); padding:8px;">هنوز چرخشی ثبت نشده است</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -519,7 +577,7 @@
       </div>
     </div>
 
-    <!-- نوار پایین استاندارد به صورت تگ button جهت تاچ بدون باگ -->
+    <!-- نوار پایین -->
     <nav class="bottom-nav">
       <button class="nav-btn-box active" id="tab-btn-home" onclick="switchNavTab('home')">
         <span class="tab-icon">🏠</span>
@@ -674,10 +732,16 @@
       });
       if (tabName === 'streak') {
         renderStreakUI();
+      } else if (tabName === 'wheel') {
+        setTimeout(() => {
+          drawWheel();
+          checkSpinStatus();
+          renderWheelHistory();
+        }, 50);
       }
     }
 
-    /* ================= پاداش روزانه زنده و مستقیم ================= */
+    /* ================= ۱. پاداش روزانه زنده ================= */
     const streakRewards = [
       { day: 1, reward: 1, icon: '🪙' },
       { day: 2, reward: 3, icon: '🎁' },
@@ -791,6 +855,159 @@
       showToast(`پاداش ${reward} سکه دریافت شد! 🎉`);
     }
 
+    /* ================= ۲. گردونه شانس طلایی زنده ================= */
+    const WHEEL_SECTORS = [
+      { label: 'پوچ 💨', val: 0, color: '#2d1519', text: '#ff7b72' },
+      { label: '0.7 🪙', val: 0.7, color: '#4a1e75', text: '#ffffff' },
+      { label: '1 🪙', val: 1.0, color: '#1a233a', text: '#00f5d4' },
+      { label: '1.7 🪙', val: 1.7, color: '#0d3d38', text: '#ffffff' },
+      { label: '10 🪙', val: 10.0, color: '#664506', text: '#fce8b3' },
+      { label: '50 👑', val: 50.0, color: '#d4af37', text: '#111111' }
+    ];
+
+    function getWheelCycleKey() {
+      const now = new Date();
+      const shifted = new Date(now.getTime() - (12 * 60 * 60 * 1000));
+      return `simab_wheel_${shifted.getUTCFullYear()}_${shifted.getUTCMonth()+1}_${shifted.getUTCDate()}_${uid}`;
+    }
+
+    function checkSpinStatus() {
+      const btn = document.getElementById('btn-spin-action');
+      const timerStatus = document.getElementById('wheel-timer-status');
+      if (!btn) return;
+      const cycleKey = getWheelCycleKey();
+      const hasSpun = (localStorage.getItem(cycleKey) === 'true');
+      if (hasSpun) {
+        btn.disabled = true;
+        btn.innerHTML = `<span>فردا امتحان کنین ⏳</span>`;
+        if (timerStatus) timerStatus.innerText = 'چرخش امروز استفاده شده (فردا بازگردید)';
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = `<span>🎰 چرخاندن گردونه</span>`;
+        if (timerStatus) timerStatus.innerText = 'آماده چرخش رایگان!';
+      }
+    }
+
+    function drawWheel() {
+      const canvas = document.getElementById('wheelCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const num = WHEEL_SECTORS.length;
+      const arc = (2 * Math.PI) / num;
+      const radius = canvas.width / 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      WHEEL_SECTORS.forEach((sec, i) => {
+        const angle = i * arc;
+        ctx.beginPath();
+        ctx.fillStyle = sec.color;
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius, angle, angle + arc);
+        ctx.lineTo(radius, radius);
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.save();
+        ctx.fillStyle = sec.text;
+        ctx.font = 'bold 12px sans-serif';
+        ctx.translate(radius, radius);
+        ctx.rotate(angle + arc / 2);
+        ctx.textAlign = 'right';
+        ctx.fillText(sec.label, radius - 16, 4);
+        ctx.restore();
+      });
+    }
+
+    let wheelRotation = 0;
+    let isSpinningWheel = false;
+
+    function pickWheelIndex() {
+      const rand = Math.random() * 100;
+      if (rand < 20) return 0;       // پوچ: ۲۰٪
+      else if (rand < 35) return 1;  // 0.7: ۱۵٪
+      else if (rand < 50) return 2;  // 1.0: ۱۵٪
+      else if (rand < 60) return 3;  // 1.7: ۱۰٪
+      else if (rand < 85) return 4;  // 10: ۲۵٪
+      else return 5;                 // 50: ۱۵٪
+    }
+
+    function spinWheel() {
+      const cycleKey = getWheelCycleKey();
+      if (isSpinningWheel || localStorage.getItem(cycleKey) === 'true') return;
+      isSpinningWheel = true;
+
+      const btn = document.getElementById('btn-spin-action');
+      if (btn) btn.disabled = true;
+      triggerHaptic('heavy');
+
+      const winningIndex = pickWheelIndex();
+      const num = WHEEL_SECTORS.length;
+      const sectorDeg = 360 / num;
+      const targetCenter = (winningIndex * sectorDeg) + (sectorDeg / 2);
+      const extraSpins = 5 * 360;
+
+      const stopAngle = extraSpins + ((270 - targetCenter - (wheelRotation % 360) + 720) % 360);
+      wheelRotation += stopAngle;
+
+      const canvas = document.getElementById('wheelCanvas');
+      if (canvas) canvas.style.transform = `rotate(${wheelRotation}deg)`;
+
+      localStorage.setItem(cycleKey, 'true');
+
+      setTimeout(() => {
+        isSpinningWheel = false;
+        const won = WHEEL_SECTORS[winningIndex];
+
+        if (won.val > 0) {
+          balance = parseFloat((balance + won.val).toFixed(2));
+          localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+          localStorage.setItem('user_balance', balance.toString());
+          renderCoins();
+          triggerHaptic('success');
+          showToast(`تبریک! برنده ${won.val} سکه شدید 🎉`);
+          saveWheelHistory(`+${won.val} سکه 🪙`);
+        } else {
+          triggerHaptic('warning');
+          showToast('پوچ شد! متاسفانه این بار شانسی نداشتید.');
+          saveWheelHistory('پوچ 💨');
+        }
+
+        checkSpinStatus();
+        renderWheelHistory();
+      }, 4600);
+    }
+
+    function saveWheelHistory(rewardText) {
+      try {
+        let hist = JSON.parse(localStorage.getItem('wheel_history_' + uid) || '[]');
+        const dateStr = new Date().toLocaleDateString('fa-IR') + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        hist.unshift({ date: dateStr, reward: rewardText });
+        if (hist.length > 10) hist.pop();
+        localStorage.setItem('wheel_history_' + uid, JSON.stringify(hist));
+      } catch(e) {}
+    }
+
+    function renderWheelHistory() {
+      const tbody = document.getElementById('history-body');
+      if (!tbody) return;
+      try {
+        const hist = JSON.parse(localStorage.getItem('wheel_history_' + uid) || '[]');
+        if (hist.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="2" style="color:var(--text-muted); padding:8px;">هنوز چرخشی ثبت نشده است</td></tr>';
+          return;
+        }
+        tbody.innerHTML = hist.map(h => `
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+            <td style="padding:6px; color:var(--text-muted);">${h.date}</td>
+            <td style="padding:6px; color:var(--gold); font-weight:bold;">${h.reward}</td>
+          </tr>
+        `).join('');
+      } catch(e) {}
+    }
+
+    /* لیست بازی‌ها */
     const gamesDatabase = [
       { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, title: 'پوکر تگزاس', sub: 'هولدم ۶ نفره آنلاین' },
       { id: 2, icon: '🎰', url: 'games/slot/index.html', active: true, title: 'رول شانس', sub: 'ماشین اسلات ۳ رول' },
@@ -801,7 +1018,7 @@
       { id: 7, icon: '🐍', url: '#', active: false, title: 'مارپله مسابقه‌ای', sub: 'رقابت شانس و تاس' },
       { id: 8, icon: '🎲', url: '#', active: false, title: 'تاس طلایی', sub: 'پرتاب شانس بزرگ' },
       { id: 9, icon: '💣', url: '#', active: false, title: 'میدان مین', sub: 'استراتژی خنثی‌سازی' },
-      { id: 10, icon: '🎡', url: 'games/tap/index.html', active: true, title: 'گردونه شانس', sub: 'اسپین و قرعه‌کشی روزانه' },
+      { id: 10, icon: '🎡', url: '#', active: true, title: 'گردونه شانس', sub: 'اسپین و قرعه‌کشی روزانه', isWheel: true },
       { id: 11, icon: '🀄', url: '#', active: false, title: 'دومینو حرفه‌ای', sub: 'دوئل سرعتی کاشی‌ها' },
       { id: 12, icon: '✂️', url: '#', active: false, title: 'سنگ کاغذ قیچی', sub: 'دوئل واکنشی سریع' },
       { id: 13, icon: '⚽', url: '#', active: false, title: 'شوت پنالتی', sub: 'چالش گلزنی آنلاین' },
@@ -815,9 +1032,14 @@
       if (!box) return;
       box.innerHTML = '';
       gamesDatabase.forEach(g => {
-        const item = document.createElement(g.active ? 'a' : 'div');
+        const item = document.createElement(g.active && !g.isWheel ? 'a' : 'div');
         item.className = 'game-card';
-        if (g.active) {
+        if (g.isWheel) {
+          item.onclick = () => {
+            switchNavTab('tasks');
+            switchTaskTab('wheel');
+          };
+        } else if (g.active) {
           item.href = g.url;
         } else {
           item.onclick = () => alertComingSoon(g.title);
