@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SIMAB | پاداش ورود روزانه</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0c0c14;
+      --card-bg: rgba(20, 20, 32, 0.94);
+      --card-inner: rgba(28, 28, 44, 0.88);
+      --gold: #f5cf62;
+      --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
+      --cyan: #00f2fe;
+      --purple: #9d4edd;
+      --green: #00f5d4;
+      --text: #ffffff;
+      --text-muted: #9595a8;
+      --border: rgba(212, 175, 55, 0.22);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 10%, #1e1338 0%, #0c0c14 70%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+    .app-wrapper {
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      padding: 10px 10px 40px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (min-width: 500px) {
+      .app-wrapper {
+        max-width: 440px;
+        box-shadow: 0 0 35px rgba(0,0,0,0.9);
+        border-left: 1px solid rgba(255,255,255,0.05);
+        border-right: 1px solid rgba(255,255,255,0.05);
+      }
+    }
+    /* هدر */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .btn-back {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .coin-badge {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .coin-badge-s {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      color: #221400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    /* کارت معرفی پاداش */
+    .hero-card {
+      background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+    .hero-icon {
+      font-size: 44px;
+      margin-bottom: 6px;
+      filter: drop-shadow(0 0 12px rgba(212, 175, 55, 0.4));
+    }
+    .hero-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .hero-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* وضعیت استریک کاربر */
+    .streak-status-bar {
+      background: var(--card-inner);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .streak-text-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .streak-lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .streak-val {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--cyan);
+    }
+    .streak-fire-badge {
+      font-size: 26px;
+    }
+
+    /* شبکه ۷ روز پاداش */
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .day-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 8px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      position: relative;
+      transition: 0.2s;
+    }
+    .day-card.claimed {
+      background: rgba(0, 245, 212, 0.06);
+      border-color: rgba(0, 245, 212, 0.4);
+    }
+    .day-card.current {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold);
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+      transform: scale(1.02);
+    }
+    .day-card.day-7 {
+      grid-column: span 3;
+      background: linear-gradient(135deg, rgba(157, 78, 221, 0.2) 0%, rgba(212, 175, 55, 0.2) 100%);
+      border-color: var(--purple);
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 12px 18px;
+    }
+    .day-num {
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--text-muted);
+    }
+    .day-icon {
+      font-size: 24px;
+    }
+    .day-reward {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--gold);
+    }
+    .day-check-badge {
+      font-size: 10px;
+      font-weight: bold;
+      color: var(--green);
+      background: rgba(0, 245, 212, 0.15);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    /* دکمه اصلی دریافت */
+    .claim-action-box {
+      margin-top: 6px;
+    }
+    .btn-main-claim {
+      width: 100%;
+      background: var(--gold-gradient);
+      color: #171000;
+      border: none;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 14.5px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+      transition: 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-main-claim:active {
+      transform: scale(0.97);
+    }
+    .btn-main-claim:disabled {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      cursor: not-allowed;
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* هشدار از دست دادن استریک */
+    .warning-box {
+      background: rgba(255, 59, 48, 0.08);
+      border: 1px solid rgba(255, 59, 48, 0.3);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 11px;
+      color: #ff9f97;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .toast-msg {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient);
+      color: #1a1200;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 12.5px;
+      font-weight: 900;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      z-index: 100001;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+    .toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <div class="toast-msg" id="toast-msg">انجام شد!</div>
+
+  <div class="app-wrapper">
+    <!-- هدر -->
+    <header class="top-header">
+      <a href="../../index.html" class="btn-back" id="back-link" title="بازگشت به لابی">➔</a>
+      <div class="header-title">پاداش ورود روزانه (Streak)</div>
+      <div class="coin-badge">
+        <div class="coin-badge-s">S</div>
+        <span id="user-balance">50</span>
+      </div>
+    </header>
+
+    <!-- کارت معرفی -->
+    <div class="hero-card">
+      <div class="hero-icon">🎁</div>
+      <div class="hero-title">پاداش‌های متوالی سیماب</div>
+      <div class="hero-desc">
+        هر روز سر بزنید تا جوایز بزرگ‌تر شوند! اگر حتی ۱ روز غیبت کنید، روز شمار صفر شده و از روز اول شروع خواهد شد.
+      </div>
+    </div>
+
+    <!-- وضعیت فعلی کاربر -->
+    <div class="streak-status-bar">
+      <div class="streak-text-info">
+        <span class="streak-lbl">زنجیره روزهای متوالی شما:</span>
+        <span class="streak-val" id="streak-counter-txt">روز ۰ از ۷</span>
+      </div>
+      <div class="streak-fire-badge" id="streak-badge-icon">🔥</div>
+    </div>
+
+    <!-- شبکه کارت‌های ۷ روز -->
+    <div class="days-grid" id="days-container"></div>
+
+    <!-- دکمه دریافت پاداش -->
+    <div class="claim-action-box">
+      <button class="btn-main-claim" id="btn-claim-today" onclick="claimDailyReward()">
+        <span>دریافت پاداش امروز ✨</span>
+      </button>
+    </div>
+
+    <!-- هشدار جریمه غیبت -->
+    <div class="warning-box">
+      ⚠️ توجه: بین هر پاداش باید ۲۴ ساعت بگذرد. در صورتی که بیش از ۴۸ ساعت فاصله بیفتد، تمام روزهای متوالی شما صفر می‌شود.
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+      }
+    } catch(e) {}
+
+    // تنظیم خودکار لینک بازگشت (در صورت قرار گرفتن در ریشه یا پوشه tasks)
+    try {
+      if (location.pathname.includes('/tasks/')) {
+        document.getElementById('back-link').href = '../../index.html';
+      } else {
+        document.getElementById('back-link').href = '../index.html';
+      }
+    } catch(e) {}
+
+    let uid = "user_guest";
+    try {
+      if (tg?.initDataUnsafe?.user?.id) {
+        uid = tg.initDataUnsafe.user.id.toString();
+      }
+    } catch(e) {}
+
+    // همگام‌سازی سکه با لابی مادر
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    let balance = parseInt(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50', 10);
+    function updateBalanceDisplay() {
+      document.getElementById('user-balance').innerText = balance.toLocaleString();
+    }
+    updateBalanceDisplay();
+
+    // مقادیر دقیق پاداش برای ۷ روز طبق درخواست شما
+    const streakRewards = [
+      { day: 1, reward: 1, icon: '🪙' },
+      { day: 2, reward: 3, icon: '🎁' },
+      { day: 3, reward: 7, icon: '💎' },
+      { day: 4, reward: 15, icon: '⚡' },
+      { day: 5, reward: 29, icon: '🔥' },
+      { day: 6, reward: 41, icon: '🌟' },
+      { day: 7, reward: 69, icon: '👑' }
+    ];
+
+    const STORAGE_KEY_STREAK = 'simab_streak_day_' + uid;
+    const STORAGE_KEY_LAST_DATE = 'simab_streak_last_date_' + uid;
+
+    function getTodayString() {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    }
+
+    function getDaysDifference(dateStr1, dateStr2) {
+      const d1 = new Date(dateStr1);
+      const d2 = new Date(dateStr2);
+      const diffTime = d2.getTime() - d1.getTime();
+      return Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    }
+
+    let currentDay = parseInt(localStorage.getItem(STORAGE_KEY_STREAK) || '0', 10);
+    let lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
+    const today = getTodayString();
+
+    let isClaimableToday = false;
+    let isStreakBroken = false;
+
+    // ارزیابی وضعیت استریک
+    if (!lastDate) {
+      // اولین بار ورود
+      isClaimableToday = true;
+      currentDay = 0;
+    } else {
+      const diff = getDaysDifference(lastDate, today);
+      if (diff === 0) {
+        // امروز قبلاً پاداش گرفته است
+        isClaimableToday = false;
+      } else if (diff === 1) {
+        // دقیقاً روز بعد آمده است (استریک حفظ شده)
+        isClaimableToday = true;
+      } else {
+        // بیش از ۱ روز فاصله افتاده (غیبت داشته و جریمه می‌شود)
+        isStreakBroken = true;
+        currentDay = 0;
+        localStorage.setItem(STORAGE_KEY_STREAK, '0');
+        isClaimableToday = true;
+      }
+    }
+
+    function showToast(text) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = text;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    function renderStreakUI() {
+      document.getElementById('streak-counter-txt').innerText = `روز ${currentDay} از ۷`;
+      const container = document.getElementById('days-container');
+      container.innerHTML = '';
+
+      const targetClaimDay = isClaimableToday ? ((currentDay % 7) + 1) : null;
+
+      streakRewards.forEach(item => {
+        const card = document.createElement('div');
+        const isDay7 = item.day === 7;
+        card.className = `day-card ${isDay7 ? 'day-7' : ''}`;
+
+        const isClaimed = item.day <= currentDay;
+        const isCurrentTarget = item.day === targetClaimDay;
+
+        if (isClaimed) card.classList.add('claimed');
+        if (isCurrentTarget) card.classList.add('current');
+
+        if (isDay7) {
+          card.innerHTML = `
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span class="day-icon">${item.icon}</span>
+              <div style="text-align:start;">
+                <div class="day-num" style="color:var(--gold);">روز ۷ (پاداش ویژه پادشاهی)</div>
+                <div class="day-reward">+${item.reward} سکه طلایی</div>
+              </div>
+            </div>
+            <div>
+              ${isClaimed ? '<span class="day-check-badge">دریافت شد ✓</span>' : (isCurrentTarget ? '<span class="day-check-badge" style="color:var(--gold); background:rgba(212,175,55,0.2);">آماده دریافت ✨</span>' : '🔒')}
+            </div>
+          `;
+        } else {
+          card.innerHTML = `
+            <div class="day-num">روز ${item.day}</div>
+            <div class="day-icon">${item.icon}</div>
+            <div class="day-reward">+${item.reward}</div>
+            ${isClaimed ? '<span class="day-check-badge">انجام شد ✓</span>' : (isCurrentTarget ? '<span class="day-check-badge" style="color:var(--gold); background:rgba(212,175,55,0.2);">امروز</span>' : '')}
+          `;
+        }
+        container.appendChild(card);
+      });
+
+      const btn = document.getElementById('btn-claim-today');
+      if (isClaimableToday) {
+        const nextReward = streakRewards[(currentDay % 7)].reward;
+        btn.disabled = false;
+        btn.innerHTML = `<span>دریافت پاداش امروز ( 🪙 +${nextReward} ) ✨</span>`;
+      } else {
+        btn.disabled = true;
+        btn.innerHTML = `<span>فردا برای پاداش بعدی سر بزنید ⏳</span>`;
+      }
+    }
+
+    function claimDailyReward() {
+      if (!isClaimableToday) return;
+
+      const nextDay = (currentDay % 7) + 1;
+      const reward = streakRewards[nextDay - 1].reward;
+
+      currentDay = nextDay;
+      balance += reward;
+
+      // ذخیره سازی دائمی
+      localStorage.setItem(STORAGE_KEY_STREAK, currentDay.toString());
+      localStorage.setItem(STORAGE_KEY_LAST_DATE, today);
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+
+      isClaimableToday = false;
+
+      updateBalanceDisplay();
+      renderStreakUI();
+
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      showToast(`پاداش ${reward} سکه برای روز ${currentDay} با موفقیت دریافت شد! 🎉`);
+    }
+
+    if (isStreakBroken) {
+      showToast('به دلیل غیبت، روزشمار استریک شما از نو آغاز شد.');
+    }
+
+    renderStreakUI();
+  </script>
+</body>
+</html>
