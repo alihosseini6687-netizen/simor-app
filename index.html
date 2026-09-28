@@ -365,7 +365,7 @@
     }
     .btn-streak-claim:active { transform: scale(0.97); }
 
-    /* ================= استایل‌های گردونه شانس طلایی ================= */
+    /* ================= طراحی اختصاصی گردونه زنده داخل کارت ================= */
     .wheel-stage {
       position: relative;
       width: 270px;
@@ -462,170 +462,6 @@
       text-align: center;
       font-size: 11px;
       font-weight: bold;
-    }
-
-    /* ================= استایل‌های ماینر ابری زنده ================= */
-    .active-rig-card {
-      background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 16px 14px;
-      text-align: center;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
-      margin-bottom: 14px;
-    }
-    .rig-tier-badge {
-      display: inline-block;
-      background: rgba(212, 175, 55, 0.15);
-      border: 1px solid var(--gold);
-      color: var(--gold);
-      font-size: 11px;
-      font-weight: 900;
-      padding: 3px 12px;
-      border-radius: 20px;
-      margin-bottom: 10px;
-    }
-    .rig-gear-icon {
-      font-size: 42px;
-      margin-bottom: 4px;
-      display: inline-block;
-      animation: rotateRig 8s linear infinite;
-    }
-    .rig-gear-icon.paused { animation-play-state: paused; opacity: 0.5; }
-    @keyframes rotateRig { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    .rig-live-val {
-      font-size: 32px;
-      font-weight: 900;
-      color: #fff;
-      margin-bottom: 2px;
-      letter-spacing: 0.5px;
-    }
-    .rig-rate-lbl {
-      font-size: 11px;
-      color: var(--cyan-neon);
-      margin-bottom: 14px;
-    }
-    .progress-box {
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 12px;
-      padding: 10px;
-      border: 1px solid rgba(255,255,255,0.06);
-      margin-bottom: 10px;
-    }
-    .progress-row-info {
-      display: flex;
-      justify-content: space-between;
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
-    .bar-bg {
-      width: 100%;
-      height: 10px;
-      background: #1e1e2c;
-      border-radius: 6px;
-      overflow: hidden;
-      margin-bottom: 6px;
-    }
-    .bar-fill-daily {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--cyan-neon), var(--green));
-      border-radius: 6px;
-      transition: width 0.3s;
-    }
-    .bar-fill-tank {
-      height: 100%;
-      width: 100%;
-      background: var(--gold-gradient);
-      border-radius: 6px;
-      transition: width 0.3s;
-    }
-    .btn-claim {
-      width: 100%;
-      background: var(--gold-gradient);
-      color: #171000;
-      border: none;
-      padding: 13px;
-      border-radius: 14px;
-      font-size: 14px;
-      font-weight: 900;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
-      transition: 0.15s;
-    }
-    .btn-claim:active { transform: scale(0.97); }
-    .btn-claim:disabled {
-      background: rgba(255, 255, 255, 0.08) !important;
-      color: var(--text-muted) !important;
-      cursor: not-allowed;
-      box-shadow: none !important;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    .section-title {
-      font-size: 14px;
-      font-weight: 900;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 10px;
-      margin-bottom: 8px;
-    }
-    .shop-list {
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-    }
-    .shop-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 12px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: 0.15s;
-    }
-    .shop-card.active-owned {
-      border-color: var(--green);
-      background: rgba(0, 245, 212, 0.06);
-    }
-    .shop-info {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      text-align: start;
-    }
-    .shop-tier-name {
-      font-size: 13.5px;
-      font-weight: 900;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .shop-specs {
-      font-size: 10.5px;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-    .btn-buy {
-      background: var(--gold-gradient);
-      color: #171000;
-      border: none;
-      padding: 9px 14px;
-      border-radius: 10px;
-      font-size: 11.5px;
-      font-weight: 800;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .btn-buy.active-badge {
-      background: rgba(0, 245, 212, 0.15);
-      border: 1px solid var(--green);
-      color: var(--green);
-      cursor: default;
     }
 
     /* ماینر و ماموریت‌ها */
@@ -857,7 +693,7 @@
           <span>پاداش ورود روزانه (Streak)</span>
         </div>
         <div class="task-card-desc">
-          هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. اگر یک روز غیبت کنید، شمارنده از اول شروع می‌شود!
+          هر روز به سیماب سر بزنید و پاداش‌های افزایشی دریافت کنید. در صورت ۱ روز غیبت، شمارنده از اول شروع می‌شود!
         </div>
         <div class="streak-grid">
           <div class="streak-box ready">
@@ -901,7 +737,7 @@
         </button>
       </div>
 
-      <!-- ۲. زیر‌بخش گردونه شانس طلایی (کاملاً زنده داخل کارت) -->
+      <!-- ۲. زیر‌بخش گردونه شانس طلایی (کاملاً زنده و عملیاتی داخل کارت) -->
       <div id="task-view-wheel" class="task-main-card" style="display:none;">
         <div class="task-card-title">
           <span>🎡</span>
@@ -911,6 +747,7 @@
           گردونه را بچرخانید و جوایز نقدی تا ۵۰ سکه برنده شوید.
         </div>
 
+        <!-- صحنه چرخ گردونه و عقربه -->
         <div class="wheel-stage">
           <div class="wheel-pointer"></div>
           <div class="canvas-wrap">
@@ -919,21 +756,23 @@
           </div>
         </div>
 
+        <!-- دکمه چرخش -->
         <button class="btn-spin" id="btn-spin-action" onclick="spinWheel()">
           <span>چرخش گردونه (SPIN) 🎲</span>
         </button>
 
+        <!-- لیست ۶ قطاع جوایز -->
         <div class="prizes-legend">
           <div class="legend-item" style="color:#ff7b72;">💨 پوچ</div>
           <div class="legend-item" style="color:var(--gold);">🪙 0.7 سکه</div>
           <div class="legend-item" style="color:var(--green);">🪙 1 سکه</div>
-          <div class="legend-item" style="color:var(--cyan-neon);">🪙 1.7 سکه</div>
+          <div class="legend-item" style="color:var(--cyan);">🪙 1.7 سکه</div>
           <div class="legend-item" style="color:#fce8b3;">🪙 10 سکه (۲۵٪)</div>
           <div class="legend-item" style="color:#ffd700;">👑 50 سکه (۱۵٪)</div>
         </div>
       </div>
 
-      <!-- ۳. زیر‌بخش ماینر ابری توکن (کاملاً زنده، تعاملی و عملیاتی داخل کارت) -->
+      <!-- ۳. زیر‌بخش ماینر -->
       <div id="task-view-miner" class="task-main-card" style="display:none;">
         <div class="task-card-title">
           <span>⚡</span>
@@ -942,51 +781,12 @@
         <div class="task-card-desc">
           استخراج ابری اتوماتیک توکن حتی در حالت آفلاین؛ هر زمان پر شد آن را برداشت کنید.
         </div>
-
-        <!-- کارت زنده ماینر -->
-        <div class="active-rig-card" id="rig-card">
-          <div class="rig-tier-badge" id="rig-badge">سطح ۱: ماینر مقدماتی</div>
-          <div><span class="rig-gear-icon" id="rig-gear">⚙️</span></div>
-          <div class="rig-live-val" id="rig-mined-display">0.00 S</div>
-          <div class="rig-rate-lbl" id="rig-rate-desc">تولید: ۳۰ سکه در ۲۴ ساعت</div>
-
-          <!-- نوار پیشرفت ۲۴ ساعته امروز -->
-          <div class="progress-box">
-            <div class="progress-row-info">
-              <span>دوره ۲۴ ساعته امروز:</span>
-              <span id="cycle-timer-txt">در حال بارگذاری...</span>
-            </div>
-            <div class="bar-bg">
-              <div class="bar-fill-daily" id="daily-bar"></div>
-            </div>
-            <div class="progress-row-info" style="margin-bottom:0;">
-              <span>پیشرفت استخراج امروز:</span>
-              <span id="cycle-mined-txt">۰ / ۳۰ سکه</span>
-            </div>
-          </div>
-
-          <!-- نوار مخزن کل ماینر -->
-          <div class="progress-box" style="margin-bottom: 14px;">
-            <div class="progress-row-info">
-              <span>باقی‌مانده ظرفیت مخزن:</span>
-              <span id="tank-val-txt">۱۲۰ / ۱۲۰ S</span>
-            </div>
-            <div class="bar-bg">
-              <div class="bar-fill-tank" id="tank-bar"></div>
-            </div>
-          </div>
-
-          <button class="btn-claim" id="btn-claim-action" onclick="handleMinerAction()">
-            <span>برداشت سکه (Claim) ✨</span>
-          </button>
+        <div class="module-soon-box">
+          <div class="module-soon-icon">⚡</div>
+          <div class="module-soon-title">ماینر ابری توکن سیماب</div>
+          <div class="module-soon-sub">این بخش در ایندکس اختصاصی در حال راه‌اندازی است</div>
+          <button class="btn-enter-index" onclick="window.location.href='games/horoscope/index.html'">ورود به دستگاه ماینر ابری ➔</button>
         </div>
-
-        <!-- فروشگاه و ارتقای سطوح ماینر -->
-        <div class="section-title">
-          <span>⚡</span>
-          <span>ارتقا و مشخصات سطوح ماینر</span>
-        </div>
-        <div class="shop-list" id="shop-container"></div>
       </div>
 
       <!-- ۴. زیر‌بخش ماموریت‌ها -->
@@ -1072,12 +872,12 @@
     </div>
   </div>
 
-  <!-- مودال پیام اختصاصی -->
-  <div class="modal-overlay" id="modal-info">
+  <!-- مودال برنده شدن گردونه -->
+  <div class="modal-overlay" id="modal-wheel-result">
     <div class="modal-box">
-      <div style="font-size:44px; margin-bottom:8px;" id="info-res-icon">🎉</div>
-      <div class="modal-title" id="info-res-title">نتیجه</div>
-      <div class="modal-content" id="info-res-msg" style="text-align:center;"></div>
+      <div style="font-size:48px; margin-bottom:8px;" id="wheel-res-icon">🎉</div>
+      <div class="modal-title" id="wheel-res-title">نتیجه گردونه</div>
+      <div class="modal-content" id="wheel-res-msg" style="text-align:center;"></div>
       <button class="btn-modal-close" onclick="closeModals()">متوجه شدم</button>
     </div>
   </div>
@@ -1205,13 +1005,6 @@
       }).catch(() => { alertComingSoon(name); });
     }
 
-    function showInfoModal(icon, title, msg) {
-      document.getElementById('info-res-icon').innerText = icon;
-      document.getElementById('info-res-title').innerText = title;
-      document.getElementById('info-res-msg').innerHTML = msg;
-      document.getElementById('modal-info').style.display = 'flex';
-    }
-
     /* سوییچ ۴ سربرگ تسک‌ها */
     function switchTaskTab(tabName) {
       triggerHaptic('light');
@@ -1220,13 +1013,14 @@
         document.getElementById('btn-sub-' + t).classList.toggle('active', t === tabName);
       });
       if (tabName === 'wheel') {
-        setTimeout(() => { drawWheel(); checkSpinStatus(); }, 50);
-      } else if (tabName === 'miner') {
-        setTimeout(() => { updateMinerEngine(); renderShop(); }, 50);
+        setTimeout(() => {
+          drawWheel();
+          checkSpinStatus();
+        }, 50);
       }
     }
 
-    /* ================= ۱. منطق گردونه شانس طلایی ================= */
+    /* ================= منطق گردونه شانس طلایی ================= */
     const WHEEL_SECTORS = [
       { label: 'پوچ 💨', val: 0, color: '#2d1519', text: '#ff7b72', icon: '💨' },
       { label: '0.7 🪙', val: 0.7, color: '#4a1e75', text: '#ffffff', icon: '🎁' },
@@ -1238,6 +1032,7 @@
 
     function getWheelCycleKey() {
       const now = new Date();
+      // شیفت ۱۲ ساعته جهت ریست سر ساعت ۱۲:۰۰ ظهر به وقت انگلیس (12:00 UTC)
       const shifted = new Date(now.getTime() - (12 * 60 * 60 * 1000));
       return `simab_wheel_${shifted.getUTCFullYear()}_${shifted.getUTCMonth()+1}_${shifted.getUTCDate()}_${uid}`;
     }
@@ -1293,12 +1088,12 @@
 
     function pickWheelIndex() {
       const rand = Math.random() * 100;
-      if (rand < 20) return 0;
-      else if (rand < 35) return 1;
-      else if (rand < 50) return 2;
-      else if (rand < 60) return 3;
-      else if (rand < 85) return 4;
-      else return 5;
+      if (rand < 20) return 0;       // پوچ: ۲۰٪
+      else if (rand < 35) return 1;  // 0.7: ۱۵٪
+      else if (rand < 50) return 2;  // 1.0: ۱۵٪
+      else if (rand < 60) return 3;  // 1.7: ۱۰٪
+      else if (rand < 85) return 4;  // 10: ۲۵٪
+      else return 5;                 // 50: ۱۵٪
     }
 
     function spinWheel() {
@@ -1321,6 +1116,7 @@
 
       const canvas = document.getElementById('wheelCanvas');
       canvas.style.transform = `rotate(${wheelRotation}deg)`;
+
       localStorage.setItem(cycleKey, 'true');
 
       setTimeout(() => {
@@ -1332,223 +1128,21 @@
           localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
           localStorage.setItem('user_balance', balance.toString());
           renderCoins();
+
           triggerHaptic('success');
-          showInfoModal(won.icon, 'تبریک! برنده شدید 🎉', `شما برنده <b>+${won.val} سکه</b> شدید!`);
+          document.getElementById('wheel-res-icon').innerText = won.icon;
+          document.getElementById('wheel-res-title').innerText = 'تبریک! برنده شدید 🎉';
+          document.getElementById('wheel-res-msg').innerHTML = `شما برنده <b>+${won.val} سکه</b> شدید!`;
         } else {
           triggerHaptic('warning');
-          showInfoModal('💨', 'پوچ شد!', 'متاسفانه این بار شانسی نداشتید. فردا دوباره امتحان کنین!');
+          document.getElementById('wheel-res-icon').innerText = '💨';
+          document.getElementById('wheel-res-title').innerText = 'پوچ شد!';
+          document.getElementById('wheel-res-msg').innerHTML = 'متاسفانه این بار شانسی نداشتید. فردا دوباره امتحان کنین!';
         }
+
+        document.getElementById('modal-wheel-result').style.display = 'flex';
         checkSpinStatus();
       }, 4600);
-    }
-
-    /* ================= ۲. منطق ماینر ابری اختصاصی ================= */
-    const MINER_TIERS = {
-      1: { name: 'ماینر سطح ۱ (مقدماتی)', cost: 50, daily: 30, tank: 120, recharge: 40 },
-      2: { name: 'ماینر سطح ۲ (پیشرفته)', cost: 150, daily: 75, tank: 240, recharge: 120 },
-      3: { name: 'ماینر سطح ۳ (توربو)', cost: 500, daily: 250, tank: 1850, recharge: 400 },
-      4: { name: 'ماینر سطح ۴ (اولترا)', cost: 2000, daily: 500, tank: 8000, recharge: 1800 }
-    };
-
-    const CYCLE_DURATION_MS = 24 * 60 * 60 * 1000;
-    const KEY_TIER = 'simab_miner_tier_' + uid;
-    const KEY_TANK = 'simab_miner_tank_' + uid;
-    const KEY_START = 'simab_miner_cycle_start_' + uid;
-
-    let currentTier = parseInt(localStorage.getItem(KEY_TIER) || '0', 10);
-    let tankRemaining = parseFloat(localStorage.getItem(KEY_TANK) || '0');
-    let cycleStart = parseInt(localStorage.getItem(KEY_START) || '0', 10);
-
-    function updateMinerEngine() {
-      const gear = document.getElementById('rig-gear');
-      const badge = document.getElementById('rig-badge');
-      const minedTxt = document.getElementById('rig-mined-display');
-      const rateDesc = document.getElementById('rig-rate-desc');
-      const timerTxt = document.getElementById('cycle-timer-txt');
-      const cycleMinedTxt = document.getElementById('cycle-mined-txt');
-      const dailyBar = document.getElementById('daily-bar');
-      const tankTxt = document.getElementById('tank-val-txt');
-      const tankBar = document.getElementById('tank-bar');
-      const btn = document.getElementById('btn-claim-action');
-
-      if (!badge) return;
-
-      if (currentTier === 0) {
-        badge.innerText = 'هیچ دستگاهی فعال نیست';
-        gear.classList.add('paused');
-        minedTxt.innerText = 'خاموش';
-        rateDesc.innerText = 'یک ماینر از لیست زیر خریداری کنید';
-        timerTxt.innerText = '--:--:--';
-        cycleMinedTxt.innerText = '۰ S';
-        dailyBar.style.width = '0%';
-        tankTxt.innerText = '۰ / ۰ S';
-        tankBar.style.width = '0%';
-        btn.disabled = true;
-        btn.innerHTML = `<span>ابتدا ماینر بخرید 🔒</span>`;
-        return;
-      }
-
-      const cfg = MINER_TIERS[currentTier];
-      badge.innerText = cfg.name;
-      rateDesc.innerText = `تولید: ${cfg.daily} سکه در ۲۴ ساعت`;
-
-      const tankPct = Math.max(0, Math.min(100, (tankRemaining / cfg.tank) * 100));
-      tankTxt.innerText = `${tankRemaining.toFixed(1)} / ${cfg.tank} S`;
-      tankBar.style.width = `${tankPct}%`;
-
-      if (tankRemaining <= 0) {
-        gear.classList.add('paused');
-        minedTxt.innerText = 'مخزن خالی';
-        timerTxt.innerText = 'پایان چرخه';
-        dailyBar.style.width = '0%';
-        btn.disabled = false;
-        btn.innerHTML = `<span>شارژ مجدد مخزن (${cfg.recharge} 🪙) 🔄</span>`;
-        return;
-      }
-
-      const now = Date.now();
-      const elapsed = Math.max(0, now - cycleStart);
-      const isCycleFinished = elapsed >= CYCLE_DURATION_MS;
-
-      const cyclePct = Math.min(100, (elapsed / CYCLE_DURATION_MS) * 100);
-      dailyBar.style.width = `${cyclePct}%`;
-
-      const cycleMined = Math.min(cfg.daily, Math.min(tankRemaining, (elapsed / CYCLE_DURATION_MS) * cfg.daily));
-      minedTxt.innerText = `${cycleMined.toFixed(2)} S`;
-      cycleMinedTxt.innerText = `${cycleMined.toFixed(1)} / ${cfg.daily} سکه`;
-
-      if (isCycleFinished) {
-        gear.classList.add('paused');
-        timerTxt.innerText = 'تکمیل شد ✅';
-        btn.disabled = false;
-        btn.innerHTML = `<span>برداشت ${cycleMined.toFixed(0)} سکه و شروع روز بعد ✨</span>`;
-      } else {
-        gear.classList.remove('paused');
-        const remainingMs = CYCLE_DURATION_MS - elapsed;
-        const hrs = Math.floor(remainingMs / (1000 * 60 * 60));
-        const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-        const secs = Math.floor((remainingMs % (1000 * 60)) / 1000);
-        timerTxt.innerText = `${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')} باقی‌مانده`;
-        btn.disabled = true;
-        btn.innerHTML = `<span>در حال استخراج... ⏳</span>`;
-      }
-    }
-
-    function handleMinerAction() {
-      if (currentTier === 0) return;
-      const cfg = MINER_TIERS[currentTier];
-
-      if (tankRemaining <= 0) {
-        if (balance < cfg.recharge) {
-          triggerHaptic('error');
-          showInfoModal('⚠️', 'موجودی ناکافی', `برای شارژ مجدد مخزن به <b>${cfg.recharge} سکه</b> نیاز دارید.`);
-          return;
-        }
-        balance -= cfg.recharge;
-        tankRemaining = cfg.tank;
-        cycleStart = Date.now();
-
-        localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-        localStorage.setItem('user_balance', balance.toString());
-        localStorage.setItem(KEY_TANK, tankRemaining.toString());
-        localStorage.setItem(KEY_START, cycleStart.toString());
-
-        renderCoins();
-        updateMinerEngine();
-        renderShop();
-        triggerHaptic('success');
-        showInfoModal('⚡', 'مخزن شارژ شد', `مخزن ماینر با ظرفیت کامل <b>${cfg.tank} سکه</b> مجدداً فعال گردید!`);
-        return;
-      }
-
-      const now = Date.now();
-      const elapsed = Math.max(0, now - cycleStart);
-      if (elapsed < CYCLE_DURATION_MS) return;
-
-      const claimAmount = Math.min(cfg.daily, tankRemaining);
-      balance = parseFloat((balance + claimAmount).toFixed(2));
-      tankRemaining = parseFloat((tankRemaining - claimAmount).toFixed(2));
-      cycleStart = Date.now();
-
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      localStorage.setItem(KEY_TANK, tankRemaining.toString());
-      localStorage.setItem(KEY_START, cycleStart.toString());
-
-      renderCoins();
-      updateMinerEngine();
-      renderShop();
-
-      triggerHaptic('success');
-      showInfoModal('🎉', 'برداشت موفق', `مبلغ <b>+${claimAmount} سکه</b> به حساب شما اضافه شد و استخراج ۲۴ ساعت بعد آغاز شد.`);
-    }
-
-    function buyOrUpgrade(tierNum) {
-      const target = MINER_TIERS[tierNum];
-      if (currentTier === tierNum) return;
-
-      if (balance < target.cost) {
-        triggerHaptic('error');
-        showInfoModal('⚠️', 'موجودی ناکافی', `برای خرید این ماینر به <b>${target.cost} سکه</b> نیاز دارید.`);
-        return;
-      }
-
-      balance -= target.cost;
-      currentTier = tierNum;
-      tankRemaining = target.tank;
-      cycleStart = Date.now();
-
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      localStorage.setItem(KEY_TIER, currentTier.toString());
-      localStorage.setItem(KEY_TANK, tankRemaining.toString());
-      localStorage.setItem(KEY_START, cycleStart.toString());
-
-      renderCoins();
-      updateMinerEngine();
-      renderShop();
-
-      triggerHaptic('success');
-      showInfoModal('🚀', 'ماینر فعال شد!', `شما با موفقیت <b>${target.name}</b> را فعال کردید.<br>استخراج روزانه <b>${target.daily} سکه</b> آغاز شد.`);
-    }
-
-    function renderShop() {
-      const container = document.getElementById('shop-container');
-      if (!container) return;
-      container.innerHTML = '';
-
-     .forEach(t => {
-        const item = MINER_TIERS[t];
-        const card = document.createElement('div');
-        const isCurrent = (currentTier === t);
-        card.className = `shop-card ${isCurrent ? 'active-owned' : ''}`;
-
-        let btnHtml = '';
-        if (isCurrent) {
-          btnHtml = `<span class="btn-buy active-badge">سطح فعال ✓</span>`;
-        } else if (currentTier === 0) {
-          btnHtml = `<button class="btn-buy" onclick="buyOrUpgrade(${t})">خرید (${item.cost} 🪙)</button>`;
-        } else if (t > currentTier) {
-          btnHtml = `<button class="btn-buy" onclick="buyOrUpgrade(${t})">ارتقا (${item.cost} 🪙)</button>`;
-        } else {
-          btnHtml = `<span style="font-size:11px; color:var(--text-muted);">سپری شده</span>`;
-        }
-
-        card.innerHTML = `
-          <div class="shop-info">
-            <div class="shop-tier-name">
-              <span>⚡</span>
-              <span>${item.name}</span>
-            </div>
-            <div class="shop-specs">
-              • استخراج: <b>${item.daily} سکه</b> در روز<br>
-              • ظرفیت کل مخزن: <b>${item.tank} سکه</b> (شارژ: ${item.recharge} 🪙)
-            </div>
-          </div>
-          <div>${btnHtml}</div>
-        `;
-        container.appendChild(card);
-      });
     }
 
     /* لیست بازی‌ها */
@@ -1567,7 +1161,7 @@
       { id: 12, icon: '✂️', url: 'games/rps/index.html', active: false, fa: { title: 'سنگ کاغذ قیچی', sub: 'دوئل واکنشی سریع' } },
       { id: 13, icon: '⚽', url: 'games/penalty/index.html', active: false, fa: { title: 'شوت پنالتی', sub: 'چالش گلزنی آنلاین' } },
       { id: 14, icon: '🧨', url: 'games/bomb/index.html', active: false, fa: { title: 'بمب شانس', sub: 'شمارش معکوس انفجار' } },
-      { id: 15, icon: '⚡', url: '#', active: true, fa: { title: 'ماینر ابری', sub: 'استخراج آنلاین توکن' }, isMiner: true },
+      { id: 15, icon: '⚡', url: 'games/speed/index.html', active: false, fa: { title: 'دوئل تند و تیز', sub: 'تست سرعت و واکنش' } },
       { id: 16, icon: '🏆', url: 'games/jackpot/index.html', active: false, fa: { title: 'جک‌پات هفتگی', sub: 'صندوق جوایز طلایی' } }
     ];
 
@@ -1575,12 +1169,13 @@
       const box = document.getElementById('games-container');
       box.innerHTML = '';
       gamesDatabase.forEach(g => {
-        const item = document.createElement(g.active && !g.isWheel && !g.isMiner ? 'a' : 'div');
+        const item = document.createElement(g.active && !g.isWheel ? 'a' : 'div');
         item.className = 'game-card';
         if (g.isWheel) {
-          item.onclick = () => { switchNavTab('tasks'); switchTaskTab('wheel'); };
-        } else if (g.isMiner) {
-          item.onclick = () => { switchNavTab('tasks'); switchTaskTab('miner'); };
+          item.onclick = () => {
+            switchNavTab('tasks');
+            switchTaskTab('wheel');
+          };
         } else if (g.active) {
           item.href = g.url;
         } else {
@@ -1600,10 +1195,12 @@
       });
     }
 
-    /* سوییچ هوشمند تب‌ها */
+    /* سوییچ هوشمند تب‌ها + ذخیره در حافظه جهت برگشت به سربرگ قبلی */
     function switchNavTab(tab) {
       triggerHaptic('light');
-      try { localStorage.setItem('simab_active_tab', tab); } catch(e) {}
+      try {
+        localStorage.setItem('simab_active_tab', tab);
+      } catch(e) {}
 
       document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
       document.getElementById('tab-home-content').style.display = 'none';
@@ -1630,14 +1227,12 @@
 
     renderGames();
 
+    // بازیابی هوشمند تب فعال قبلی هنگام برگشت به لابی
     window.addEventListener('DOMContentLoaded', () => {
       const savedTab = localStorage.getItem('simab_active_tab') || 'home';
       switchNavTab(savedTab);
       drawWheel();
       checkSpinStatus();
-      updateMinerEngine();
-      renderShop();
-      setInterval(updateMinerEngine, 1000);
     });
   </script>
 </body>
