@@ -3,250 +3,379 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>فال و طالع‌بینی سیمُر</title>
+  <title>SIMAB | ماینر ابری توکن</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #0c0814;
-      --card-bg: #150f24;
-      --card-inner: #1e1533;
-      --gold: #e5c158;
-      --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
-      --purple: #8b3dff;
-      --purple-gradient: linear-gradient(135deg, #7928ca, #ff0080);
+      --bg: #0c0c14;
+      --card-bg: rgba(20, 20, 32, 0.94);
+      --card-inner: rgba(28, 28, 44, 0.88);
+      --gold: #f5cf62;
+      --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
+      --cyan: #00f2fe;
+      --purple: #9d4edd;
+      --green: #00f5d4;
       --text: #ffffff;
-      --text-muted: #9d8eb5;
-      --border: rgba(212, 175, 55, 0.28);
-      --green: #34c759;
+      --text-muted: #9595a8;
+      --border: rgba(212, 175, 55, 0.25);
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
-    body {
-      background: radial-gradient(circle at 50% 10%, #29154a 0%, #0c0814 100%);
-      color: var(--text); min-height: 100vh; padding: 12px; text-align: center; padding-bottom: 30px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
-
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 10%, #1e1338 0%, #0c0c14 70%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+    .app-wrapper {
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      padding: 10px 10px 40px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (min-width: 500px) {
+      .app-wrapper {
+        max-width: 440px;
+        box-shadow: 0 0 35px rgba(0,0,0,0.9);
+        border-left: 1px solid rgba(255,255,255,0.05);
+        border-right: 1px solid rgba(255,255,255,0.05);
+      }
+    }
     /* هدر */
-    .top-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 12px; padding: 8px 12px; margin-bottom: 14px; font-size: 13px;
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     .btn-back {
-      background: #251a36; color: var(--gold); border: 1px solid var(--border);
-      padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .coin-badge {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .coin-badge-s {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      color: #221400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
     }
 
-    /* انتخاب نوع فال */
-    .tabs-type { display: flex; gap: 6px; justify-content: center; margin-bottom: 14px; }
-    .btn-type {
-      flex: 1; padding: 9px 4px; border-radius: 10px; font-size: 11px;
-      font-weight: bold; border: 1px solid var(--border); background: var(--card-bg);
-      color: var(--text-muted); cursor: pointer; transition: transform 0.1s;
+    /* کارت دستگاه فعال */
+    .active-rig-card {
+      background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px 14px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      position: relative;
     }
-    .btn-type.active {
-      background: var(--purple-gradient); border-color: transparent; color: white;
-      box-shadow: 0 0 12px rgba(139,61,255,0.4);
+    .rig-tier-badge {
+      display: inline-block;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .rig-gear-icon {
+      font-size: 42px;
+      margin-bottom: 4px;
+      display: inline-block;
+      animation: rotateRig 8s linear infinite;
+    }
+    .rig-gear-icon.paused { animation-play-state: paused; opacity: 0.5; }
+    @keyframes rotateRig { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .rig-live-val {
+      font-size: 32px;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 2px;
+      letter-spacing: 0.5px;
+    }
+    .rig-rate-lbl {
+      font-size: 11px;
+      color: var(--cyan);
+      margin-bottom: 14px;
     }
 
-    /* شبکه ۱۲ ماه سال */
-    .signs-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;
+    /* نوار پیشرفت ۲۴ ساعته */
+    .progress-box {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 12px;
     }
-    .sign-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 12px; padding: 10px 4px; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      transition: transform 0.1s, border-color 0.2s;
+    .progress-row-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
     }
-    .sign-card:active { transform: scale(0.96); }
-    .sign-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.15); }
-    .sign-symbol { font-size: 24px; margin-bottom: 2px; }
-    .sign-name { font-size: 12px; font-weight: bold; color: var(--gold); }
-    .sign-date { font-size: 9px; color: var(--text-muted); margin-top: 1px; }
-
-    /* کارت نتیجه فال */
-    .result-container {
-      display: none; background: var(--card-bg); border: 1px solid var(--gold);
-      border-radius: 16px; padding: 18px 14px; text-align: right;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8); animation: fadeIn 0.3s ease;
+    .bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #1e1e2c;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 6px;
     }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-    .result-header {
-      display: flex; justify-content: space-between; align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 10px; margin-bottom: 12px;
+    .bar-fill-daily {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      border-radius: 6px;
+      transition: width 0.3s;
     }
-    .result-title { font-size: 16px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 6px; }
-
-    /* نوار درصد شانس */
-    .luck-bar-wrap { margin-bottom: 14px; }
-    .luck-bar-labels { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
-    .luck-bar-bg { width: 100%; height: 8px; background: #222230; border-radius: 4px; overflow: hidden; }
-    .luck-bar-fill { height: 100%; background: var(--gold-gradient); border-radius: 4px; }
-
-    /* ردیف‌های طالع */
-    .fortune-section { margin-bottom: 12px; line-height: 1.6; }
-    .fortune-section h4 { font-size: 13px; color: var(--gold); margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
-    .fortune-section p { font-size: 12px; color: #ffffff; text-align: justify; }
-
-    /* باکث‌های فکت‌های شانس */
-    .luck-facts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
-    .luck-fact-box {
-      background: var(--card-inner); border: 1px solid rgba(212,175,55,0.2);
-      border-radius: 8px; padding: 8px; text-align: center;
+    .bar-fill-tank {
+      height: 100%;
+      width: 100%;
+      background: var(--gold-gradient);
+      border-radius: 6px;
+      transition: width 0.3s;
     }
-    .luck-fact-box span { font-size: 11px; color: var(--text-muted); display: block; margin-bottom: 2px; }
-    .luck-fact-box b { font-size: 14px; color: var(--gold); }
 
-    .btn-action {
-      width: 100%; background: var(--gold-gradient); color: #000;
-      border: none; padding: 12px; border-radius: 10px; font-weight: bold;
-      font-size: 13px; cursor: pointer; margin-top: 6px;
+    /* دکمه کلیم */
+    .btn-claim {
+      width: 100%;
+      background: var(--gold-gradient);
+      color: #171000;
+      border: none;
+      padding: 13px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+      transition: 0.15s;
     }
-    .btn-action.purple { background: var(--purple-gradient); color: white; }
+    .btn-claim:active { transform: scale(0.97); }
+    .btn-claim:disabled {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: var(--text-muted) !important;
+      cursor: not-allowed;
+      box-shadow: none !important;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* کاتالوگ فروشگاه ماینرها */
+    .section-title {
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .shop-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .shop-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: 0.15s;
+    }
+    .shop-card.active-owned {
+      border-color: var(--green);
+      background: rgba(0, 245, 212, 0.06);
+    }
+    .shop-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .shop-tier-name {
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .shop-specs {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .btn-buy {
+      background: var(--gold-gradient);
+      color: #171000;
+      border: none;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-buy.active-badge {
+      background: rgba(0, 245, 212, 0.15);
+      border: 1px solid var(--green);
+      color: var(--green);
+      cursor: default;
+    }
+
+    /* پاپ‌آپ پیام */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; z-index: 100000; padding: 16px;
+    }
+    .modal-box {
+      background: var(--card-bg); border: 2px solid var(--gold);
+      border-radius: 20px; padding: 22px; width: 100%; max-width: 320px; text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+    }
+    .modal-icon { font-size: 44px; margin-bottom: 8px; }
+    .modal-title { font-size: 16px; font-weight: 900; color: var(--gold); margin-bottom: 6px; }
+    .modal-msg { font-size: 12.5px; color: #fff; margin-bottom: 16px; line-height: 1.5; }
+    .btn-modal-close {
+      width: 100%; background: var(--gold-gradient); color: #150f00;
+      border: none; padding: 12px; border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer;
+    }
+
+    .toast-msg {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient); color: #1a1200; padding: 8px 20px; border-radius: 25px;
+      font-size: 12.5px; font-weight: 900; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
+  <div class="toast-msg" id="toast-msg">انجام شد!</div>
 
-  <!-- هدر -->
-  <div class="top-bar">
-    <button class="btn-back" onclick="goBack()">🔙 لابی</button>
-    <div style="font-weight: bold; color: var(--gold);">🔮 فال و انرژی کائنات</div>
-    <div style="color: var(--gold); font-weight: bold;">
-      🪙 <span id="user-bal">1,000</span>
+  <div class="app-wrapper">
+    <!-- هدر -->
+    <header class="top-header">
+      <a href="../../index.html" class="btn-back" id="btn-back-nav" title="بازگشت">➔</a>
+      <div class="header-title">ماینر ابری سیماب</div>
+      <div class="coin-badge">
+        <div class="coin-badge-s">S</div>
+        <span id="user-balance">50</span>
+      </div>
+    </header>
+
+    <!-- کارت وضعیت ماینر فعال -->
+    <div class="active-rig-card" id="rig-card">
+      <div class="rig-tier-badge" id="rig-badge">سطح ۱: ماینر مقدماتی</div>
+      <div>
+        <span class="rig-gear-icon" id="rig-gear">⚙️</span>
+      </div>
+      <div class="rig-live-val" id="rig-mined-display">0.00 S</div>
+      <div class="rig-rate-lbl" id="rig-rate-desc">تولید: ۳۰ سکه در ۲۴ ساعت</div>
+
+      <!-- نوار روزانه ۲۴ ساعته -->
+      <div class="progress-box">
+        <div class="progress-row-info">
+          <span>دوره ۲۴ ساعته امروز:</span>
+          <span id="cycle-timer-txt">در حال بارگذاری...</span>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-fill-daily" id="daily-bar"></div>
+        </div>
+        <div class="progress-row-info" style="margin-bottom:0;">
+          <span>پیشرفت استخراج امروز:</span>
+          <span id="cycle-mined-txt">۰ / ۳۰ سکه</span>
+        </div>
+      </div>
+
+      <!-- نوار مخزن کل -->
+      <div class="progress-box" style="margin-bottom: 14px;">
+        <div class="progress-row-info">
+          <span>باقی‌مانده ظرفیت مخزن:</span>
+          <span id="tank-val-txt">۱۲۰ / ۱۲۰ S</span>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-fill-tank" id="tank-bar"></div>
+        </div>
+      </div>
+
+      <!-- دکمه برداشت یا شارژ -->
+      <button class="btn-claim" id="btn-claim-action" onclick="handleMinerAction()">
+        <span>برداشت سکه (Claim) ✨</span>
+      </button>
     </div>
+
+    <!-- فروشگاه و ارتقای سطوح ماینر -->
+    <div class="section-title">
+      <span>⚡</span>
+      <span>ارتقا و مشخصات سطوح ماینر</span>
+    </div>
+
+    <div class="shop-list" id="shop-container"></div>
   </div>
 
-  <!-- نوع فال -->
-  <div class="tabs-type">
-    <button class="btn-type active" id="btn-t-daily" onclick="selectType('daily', this)">☀️ فال روزانه (رایگان)</button>
-    <button class="btn-type" id="btn-t-weekly" onclick="selectType('weekly', this)">📅 فال هفتگی (۵ سکه)</button>
-    <button class="btn-type" id="btn-t-astro" onclick="selectType('astro', this)">🪐 طالع ماه تولد (۵ سکه)</button>
-  </div>
-
-  <!-- انتخاب ماه تولد -->
-  <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;" id="choose-hint">ماه تولد خود را انتخاب کنید:</p>
-
-  <div class="signs-grid" id="signs-container">
-    <!-- فروردین تا اسفند -->
-    <div class="sign-card" onclick="openFortune(0)">
-      <div class="sign-symbol">♈</div>
-      <div class="sign-name">فروردین</div>
-      <div class="sign-date">Aries</div>
+  <!-- مودال پیام -->
+  <div class="modal-overlay" id="info-modal">
+    <div class="modal-box">
+      <div class="modal-icon" id="modal-icon">🎉</div>
+      <div class="modal-title" id="modal-title">عملیات موفق</div>
+      <div class="modal-msg" id="modal-msg">پیام سیستم</div>
+      <button class="btn-modal-close" onclick="closeModal()">متوجه شدم</button>
     </div>
-    <div class="sign-card" onclick="openFortune(1)">
-      <div class="sign-symbol">♉</div>
-      <div class="sign-name">اردیبهشت</div>
-      <div class="sign-date">Taurus</div>
-    </div>
-    <div class="sign-card" onclick="openFortune(2)">
-      <div class="sign-symbol">♊</div>
-      <div class="sign-name">خرداد</div>
-      <div class="sign-date">Gemini</div>
-    </div>
-
-    <div class="sign-card" onclick="openFortune(3)">
-      <div class="sign-symbol">♋</div>
-      <div class="sign-name">تیر</div>
-      <div class="sign-date">Cancer</div>
-    </div>
-    <div class="sign-card" onclick="openFortune(4)">
-      <div class="sign-symbol">♌</div>
-      <div class="sign-name">مرداد</div>
-      <div class="sign-date">Leo</div>
-    </div>
-    <div class="sign-card" onclick="openFortune(5)">
-      <div class="sign-symbol">♍</div>
-      <div class="sign-name">شهریور</div>
-      <div class="sign-date">Virgo</div>
-    </div>
-
-    <div class="sign-card" onclick="openFortune(6)">
-      <div class="sign-symbol">♎</div>
-      <div class="sign-name">مهر</div>
-      <div class="sign-date">Libra</div>
-    </div>
-    <div class="sign-card" onclick="openFortune(7)">
-      <div class="sign-symbol">♏</div>
-      <div class="sign-name">آبان</div>
-      <div class="sign-date">Scorpio</div>
-    </div>
-    <div class="sign-card" onclick="openFortune(8)">
-      <div class="sign-symbol">♐</div>
-      <div class="sign-name">آذر</div>
-      <div class="sign-date">Sagittarius</div>
-    </div>
-
-    <div class="sign-card" onclick="openFortune(9)">
-      <div class="sign-symbol">♑</div>
-      <div class="sign-name">دی</div>
-      <div class="sign-date">Capricorn</div>
-    </div>
-    <div class="sign-card" onclick="openFortune(10)">
-      <div class="sign-symbol">♒</div>
-      <div class="sign-name">بهمن</div>
-      <div class="sign-date">Aquarius</div>
-    </div>
-    <div class="sign-card" onclick="openFortune(11)">
-      <div class="sign-symbol">♓</div>
-      <div class="sign-name">اسفند</div>
-      <div class="sign-date">Pisces</div>
-    </div>
-  </div>
-
-  <!-- کارت نمایش نتیجه فال -->
-  <div class="result-container" id="result-box">
-    <div class="result-header">
-      <div class="result-title">
-        <span id="res-symbol">♈</span>
-        <span id="res-sign-title">طالع متولدین فروردین</span>
-      </div>
-      <span style="font-size: 11px; color: var(--gold);" id="res-date">امروز</span>
-    </div>
-
-    <!-- نوار درصد شانس امروز -->
-    <div class="luck-bar-wrap">
-      <div class="luck-bar-labels">
-        <span>شاخص شانس و فرکانس مثبت</span>
-        <b style="color: var(--gold);" id="res-luck-pct">۸۸٪</b>
-      </div>
-      <div class="luck-bar-bg">
-        <div class="luck-bar-fill" id="res-luck-fill" style="width: 88%;"></div>
-      </div>
-    </div>
-
-    <!-- متن فال روز -->
-    <div class="fortune-section">
-      <h4>🌟 پیام و انرژی کائنات:</h4>
-      <p id="res-msg">امروز روزی پر از انرژی مثبت و شروع‌های تازه است. در تصمیم‌گیری‌های مهم شجاع باشید.</p>
-    </div>
-
-    <div class="fortune-section">
-      <h4>💼 کار، ثروت و موفقیت:</h4>
-      <p id="res-money">یک پیشنهاد مالی یا ایده جدید در مسیر شما قرار می‌گیرد. با دقت بررسی کنید.</p>
-    </div>
-
-    <div class="fortune-section">
-      <h4>❤️ عشق و روابط:</h4>
-      <p id="res-love">گفتگویی صمیمانه با فردی مهم می‌تواند آرامش ذهنی را به شما بازگرداند.</p>
-    </div>
-
-    <!-- عدد و رنگ شانس -->
-    <div class="luck-facts-grid">
-      <div class="luck-fact-box">
-        <span>عدد شانس امروز</span>
-        <b id="res-num">۷</b>
-      </div>
-      <div class="luck-fact-box">
-        <span>رنگ انرژی‌بخش</span>
-        <b id="res-color">طلایی</b>
-      </div>
-    </div>
-
-    <!-- دکمه‌های اقدام -->
-    <button class="btn-action purple" onclick="shareFortune()">ارسال و اشتراک فال در تلگرام 📤</button>
-    <button class="btn-action" style="background:#251a36; color:white;" onclick="resetSelection()">انتخاب ماه دیگر 🔄</button>
   </div>
 
   <script>
@@ -255,118 +384,276 @@
       if (tg) {
         tg.ready();
         tg.expand();
-        if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg.BackButton) {
+        if (tg.BackButton) {
           tg.BackButton.show();
-          tg.BackButton.onClick(goBack);
+          tg.BackButton.onClick(() => { window.location.href = '../../index.html'; });
         }
       }
     } catch(e) {}
 
-    function goBack() { window.location.href = '../../index.html'; }
-
-    let balance = 1000;
-    try { balance = parseInt(localStorage.getItem('user_balance') || '1000'); } catch(e) {}
-    function saveBalance() {
-      try { localStorage.setItem('user_balance', balance.toString()); } catch(e) {}
-      document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S';
-    }
-    document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S';
-
-    let currentMode = 'daily';
-    const monthNames = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
-    const monthSymbols = ['♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓'];
-
-    // دیتابیس متنوع فال بر اساس فرمول تاریخ روز
-    const fortunePool = [
-      {
-        gen: "مدارهای انرژی در نقطه عطفی برای شما قرار دارند. هر برنامه‌ای که به تعویق انداخته‌اید را امروز با قدرت پیش ببرید.",
-        fin: "مراقب هزینه‌های هیجانی باشید. سرمایه‌گذاری‌های کوچک امروز، در آینده نزدیک بازدهی غیرمنتظره خواهند داشت.",
-        lov: "یک پیام یا توجه غیرمنتظره مسیر روز شما را تغییر می‌دهد. احساسات واقعی خود را پنهان نکنید.",
-        num: 7, col: "طلایی"
-      },
-      {
-        gen: "تمرکز و خونسردی، کلید پیروزی امروز شماست. به توانایی‌های درونی خود اعتماد کامل داشته باشید.",
-        fin: "فرصتی برای کسب پاداش یا سود در محیط کاری یا بازی‌ها نمایان می‌شود. با حساب و کتاب جلو بروید.",
-        lov: "زمان مناسبی برای یک دیدار یا صحبت دوستانه است. سوءتفاهم‌های گذشته را کنار بگذارید.",
-        num: 3, col: "آبی فیروزه‌ای"
-      },
-      {
-        gen: "الهامات فکری نویدبخش موفقیت‌های بزرگ است. به نشانه‌هایی که اطراف شما رخ می‌دهد توجه کنید.",
-        fin: "شانس مالی شما در اوج است. ریسک‌های معقول می‌توانند نتایج شگفت‌انگیزی رقم بزنند.",
-        lov: "یک هدیه کوچک یا کلام محبت‌آمیز می‌تواند پیوندهای عاطفی شما را عمیق‌تر کند.",
-        num: 9, col: "زمردی"
-      },
-      {
-        gen: "امروز کائنات برای شما آرامش و نظم به ارمغان آورده است. از عجله بپرهیزید و با طمأنینه تصمیم بگیرید.",
-        fin: "برنامه‌ریزی دقیق مالی شما جواب می‌دهد و به زودی پاداش تلاش‌های اخیرتان را دریافت می‌کنید.",
-        lov: "شنونده خوبی باشید؛ یک دوست یا فرد نزدیک به همدلی و حمایت فکری شما نیاز دارد.",
-        num: 5, col: "یاقوتی"
+    let uid = "user_guest";
+    try {
+      if (tg?.initDataUnsafe?.user?.id) {
+        uid = tg.initDataUnsafe.user.id.toString();
       }
-    ];
+    } catch(e) {}
 
-    function selectType(mode, btn) {
-      currentMode = mode;
-      document.querySelectorAll('.btn-type').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      resetSelection();
+    // تنظیم بازگشت هوشمند
+    document.getElementById('btn-back-nav').onclick = (e) => {
+      e.preventDefault();
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = '../../index.html';
+    };
+
+    // موجودی سکه
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+    function updateBalanceDisplay() {
+      document.getElementById('user-balance').innerText = balance.toLocaleString();
+    }
+    updateBalanceDisplay();
+
+    // مشخصات ۴ سطح ماینر طبق طرح اقتصادی دقیق
+    const MINER_TIERS = {
+      1: { name: 'ماینر سطح ۱ (مقدماتی)', cost: 50, daily: 30, tank: 120, recharge: 40 },
+      2: { name: 'ماینر سطح ۲ (پیشرفته)', cost: 150, daily: 75, tank: 240, recharge: 120 },
+      3: { name: 'ماینر سطح ۳ (توربو)', cost: 500, daily: 250, tank: 1850, recharge: 400 },
+      4: { name: 'ماینر سطح ۴ (اولترا)', cost: 2000, daily: 500, tank: 8000, recharge: 1800 }
+    };
+
+    const CYCLE_DURATION_MS = 24 * 60 * 60 * 1000; // ۲۴ ساعت
+
+    // ذخیره‌سازی وضعیت ماینر
+    const KEY_TIER = 'simab_miner_tier_' + uid;
+    const KEY_TANK = 'simab_miner_tank_' + uid;
+    const KEY_START = 'simab_miner_cycle_start_' + uid;
+
+    let currentTier = parseInt(localStorage.getItem(KEY_TIER) || '0', 10);
+    let tankRemaining = parseFloat(localStorage.getItem(KEY_TANK) || '0');
+    let cycleStart = parseInt(localStorage.getItem(KEY_START) || '0', 10);
+
+    function showToast(text) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = text;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
     }
 
-    function openFortune(idx) {
-      // بررسی هزینه برای فال هفتگی و ماهانه
-      if (currentMode !== 'daily') {
-        if (balance < 5) {
-          alert('برای این فال نیاز به ۵ سکه دارید. موجودی شما کافی نیست!');
+    function showModal(icon, title, msg) {
+      document.getElementById('modal-icon').innerText = icon;
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-msg').innerHTML = msg;
+      document.getElementById('info-modal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('info-modal').style.display = 'none';
+    }
+
+    function updateMinerEngine() {
+      const gear = document.getElementById('rig-gear');
+      const badge = document.getElementById('rig-badge');
+      const minedTxt = document.getElementById('rig-mined-display');
+      const rateDesc = document.getElementById('rig-rate-desc');
+      const timerTxt = document.getElementById('cycle-timer-txt');
+      const cycleMinedTxt = document.getElementById('cycle-mined-txt');
+      const dailyBar = document.getElementById('daily-bar');
+      const tankTxt = document.getElementById('tank-val-txt');
+      const tankBar = document.getElementById('tank-bar');
+      const btn = document.getElementById('btn-claim-action');
+
+      if (currentTier === 0) {
+        // هیچ ماینری خریداری نشده
+        badge.innerText = 'هیچ دستگاهی فعال نیست';
+        gear.classList.add('paused');
+        minedTxt.innerText = 'خاموش';
+        rateDesc.innerText = 'یک ماینر از لیست زیر خریداری کنید';
+        timerTxt.innerText = '--:--:--';
+        cycleMinedTxt.innerText = '۰ S';
+        dailyBar.style.width = '0%';
+        tankTxt.innerText = '۰ / ۰ S';
+        tankBar.style.width = '0%';
+        btn.disabled = true;
+        btn.innerHTML = `<span>ابتدا ماینر بخرید 🔒</span>`;
+        return;
+      }
+
+      const cfg = MINER_TIERS[currentTier];
+      badge.innerText = cfg.name;
+      rateDesc.innerText = `تولید: ${cfg.daily} سکه در ۲۴ ساعت`;
+
+      // درصد و وضعیت مخزن کل
+      const tankPct = Math.max(0, Math.min(100, (tankRemaining / cfg.tank) * 100));
+      tankTxt.innerText = `${tankRemaining.toFixed(1)} / ${cfg.tank} S`;
+      tankBar.style.width = `${tankPct}%`;
+
+      if (tankRemaining <= 0) {
+        // مخزن کاملاً تخلیه شده
+        gear.classList.add('paused');
+        minedTxt.innerText = 'مخزن خالی';
+        timerTxt.innerText = 'پایان چرخه';
+        dailyBar.style.width = '0%';
+        btn.disabled = false;
+        btn.innerHTML = `<span>شارژ مجدد مخزن (${cfg.recharge} 🪙) 🔄</span>`;
+        return;
+      }
+
+      // محاسبه استخراج زمان واقعی ۲۴ ساعته
+      const now = Date.now();
+      const elapsed = Math.max(0, now - cycleStart);
+      const isCycleFinished = elapsed >= CYCLE_DURATION_MS;
+
+      const cyclePct = Math.min(100, (elapsed / CYCLE_DURATION_MS) * 100);
+      dailyBar.style.width = `${cyclePct}%`;
+
+      // میزان استخراج شده در چرخه جاری
+      const cycleMined = Math.min(cfg.daily, Math.min(tankRemaining, (elapsed / CYCLE_DURATION_MS) * cfg.daily));
+      minedTxt.innerText = `${cycleMined.toFixed(2)} S`;
+      cycleMinedTxt.innerText = `${cycleMined.toFixed(1)} / ${cfg.daily} سکه`;
+
+      if (isCycleFinished) {
+        // ۲۴ ساعت تکمیل شده و آماده کلیم است
+        gear.classList.add('paused');
+        timerTxt.innerText = 'تکمیل شد ✅';
+        btn.disabled = false;
+        btn.innerHTML = `<span>برداشت ${cycleMined.toFixed(0)} سکه و شروع روز بعد ✨</span>`;
+      } else {
+        // در حال استخراج فعال
+        gear.classList.remove('paused');
+        const remainingMs = CYCLE_DURATION_MS - elapsed;
+        const hrs = Math.floor(remainingMs / (1000 * 60 * 60));
+        const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((remainingMs % (1000 * 60)) / 1000);
+        timerTxt.innerText = `${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')} باقی‌مانده`;
+        btn.disabled = true;
+        btn.innerHTML = `<span>در حال استخراج... ⏳</span>`;
+      }
+    }
+
+    function handleMinerAction() {
+      if (currentTier === 0) return;
+      const cfg = MINER_TIERS[currentTier];
+
+      if (tankRemaining <= 0) {
+        // شارژ مجدد مخزن
+        if (balance < cfg.recharge) {
+          if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+          showModal('⚠️', 'موجودی ناکافی', `برای شارژ مجدد مخزن به <b>${cfg.recharge} سکه</b> نیاز دارید.`);
           return;
         }
-        balance -= 5;
-        saveBalance();
+        balance -= cfg.recharge;
+        tankRemaining = cfg.tank;
+        cycleStart = Date.now();
+
+        localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+        localStorage.setItem('user_balance', balance.toString());
+        localStorage.setItem(KEY_TANK, tankRemaining.toString());
+        localStorage.setItem(KEY_START, cycleStart.toString());
+
+        updateBalanceDisplay();
+        updateMinerEngine();
+        renderShop();
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        showModal('⚡', 'مخزن شارژ شد', `مخزن ماینر با ظرفیت کامل <b>${cfg.tank} سکه</b> مجدداً فعال گردید!`);
+        return;
       }
 
-      // تولید محتوای الگوریتمی متغیر بر اساس تاریخ روز
-      const now = new Date();
-      const seed = (now.getDate() + now.getMonth() + idx) % fortunePool.length;
-      const data = fortunePool[seed];
+      // کلیم کردن سکه‌ها پس از ۲۴ ساعت
+      const now = Date.now();
+      const elapsed = Math.max(0, now - cycleStart);
+      if (elapsed < CYCLE_DURATION_MS) return;
 
-      const pct = 70 + ((idx * 7 + now.getDate()) % 29); // درصد بین ۷۰ تا ۹۸
+      const claimAmount = Math.min(cfg.daily, tankRemaining);
+      balance = parseFloat((balance + claimAmount).toFixed(2));
+      tankRemaining = parseFloat((tankRemaining - claimAmount).toFixed(2));
 
-      document.getElementById('res-symbol').innerText = monthSymbols[idx];
-      document.getElementById('res-sign-title').innerText = `طالع متولدین ${monthNames[idx]}`;
-      document.getElementById('res-date').innerText = (currentMode === 'daily') ? 'فال روزانه' : (currentMode === 'weekly' ? 'فال هفتگی' : 'طالع نجومی');
+      // ریست تایمر ۲۴ ساعته بعدی بلافاصله از همین لحظه
+      cycleStart = Date.now();
 
-      document.getElementById('res-luck-pct').innerText = pct + '٪';
-      document.getElementById('res-luck-fill').style.width = pct + '%';
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      localStorage.setItem(KEY_TANK, tankRemaining.toString());
+      localStorage.setItem(KEY_START, cycleStart.toString());
 
-      document.getElementById('res-msg').innerText = data.gen;
-      document.getElementById('res-money').innerText = data.fin;
-      document.getElementById('res-love').innerText = data.lov;
-      document.getElementById('res-num').innerText = ((data.num + idx) % 9) + 1;
-      document.getElementById('res-color').innerText = data.col;
+      updateBalanceDisplay();
+      updateMinerEngine();
+      renderShop();
 
-      document.getElementById('signs-container').style.display = 'none';
-      document.getElementById('choose-hint').style.display = 'none';
-      document.getElementById('result-box').style.display = 'block';
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      showModal('🎉', 'برداشت موفق', `مبلغ <b>+${claimAmount} سکه</b> به حساب شما اضافه شد و استخراج ۲۴ ساعت بعد آغاز شد.`);
     }
 
-    function resetSelection() {
-      document.getElementById('signs-container').style.display = 'grid';
-      document.getElementById('choose-hint').style.display = 'block';
-      document.getElementById('result-box').style.display = 'none';
-    }
+    // خرید یا ارتقای ماینر
+    function buyOrUpgrade(tierNum) {
+      const target = MINER_TIERS[tierNum];
+      if (currentTier === tierNum) return;
 
-    function shareFortune() {
-      const sign = document.getElementById('res-sign-title').innerText;
-      const pct = document.getElementById('res-luck-pct').innerText;
-      const msg = document.getElementById('res-msg').innerText;
-      const text = `🔮 ${sign}\n📊 شانس امروز: ${pct}\n🌟 پیام کائنات: "${msg}"\n\n✨ دریافت فال اختصاصی در مینی‌اپ سیمُر:`;
-      const url = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/SimorMiniApp_bot')}&text=${encodeURIComponent(text)}`;
-
-      try {
-        if (tg?.openTelegramLink) tg.openTelegramLink(url);
-        else window.open(url, '_blank');
-      } catch(e) {
-        window.open(url, '_blank');
+      if (balance < target.cost) {
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+        showModal('⚠️', 'موجودی ناکافی', `برای خرید این ماینر به <b>${target.cost} سکه</b> نیاز دارید.`);
+        return;
       }
+
+      balance -= target.cost;
+      currentTier = tierNum;
+      tankRemaining = target.tank;
+      cycleStart = Date.now();
+
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      localStorage.setItem(KEY_TIER, currentTier.toString());
+      localStorage.setItem(KEY_TANK, tankRemaining.toString());
+      localStorage.setItem(KEY_START, cycleStart.toString());
+
+      updateBalanceDisplay();
+      updateMinerEngine();
+      renderShop();
+
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      showModal('🚀', 'ماینر فعال شد!', `شما با موفقیت <b>${target.name}</b> را فعال کردید.<br>استخراج روزانه <b>${target.daily} سکه</b> آغاز شد.`);
     }
+
+    function renderShop() {
+      const container = document.getElementById('shop-container');
+      container.innerHTML = '';
+
+     .forEach(t => {
+        const item = MINER_TIERS[t];
+        const card = document.createElement('div');
+        const isCurrent = (currentTier === t);
+        card.className = `shop-card ${isCurrent ? 'active-owned' : ''}`;
+
+        let btnHtml = '';
+        if (isCurrent) {
+          btnHtml = `<span class="btn-buy active-badge">سطح فعال ✓</span>`;
+        } else if (currentTier === 0) {
+          btnHtml = `<button class="btn-buy" onclick="buyOrUpgrade(${t})">خرید (${item.cost} 🪙)</button>`;
+        } else if (t > currentTier) {
+          btnHtml = `<button class="btn-buy" onclick="buyOrUpgrade(${t})">ارتقا (${item.cost} 🪙)</button>`;
+        } else {
+          btnHtml = `<span style="font-size:11px; color:var(--text-muted);">سپری شده</span>`;
+        }
+
+        card.innerHTML = `
+          <div class="shop-info">
+            <div class="shop-tier-name">
+              <span>⚡</span>
+              <span>${item.name}</span>
+            </div>
+            <div class="shop-specs">
+              • استخراج: <b>${item.daily} سکه</b> در روز<br>
+              • ظرفیت کل مخزن: <b>${item.tank} سکه</b> (شارژ مجدد: ${item.recharge} 🪙)
+            </div>
+          </div>
+          <div>${btnHtml}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    renderShop();
+    updateMinerEngine();
+    setInterval(updateMinerEngine, 1000);
   </script>
 </body>
 </html>
