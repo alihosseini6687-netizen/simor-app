@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SIMAB | ماموریت‌های ویژه</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0c0c14;
+      --card-bg: rgba(20, 20, 32, 0.94);
+      --card-inner: rgba(28, 28, 44, 0.88);
+      --gold: #f5cf62;
+      --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
+      --cyan: #00f2fe;
+      --purple: #9d4edd;
+      --green: #00f5d4;
+      --text: #ffffff;
+      --text-muted: #9595a8;
+      --border: rgba(212, 175, 55, 0.22);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 10%, #1e1338 0%, #0c0c14 70%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+    .app-wrapper {
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      padding: 10px 10px 40px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (min-width: 500px) {
+      .app-wrapper {
+        max-width: 440px;
+        box-shadow: 0 0 35px rgba(0,0,0,0.9);
+        border-left: 1px solid rgba(255,255,255,0.05);
+        border-right: 1px solid rgba(255,255,255,0.05);
+      }
+    }
+    /* هدر با دکمه بازگشت */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .btn-back {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .coin-badge {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .coin-badge-s {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      color: #221400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    /* کارت سرتیتر پیشرفت */
+    .hero-card {
+      background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px 14px;
+      text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+    .hero-icon { font-size: 38px; margin-bottom: 4px; }
+    .hero-title { font-size: 16.5px; font-weight: 900; color: var(--gold); margin-bottom: 4px; }
+    .hero-desc { font-size: 11px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
+
+    .progress-box {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .progress-row-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .bar-bg {
+      width: 100%;
+      height: 8px;
+      background: #1e1e2c;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--gold-gradient);
+      border-radius: 5px;
+      transition: width 0.4s ease;
+    }
+
+    /* لیست کارت‌های ماموریت */
+    .quest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .quest-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      transition: 0.2s;
+    }
+    .quest-card.completed {
+      border-color: rgba(0, 245, 212, 0.4);
+      background: rgba(0, 245, 212, 0.05);
+    }
+
+    .quest-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: right;
+    }
+    .quest-icon-box {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--card-inner);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .quest-title { font-size: 13px; font-weight: 800; color: #fff; margin-bottom: 2px; }
+    .quest-reward { font-size: 11px; font-weight: 900; color: var(--gold); }
+
+    /* دکمه‌های وضعیت تسک */
+    .btn-quest-action {
+      background: var(--gold-gradient);
+      color: #171000;
+      border: none;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      min-width: 95px;
+      white-space: nowrap;
+      transition: 0.15s;
+    }
+    .btn-quest-action:active { transform: scale(0.96); }
+    .btn-quest-action.timer {
+      background: rgba(255, 159, 10, 0.18);
+      border: 1px solid #ff9f0a;
+      color: #ff9f0a;
+      cursor: default;
+    }
+    .btn-quest-action.claim {
+      background: linear-gradient(135deg, #00f5d4, #00b4d8);
+      color: #00222e;
+      box-shadow: 0 0 15px rgba(0, 245, 212, 0.4);
+      animation: pulseClaim 0.8s infinite alternate;
+    }
+    @keyframes pulseClaim { from { transform: scale(1); } to { transform: scale(1.04); } }
+    .btn-quest-action.done {
+      background: rgba(0, 245, 212, 0.12);
+      border: 1px solid var(--green);
+      color: var(--green);
+      cursor: default;
+    }
+
+    .toast-msg {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient); color: #1a1200; padding: 8px 20px; border-radius: 25px;
+      font-size: 12.5px; font-weight: 900; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="toast-msg" id="toast-msg">انجام شد!</div>
+
+  <div class="app-wrapper">
+    <!-- هدر با بازگشت هوشمند به سربرگ تسک‌ها -->
+    <header class="top-header">
+      <a href="../index.html" class="btn-back" id="btn-back-nav" title="بازگشت">➔</a>
+      <div class="header-title">ماموریت‌های ویژه</div>
+      <div class="coin-badge">
+        <div class="coin-badge-s">S</div>
+        <span id="user-balance">50</span>
+      </div>
+    </header>
+
+    <!-- کارت معرفی و پیشرفت -->
+    <div class="hero-card">
+      <div class="hero-icon">📋</div>
+      <div class="hero-title">عضویت در شبکه‌های رسمی سیماب</div>
+      <div class="hero-desc">
+        با پیوستن به کانال و صفحات رسمی ما، جوایز فوری سکه دریافت کنید!
+      </div>
+      <div class="progress-box">
+        <div class="progress-row-info">
+          <span>پیشرفت تکمیل ماموریت‌ها:</span>
+          <span id="progress-text">۰ از ۲</span>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-fill" id="progress-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- لیست ماموریت‌ها -->
+    <div class="quest-list" id="quests-container">
+      <!-- تسک ۱: کانال تلگرام (تایمر ۱۰ ثانیه) -->
+      <div class="quest-card" id="card-quest-tg">
+        <div class="quest-info">
+          <div class="quest-icon-box">📢</div>
+          <div>
+            <div class="quest-title">عضویت در کانال رسمی تلگرام</div>
+            <div class="quest-reward">+۲۰ سکه 🪙</div>
+          </div>
+        </div>
+        <button class="btn-quest-action" id="btn-quest-tg" onclick="handleQuest('tg')">
+          عضویت ➔
+        </button>
+      </div>
+
+      <!-- تسک ۲: اینستاگرام (تایمر ۲۰ ثانیه) -->
+      <div class="quest-card" id="card-quest-insta">
+        <div class="quest-info">
+          <div class="quest-icon-box">📸</div>
+          <div>
+            <div class="quest-title">دنبال کردن پیج اینستاگرام</div>
+            <div class="quest-reward">+۲۰ سکه 🪙</div>
+          </div>
+        </div>
+        <button class="btn-quest-action" id="btn-quest-insta" onclick="handleQuest('insta')">
+          دنبال کردن ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(goBackToMother);
+        }
+      }
+    } catch(e) {}
+
+    let uid = "702007470";
+    try {
+      if (tg?.initDataUnsafe?.user?.id) {
+        uid = tg.initDataUnsafe.user.id.toString();
+      }
+    } catch(e) {}
+
+    function goBackToMother() {
+      try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = '../index.html';
+      }
+    }
+    document.getElementById('btn-back-nav').onclick = (e) => {
+      e.preventDefault();
+      goBackToMother();
+    };
+
+    // موجودی هماهنگ با کل مینی‌اپ
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+
+    function updateBalanceDisplay() {
+      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+      document.getElementById('user-balance').innerText = displayVal;
+    }
+    updateBalanceDisplay();
+
+    function showToast(text) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = text;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // تنظیمات ماموریت‌ها
+    const QUESTS = {
+      tg: {
+        id: 'tg',
+        name: 'کانال تلگرام',
+        reward: 20,
+        timerSec: 10, // ۱۰ ثانیه طبق درخواست شما
+        url: 'https://t.me/SimorApp_bot', // لینک کانال شما
+        isTgLink: true
+      },
+      insta: {
+        id: 'insta',
+        name: 'پیج اینستاگرام',
+        reward: 20,
+        timerSec: 20, // ۲۰ ثانیه طبق درخواست شما
+        url: 'https://instagram.com/Alihosseiniv', // لینک اینستاگرام شما
+        isTgLink: false
+      }
+    };
+
+    const STORAGE_KEY_CLAIMED = 'simab_quests_claimed_' + uid;
+    let claimedQuests = JSON.parse(localStorage.getItem(STORAGE_KEY_CLAIMED) || '[]');
+    let activeTimers = {};
+
+    function updateProgressUI() {
+      const total = Object.keys(QUESTS).length;
+      const done = claimedQuests.length;
+      document.getElementById('progress-text').innerText = `${done} از ${total} انجام شده`;
+      const pct = Math.min(100, (done / total) * 100);
+      document.getElementById('progress-bar').style.width = `${pct}%`;
+    }
+
+    function initQuestsState() {
+      Object.keys(QUESTS).forEach(qKey => {
+        const isClaimed = claimedQuests.includes(qKey);
+        const btn = document.getElementById(`btn-quest-${qKey}`);
+        const card = document.getElementById(`card-quest-${qKey}`);
+
+        if (isClaimed) {
+          card.classList.add('completed');
+          btn.className = 'btn-quest-action done';
+          btn.innerText = 'انجام شد ✓';
+          btn.disabled = true;
+        }
+      });
+      updateProgressUI();
+    }
+
+    function handleQuest(qKey) {
+      const q = QUESTS[qKey];
+      if (claimedQuests.includes(qKey)) return;
+
+      const btn = document.getElementById(`btn-quest-${qKey}`);
+
+      // اگر در حالت آماده دریافت بود:
+      if (btn.classList.contains('claim')) {
+        claimQuestReward(qKey);
+        return;
+      }
+
+      // اگر در حال تایمر بود کلیک نشود
+      if (btn.classList.contains('timer')) return;
+
+      // ۱. باز کردن لینک
+      if (q.isTgLink && tg?.openTelegramLink) {
+        tg.openTelegramLink(q.url);
+      } else {
+        window.open(q.url, '_blank');
+      }
+
+      // ۲. شروع تایمر شمارش معکوس
+      let timeLeft = q.timerSec;
+      btn.className = 'btn-quest-action timer';
+      btn.innerText = `⏱ بررسی (${timeLeft}s)`;
+
+      activeTimers[qKey] = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          btn.innerText = `⏱ بررسی (${timeLeft}s)`;
+        } else {
+          clearInterval(activeTimers[qKey]);
+          // فعال شدن دکمه دریافت پاداش
+          btn.className = 'btn-quest-action claim';
+          btn.innerText = `دریافت +${q.reward} 🪙`;
+          showToast(`ماموریت ${q.name} تایید شد؛ پاداش را دریافت کنید! ✨`);
+        }
+      }, 1000);
+    }
+
+    function claimQuestReward(qKey) {
+      const q = QUESTS[qKey];
+      if (claimedQuests.includes(qKey)) return;
+
+      claimedQuests.push(qKey);
+      localStorage.setItem(STORAGE_KEY_CLAIMED, JSON.stringify(claimedQuests));
+
+      // اضافه شدن سکه
+      balance = parseFloat((balance + q.reward).toFixed(4));
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+
+      updateBalanceDisplay();
+      initQuestsState();
+
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      showToast(`+${q.reward} سکه پاداش با موفقیت به حساب شما اضافه شد! 🎉`);
+    }
+
+    initQuestsState();
+  </script>
+</body>
+</html>
