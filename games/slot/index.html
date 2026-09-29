@@ -220,15 +220,21 @@
       <div class="payline-marker"></div>
       <!-- رول ۱ -->
       <div class="reel-window" id="reel-box-1">
-        <div class="reel-strip" id="strip-1"></div>
+        <div class="reel-strip" id="strip-1">
+          <div class="slot-item"><img src="../../assets/chest-slot.png" onerror="this.src='../../assets/chest.png'"><span>صندوق</span></div>
+        </div>
       </div>
       <!-- رول ۲ -->
       <div class="reel-window" id="reel-box-2">
-        <div class="reel-strip" id="strip-2"></div>
+        <div class="reel-strip" id="strip-2">
+          <div class="slot-item"><img src="../../assets/coin.png"><span>سکه</span></div>
+        </div>
       </div>
       <!-- رول ۳ -->
       <div class="reel-window" id="reel-box-3">
-        <div class="reel-strip" id="strip-3"></div>
+        <div class="reel-strip" id="strip-3">
+          <div class="slot-item"><img src="../../assets/diamond.png"><span>الماس</span></div>
+        </div>
       </div>
     </div>
     <img src="../../assets/piggy.png" class="piggy-decor" onerror="this.style.display='none'">
@@ -389,19 +395,24 @@
       playTone(80, 'sawtooth', 0.4);
     }
 
-    // ================= تعریف نمادها و احتمالات =================
+    // ۹ نماد با شانس کاملاً مساوی و تصادفی (بدون هیچ وزن‌دهی یا دستکاری)
     const symbols = [
-      { id: 'chest', name: 'صندوق', img: '../../assets/chest-slot.png', alt: '../../assets/chest.png', mult: 50, weight: 2 },
-      { id: 'diamond', name: 'الماس', img: '../../assets/diamond.png', alt: '', mult: 30, weight: 3 },
-      { id: 'seven', name: 'هفت سرخ', img: '../../assets/seven.png', alt: '', mult: 20, weight: 5 },
-      { id: 'coin', name: 'سکه', img: '../../assets/coin.png', alt: '', mult: 10, weight: 8 },
-      { id: 'energy', name: 'انرژی', img: '../../assets/energy.png', alt: '', mult: 10, weight: 10 },
-      { id: 'chip', name: 'چیپ', img: '../../assets/poker-chip.png', alt: '', mult: 5, weight: 12 },
-      { id: 'pants', name: 'شلوار', img: '../../assets/pants.png', alt: '', mult: 0, weight: 25 },
-      { id: 'skull', name: 'جمجمه', img: '../../assets/skull.png', alt: '', mult: 0, weight: 20 },
-      { id: 'bomb', name: 'بمب خطر', img: '../../assets/bomb.png', alt: '', mult: -10, weight: 15 }
+      { id: 'chest', name: 'صندوق', img: '../../assets/chest-slot.png', alt: '../../assets/chest.png', mult: 50 },
+      { id: 'diamond', name: 'الماس', img: '../../assets/diamond.png', alt: '', mult: 30 },
+      { id: 'seven', name: 'هفت سرخ', img: '../../assets/seven.png', alt: '', mult: 20 },
+      { id: 'coin', name: 'سکه', img: '../../assets/coin.png', alt: '', mult: 10 },
+      { id: 'energy', name: 'انرژی', img: '../../assets/energy.png', alt: '', mult: 10 },
+      { id: 'chip', name: 'چیپ', img: '../../assets/poker-chip.png', alt: '', mult: 5 },
+      { id: 'pants', name: 'شلوار', img: '../../assets/pants.png', alt: '', mult: 0 },
+      { id: 'skull', name: 'جمجمه', img: '../../assets/skull.png', alt: '', mult: 0 },
+      { id: 'bomb', name: 'بمب خطر', img: '../../assets/bomb.png', alt: '', mult: -10 }
     ];
 
+    // انتخاب ۱۰۰٪ رندوم و بر پایه بخت واقعی
+    function getRandomSymbol() {
+      const randIdx = Math.floor(Math.random() * symbols.length);
+      return symbols.at(randIdx);
+    }
     function getSymbolHtml(s) {
       const errHandler = s.alt ? `onerror="this.src='${s.alt}'"` : '';
       return `<img src="${s.img}" ${errHandler}><span>${s.name}</span>`;
