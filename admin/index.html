@@ -3,159 +3,220 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>پنل مدیریت آکادمی simor</title>
+  <title>SIMAB | پنل مدیریت ارشد</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #0c0c10;
-      --card-bg: #14141b;
-      --card-inner: #1a1a24;
-      --gold: #e5c158;
+      --bg: #0a0612;
+      --card-bg: rgba(20, 14, 30, 0.95);
+      --card-inner: rgba(30, 22, 45, 0.85);
+      --gold: #f5cf62;
       --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
+      --purple: #8b3dff;
+      --purple-gradient: linear-gradient(135deg, #7928ca, #ff0080);
       --text: #ffffff;
-      --text-muted: #8e8e98;
+      --text-muted: #9d8eb5;
       --border: rgba(212, 175, 55, 0.28);
       --red: #ff3b30;
       --green: #34c759;
-      --blue: #007aff;
+      --blue: #00f2fe;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
-    body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; padding-bottom: 40px; }
-    /* نوار هدر */
+    body {
+      background: radial-gradient(circle at 50% 10%, #1e1035 0%, #07030d 100%);
+      color: var(--text); min-height: 100vh; padding: 12px; padding-bottom: 40px;
+    }
+    /* هدر */
     .header-bar {
       display: flex; justify-content: space-between; align-items: center;
-      background: var(--card-bg); border: 1px solid var(--red);
-      border-radius: 14px; padding: 12px 14px; margin-bottom: 18px;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px 14px; margin-bottom: 14px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
     }
     .btn-back {
-      background: #252532; color: var(--gold); border: 1px solid var(--border);
-      padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;
+      background: #251a36; color: var(--gold); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 12px;
     }
-    /* باکس‌های تنظیمات */
+    .admin-title {
+      color: var(--gold); font-weight: 900; font-size: 15px; display: flex; align-items: center; gap: 6px;
+    }
+
+    /* کارت‌های مدیریت */
     .admin-card {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 16px; padding: 16px; margin-bottom: 16px;
+      border-radius: 16px; padding: 14px; margin-bottom: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5); text-align: right;
     }
-    .admin-card h3 { color: var(--gold); font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .admin-card h3 {
+      color: var(--gold); font-size: 14px; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px; font-weight: 900;
+    }
     .input-field {
-      width: 100%; padding: 10px; background: var(--card-inner);
+      width: 100%; padding: 10px 12px; background: var(--card-inner);
       border: 1px solid var(--border); border-radius: 8px;
-      color: white; font-size: 13px; margin-bottom: 10px; outline: none;
+      color: white; font-size: 12.5px; margin-bottom: 8px; outline: none;
     }
     .input-field:focus { border-color: var(--gold); }
     .btn-action {
-      width: 100%; background: var(--gold-gradient); color: #000;
-      border: none; padding: 12px; border-radius: 10px; font-weight: bold;
-      font-size: 14px; cursor: pointer; transition: transform 0.1s;
+      width: 100%; background: var(--gold-gradient); color: #150900;
+      border: none; padding: 11px; border-radius: 10px; font-weight: 900;
+      font-size: 13.5px; cursor: pointer; transition: 0.15s;
     }
-    .btn-action:active { transform: scale(0.98); }
-    /* دکمه‌های تستی */
-    .test-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-    .btn-test {
+    .btn-action:active { transform: scale(0.97); }
+
+    /* دکمه‌های شارژ خودتان */
+    .charge-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px;
+    }
+    .btn-charge {
       background: var(--card-inner); border: 1px solid var(--border);
-      color: white; padding: 10px; border-radius: 8px; font-weight: bold;
-      font-size: 12px; cursor: pointer;
+      color: var(--gold); padding: 8px 2px; border-radius: 8px; font-weight: 900;
+      font-size: 11px; cursor: pointer;
     }
-    .btn-test.green { border-color: var(--green); color: var(--green); }
-    .btn-test.gold { border-color: var(--gold); color: var(--gold); }
-    .btn-test.red { border-color: var(--red); color: var(--red); }
-    .btn-test.purple { border-color: #5856d6; color: #af52de; }
-    /* لیست تسک‌های سفارشی */
+    .btn-charge:active { transform: scale(0.95); background: var(--gold-gradient); color: black; }
+
+    /* ابزارهای تست */
+    .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; }
+    .btn-tool {
+      background: var(--card-inner); border: 1px solid var(--border);
+      color: white; padding: 9px 6px; border-radius: 8px; font-weight: 800;
+      font-size: 11px; cursor: pointer; text-align: center;
+    }
+    .btn-tool.cyan { border-color: var(--blue); color: var(--blue); }
+    .btn-tool.green { border-color: var(--green); color: var(--green); }
+    .btn-tool.purple { border-color: #a370f7; color: #a370f7; }
+    .btn-tool.red { border-color: var(--red); color: var(--red); }
+
+    /* لیست تسک‌ها */
     .custom-task-item {
       display: flex; justify-content: space-between; align-items: center;
       background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
       border-radius: 8px; padding: 8px 12px; margin-top: 6px; font-size: 12px;
     }
     .btn-del {
-      background: none; border: none; color: var(--red); font-size: 16px; cursor: pointer;
+      background: none; border: none; color: var(--red); font-size: 15px; cursor: pointer;
     }
-    /* پاپ‌آپ پیام اختصاصی */
+
+    /* پاپ‌آپ پیام */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
       z-index: 1000; align-items: center; justify-content: center; padding: 16px;
     }
     .modal-overlay.open { display: flex; }
     .modal-box {
-      background: var(--card-bg); border: 1px solid var(--gold);
-      border-radius: 16px; width: 100%; max-width: 320px; padding: 20px; text-align: center;
+      background: var(--card-bg); border: 1.5px solid var(--gold);
+      border-radius: 16px; width: 100%; max-width: 320px; padding: 18px; text-align: center;
     }
   </style>
 </head>
 <body>
   <!-- هدر بالای پنل -->
   <div class="header-bar">
-    <button class="btn-back" onclick="goBack()">🔙 برگشت به لابی</button>
-    <div style="color: var(--red); font-weight: bold; font-size: 14px;">👑 پنل مدیریت آکادمی</div>
+    <button class="btn-back" onclick="goBack()">🔙 بازگشت به لابی</button>
+    <div class="admin-title">👑 پنل مدیریت ارشد سیماب</div>
   </div>
 
-  <!-- بخش ۱: ارسال پیام به کانال تلگرام -->
+  <!-- بخش ۱: شارژ نامحدود و همه‌جانبه حساب خودتان -->
   <div class="admin-card">
-    <h3>📢 ارسال پیام به کانال (@SimorApp)</h3>
-    <textarea class="input-field" id="broadcast-text" rows="3" placeholder="متن اطلاعیه جهت ارسال به کانال رسمی آکادمی سیمُر..."></textarea>
-    <button class="btn-action" style="background: var(--blue); color: white;" onclick="sendToChannel()">🚀 ارسال پیام به کانال</button>
-  </div>
-
-  <!-- بخش ۲: شارژ دستی سکه برای دیگران با شناسه عددی -->
-  <div class="admin-card">
-    <h3>💸 واریز مستقیم سکه به حساب کاربران</h3>
-    <input type="text" class="input-field" id="target-user-id" placeholder="شناسه عددی تلگرام کاربر (User ID مثلاً 702007470)">
-    <input type="number" class="input-field" id="target-coin-amount" placeholder="تعداد سکه واریزی (مثلاً 500)">
-    <button class="btn-action" onclick="transferCoins()">واریز و شارژ حساب</button>
-  </div>
-
-  <!-- بخش ۳: ابزارهای تست سریع سیستم -->
-  <div class="admin-card">
-    <h3>⚙️ کلیدهای تست سریع</h3>
-    <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">موجودی فعلی شما: <b id="current-bal" style="color: var(--gold);">50 S</b></div>
-    <div class="test-grid">
-      <button class="btn-test green" onclick="addCoins(500)">+۵۰۰ سکه</button>
-      <button class="btn-test gold" onclick="addCoins(2000)">+۲۰۰۰ سکه</button>
-      <button class="btn-test gold" onclick="addCoins(10000)">+۱۰۰۰۰ سکه</button>
-      <button class="btn-test red" onclick="setCoins(0)">صفر کردن موجودی</button>
+    <h3>🪙 شارژ سریع حساب خودتان</h3>
+    <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">
+      موجودی فعال حساب شما: <b id="current-bal" style="color: var(--gold); font-size: 14px;">50 S</b>
     </div>
-    <button class="btn-test purple" style="width: 100%; margin-top: 4px;" onclick="resetWheelTimer()">🔄 ریست تایمر ۲۴ ساعته گردونه</button>
+    
+    <!-- دکمه‌های شارژ سریع -->
+    <div class="charge-grid">
+      <button class="btn-charge" onclick="addMyCoins(100)">+۱۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(500)">+۵۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(1000)">+۱,۰۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(5000)">+۵,۰۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(10000)">+۱۰,۰۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(50000)">+۵۰,۰۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(100000)">+۱۰۰,۰۰۰</button>
+      <button class="btn-charge" style="border-color:var(--blue); color:var(--blue);" onclick="addMyCoins(500000)">VIP 👑</button>
+    </div>
+
+    <!-- شارژ مبلغ دلخواه خودتان -->
+    <div style="display: flex; gap: 6px; margin-top: 4px;">
+      <input type="number" class="input-field" id="custom-my-coin" placeholder="مبلغ دلخواه برای شارژ خودتان..." style="margin-bottom:0;">
+      <button class="btn-action" style="width: 100px; padding: 8px;" onclick="chargeCustomMyCoins()">افزایش</button>
+    </div>
+    <button class="btn-tool red" style="width: 100%; margin-top: 6px;" onclick="resetMyCoins()">تنظیم موجودی روی ۵۰ (حالت پیش‌فرض)</button>
   </div>
 
-  <!-- بخش ۴: تسک‌ساز سفارشی -->
+  <!-- بخش ۲: ابزارهای تست بخش‌های پروژه (ماینر، گردونه، روزانه) -->
   <div class="admin-card">
-    <h3>➕ ایجاد تسک جدید برای مینی‌اپ</h3>
-    <input type="text" class="input-field" id="task-title" placeholder="عنوان تسک (مثلاً عضویت در چنل یوتیوب)">
+    <h3>⚙️ جعبه ابزار و تست ماینر، گردونه و استریک</h3>
+    <div class="tools-grid">
+      <button class="btn-tool cyan" onclick="adminMaxMiner()">⚡ ماینر سطح ۴ + مخزن فول</button>
+      <button class="btn-tool purple" onclick="resetWheelTimer()">🎡 ریست چرخش گردونه</button>
+      <button class="btn-tool green" onclick="advanceStreakDay()">🎁 پرش به روز بعد استریک</button>
+      <button class="btn-tool red" onclick="resetStreak()">🔄 صفر کردن روزهای استریک</button>
+    </div>
+  </div>
+
+  <!-- بخش ۳: واریز سکه برای دیگران و ساخت لینک هدیه -->
+  <div class="admin-card">
+    <h3>💸 واریز سکه به کاربران یا ساخت لینک هدیه</h3>
+    <input type="text" class="input-field" id="target-user-id" placeholder="شناسه عددی تلگرام کاربر (User ID)">
+    <input type="number" class="input-field" id="target-coin-amount" placeholder="تعداد سکه واریزی...">
+    <button class="btn-action" onclick="transferCoinsDirect()">واریز به شناسه کاربر</button>
+    
+    <div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px;">
+      <button class="btn-tool purple" style="width: 100%;" onclick="generateGiftLink()">🎁 ساخت لینک هدیه تلگرامی (ارسال در چت)</button>
+    </div>
+  </div>
+
+  <!-- بخش ۴: ارسال پیام به کانال تلگرام -->
+  <div class="admin-card">
+    <h3>📢 ارسال پیام به کانال تلگرام</h3>
+    <input type="text" class="input-field" id="bot-token-input" placeholder="توکن ربات تلگرام (اختیاری جهت ارسال مستقیم بدون فیلتر)">
+    <input type="text" class="input-field" id="channel-username-input" value="@SimorApp" placeholder="آیدی کانال مثلاً @SimorApp">
+    <textarea class="input-field" id="broadcast-text" rows="3" placeholder="متن اطلاعیه جهت انتشار در کانال..."></textarea>
+    
+    <div style="display:flex; gap:6px;">
+      <button class="btn-action" style="background: var(--blue); color: #000;" onclick="sendToChannelDirect()">🚀 ارسال از سرور</button>
+      <button class="btn-action" style="background: #251a36; color: var(--gold); border: 1px solid var(--gold);" onclick="shareToTelegram()">📤 ارسال مستقیم تلگرام</button>
+    </div>
+  </div>
+
+  <!-- بخش ۵: ایجاد تسک و ماموریت جدید -->
+  <div class="admin-card">
+    <h3>➕ ایجاد ماموریت جدید برای صفحه تسک‌ها</h3>
+    <input type="text" class="input-field" id="task-title" placeholder="عنوان ماموریت (مثلاً عضویت در چنل یوتیوب)">
     <input type="text" class="input-field" id="task-url" placeholder="لینک (https://...)">
-    <input type="number" class="input-field" id="task-reward" placeholder="پاداش سکه (مثلاً 15)">
-    <button class="btn-action" onclick="saveCustomTask()">ثبت و انتشار تسک در مینی‌اپ</button>
-    <h4 style="color: var(--text-muted); font-size: 12px; margin-top: 14px; margin-bottom: 6px;">لیست تسک‌های ساخته‌شده:</h4>
-    <div id="tasks-list">
-      <div style="color: var(--text-muted); font-size: 11px;">هنوز تسک سفارشی اضافه نشده است.</div>
+    <div style="display:flex; gap:6px;">
+      <input type="number" class="input-field" id="task-reward" placeholder="پاداش سکه (مثلاً 20)">
+      <select class="input-field" id="task-timer" style="width: 120px;">
+        <option value="10">تایمر ۱۰s</option>
+        <option value="20" selected>تایمر ۲۰s</option>
+      </select>
     </div>
+    <button class="btn-action" onclick="saveCustomTask()">ثبت و انتشار تسک</button>
+
+    <h4 style="color: var(--text-muted); font-size: 11px; margin-top: 12px; margin-bottom: 4px;">تسک‌های سفارشی فعال:</h4>
+    <div id="tasks-list"></div>
   </div>
 
-  <!-- پاپ‌آپ اختصاصی پیام -->
+  <!-- پاپ‌آپ پیام اختصاصی -->
   <div class="modal-overlay" id="popup-modal">
     <div class="modal-box">
       <div style="font-size: 38px; margin-bottom: 6px;" id="pop-icon">✅</div>
       <h3 id="pop-title" style="color: var(--gold); margin-bottom: 6px;">موفق</h3>
-      <p id="pop-msg" style="font-size: 13px; line-height: 1.6; margin-bottom: 14px;">عملیات با موفقیت انجام شد.</p>
-      <button class="btn-action" onclick="closePopup()">تایید</button>
+      <p id="pop-msg" style="font-size: 12.5px; line-height: 1.6; margin-bottom: 14px;">عملیات با موفقیت انجام شد.</p>
+      <button class="btn-action" onclick="closePopup()">متوجه شدم</button>
     </div>
   </div>
 
   <script>
     const tg = window.Telegram?.WebApp;
     const ADMIN_ID = 702007470;
-    const currentUser = tg?.initDataUnsafe?.user;
 
-    // بررسی امنیتی: فقط در صورت احراز هویت کاربری غیر از ادمین در تلگرام مسدود شود
-    if (currentUser && currentUser.id !== ADMIN_ID) {
-      document.body.innerHTML = `
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; padding:20px; color:#ff3b30; background:#0c0c10;">
-          <div style="font-size:55px; margin-bottom:10px;">🚫</div>
-          <h2 style="margin-bottom:8px;">دسترسی غیرمجاز</h2>
-          <p style="color:#8e8e98; font-size:14px; margin-bottom:20px;">این صفحه فقط مخصوص مدیر ارشد آکادمی است.</p>
-          <button onclick="window.location.href='../index.html'" style="padding:10px 20px; background:#e5c158; color:#000; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">بازگشت به برنامه</button>
-        </div>
-      `;
-      throw new Error('Access Denied');
-    }
+    let uid = "702007470";
+    try {
+      if (tg?.initDataUnsafe?.user?.id) {
+        uid = tg.initDataUnsafe.user.id.toString();
+      }
+    } catch(e) {}
 
     try {
       if (tg) {
@@ -169,28 +230,20 @@
     } catch(e) {}
 
     function goBack() {
+      try { localStorage.setItem('simab_active_tab', 'home'); } catch(e) {}
       window.location.href = '../index.html';
     }
 
-    // کلید اصلی سکه ادمین
-    const STORAGE_KEY_ADMIN_COINS = 'simor_coins_' + ADMIN_ID;
-    let balance = 50;
-    try {
-      balance = parseInt(localStorage.getItem(STORAGE_KEY_ADMIN_COINS) || localStorage.getItem('user_balance') || '50', 10);
-    } catch(e) {}
-
-    function renderAdminBalance() {
-      document.getElementById('current-bal').innerText = balance.toLocaleString() + ' S';
-    }
-    renderAdminBalance();
+    // موجودی ادمین
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
 
     function saveBalance() {
-      try {
-        localStorage.setItem(STORAGE_KEY_ADMIN_COINS, balance.toString());
-        localStorage.setItem('user_balance', balance.toString());
-      } catch(e) {}
-      renderAdminBalance();
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      document.getElementById('current-bal').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 }) + ' S';
     }
+    saveBalance();
 
     function showPopup(title, msg, icon = '✅') {
       document.getElementById('pop-icon').innerText = icon;
@@ -198,108 +251,182 @@
       document.getElementById('pop-msg').innerText = msg;
       document.getElementById('popup-modal').classList.add('open');
     }
-
     function closePopup() {
       document.getElementById('popup-modal').classList.remove('open');
     }
 
-    // ارسال پیام به کانال
-    function sendToChannel() {
-      const msg = document.getElementById('broadcast-text').value.trim();
-      if (!msg) {
-        showPopup('خطا', 'لطفاً متن پیام را وارد کنید.', '⚠️');
-        return;
-      }
-      showPopup('ارسال به کانال', `پیام با موفقیت برای انتشار در کانال رسمی @SimorApp ثبت شد:\n\n"${msg}"`, '📢');
-      document.getElementById('broadcast-text').value = '';
+    // ================= ۱. شارژ حساب خودتان =================
+    function addMyCoins(num) {
+      balance = parseFloat((balance + num).toFixed(4));
+      saveBalance();
+      showPopup('شارژ موفق', `مبلغ +${num.toLocaleString()} سکه با موفقیت به حساب اصلی شما اضافه شد و در لابی و بازی‌ها ثبت گردید.`, '🪙');
     }
 
-    // واریز واقعی سکه به حساب کاربر دیگر
-    function transferCoins() {
-      const targetId = document.getElementById('target-user-id').value.trim();
-      const amount = parseInt(document.getElementById('target-coin-amount').value, 10);
-      if (!targetId || isNaN(amount) || amount <= 0) {
-        showPopup('خطا', 'لطفاً شناسه عددی معتبر و مقدار سکه را مشخص کنید.', '⚠️');
+    function chargeCustomMyCoins() {
+      const amt = parseFloat(document.getElementById('custom-my-coin').value);
+      if (isNaN(amt) || amt <= 0) {
+        showPopup('خطا', 'لطفاً مبلغ معتبری برای افزایش وارد کنید.', '⚠️');
         return;
       }
+      addMyCoins(amt);
+      document.getElementById('custom-my-coin').value = '';
+    }
 
+    function resetMyCoins() {
+      balance = 50;
+      saveBalance();
+      showPopup('بازنشانی', 'موجودی شما روی ۵۰ سکه (حالت استاندارد کاربر جدید) تنظیم شد.', '⚙️');
+    }
+
+    // ================= ۲. ابزارهای تست ماینر، گردونه و استریک =================
+    function adminMaxMiner() {
+      localStorage.setItem('simab_miner_tier_' + uid, '4'); // ماینر سطح ۴ اولترا
+      localStorage.setItem('simab_miner_tank_' + uid, '8000'); // مخزن پر ۸۰۰۰
+      localStorage.setItem('simab_miner_cycle_start_' + uid, Date.now().toString());
+      showPopup('ماینر ارتقا یافت', 'ماینر شما به «سطح ۴ اولترا» با مخزن فول ۸۰۰۰ سکه ارتقا پیدا کرد!', '⚡');
+    }
+
+    function resetWheelTimer() {
+      const now = new Date();
+      const cycleKey = `simab_wheel_free_${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}_${uid}`;
+      localStorage.removeItem(cycleKey);
+      showPopup('ریست گردونه', 'شانس چرخش رایگان امروز برای شما مجدداً فعال شد!', '🎡');
+    }
+
+    function advanceStreakDay() {
+      let cur = parseInt(localStorage.getItem('simab_streak_day_' + uid) || '0', 10);
+      cur = (cur % 7) + 1;
+      localStorage.setItem('simab_streak_day_' + uid, cur.toString());
+      localStorage.removeItem('simab_streak_last_date_' + uid);
+      showPopup('استریک روزانه', `روز استریک شما به روز ${cur} منتقل شد و پاداش آماده دریافت است!`, '🎁');
+    }
+
+    function resetStreak() {
+      localStorage.setItem('simab_streak_day_' + uid, '0');
+      localStorage.removeItem('simab_streak_last_date_' + uid);
+      showPopup('ریست استریک', 'روزهای متوالی استریک روزانه صفر شد.', '🔄');
+    }
+
+    // ================= ۳. واریز به دیگران و لینک هدیه =================
+    function transferCoinsDirect() {
+      const targetId = document.getElementById('target-user-id').value.trim();
+      const amount = parseFloat(document.getElementById('target-coin-amount').value);
+      if (!targetId || isNaN(amount) || amount <= 0) {
+        showPopup('خطا', 'لطفاً شناسه عددی کاربر و تعداد سکه را به درستی وارد کنید.', '⚠️');
+        return;
+      }
       const targetKey = 'simor_coins_' + targetId;
-      let targetBal = parseInt(localStorage.getItem(targetKey) || '50', 10);
-      targetBal += amount;
+      let targetBal = parseFloat(localStorage.getItem(targetKey) || '50');
+      targetBal = parseFloat((targetBal + amount).toFixed(4));
       localStorage.setItem(targetKey, targetBal.toString());
 
-      showPopup('واریز موفق', `تعداد ${amount.toLocaleString()} سکه با موفقیت به شناسه ${targetId} واریز شد.\nموجودی جدید کاربر: ${targetBal.toLocaleString()} S`, '💸');
+      showPopup('واریز انجام شد', `تعداد ${amount.toLocaleString()} سکه به شناسه ${targetId} ثبت شد.\nموجودی جدید: ${targetBal.toLocaleString()} S`, '💸');
       document.getElementById('target-user-id').value = '';
       document.getElementById('target-coin-amount').value = '';
     }
 
-    // ابزارهای تست
-    function addCoins(num) {
-      balance += num;
-      saveBalance();
-      showPopup('شارژ سکه', `+${num.toLocaleString()} سکه با موفقیت به حساب شما اضافه شد و در لابی اصلی اعمال گردید.`, '🪙');
+    function generateGiftLink() {
+      const amount = parseFloat(document.getElementById('target-coin-amount').value) || 100;
+      const giftCode = 'gift_' + Math.floor(100000 + Math.random() * 900000) + '_' + amount;
+      const giftUrl = `https://t.me/SimorApp_bot?startapp=${giftCode}`;
+      const msg = `🎁 شما یک هدیه ${amount} سکه‌ای دریافت کردید! برای دریافت روی لینک زیر بزنید:\n${giftUrl}`;
+      
+      if (tg?.openTelegramLink) {
+        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(giftUrl)}&text=${encodeURIComponent(msg)}`);
+      } else {
+        navigator.clipboard.writeText(msg);
+        showPopup('لینک هدیه ساخته شد', `لینک هدیه ${amount} سکه‌ای در کلیپ‌بورد کپی شد:\n\n${giftUrl}`, '📋');
+      }
     }
 
-    function setCoins(num) {
-      balance = num;
-      saveBalance();
-      showPopup('تنظیم موجودی', `موجودی شما روی ${num} تنظیم شد.`, '⚙️');
-    }
+    // ================= ۴. ارسال پیام به کانال =================
+    async function sendToChannelDirect() {
+      const token = document.getElementById('bot-token-input').value.trim();
+      const channel = document.getElementById('channel-username-input').value.trim();
+      const text = document.getElementById('broadcast-text').value.trim();
 
-    function resetWheelTimer() {
+      if (!text) {
+        showPopup('خطا', 'لطفاً متن اطلاعیه را وارد کنید.', '⚠️');
+        return;
+      }
+      if (!token) {
+        showPopup('نیاز به توکن', 'برای ارسال مستقیم از سرور، توکن ربات را در فیلد مربوطه وارد کنید یا از دکمه «ارسال مستقیم تلگرام» استفاده نمایید.', 'ℹ️');
+        return;
+      }
+
       try {
-        localStorage.removeItem('simor_spins_count_' + ADMIN_ID);
-        localStorage.removeItem('simor_spins_count_guest');
-        localStorage.removeItem('last_spin_day');
-      } catch(e) {}
-      showPopup('ریست گردونه', 'تایمر ۲۴ ساعته گردونه شانس با موفقیت ریست شد. اکنون می‌توانید دوباره بچرخانید.', '🔄');
+        const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ chat_id: channel, text: text })
+        });
+        const data = await res.json();
+        if (data.ok) {
+          showPopup('ارسال موفق', `پیام با موفقیت در کانال ${channel} منتشر شد!`, '📢');
+          document.getElementById('broadcast-text').value = '';
+        } else {
+          showPopup('خطای تلگرام', `خطا: ${data.description}`, '❌');
+        }
+      } catch(e) {
+        showPopup('خطای شبکه', 'ارتباط با سرور تلگرام به دلیل محدودیت اینترنت مسدود شد. از دکمه «ارسال مستقیم تلگرام» استفاده کنید.', '⚠️');
+      }
     }
 
-    // تسک‌ساز سفارشی
+    function shareToTelegram() {
+      const channel = document.getElementById('channel-username-input').value.trim();
+      const text = document.getElementById('broadcast-text').value.trim();
+      if (!text) {
+        showPopup('خطا', 'لطفاً متن پیام را وارد کنید.', '⚠️');
+        return;
+      }
+      const url = `https://t.me/share/url?url=${encodeURIComponent(channel)}&text=${encodeURIComponent(text)}`;
+      if (tg?.openTelegramLink) tg.openTelegramLink(url);
+      else window.open(url, '_blank');
+    }
+
+    // ================= ۵. ایجاد تسک‌های سفارشی =================
     function saveCustomTask() {
       const title = document.getElementById('task-title').value.trim();
       const url = document.getElementById('task-url').value.trim();
       const reward = parseInt(document.getElementById('task-reward').value, 10);
+      const timer = parseInt(document.getElementById('task-timer').value, 10) || 20;
+
       if (!title || !url || isNaN(reward)) {
-        showPopup('خطا', 'لطفاً تمام فیلدهای تسک را کامل پر کنید.', '⚠️');
+        showPopup('خطا', 'لطفاً تمام فیلدهای تسک را کامل پر کنید.', '⚠️️');
         return;
       }
-      try {
-        let tasks = JSON.parse(localStorage.getItem('custom_tasks') || '[]');
-        tasks.push({ id: 'task_' + Date.now(), title, url, reward });
-        localStorage.setItem('custom_tasks', JSON.stringify(tasks));
-        renderTasks();
-        showPopup('تسک ایجاد شد', `تسک "${title}" با پاداش ${reward} سکه با موفقیت منتشر شد.`, '➕');
-        document.getElementById('task-title').value = '';
-        document.getElementById('task-url').value = '';
-        document.getElementById('task-reward').value = '';
-      } catch(e) {}
+
+      let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
+      tasks.push({ id: 'quest_' + Date.now(), title, url, reward, timer });
+      localStorage.setItem('simab_custom_quests', JSON.stringify(tasks));
+      renderTasks();
+
+      showPopup('تسک ایجاد شد', `ماموریت "${title}" با پاداش ${reward} سکه و تایمر ${timer}s با موفقیت ثبت شد.`, '➕');
+      document.getElementById('task-title').value = '';
+      document.getElementById('task-url').value = '';
+      document.getElementById('task-reward').value = '';
     }
 
     function renderTasks() {
-      try {
-        let tasks = JSON.parse(localStorage.getItem('custom_tasks') || '[]');
-        const container = document.getElementById('tasks-list');
-        if (tasks.length === 0) {
-          container.innerHTML = '<div style="color: var(--text-muted); font-size: 11px;">هنوز تسک سفارشی اضافه نشده است.</div>';
-          return;
-        }
-        container.innerHTML = tasks.map((t, idx) => `
-          <div class="custom-task-item">
-            <span>${t.title} (+${t.reward} S)</span>
-            <button class="btn-del" onclick="deleteTask(${idx})">✕</button>
-          </div>
-        `).join('');
-      } catch(e) {}
+      let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
+      const container = document.getElementById('tasks-list');
+      if (tasks.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-muted); font-size: 11px;">هنوز تسک سفارشی اضافه نشده است.</div>';
+        return;
+      }
+      container.innerHTML = tasks.map((t, idx) => `
+        <div class="custom-task-item">
+          <span>${t.title} (+${t.reward} S | تایمر: ${t.timer}s)</span>
+          <button class="btn-del" onclick="deleteTask(${idx})">✕</button>
+        </div>
+      `).join('');
     }
 
     function deleteTask(index) {
-      try {
-        let tasks = JSON.parse(localStorage.getItem('custom_tasks') || '[]');
-        tasks.splice(index, 1);
-        localStorage.setItem('custom_tasks', JSON.stringify(tasks));
-        renderTasks();
-      } catch(e) {}
+      let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
+      tasks.splice(index, 1);
+      localStorage.setItem('simab_custom_quests', JSON.stringify(tasks));
+      renderTasks();
     }
 
     renderTasks();
