@@ -16,8 +16,8 @@
       --purple-neon: #9d4edd;
       --green: #00f5d4;
       --text: #ffffff;
-      --text-muted: #9595a8;
-      --border: rgba(212, 175, 55, 0.22);
+      --text-muted: #a5a5bc;
+      --border: rgba(212, 175, 55, 0.25);
     }
     * { 
       box-sizing: border-box; 
@@ -36,12 +36,13 @@
       justify-content: center;
       text-align: start;
       overflow-x: hidden;
+      font-size: 14px;
     }
     .app-wrapper {
       width: 100%;
       max-width: 100%;
       min-height: 100vh;
-      padding: 8px 8px 85px 8px;
+      padding: 8px 8px 90px 8px;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -54,157 +55,157 @@
         border-right: 1px solid rgba(255,255,255,0.05);
       }
     }
-    /* هدر بالای صفحه */
+    /* هدر */
     .top-header {
       display: flex; justify-content: space-between; align-items: center;
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 16px; padding: 8px 12px; margin-bottom: 10px;
+      border-radius: 16px; padding: 10px 14px; margin-bottom: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     .header-start { display: flex; align-items: center; gap: 8px; }
     .btn-gear {
-      background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border); color: var(--gold);
-      width: 34px; height: 34px; border-radius: 10px; font-size: 16px;
+      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: var(--gold);
+      width: 36px; height: 36px; border-radius: 10px; font-size: 18px;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
     .brand-title {
-      font-size: 19px; font-weight: 900; letter-spacing: 1.5px;
+      font-size: 21px; font-weight: 900; letter-spacing: 1.5px;
       background: var(--gold-gradient);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     .coin-badge {
-      background: rgba(212, 175, 55, 0.12); border: 1px solid var(--border);
-      padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; color: var(--gold);
+      background: rgba(212, 175, 55, 0.15); border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 20px; font-size: 14.5px; font-weight: 900; color: var(--gold);
       display: flex; align-items: center; gap: 6px; cursor: pointer;
     }
     .coin-badge-s {
-      width: 20px; height: 20px; border-radius: 50%;
+      width: 22px; height: 22px; border-radius: 50%;
       background: var(--gold-gradient); color: #221400;
       display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 900;
+      font-size: 13px; font-weight: 900;
     }
 
-    /* کارت پروفایل کاربر */
+    /* پروفایل درشت */
     .profile-card {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 18px; padding: 14px 16px; margin-bottom: 10px;
+      border-radius: 18px; padding: 16px; margin-bottom: 12px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     }
-    .profile-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .profile-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
     .user-avatar {
-      width: 50px; height: 50px; border-radius: 50%;
+      width: 54px; height: 54px; border-radius: 50%;
       border: 2px solid var(--gold);
       background: radial-gradient(circle, #3d2366 0%, #1c1130 100%);
       display: flex; align-items: center; justify-content: center;
-      font-size: 24px; overflow: hidden; flex-shrink: 0;
+      font-size: 26px; overflow: hidden; flex-shrink: 0;
     }
     .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .user-name { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 2px; }
-    .user-username { font-size: 11.5px; color: var(--text-muted); direction: ltr; text-align: right; }
+    .user-name { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 3px; }
+    .user-username { font-size: 13px; color: var(--text-muted); direction: ltr; text-align: right; }
     
     .ids-container {
       background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;
+      border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 10px;
     }
-    .id-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
-    .id-label { color: var(--text-muted); font-size: 11.5px; }
-    .id-value { font-weight: bold; color: #fff; display: flex; align-items: center; gap: 8px; font-family: monospace; font-size: 13px; direction: ltr; }
+    .id-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .id-label { color: var(--text-muted); font-size: 12.5px; font-weight: bold; }
+    .id-value { font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px; font-family: monospace; font-size: 14px; direction: ltr; }
     .id-game-val { color: var(--gold); }
     .btn-copy {
-      background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--gold);
-      padding: 2px 8px; border-radius: 6px; font-size: 10.5px; font-weight: bold; cursor: pointer;
+      background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: var(--gold);
+      padding: 3px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;
     }
 
-    /* ۳ مربع میانی در خانه */
-    .three-grid { display: flex; gap: 8px; margin-bottom: 10px; }
+    /* ۳ مربع میانی درشت */
+    .three-grid { display: flex; gap: 8px; margin-bottom: 12px; }
     .grid-box {
       flex: 1; aspect-ratio: 1; background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 5px; cursor: pointer; text-decoration: none; color: inherit; position: relative;
+      gap: 6px; cursor: pointer; text-decoration: none; color: inherit; position: relative;
     }
-    .grid-box span.icon { font-size: 24px; }
-    .grid-box span.label { font-size: 12.5px; font-weight: 800; color: var(--gold); }
-    .grid-box span.sub { font-size: 10px; color: var(--text-muted); }
+    .grid-box span.icon { font-size: 26px; }
+    .grid-box span.label { font-size: 14px; font-weight: 900; color: var(--gold); }
+    .grid-box span.sub { font-size: 11.5px; color: var(--text-muted); }
     .badge-soon-mini {
       position: absolute; top: 6px; right: 6px;
-      background: rgba(255, 59, 48, 0.2); border: 1px solid #ff3b30; color: #ff7b72;
-      font-size: 8px; font-weight: 900; padding: 1px 5px; border-radius: 6px;
+      background: rgba(255, 59, 48, 0.25); border: 1px solid #ff3b30; color: #ff7b72;
+      font-size: 9.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px;
     }
 
-    /* دکمه‌های کپسولی */
-    .action-bars { display: flex; flex-direction: column; gap: 9px; }
+    /* دکمه‌های کپسولی درشت */
+    .action-bars { display: flex; flex-direction: column; gap: 10px; }
     .action-btn {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 14px; padding: 12px 14px; display: flex; align-items: center;
       gap: 12px; cursor: pointer; color: inherit; text-decoration: none;
     }
     .action-btn .btn-icon {
-      font-size: 18px; width: 34px; height: 34px; border-radius: 10px;
+      font-size: 20px; width: 36px; height: 36px; border-radius: 10px;
       background: var(--card-inner); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
-    .action-btn .btn-txt { font-size: 13px; font-weight: bold; flex: 1; text-align: start; }
-    .action-btn .arrow { font-size: 11px; color: var(--text-muted); }
-    .action-btn.admin-bar { border-color: var(--gold); background: rgba(212, 175, 55, 0.08); }
+    .action-btn .btn-txt { font-size: 14.5px; font-weight: 900; flex: 1; text-align: start; }
+    .action-btn .arrow { font-size: 13px; color: var(--text-muted); }
+    .action-btn.admin-bar { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); }
     .action-btn.admin-bar .btn-txt { color: var(--gold); }
 
-    /* سربرگ بازی‌ها */
+    /* سربرگ بازی‌ها درشت */
     .games-banner-box {
-      width: 100%; height: 110px; border-radius: 16px;
+      width: 100%; height: 115px; border-radius: 16px;
       position: relative; overflow: hidden; border: 1px solid var(--border);
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       background: linear-gradient(135deg, #2c1254 0%, #150a29 55%, #0d0617 100%);
       display: flex; align-items: center; justify-content: center;
     }
-    .games-banner-overlay { text-align: center; padding: 8px; width: 100%; }
+    .games-banner-overlay { text-align: center; padding: 10px; width: 100%; }
     .banner-badge {
       display: inline-block; background: rgba(212, 175, 55, 0.2); border: 1px solid var(--gold);
-      color: var(--gold); font-size: 9.5px; font-weight: 900; padding: 2px 8px; border-radius: 10px; margin-bottom: 3px;
+      color: var(--gold); font-size: 10.5px; font-weight: 900; padding: 2px 10px; border-radius: 10px; margin-bottom: 4px;
     }
-    .banner-title { font-size: 15px; font-weight: 900; color: #fff; margin-bottom: 2px; }
-    .banner-sub { font-size: 10px; color: var(--cyan-neon); }
-    .games-grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding-bottom: 10px; }
+    .banner-title { font-size: 17px; font-weight: 900; color: #fff; margin-bottom: 3px; }
+    .banner-sub { font-size: 12px; color: var(--cyan-neon); font-weight: bold; }
+    .games-grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding-bottom: 12px; }
     .game-card {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 10px 10px; display: flex; flex-direction: column;
-      justify-content: space-between; min-height: 86px;
+      border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column;
+      justify-content: space-between; min-height: 90px;
       cursor: pointer; text-decoration: none; color: inherit; transition: 0.15s;
     }
     .game-card:active { transform: scale(0.97); }
     .game-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
     .game-card-icon {
-      width: 32px; height: 32px; border-radius: 8px;
+      width: 34px; height: 34px; border-radius: 8px;
       background: var(--card-inner); display: flex; align-items: center; justify-content: center;
-      font-size: 18px; border: 1px solid rgba(255,255,255,0.08);
+      font-size: 20px; border: 1px solid rgba(255,255,255,0.08);
     }
-    .game-badge { font-size: 8.5px; font-weight: 800; padding: 2px 6px; border-radius: 6px; }
-    .badge-soon { background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.18); color: #d1d1db; }
-    .badge-live { background: rgba(0, 245, 212, 0.15); border: 1px solid var(--green); color: var(--green); }
-    .game-card-title { font-size: 12.5px; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
-    .game-card-sub { font-size: 9.5px; color: var(--text-muted); line-height: 1.2; }
+    .game-badge { font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 6px; }
+    .badge-soon { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #d1d1db; }
+    .badge-live { background: rgba(0, 245, 212, 0.18); border: 1px solid var(--green); color: var(--green); }
+    .game-card-title { font-size: 14px; font-weight: 900; color: #ffffff; margin-bottom: 3px; }
+    .game-card-sub { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
 
-    /* سربرگ تسک‌ها (طراحی تمیز و خلوت) */
+    /* سربرگ تسک‌ها درشت */
     .task-balance-card {
-      background: linear-gradient(135deg, rgba(30, 20, 50, 0.85), rgba(15, 15, 25, 0.95));
-      border: 1px solid var(--border); border-radius: 18px; padding: 12px 16px;
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+      background: linear-gradient(135deg, rgba(30, 20, 50, 0.9), rgba(15, 15, 25, 0.98));
+      border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px;
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
     }
-    .task-balance-info { display: flex; align-items: center; gap: 10px; }
+    .task-balance-info { display: flex; align-items: center; gap: 12px; }
     .task-coin-circle {
-      width: 44px; height: 44px; border-radius: 50%; background: var(--gold-gradient);
-      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 22px; color: #352100;
+      width: 48px; height: 48px; border-radius: 50%; background: var(--gold-gradient);
+      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; color: #352100;
     }
     .task-balance-text { display: flex; flex-direction: column; }
-    .task-balance-label { font-size: 10.5px; color: var(--text-muted); }
-    .task-balance-val { font-size: 24px; font-weight: 900; color: #fff; }
+    .task-balance-label { font-size: 12px; color: var(--text-muted); font-weight: bold; }
+    .task-balance-val { font-size: 26px; font-weight: 900; color: #fff; }
     .btn-task-swap {
       background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: var(--gold);
-      padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: bold; cursor: pointer; text-decoration: none;
+      padding: 8px 14px; border-radius: 12px; font-size: 13px; font-weight: 900; cursor: pointer; text-decoration: none;
     }
 
-    /* سطر اول تسک‌ها: ۴ دکمه مستقل */
+    /* سطر اول: ۴ دکمه مستقل */
     .task-nav-grid-4 {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .task-btn-link {
       background: var(--card-bg); border: 1px solid var(--border);
@@ -213,10 +214,10 @@
       color: inherit; transition: 0.15s;
     }
     .task-btn-link:active { transform: scale(0.96); border-color: var(--gold); }
-    .task-btn-link span.t-icon { font-size: 22px; }
-    .task-btn-link span.t-title { font-size: 11.5px; font-weight: 800; color: #fff; }
+    .task-btn-link span.t-icon { font-size: 25px; }
+    .task-btn-link span.t-title { font-size: 13px; font-weight: 900; color: #fff; }
 
-    /* سطر دوم تسک‌ها: دو مستطیل افقی آفر روزانه و خرید سکه */
+    /* سطر دوم: دو مستطیل افقی */
     .task-dual-rect-grid {
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
     }
@@ -224,20 +225,20 @@
       background: linear-gradient(135deg, rgba(28, 20, 48, 0.9), var(--card-bg));
       border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 6px; text-decoration: none; color: inherit; min-height: 95px; text-align: center;
+      gap: 6px; text-decoration: none; color: inherit; min-height: 100px; text-align: center;
       transition: 0.15s; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
     .dual-rect-card:active { transform: scale(0.97); border-color: var(--gold); }
-    .dual-rect-card.offer-card { border-color: rgba(255, 149, 0, 0.4); }
-    .dual-rect-card.shop-card { border-color: rgba(0, 245, 212, 0.4); }
-    .dual-rect-card .rect-icon { font-size: 24px; }
-    .dual-rect-card .rect-title { font-size: 13.5px; font-weight: 900; color: #fff; }
-    .dual-rect-card .rect-sub { font-size: 10px; color: var(--text-muted); }
+    .dual-rect-card.offer-card { border-color: rgba(255, 149, 0, 0.45); }
+    .dual-rect-card.shop-card { border-color: rgba(0, 245, 212, 0.45); }
+    .dual-rect-card .rect-icon { font-size: 28px; }
+    .dual-rect-card .rect-title { font-size: 15.5px; font-weight: 900; color: #fff; }
+    .dual-rect-card .rect-sub { font-size: 12px; color: var(--text-muted); }
 
-    /* نوار ناوبری پایین */
+    /* نوار پایین دلباز */
     .bottom-nav {
       position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 100%; height: 64px; background: #0e0e16;
+      width: 100%; max-width: 100%; height: 68px; background: #0e0e16;
       border-top: 1px solid var(--border); display: flex; justify-content: space-around;
       align-items: center; z-index: 99999;
     }
@@ -247,28 +248,28 @@
       gap: 3px; color: var(--text-muted); cursor: pointer; background: transparent; border: none; outline: none;
     }
     .nav-btn-box.active { color: var(--gold); }
-    .nav-btn-box .tab-icon { font-size: 21px; pointer-events: none; }
-    .nav-btn-box .tab-title { font-size: 11px; font-weight: bold; pointer-events: none; }
+    .nav-btn-box .tab-icon { font-size: 24px; pointer-events: none; }
+    .nav-btn-box .tab-title { font-size: 12.5px; font-weight: 900; pointer-events: none; }
 
-    /* مودال درباره ما */
+    /* مودال */
     .modal-overlay {
       position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
       display: none; align-items: center; justify-content: center; z-index: 100000; padding: 16px;
     }
     .modal-box {
       background: var(--card-bg); border: 1px solid var(--gold);
-      border-radius: 20px; padding: 20px; width: 100%; max-width: 340px; text-align: center;
+      border-radius: 20px; padding: 22px; width: 100%; max-width: 340px; text-align: center;
     }
-    .modal-title { font-size: 16px; font-weight: 800; color: var(--gold); margin-bottom: 10px; }
-    .modal-content { font-size: 12px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+    .modal-title { font-size: 17px; font-weight: 900; color: var(--gold); margin-bottom: 10px; }
+    .modal-content { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
     .btn-modal-close {
       width: 100%; background: var(--gold-gradient); color: #150f00; border: none; padding: 12px;
-      border-radius: 12px; font-weight: 900; font-size: 13px; cursor: pointer;
+      border-radius: 12px; font-weight: 900; font-size: 14px; cursor: pointer;
     }
     .toast-msg {
       position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
-      background: var(--gold-gradient); color: #1a1200; padding: 8px 20px; border-radius: 25px;
-      font-size: 12.5px; font-weight: 900; z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
+      background: var(--gold-gradient); color: #1a1200; padding: 10px 22px; border-radius: 25px;
+      font-size: 13.5px; font-weight: 900; z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
     }
     .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
