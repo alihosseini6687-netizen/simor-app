@@ -457,15 +457,7 @@
       if (maxBtn) maxBtn.classList.add('active');
     }
 
-    function getRandomSymbol() {
-      const totalWeight = symbols.reduce((s, x) => s + x.weight, 0);
-      let rand = Math.random() * totalWeight;
-      for (let s of symbols) {
-        if (rand < s.weight) return s;
-        rand -= s.weight;
-      }
-      return symbols.slice(0, 1)[0];
-    }
+    
 
     function populateStrip(stripEl) {
       stripEl.innerHTML = '';
