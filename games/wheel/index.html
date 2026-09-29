@@ -3,140 +3,358 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>گردونه شانس طلایی</title>
+  <title>SIMAB | گردونه شانس طلایی</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #0c0c10;
-      --card-bg: #14141b;
-      --card-inner: #1a1a24;
-      --gold: #e5c158;
-      --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
+      --bg: #0c0c14;
+      --card-bg: rgba(20, 20, 32, 0.94);
+      --card-inner: rgba(28, 28, 44, 0.88);
+      --gold: #f5cf62;
+      --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
+      --cyan-neon: #00f2fe;
+      --purple-neon: #9d4edd;
+      --green: #00f5d4;
       --text: #ffffff;
-      --text-muted: #8e8e98;
-      --border: rgba(212, 175, 55, 0.28);
+      --text-muted: #9595a8;
+      --border: rgba(212, 175, 55, 0.22);
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
-    body { background-color: var(--bg); color: var(--text); min-height: 100vh; padding: 16px; text-align: center; }
-
-    /* نوار بالای صفحه */
-    .top-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 10px 14px; margin-bottom: 20px;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 10%, #1e1338 0%, #0c0c14 70%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+    .app-wrapper {
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      padding: 10px 10px 40px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (min-width: 500px) {
+      .app-wrapper {
+        max-width: 440px;
+        box-shadow: 0 0 35px rgba(0,0,0,0.9);
+        border-left: 1px solid rgba(255,255,255,0.05);
+        border-right: 1px solid rgba(255,255,255,0.05);
+      }
+    }
+    /* هدر با دکمه بازگشت */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     .btn-back {
-      background: #252532; color: var(--gold); border: 1px solid var(--border);
-      padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
     }
-    .balance-box {
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(212,175,55,0.12); border: 1px solid var(--border);
-      padding: 6px 12px; border-radius: 20px; color: var(--gold); font-weight: bold; font-size: 14px;
+    .header-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .coin-badge {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .coin-badge-s {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      color: #221400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
     }
 
-    /* گردونه */
-    .wheel-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 18px; padding: 20px 14px; margin-bottom: 20px;
+    /* کارت اصلی گردونه */
+    .wheel-main-card {
+      background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px 14px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      position: relative;
     }
-    .wheel-card h2 { color: var(--gold); font-size: 20px; margin-bottom: 4px; }
-    .wheel-card p { font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
+    .wheel-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .wheel-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
 
-    .wheel-container { position: relative; width: 270px; height: 270px; margin: 10px auto; }
-    #wheel-canvas { width: 100%; height: 100%; border-radius: 50%; border: 6px solid var(--gold); box-shadow: 0 0 25px rgba(212,175,55,0.4); }
+    /* استیج چرخش */
+    .wheel-stage {
+      position: relative;
+      width: 270px;
+      height: 270px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 10px auto 14px auto;
+    }
     .wheel-pointer {
-      position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
-      width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent;
-      border-top: 24px solid white; z-index: 10;
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 24px solid #ff3b30;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
+      z-index: 20;
+    }
+    .canvas-wrap {
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      border: 5px solid #d4af37;
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.4), inset 0 0 15px rgba(0,0,0,0.9);
+      overflow: hidden;
+      position: relative;
+      background: #111;
+    }
+    #wheelCanvas {
+      width: 100%;
+      height: 100%;
+      transition: transform 4.5s cubic-bezier(0.12, 0.9, 0.15, 1);
+    }
+    .wheel-center-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff2ad 0%, #d4af37 60%, #593f00 100%);
+      border: 3px solid #14141e;
+      box-shadow: 0 0 12px rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 900;
+      color: #221400;
+      z-index: 10;
     }
 
+    /* دکمه چرخش */
     .btn-spin {
-      width: 100%; max-width: 270px; margin: 18px auto 8px; display: block;
-      background: var(--gold-gradient); color: #000; border: none; padding: 14px;
-      border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer;
+      width: 100%;
+      background: var(--gold-gradient);
+      color: #171000;
+      border: none;
+      padding: 13px;
+      border-radius: 14px;
+      font-size: 14.5px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+      transition: 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
     }
-    .btn-spin:disabled { opacity: 0.5; cursor: not-allowed; }
-    .timer-text { font-size: 12px; color: #ff9f0a; font-weight: 500; }
+    .btn-spin:active { transform: scale(0.97); }
+    .btn-spin:disabled {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: var(--text-muted) !important;
+      cursor: not-allowed;
+      box-shadow: none !important;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .spin-status-note {
+      font-size: 11.5px;
+      font-weight: bold;
+      color: #ff9f0a;
+      margin-bottom: 12px;
+    }
 
-    /* جدول ۱۰ تایی تاریخچه */
+    /* جدول راهنمای جوایز */
+    .prizes-legend {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .legend-item {
+      background: var(--card-inner);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 6px 4px;
+      text-align: center;
+      font-size: 10.5px;
+      font-weight: bold;
+    }
+
+    /* جدول تاریخچه جوایز */
     .history-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 14px; text-align: right;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      text-align: start;
     }
-    .history-card h4 { color: var(--gold); font-size: 13px; margin-bottom: 8px; }
-    .history-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .history-table th { color: var(--text-muted); padding: 8px; border-bottom: 1px solid var(--border); text-align: center; }
-    .history-table td { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center; }
+    .history-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--gold);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    table.history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+      text-align: center;
+    }
+    table.history-table th {
+      padding: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      color: var(--text-muted);
+    }
+    table.history-table td {
+      padding: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
 
-    /* پاپ‌آپ پیام اختصاصی */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-      z-index: 1000; align-items: center; justify-content: center; padding: 16px;
+    .toast-msg {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient);
+      color: #1a1200;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 12.5px;
+      font-weight: 900;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      z-index: 100001;
+      transition: transform 0.3s ease;
+      pointer-events: none;
     }
-    .modal-overlay.open { display: flex; }
-    .modal-box {
-      background: var(--card-bg); border: 1px solid var(--gold);
-      border-radius: 16px; width: 100%; max-width: 320px; padding: 20px; text-align: center;
-    }
-    .modal-icon { font-size: 40px; margin-bottom: 8px; }
-    .modal-box h3 { color: var(--gold); margin-bottom: 6px; font-size: 17px; }
-    .modal-box p { color: var(--text); font-size: 13px; margin-bottom: 16px; line-height: 1.6; }
-    .btn-modal {
-      width: 100%; background: var(--gold-gradient); color: black;
-      border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer;
-    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
+  <div class="toast-msg" id="toast-msg">انجام شد!</div>
 
-  <!-- نوار بالای صفحه -->
-  <div class="top-bar">
-    <button class="btn-back" onclick="goBack()">🔙 برگشت به منو</button>
-    <div class="balance-box">
-      <img src="../../assets/coin.png" width="18" height="18">
-      <span id="wheel-balance">1,000</span>
+  <div class="app-wrapper">
+    <!-- هدر با بازگشت هوشمند به ایندکس مادر و سربرگ تسک‌ها -->
+    <header class="top-header">
+      <a href="../index.html" class="btn-back" id="btn-back-nav" title="بازگشت">➔</a>
+      <div class="header-title">گردونه شانس طلایی</div>
+      <div class="coin-badge">
+        <div class="coin-badge-s">S</div>
+        <span id="user-balance-txt">50</span>
+      </div>
+    </header>
+
+    <!-- کارت گردونه -->
+    <div class="wheel-main-card">
+      <div class="wheel-title">🎡 شانس خود را امتحان کنید</div>
+      <div class="wheel-desc">اولین چرخش هر روز رایگان است؛ چرخش‌های بعدی فقط ۲ سکه!</div>
+
+      <!-- استیج گردونه -->
+      <div class="wheel-stage">
+        <div class="wheel-pointer"></div>
+        <div class="canvas-wrap">
+          <canvas id="wheelCanvas" width="250" height="250"></canvas>
+          <div class="wheel-center-badge">S</div>
+        </div>
+      </div>
+
+      <!-- دکمه چرخش و وضعیت -->
+      <button class="btn-spin" id="btn-spin-action" onclick="spinWheel()">
+        <span>🎰 چرخاندن گردونه</span>
+      </button>
+      <div class="spin-status-note" id="wheel-timer-status">در حال بررسی شانس روزانه...</div>
+
+      <!-- راهنمای جوایز با درصدهای دقیق -->
+      <div class="prizes-legend">
+        <div class="legend-item" style="color:#ff7b72;">💨 پوچ (۳۵٪)</div>
+        <div class="legend-item" style="color:var(--gold);">🪙 0.7 سکه (۲۵٪)</div>
+        <div class="legend-item" style="color:var(--green);">🪙 1 سکه (۱۸٪)</div>
+        <div class="legend-item" style="color:var(--cyan-neon);">🪙 1.7 سکه (۱۰٪)</div>
+        <div class="legend-item" style="color:#fce8b3;">🪙 10 سکه (۷٪)</div>
+        <div class="legend-item" style="color:#ffd700;">👑 50 سکه (۵٪)</div>
+      </div>
     </div>
-  </div>
 
-  <!-- کارت گردونه -->
-  <div class="wheel-card">
-    <h2>🎡 گردونه شانس طلایی</h2>
-    <p>هر ۲۴ ساعت یک شانس چرخش رایگان (ریست ساعت ۰۰:۰۰ لندن)</p>
-
-    <div class="wheel-container">
-      <div class="wheel-pointer"></div>
-      <canvas id="wheel-canvas" width="270" height="270"></canvas>
-    </div>
-
-    <button id="btn-spin" class="btn-spin" onclick="spinWheel()">🎰 چرخاندن گردونه</button>
-    <div class="timer-text" id="wheel-timer">آماده چرخش رایگان!</div>
-  </div>
-
-  <!-- جدول ۱۰ جایزه اخیر -->
-  <div class="history-card">
-    <h4>📜 تاریخچه جوایز اخیر شما (۱۰ روز گذشته)</h4>
-    <table class="history-table">
-      <thead>
-        <tr>
-          <th>تاریخ و ساعت</th>
-          <th>جایزه دریافتی</th>
-        </tr>
-      </thead>
-      <tbody id="history-body">
-        <tr><td colspan="2" style="color: var(--text-muted);">هنوز چرخشی ثبت نشده است</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- پاپ‌آپ اختصاصی -->
-  <div class="modal-overlay" id="popup-modal">
-    <div class="modal-box">
-      <div class="modal-icon" id="pop-icon">🎉</div>
-      <h3 id="pop-title">تبریک</h3>
-      <p id="pop-msg">پیام</p>
-      <button class="btn-modal" onclick="closePopup()">تایید</button>
+    <!-- تاریخچه جوایز ۱۰ چرخش اخیر -->
+    <div class="history-card">
+      <div class="history-title">
+        <span>📜</span>
+        <span>تاریخچه ۱۰ چرخش اخیر شما</span>
+      </div>
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>زمان چرخش</th>
+            <th>نوع چرخش</th>
+            <th>نتیجه</th>
+          </tr>
+        </thead>
+        <tbody id="history-body">
+          <tr><td colspan="3" style="color:var(--text-muted); padding:10px;">هنوز چرخشی ثبت نشده است</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -146,175 +364,256 @@
       if (tg) {
         tg.ready();
         tg.expand();
-        if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg.BackButton) {
+        if (tg.BackButton) {
           tg.BackButton.show();
-          tg.BackButton.onClick(goBack);
+          tg.BackButton.onClick(() => { goBackToMother(); });
         }
       }
     } catch(e) {}
 
-    function goBack() {
-      window.location.href = '../../index.html';
-    }
-
-    let balance = 1000;
+    let uid = "702007470";
     try {
-      balance = parseInt(localStorage.getItem('user_balance') || '1000');
+      if (tg?.initDataUnsafe?.user?.id) {
+        uid = tg.initDataUnsafe.user.id.toString();
+      }
     } catch(e) {}
-    document.getElementById('wheel-balance').innerText = balance.toLocaleString() + ' S';
 
-    function saveBalance() {
+    function goBackToMother() {
+      try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = '../index.html';
+      }
+    }
+    document.getElementById('btn-back-nav').onclick = (e) => {
+      e.preventDefault();
+      goBackToMother();
+    };
+
+    // موجودی سکه مشترک با کل برنامه
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+
+    function updateBalanceDisplay() {
+      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+      document.getElementById('user-balance-txt').innerText = displayVal;
+    }
+    updateBalanceDisplay();
+
+    function triggerHaptic(type = 'light') {
       try {
-        localStorage.setItem('user_balance', balance.toString());
+        if (tg?.HapticFeedback) {
+          if (type === 'success' || type === 'error' || type === 'warning') {
+            tg.HapticFeedback.notificationOccurred(type);
+          } else {
+            tg.HapticFeedback.impactOccurred(type);
+          }
+        }
       } catch(e) {}
-      document.getElementById('wheel-balance').innerText = balance.toLocaleString() + ' S';
     }
 
-    function showPopup(title, msg, icon = '🎉') {
-      document.getElementById('pop-icon').innerText = icon;
-      document.getElementById('pop-title').innerText = title;
-      document.getElementById('pop-msg').innerText = msg;
-      document.getElementById('popup-modal').classList.add('open');
-    }
-    function closePopup() {
-      document.getElementById('popup-modal').classList.remove('open');
+    function showToast(msg) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => { t.classList.remove('show'); }, 2200);
     }
 
-    // تنظیمات گردونه ۶ تایی با شانس وزنی دقیق
-    const canvas = document.getElementById('wheel-canvas');
-    const ctx = canvas.getContext('2d');
-    const segments = [
-      { label: '0 S', val: 0, weight: 35 },
-      { label: '2 S', val: 2, weight: 30 },
-      { label: '5 S', val: 5, weight: 20 },
-      { label: 'چرخش مجدد', val: 'again', weight: 10 },
-      { label: '15 S', val: 15, weight: 4 },
-      { label: '30 S', val: 30, weight: 1 }
+    // قطاع‌ها، جوایز و درصدهای شانس
+    const WHEEL_SECTORS = [
+      { label: 'پوچ 💨', val: 0, color: '#2d1519', text: '#ff7b72' },
+      { label: '0.7 🪙', val: 0.7, color: '#4a1e75', text: '#ffffff' },
+      { label: '1 🪙', val: 1.0, color: '#1a233a', text: '#00f5d4' },
+      { label: '1.7 🪙', val: 1.7, color: '#0d3d38', text: '#ffffff' },
+      { label: '10 🪙', val: 10.0, color: '#664506', text: '#fce8b3' },
+      { label: '50 👑', val: 50.0, color: '#d4af37', text: '#111111' }
     ];
-    const colors = ['#1a1a24', '#d4af37', '#252532', '#aa7c11', '#14141b', '#f9e8a2'];
-    let currentAngle = 0;
-    let spinning = false;
+
+    const EXTRA_SPIN_COST = 2; // هزینه هر چرخش اضافه: ۲ سکه
+
+    function getWheelCycleKey() {
+      const now = new Date();
+      return `simab_wheel_free_${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}_${uid}`;
+    }
+
+    function checkSpinStatus() {
+      const btn = document.getElementById('btn-spin-action');
+      const timerStatus = document.getElementById('wheel-timer-status');
+      if (!btn) return;
+
+      const cycleKey = getWheelCycleKey();
+      const hasUsedFree = (localStorage.getItem(cycleKey) === 'true');
+
+      if (!hasUsedFree) {
+        btn.disabled = false;
+        btn.innerHTML = `<span>🎁 چرخاندن رایگان گردونه</span>`;
+        if (timerStatus) {
+          timerStatus.innerText = 'یک شانس چرخش رایگان برای امروز فعال است!';
+          timerStatus.style.color = 'var(--green)';
+        }
+      } else {
+        if (balance >= EXTRA_SPIN_COST) {
+          btn.disabled = false;
+          btn.innerHTML = `<span>🎰 چرخاندن مجدد (${EXTRA_SPIN_COST} سکه 🪙)</span>`;
+          if (timerStatus) {
+            timerStatus.innerText = `شانس رایگان استفاده شد؛ چرخش‌های بعدی با ${EXTRA_SPIN_COST} سکه`;
+            timerStatus.style.color = '#ff9f0a';
+          }
+        } else {
+          btn.disabled = true;
+          btn.innerHTML = `<span>موجودی ناکافی (حداقل ${EXTRA_SPIN_COST} سکه) 🔒</span>`;
+          if (timerStatus) {
+            timerStatus.innerText = `برای چرخش اضافه حداقل به ${EXTRA_SPIN_COST} سکه نیاز دارید.`;
+            timerStatus.style.color = '#ff7b72';
+          }
+        }
+      }
+    }
 
     function drawWheel() {
-      const arc = (2 * Math.PI) / segments.length;
-      ctx.clearRect(0, 0, 270, 270);
-      for (let i = 0; i < segments.length; i++) {
-        const angle = currentAngle + i * arc;
+      const canvas = document.getElementById('wheelCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const num = WHEEL_SECTORS.length;
+      const arc = (2 * Math.PI) / num;
+      const radius = canvas.width / 2;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      WHEEL_SECTORS.forEach((sec, i) => {
+        const angle = i * arc;
         ctx.beginPath();
-        ctx.moveTo(135, 135);
-        ctx.arc(135, 135, 130, angle, angle + arc);
-        ctx.fillStyle = colors[i];
+        ctx.fillStyle = sec.color;
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius, angle, angle + arc);
+        ctx.lineTo(radius, radius);
         ctx.fill();
+
+        ctx.strokeStyle = 'rgba(212, 175, 55, 0.4)';
+        ctx.lineWidth = 2;
         ctx.stroke();
 
         ctx.save();
-        ctx.translate(135, 135);
+        ctx.fillStyle = sec.text;
+        ctx.font = 'bold 12px sans-serif';
+        ctx.translate(radius, radius);
         ctx.rotate(angle + arc / 2);
         ctx.textAlign = 'right';
-        ctx.fillStyle = (colors[i] === '#f9e8a2' || colors[i] === '#d4af37') ? '#000000' : '#ffffff';
-        ctx.font = 'bold 12px sans-serif';
-        ctx.fillText(segments[i].label, 115, 5);
+        ctx.fillText(sec.label, radius - 16, 4);
         ctx.restore();
-      }
+      });
     }
 
-    function checkDailyLimit() {
-      const now = new Date();
-      const todayUTC = now.getUTCFullYear() + '-' + now.getUTCMonth() + '-' + now.getUTCDate();
-      try {
-        if (localStorage.getItem('last_spin_day') === todayUTC) {
-          document.getElementById('wheel-timer').innerText = '⏳ چرخش امروز استفاده شده (ریست ساعت ۰۰:۰۰ لندن)';
-          document.getElementById('btn-spin').disabled = true;
-          return false;
+    let wheelRotation = 0;
+    let isSpinningWheel = false;
+
+    // انتخاب برنده طبق درصدهای دقیق درخواستی شما
+    function pickWheelIndex() {
+      const rand = Math.random() * 100;
+      if (rand < 35) return 0;       // پوچ: ۳۵٪
+      else if (rand < 60) return 1;  // 0.7 سکه: ۲۵٪
+      else if (rand < 78) return 2;  // 1 سکه: ۱۸٪
+      else if (rand < 88) return 3;  // 1.7 سکه: ۱۰٪
+      else if (rand < 95) return 4;  // 10 سکه: ۷٪
+      else return 5;                 // 50 سکه: ۵٪
+    }
+
+    function spinWheel() {
+      if (isSpinningWheel) return;
+
+      const cycleKey = getWheelCycleKey();
+      const hasUsedFree = (localStorage.getItem(cycleKey) === 'true');
+      let spinType = 'رایگان 🎁';
+
+      // اگر رایگان نباشد، ۲ سکه کسر شود
+      if (hasUsedFree) {
+        if (balance < EXTRA_SPIN_COST) {
+          showToast(`موجودی کافی نیست! به ${EXTRA_SPIN_COST} سکه نیاز دارید.`);
+          return;
         }
-      } catch(e) {}
-      document.getElementById('wheel-timer').innerText = 'آماده چرخش رایگان!';
-      document.getElementById('btn-spin').disabled = false;
-      return true;
+        balance = parseFloat((balance - EXTRA_SPIN_COST).toFixed(4));
+        spinType = `پولی (-${EXTRA_SPIN_COST} 🪙)`;
+      } else {
+        localStorage.setItem(cycleKey, 'true');
+      }
+
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      updateBalanceDisplay();
+
+      isSpinningWheel = true;
+      const btn = document.getElementById('btn-spin-action');
+      if (btn) btn.disabled = true;
+      triggerHaptic('heavy');
+
+      const winningIndex = pickWheelIndex();
+      const num = WHEEL_SECTORS.length;
+      const sectorDeg = 360 / num;
+      const targetCenter = (winningIndex * sectorDeg) + (sectorDeg / 2);
+      const extraSpins = 5 * 360;
+      const stopAngle = extraSpins + ((270 - targetCenter - (wheelRotation % 360) + 720) % 360);
+      wheelRotation += stopAngle;
+
+      const canvas = document.getElementById('wheelCanvas');
+      if (canvas) canvas.style.transform = `rotate(${wheelRotation}deg)`;
+
+      setTimeout(() => {
+        isSpinningWheel = false;
+        const won = WHEEL_SECTORS[winningIndex];
+
+        if (won.val > 0) {
+          balance = parseFloat((balance + won.val).toFixed(4));
+          localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+          localStorage.setItem('user_balance', balance.toString());
+          updateBalanceDisplay();
+          triggerHaptic('success');
+          showToast(`تبریک! برنده ${won.val} سکه شدید 🎉`);
+          saveWheelHistory(spinType, `+${won.val} سکه 🪙`);
+        } else {
+          triggerHaptic('warning');
+          showToast('پوچ شد! متاسفانه این بار شانسی نداشتید.');
+          saveWheelHistory(spinType, 'پوچ 💨');
+        }
+
+        checkSpinStatus();
+        renderWheelHistory();
+      }, 4600);
     }
 
-    function saveHistory(rewardText) {
+    function saveWheelHistory(spinType, rewardText) {
       try {
-        let hist = JSON.parse(localStorage.getItem('wheel_history') || '[]');
-        const dateStr = new Date().toLocaleDateString('fa-IR') + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        hist.unshift({ date: dateStr, reward: rewardText });
-        if (hist.length > 10) hist.pop(); // نگه‌داری حداکثر ۱۰ ردیف
-        localStorage.setItem('wheel_history', JSON.stringify(hist));
-        renderHistory();
+        let hist = JSON.parse(localStorage.getItem('wheel_history_' + uid) || '[]');
+        const dateStr = new Date().toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+        hist.unshift({ date: dateStr, type: spinType, reward: rewardText });
+        if (hist.length > 10) hist.pop();
+        localStorage.setItem('wheel_history_' + uid, JSON.stringify(hist));
       } catch(e) {}
     }
 
-    function renderHistory() {
+    function renderWheelHistory() {
+      const tbody = document.getElementById('history-body');
+      if (!tbody) return;
       try {
-        const hist = JSON.parse(localStorage.getItem('wheel_history') || '[]');
-        const tbody = document.getElementById('history-body');
+        const hist = JSON.parse(localStorage.getItem('wheel_history_' + uid) || '[]');
         if (hist.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="2" style="color: var(--text-muted);">هنوز چرخشی ثبت نشده است</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="3" style="color:var(--text-muted); padding:10px;">هنوز چرخشی ثبت نشده است</td></tr>';
           return;
         }
         tbody.innerHTML = hist.map(h => `
           <tr>
-            <td>${h.date}</td>
-            <td style="color: var(--gold); font-weight: bold;">${h.reward}</td>
+            <td style="color:var(--text-muted);">${h.date}</td>
+            <td style="color:var(--cyan-neon); font-size:10px;">${h.type}</td>
+            <td style="color:var(--gold); font-weight:bold;">${h.reward}</td>
           </tr>
         `).join('');
       } catch(e) {}
     }
 
-    function spinWheel() {
-      if (!checkDailyLimit() || spinning) return;
-      spinning = true;
-
-      const totalWeight = segments.reduce((sum, s) => sum + s.weight, 0);
-      let rand = Math.random() * totalWeight;
-      let winIndex = 0;
-      for (let i = 0; i < segments.length; i++) {
-        if (rand < segments[i].weight) {
-          winIndex = i;
-          break;
-        }
-        rand -= segments[i].weight;
-      }
-
-      const arc = (2 * Math.PI) / segments.length;
-      const fullRotations = 5 + Math.floor(Math.random() * 3);
-      const targetStopAngle = (3 * Math.PI / 2) - (winIndex * arc + arc / 2);
-      const totalSpinAngle = fullRotations * 2 * Math.PI + targetStopAngle;
-
-      let start = null;
-      function anim(t) {
-        if (!start) start = t;
-        const p = Math.min((t - start) / 4000, 1);
-        const ease = 1 - Math.pow(1 - p, 3);
-        currentAngle = ease * totalSpinAngle;
-        drawWheel();
-
-        if (p < 1) {
-          requestAnimationFrame(anim);
-        } else {
-          spinning = false;
-          const prize = segments[winIndex];
-          if (prize.val === 'again') {
-            showPopup('چرخش مجدد', '🎉 شما برنده یک شانس چرخش مجدد شدید! می‌توانید دوباره بچرخانید.', '🎡');
-            saveHistory('چرخش مجدد');
-          } else {
-            balance += prize.val;
-            saveBalance();
-            const now = new Date();
-            const todayUTC = now.getUTCFullYear() + '-' + now.getUTCMonth() + '-' + now.getUTCDate();
-            try { localStorage.setItem('last_spin_day', todayUTC); } catch(e) {}
-            saveHistory(`+${prize.val} S`);
-            checkDailyLimit();
-            showPopup('تبریک!', `🎉 شما برنده ${prize.label} سکه شدید!`, '🪙');
-          }
-        }
-      }
-      requestAnimationFrame(anim);
-    }
-
+    // راه‌اندازی اولیه
     drawWheel();
-    checkDailyLimit();
-    renderHistory();
+    checkSpinStatus();
+    renderWheelHistory();
   </script>
 </body>
 </html>
