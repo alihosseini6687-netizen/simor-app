@@ -107,7 +107,6 @@
       font-size: 11px;
       font-weight: 900;
     }
-
     /* کارت معرفی */
     .hero-card {
       background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
@@ -133,7 +132,6 @@
       color: var(--text-muted);
       line-height: 1.6;
     }
-
     /* وضعیت استریک کاربر */
     .streak-status-bar {
       background: var(--card-inner);
@@ -161,7 +159,6 @@
     .streak-fire-badge {
       font-size: 26px;
     }
-
     /* شبکه ۷ روز پاداش */
     .days-grid {
       display: grid;
@@ -220,7 +217,6 @@
       padding: 2px 6px;
       border-radius: 6px;
     }
-
     /* دکمه دریافت */
     .claim-action-box {
       margin-top: 6px;
@@ -252,7 +248,6 @@
       box-shadow: none;
       border: 1px solid rgba(255,255,255,0.06);
     }
-
     /* هشدار غیبت */
     .warning-box {
       background: rgba(255, 59, 48, 0.08);
@@ -264,7 +259,6 @@
       line-height: 1.5;
       text-align: center;
     }
-
     .toast-msg {
       position: fixed;
       top: 20px;
@@ -288,11 +282,10 @@
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
-
   <div class="app-wrapper">
     <!-- هدر با لینک بازگشت به لابی مادر -->
     <header class="top-header">
-      <a href="../index.html" class="btn-back" title="بازگشت به لابی">➔</a>
+      <a href="../index.html" class="btn-back" id="btn-back-nav" title="بازگشت به لابی">➔</a>
       <div class="header-title">پاداش ورود روزانه (Streak)</div>
       <div class="coin-badge">
         <div class="coin-badge-s">S</div>
@@ -340,25 +333,44 @@
       if (tg) {
         tg.ready();
         tg.expand();
+        if (tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(() => { goBackToMother(); });
+        }
       }
     } catch(e) {}
 
-    let uid = "user_guest";
+    let uid = "702007470";
     try {
       if (tg?.initDataUnsafe?.user?.id) {
         uid = tg.initDataUnsafe.user.id.toString();
       }
     } catch(e) {}
 
-    // همگام‌سازی سکه با لابی مادر
+    function goBackToMother() {
+      try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = '../index.html';
+      }
+    }
+    document.getElementById('btn-back-nav').onclick = (e) => {
+      e.preventDefault();
+      goBackToMother();
+    };
+
+    // همگام‌سازی سکه با لابی مادر (با حفظ دقیق اعشار)
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    let balance = parseInt(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50', 10);
+    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+
     function updateBalanceDisplay() {
-      document.getElementById('user-balance').innerText = balance.toLocaleString();
+      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+      document.getElementById('user-balance').innerText = displayVal;
     }
     updateBalanceDisplay();
 
-    // مقادیر دقیق پاداش برای ۷ روز طبق دستور شما
+    // مقادیر دقیق پاداش برای ۷ روز
     const streakRewards = [
       { day: 1, reward: 1, icon: '🪙' },
       { day: 2, reward: 3, icon: '🎁' },
@@ -387,7 +399,6 @@
     let currentDay = parseInt(localStorage.getItem(STORAGE_KEY_STREAK) || '0', 10);
     let lastDate = localStorage.getItem(STORAGE_KEY_LAST_DATE);
     const today = getTodayString();
-
     let isClaimableToday = false;
     let isStreakBroken = false;
 
@@ -398,7 +409,7 @@
     } else {
       const diff = getDaysDifference(lastDate, today);
       if (diff === 0) {
-        // امروز قبلاً پاداش گرفته
+        // امروز قبلاً پاداش گرفته شده
         isClaimableToday = false;
       } else if (diff === 1) {
         // روز بعد آمده (حفظ استریک)
@@ -423,14 +434,12 @@
       document.getElementById('streak-counter-txt').innerText = `روز ${currentDay} از ۷`;
       const container = document.getElementById('days-container');
       container.innerHTML = '';
-
       const targetClaimDay = isClaimableToday ? ((currentDay % 7) + 1) : null;
 
       streakRewards.forEach(item => {
         const card = document.createElement('div');
         const isDay7 = item.day === 7;
         card.className = `day-card ${isDay7 ? 'day-7' : ''}`;
-
         const isClaimed = item.day <= currentDay;
         const isCurrentTarget = item.day === targetClaimDay;
 
@@ -474,20 +483,19 @@
 
     function claimDailyReward() {
       if (!isClaimableToday) return;
-
       const nextDay = (currentDay % 7) + 1;
       const reward = streakRewards[nextDay - 1].reward;
-
       currentDay = nextDay;
-      balance += reward;
-
+      
+      // افزایش بالانس با حفظ اعشار
+      balance = parseFloat((balance + reward).toFixed(4));
+      
       localStorage.setItem(STORAGE_KEY_STREAK, currentDay.toString());
       localStorage.setItem(STORAGE_KEY_LAST_DATE, today);
       localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
       localStorage.setItem('user_balance', balance.toString());
-
+      
       isClaimableToday = false;
-
       updateBalanceDisplay();
       renderStreakUI();
 
