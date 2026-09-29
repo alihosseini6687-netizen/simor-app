@@ -53,7 +53,7 @@
         border-right: 1px solid rgba(255,255,255,0.05);
       }
     }
-    /* هدر */
+    /* هدر با دکمه بازگشت */
     .top-header {
       display: flex;
       justify-content: space-between;
@@ -107,6 +107,7 @@
       font-size: 11px;
       font-weight: 900;
     }
+
     /* کارت وضعیت ماینر فعال */
     .active-rig-card {
       background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
@@ -148,6 +149,7 @@
       color: var(--cyan);
       margin-bottom: 14px;
     }
+
     /* نوار پیشرفت دوره */
     .progress-box {
       background: rgba(0, 0, 0, 0.4);
@@ -185,7 +187,8 @@
       border-radius: 6px;
       transition: width 0.3s;
     }
-    /* بخش شارژ مجدد زیر مخزن */
+
+    /* پنل شارژ مجدد زیر مخزن */
     .recharge-panel {
       background: rgba(0, 245, 212, 0.05);
       border: 1px dashed rgba(0, 245, 212, 0.35);
@@ -221,7 +224,8 @@
       border-color: var(--text-muted);
       color: var(--text-muted);
     }
-    /* دکمه وضعیت اصلی / برداشت */
+
+    /* دکمه برداشت */
     .btn-claim {
       width: 100%;
       background: var(--gold-gradient);
@@ -245,6 +249,7 @@
       box-shadow: none !important;
       border: 1px solid rgba(255,255,255,0.06);
     }
+
     /* شبکه ۴ تایی فروشگاه ماینرها (۲ سطر و ۲ ستون مربعی) */
     .section-title {
       font-size: 14px;
@@ -317,6 +322,7 @@
       color: var(--green);
       cursor: default;
     }
+
     .toast-msg {
       position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
       background: var(--gold-gradient); color: #1a1200; padding: 8px 20px; border-radius: 25px;
@@ -329,7 +335,7 @@
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
   <div class="app-wrapper">
-    <!-- هدر -->
+    <!-- هدر با بازگشت هوشمند به سربرگ تسک‌ها -->
     <header class="top-header">
       <a href="../../index.html" class="btn-back" id="btn-back-nav" title="بازگشت">➔</a>
       <div class="header-title">ماینر ابری سیماب</div>
@@ -475,29 +481,38 @@
         tg.expand();
         if (tg.BackButton) {
           tg.BackButton.show();
-          tg.BackButton.onClick(() => { window.location.href = '../../index.html'; });
+          tg.BackButton.onClick(() => { goBackToMother(); });
         }
       }
     } catch(e) {}
 
-    let uid = "user_guest";
+    let uid = "702007470";
     try {
       if (tg?.initDataUnsafe?.user?.id) {
         uid = tg.initDataUnsafe.user.id.toString();
       }
     } catch(e) {}
 
+    function goBackToMother() {
+      try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = '../../index.html';
+      }
+    }
     document.getElementById('btn-back-nav').onclick = (e) => {
       e.preventDefault();
-      if (window.history.length > 1) window.history.back();
-      else window.location.href = '../../index.html';
+      goBackToMother();
     };
 
-    // موجودی سکه
+    // موجودی سکه مشترک با کل برنامه
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
     let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+
     function updateBalanceDisplay() {
-      document.getElementById('user-balance').innerText = balance.toLocaleString(undefined, { maximumFractionDigits: 3 });
+      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+      document.getElementById('user-balance').innerText = displayVal;
     }
     updateBalanceDisplay();
 
@@ -612,7 +627,7 @@
         timerTxt.innerText = `${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')} مانده`;
       }
 
-      // شرط برداشت: فعال شدن با رسیدن به حداقل ۰.۰۱ سکه
+      // شرط برداشت: حداقل ۰.۰۱ سکه
       if (cycleMined >= 0.01) {
         btnClaim.disabled = false;
         btnClaim.innerHTML = `<span>برداشت ${cycleMined.toFixed(4)} سکه و استارت مجدد ✨</span>`;
@@ -620,7 +635,7 @@
         btnClaim.disabled = true;
         btnClaim.innerHTML = `<span>حداقل برداشت: ۰.۰۱ سکه (در حال استخراج... ⏳)</span>`;
       }
-    } // <--- این آکولاد بسته شد
+    }
 
     function handleMinerAction() {
       if (currentTier === 0) return;
@@ -635,7 +650,7 @@
       balance = parseFloat((balance + claimAmount).toFixed(4));
       tankRemaining = parseFloat(Math.max(0, tankRemaining - claimAmount).toFixed(4));
       
-      // استارت دوباره چرخه ۲۴ ساعته
+      // استارت دوباره چرخه ۲۴ ساعته از همین لحظه
       cycleStart = Date.now();
 
       localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
@@ -658,7 +673,7 @@
         showToast(`موجودی کافی نیست! به ${cfg.recharge} سکه نیاز دارید.`);
         return;
       }
-      balance -= cfg.recharge;
+      balance = parseFloat((balance - cfg.recharge).toFixed(4));
       tankRemaining = cfg.tank;
       cycleStart = Date.now();
 
@@ -682,7 +697,7 @@
         showToast(`موجودی کافی نیست! به ${target.cost} سکه نیاز دارید.`);
         return;
       }
-      balance -= target.cost;
+      balance = parseFloat((balance - target.cost).toFixed(4));
       currentTier = tierNum;
       tankRemaining = target.tank;
       cycleStart = Date.now();
