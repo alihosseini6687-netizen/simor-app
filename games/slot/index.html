@@ -429,7 +429,7 @@
 
     function adjustMultiplier(delta) {
       if (isSpinning) return;
-      const presets =;
+      const presets = "1,2,5,10,25,50".split(",").map(Number);
       let idx = presets.indexOf(multiplier);
       if (idx === -1) idx = 0;
       let nextIdx = Math.max(0, Math.min(presets.length - 1, idx + delta));
