@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Simor Poker Pro</title>
+  <title>SIMAB | پوکر تگزاس هولدم</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -11,7 +11,7 @@
       --felt: #0c4323;
       --felt-inner: #072a15;
       --rail: #4a3018;
-      --gold: #e5c158;
+      --gold: #f5cf62;
       --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
       --purple: #8b3dff;
       --purple-gradient: linear-gradient(135deg, #7928ca, #ff0080);
@@ -22,13 +22,11 @@
       --green: #34c759;
       --blue: #007aff;
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
     body {
       background: radial-gradient(circle at 50% 20%, #25123a 0%, #0d0615 100%);
       color: var(--text); min-height: 100vh; padding: 8px; overflow-x: hidden; text-align: center;
     }
-
     /* نوار بالای صفحه */
     .top-bar {
       display: flex; justify-content: space-between; align-items: center;
@@ -37,15 +35,14 @@
     }
     .btn-back {
       background: #251a36; color: var(--gold); border: 1px solid rgba(212,175,55,0.3);
-      padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
+      padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none;
     }
     .btn-private-room {
       background: var(--purple-gradient); color: white; border: none;
       padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;
       box-shadow: 0 0 10px rgba(139,61,255,0.5);
     }
-
-    /* بنر انتخاب ظرفیت میز */
+    /* بنر تنظیمات میز */
     .room-settings-bar {
       display: flex; justify-content: space-between; align-items: center;
       background: rgba(0,0,0,0.4); border-radius: 8px; padding: 4px 10px; margin-bottom: 6px; font-size: 11px;
@@ -54,16 +51,14 @@
       background: #1c1527; color: var(--gold); border: 1px solid var(--gold);
       padding: 3px 6px; border-radius: 6px; font-size: 10px; outline: none;
     }
-
-    /* میز پوکر عمودی و کشیده (مشابه Pokergram) */
+    /* میز پوکر عمودی */
     .poker-table-vertical {
       position: relative; width: 100%; max-width: 350px; height: 460px;
       margin: 0 auto; background: radial-gradient(ellipse at center, #0f542b 0%, #062312 100%);
       border: 10px solid var(--rail); border-radius: 160px;
       box-shadow: inset 0 0 35px rgba(0,0,0,0.9), 0 0 25px rgba(0,0,0,0.7), 0 0 15px rgba(139,61,255,0.2);
     }
-
-    /* کاراکتر دیلر در بالای میز */
+    /* دیلر */
     .dealer-avatar {
       position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
       display: flex; flex-direction: column; align-items: center; z-index: 10;
@@ -78,28 +73,32 @@
       background: #000; color: var(--gold); font-size: 9px; font-weight: bold;
       padding: 1px 8px; border-radius: 8px; border: 1px solid var(--gold); margin-top: -6px;
     }
-
-    /* صندلی‌های ۶ نفره دور میز */
+    /* صندلی‌ها */
     .seat {
       position: absolute; display: flex; flex-direction: column; align-items: center;
-      font-size: 10px; z-index: 5;
+      font-size: 10px; z-index: 5; transition: opacity 0.3s;
     }
-    .seat-hero { bottom: 6px; left: 50%; transform: translateX(-50%); } /* بازیکن (پایین) */
-    .seat-p1 { bottom: 85px; left: 6px; }  /* چپ پایین */
-    .seat-p2 { top: 120px; left: 6px; }    /* چپ بالا */
-    .seat-p3 { top: 55px; left: 50%; transform: translateX(-50%); } /* بالا وسط */
-    .seat-p4 { top: 120px; right: 6px; }   /* راست بالا */
-    .seat-p5 { bottom: 85px; right: 6px; } /* راست پایین */
-
+    .seat.folded { opacity: 0.45; filter: grayscale(60%); }
+    .seat-hero { bottom: 6px; left: 50%; transform: translateX(-50%); }
+    .seat-p1 { bottom: 85px; left: 6px; }
+    .seat-p2 { top: 120px; left: 6px; }
+    .seat-p3 { top: 55px; left: 50%; transform: translateX(-50%); }
+    .seat-p4 { top: 120px; right: 6px; }
+    .seat-p5 { bottom: 85px; right: 6px; }
+    
     .avatar-circle {
       width: 36px; height: 36px; border-radius: 50%; background: #251a36;
       border: 2px solid var(--gold); display: flex; align-items: center;
       justify-content: center; font-weight: bold; font-size: 12px; color: white;
+      position: relative;
     }
-    .avatar-circle.empty {
-      border: 2px dashed rgba(212,175,55,0.4); background: rgba(0,0,0,0.4);
-      color: var(--gold); font-size: 16px; cursor: pointer;
+    .avatar-circle.active-turn {
+      border-color: #00f2fe;
+      box-shadow: 0 0 12px #00f2fe;
+      animation: pulseTurn 1s infinite alternate;
     }
+    @keyframes pulseTurn { from { transform: scale(1); } to { transform: scale(1.08); } }
+
     .player-name-tag {
       background: rgba(0,0,0,0.8); border: 1px solid rgba(212,175,55,0.4);
       border-radius: 10px; padding: 1px 6px; color: white; margin-top: 1px; font-size: 9px;
@@ -113,8 +112,7 @@
       font-size: 9px; font-weight: bold; padding: 1px 5px; border-radius: 4px;
       margin-top: 1px; background: rgba(0,0,0,0.7); color: var(--gold);
     }
-
-    /* مرکز میز (پات و ۵ کارت زمین) */
+    /* مرکز میز */
     .table-center {
       position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%);
       width: 100%; text-align: center;
@@ -125,8 +123,6 @@
       border-radius: 16px; padding: 4px 14px; font-size: 12px; font-weight: bold;
       color: var(--gold); margin-bottom: 8px; box-shadow: 0 0 10px rgba(212,175,55,0.3);
     }
-
-    /* کارت‌ها */
     .cards-box { display: flex; justify-content: center; gap: 4px; }
     .card {
       width: 35px; height: 50px; background: white; border-radius: 4px;
@@ -141,6 +137,16 @@
       border: 1px solid #ffffff; color: transparent;
     }
 
+    /* نوار تایمر نوبت */
+    .timer-bar-wrap {
+      width: 100%; height: 5px; background: rgba(255,255,255,0.1);
+      border-radius: 3px; overflow: hidden; margin-bottom: 6px; display: none;
+    }
+    .timer-bar-fill {
+      height: 100%; width: 100%; background: linear-gradient(90deg, #34c759, #ff3b30);
+      transition: width 1s linear;
+    }
+
     /* پنل کنترل شرط‌بندی */
     .control-panel {
       margin-top: 6px; background: rgba(28,21,39,0.95);
@@ -153,12 +159,10 @@
     }
     .poker-btn:active { transform: scale(0.96); }
     .poker-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-
     .btn-fold { background: #3a1515; color: #ff5555; border: 1px solid #ff3b30; }
     .btn-check { background: #152438; color: #5ac8fa; border: 1px solid #007aff; }
     .btn-call { background: #13331b; color: #4cd964; border: 1px solid #34c759; }
     .btn-raise { background: var(--gold-gradient); color: black; }
-
     .raise-bar {
       display: flex; align-items: center; justify-content: center; gap: 5px;
       background: #150f20; border: 1px solid var(--gold); border-radius: 8px;
@@ -173,7 +177,6 @@
       background: #251a36; border: 1px solid rgba(212,175,55,0.4); color: var(--gold);
       padding: 4px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer;
     }
-
     /* مودال‌ها */
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
@@ -187,13 +190,12 @@
   </style>
 </head>
 <body>
-
   <!-- نوار بالای صفحه -->
   <div class="top-bar">
-    <button class="btn-back" onclick="goBack()">🔙 لابی</button>
+    <button class="btn-back" onclick="goBack()">🔙 بازگشت</button>
     <button class="btn-private-room" onclick="openPrivateRoomModal()">👥 اتاق دوستان</button>
     <div style="color: var(--gold); font-weight: bold;">
-      🪙 <span id="user-bal-display">1,000</span>
+      🪙 <span id="user-bal-display">50</span>
     </div>
   </div>
 
@@ -210,28 +212,24 @@
     <div>
       هوش مصنوعی:
       <select class="select-pill" id="ai-difficulty" onchange="changeDifficulty(this.value)">
-        <option value="easy" selected>آسان</option>
-        <option value="medium">متوسط</option>
+        <option value="easy">آسان</option>
+        <option value="medium" selected>متوسط</option>
         <option value="hard">حرفه‌ای</option>
       </select>
     </div>
   </div>
 
-  <!-- میز عمودی ۶ نفره پوکر -->
+  <!-- میز عمودی ۶ نفره -->
   <div class="poker-table-vertical">
-
-    <!-- کاراکتر دیلر در بالای میز -->
     <div class="dealer-avatar">
       <div class="dealer-img-box">💃</div>
       <div class="dealer-title">DEALER</div>
     </div>
 
-    <!-- صندلی ۳: بالای میز (وسط) -->
+    <!-- صندلی ۳: بالا وسط -->
     <div class="seat seat-p3" id="seat-box-3">
-      <div class="cards-box" id="cards-bot3">
-        <div class="card card-back"></div><div class="card card-back"></div>
-      </div>
-      <div class="avatar-circle">A</div>
+      <div class="cards-box" id="cards-bot3"><div class="card card-back"></div><div class="card card-back"></div></div>
+      <div class="avatar-circle" id="avatar-bot3">A</div>
       <div class="player-name-tag">آریا 🤖</div>
       <div class="chip-badge" id="chips-bot3">0 S</div>
       <div class="status-badge" id="act-bot3">-</div>
@@ -239,10 +237,8 @@
 
     <!-- صندلی ۲: چپ بالا -->
     <div class="seat seat-p2" id="seat-box-2">
-      <div class="cards-box" id="cards-bot2">
-        <div class="card card-back"></div><div class="card card-back"></div>
-      </div>
-      <div class="avatar-circle">S</div>
+      <div class="cards-box" id="cards-bot2"><div class="card card-back"></div><div class="card card-back"></div></div>
+      <div class="avatar-circle" id="avatar-bot2">S</div>
       <div class="player-name-tag">سارا 🤖</div>
       <div class="chip-badge" id="chips-bot2">0 S</div>
       <div class="status-badge" id="act-bot2">-</div>
@@ -250,16 +246,14 @@
 
     <!-- صندلی ۱: چپ پایین -->
     <div class="seat seat-p1" id="seat-box-1">
-      <div class="cards-box" id="cards-bot1">
-        <div class="card card-back"></div><div class="card card-back"></div>
-      </div>
-      <div class="avatar-circle">M</div>
+      <div class="cards-box" id="cards-bot1"><div class="card card-back"></div><div class="card card-back"></div></div>
+      <div class="avatar-circle" id="avatar-bot1">M</div>
       <div class="player-name-tag">مسعود 🤖</div>
       <div class="chip-badge" id="chips-bot1">0 S</div>
       <div class="status-badge" id="act-bot1">-</div>
     </div>
 
-    <!-- مرکز میز: پات و ۵ کارت مشترک زمین -->
+    <!-- مرکز میز -->
     <div class="table-center">
       <div class="pot-pill">
         <span>🏆 پات:</span>
@@ -276,10 +270,8 @@
 
     <!-- صندلی ۴: راست بالا -->
     <div class="seat seat-p4" id="seat-box-4">
-      <div class="cards-box" id="cards-bot4">
-        <div class="card card-back"></div><div class="card card-back"></div>
-      </div>
-      <div class="avatar-circle">N</div>
+      <div class="cards-box" id="cards-bot4"><div class="card card-back"></div><div class="card card-back"></div></div>
+      <div class="avatar-circle" id="avatar-bot4">N</div>
       <div class="player-name-tag">نیما 🤖</div>
       <div class="chip-badge" id="chips-bot4">0 S</div>
       <div class="status-badge" id="act-bot4">-</div>
@@ -287,75 +279,62 @@
 
     <!-- صندلی ۵: راست پایین -->
     <div class="seat seat-p5" id="seat-box-5">
-      <div class="cards-box" id="cards-bot5">
-        <div class="card card-back"></div><div class="card card-back"></div>
-      </div>
-      <div class="avatar-circle">R</div>
+      <div class="cards-box" id="cards-bot5"><div class="card card-back"></div><div class="card card-back"></div></div>
+      <div class="avatar-circle" id="avatar-bot5">R</div>
       <div class="player-name-tag">رضا 🤖</div>
       <div class="chip-badge" id="chips-bot5">0 S</div>
       <div class="status-badge" id="act-bot5">-</div>
     </div>
 
-    <!-- صندلی اصلی: شما (پایین میز) -->
-    <div class="seat seat-hero">
+    <!-- صندلی شما (پایین) -->
+    <div class="seat seat-hero" id="seat-box-hero">
       <div class="status-badge" id="act-user">-</div>
-      <div class="cards-box" id="cards-user">
-        <div class="card card-back"></div><div class="card card-back"></div>
-      </div>
-      <div class="avatar-circle" style="border-color: #34c759;" id="hero-avatar">U</div>
+      <div class="cards-box" id="cards-user"><div class="card card-back"></div><div class="card card-back"></div></div>
+      <div class="avatar-circle" id="hero-avatar">U</div>
       <div class="player-name-tag" id="user-name-tag">👤 شما</div>
       <div class="chip-badge" id="chips-user">0 S</div>
     </div>
-
   </div>
 
-  <!-- پنل کنترل و شرط‌بندی در پایین صفحه -->
+  <!-- پنل کنترل -->
   <div class="control-panel">
+    <div class="timer-bar-wrap" id="timer-bar-wrap">
+      <div class="timer-bar-fill" id="timer-bar-fill"></div>
+    </div>
     <div style="font-size: 12px; color: var(--gold); margin-bottom: 6px; font-weight: bold;" id="status-text">
       برای شروع دست جدید روی دکمه زیر کلیک کنید
     </div>
-
     <div class="action-btn-row">
-      <button class="poker-btn btn-fold" id="btn-fold" onclick="userAction('fold')" disabled>انصراف</button>
-      <button class="poker-btn btn-check" id="btn-check" onclick="userAction('check')" disabled>بررسی</button>
-      <button class="poker-btn btn-call" id="btn-call" onclick="userAction('call')" disabled>کال</button>
-      <button class="poker-btn btn-raise" id="btn-raise" onclick="userAction('raise')" disabled>افزایش</button>
+      <button class="poker-btn btn-fold" id="btn-fold" onclick="userAction('fold')" disabled>انصراف (Fold)</button>
+      <button class="poker-btn btn-check" id="btn-check" onclick="userAction('check')" disabled>بررسی (Check)</button>
+      <button class="poker-btn btn-call" id="btn-call" onclick="userAction('call')" disabled>کال (Call)</button>
+      <button class="poker-btn btn-raise" id="btn-raise" onclick="userAction('raise')" disabled>افزایش (Raise)</button>
     </div>
-
-    <!-- نوار تنظیم مبلغ شرط دستی و سریع -->
     <div class="raise-bar">
       <span style="font-size: 10px; color: var(--text-muted);">مبلغ افزایش:</span>
       <input type="number" class="raise-input" id="custom-raise-input" value="4" min="1" oninput="onCustomRaiseInput(this.value)">
-      <button class="chip-quick" onclick="setRaiseAmount(5)">+۵</button>
+      <button class="chip-quick" onclick="setRaiseAmount(4)">+۴</button>
       <button class="chip-quick" onclick="setRaiseAmount(10)">+۱۰</button>
       <button class="chip-quick" onclick="setRaiseAmount(25)">+۲۵</button>
       <button class="chip-quick" style="border-color: var(--red); color: var(--red);" onclick="setAllIn()">All-in</button>
     </div>
-
-    <button class="poker-btn btn-raise" id="btn-start" style="width: 100%; margin-top: 8px; padding: 11px; font-size: 13px;" onclick="startNewHand()">🎲 پخش کارت و شروع دست ۶ نفره</button>
+    <button class="poker-btn btn-raise" id="btn-start" style="width: 100%; margin-top: 8px; padding: 11px; font-size: 13px;" onclick="startNewHand()">🎲 پخش کارت و شروع دست (ورودی ۲ سکه)</button>
   </div>
 
-  <!-- مودال اتاق خصوصی با دوستان -->
+  <!-- مودال اتاق دوستان -->
   <div class="modal-overlay" id="private-room-modal">
     <div class="modal-box">
-      <h3 style="color: var(--gold); margin-bottom: 6px;">👥 ساخت اتاق خصوصی با دوستان</h3>
+      <h3 style="color: var(--gold); margin-bottom: 6px;">👥 ساخت اتاق اختصاصی</h3>
       <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 14px;">
-        لینک زیر را برای دوستان خود بفرستید تا سر همین میز بنشینند:
+        لینک دعوت زیر را برای دوستان خود بفرستید تا سر همین میز بنشینند:
       </p>
-
       <div style="background: #150f20; border: 1px dashed var(--gold); border-radius: 8px; padding: 10px; margin-bottom: 12px; font-size: 12px;">
         <span style="color: var(--gold); font-weight: bold;" id="room-code-display">کد میز: ROOM-7020</span>
       </div>
-
       <div style="display: flex; gap: 8px; margin-bottom: 12px;">
         <button class="poker-btn btn-raise" onclick="shareRoomLink()">ارسال در تلگرام 🚀</button>
         <button class="poker-btn" style="background: #251a36; color: white;" onclick="copyRoomLink()">کپی لینک 📋</button>
       </div>
-
-      <p style="font-size: 10px; color: var(--text-muted); margin-bottom: 10px;">
-        صندلی‌های خالی میز توسط هوش مصنوعی پر می‌شوند تا بازی معطل نماند.
-      </p>
-
       <button class="poker-btn" style="width: 100%; background: #251a36; color: white;" onclick="closePrivateRoomModal()">بستن ✕</button>
     </div>
   </div>
@@ -376,7 +355,7 @@
       if (tg) {
         tg.ready();
         tg.expand();
-        if (tg.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg.BackButton) {
+        if (tg.BackButton) {
           tg.BackButton.show();
           tg.BackButton.onClick(goBack);
         }
@@ -388,17 +367,35 @@
       }
     } catch(e) {}
 
-    function goBack() { window.location.href = '../../index.html'; }
+    let uid = "702007470";
+    try {
+      if (tg?.initDataUnsafe?.user?.id) {
+        uid = tg.initDataUnsafe.user.id.toString();
+      }
+    } catch(e) {}
 
-    let balance = 1000;
-    try { balance = parseInt(localStorage.getItem('user_balance') || '1000'); } catch(e) {}
-    function saveBalance() {
-      try { localStorage.setItem('user_balance', balance.toString()); } catch(e) {}
-      document.getElementById('user-bal-display').innerText = balance.toLocaleString();
+    // بازگشت هوشمند به سربرگ بازی‌ها
+    function goBack() {
+      try { localStorage.setItem('simab_active_tab', 'games'); } catch(e) {}
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = '../../index.html';
+      }
     }
-    document.getElementById('user-bal-display').innerText = balance.toLocaleString();
 
-    let difficulty = 'easy';
+    // موجودی سکه مشترک با کل مینی‌اپ
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+
+    function saveBalance() {
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      document.getElementById('user-bal-display').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+    }
+    saveBalance();
+
+    let difficulty = 'medium';
     function changeDifficulty(val) { difficulty = val; }
 
     let tableCapacity = 6;
@@ -411,15 +408,12 @@
       document.getElementById('btn-start').innerText = `🎲 پخش کارت و شروع دست (${tableCapacity} نفره)`;
     }
 
-    // اتاق خصوصی
     function openPrivateRoomModal() { document.getElementById('private-room-modal').classList.add('open'); }
     function closePrivateRoomModal() { document.getElementById('private-room-modal').classList.remove('open'); }
-
     function shareRoomLink() {
-      const u = tg?.initDataUnsafe?.user;
-      const roomId = 'poker_' + (u?.id ? u.id.toString().slice(0, 5) : '7020');
+      const roomId = 'poker_' + uid.slice(0, 5);
       const shareUrl = `https://t.me/SimorMiniApp_bot?startapp=${roomId}`;
-      const text = `بیا با هم پوکر بزنیم! وارد میز اختصاصی من شو:`;
+      const text = `بیا با هم پوکر بزنیم! وارد میز من شو:`;
       if (tg?.openTelegramLink) {
         tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(text)}`);
       } else {
@@ -427,15 +421,13 @@
         alert('لینک دعوت کپی شد!');
       }
     }
-
     function copyRoomLink() {
-      const u = tg?.initDataUnsafe?.user;
-      const roomId = 'poker_' + (u?.id ? u.id.toString().slice(0, 5) : '7020');
+      const roomId = 'poker_' + uid.slice(0, 5);
       navigator.clipboard.writeText(`https://t.me/SimorMiniApp_bot?startapp=${roomId}`);
-      alert('لینک دعوت اتاق در کلیپ‌بورد کپی شد!');
+      alert('لینک دعوت در کلیپ‌بورد کپی شد!');
     }
 
-    // دسته کارت
+    // دسته ۵۲ تایی کارت
     const suits = ['♠', '♥', '♦', '♣'];
     const values = [
       { r: '2', v: 2 }, { r: '3', v: 3 }, { r: '4', v: 4 }, { r: '5', v: 5 },
@@ -445,17 +437,56 @@
 
     let deck = [];
     let pot = 0;
-    let stage = 0;
+    let stage = 0; // 0: Preflop, 1: Flop, 2: Turn, 3: River, 4: Showdown
     let currentHighestBet = 2;
     let selectedRaiseAmt = 4;
+    let communityCards = [];
 
-    let cCard1, cCard2, cCard3, cCard4, cCard5;
-    let pHero = { id: 'hero', name: 'شما', bet: 0, folded: false, card1: null, card2: null };
-    let pBot1 = { id: 'bot1', name: 'مسعود', bet: 0, folded: false, card1: null, card2: null };
-    let pBot2 = { id: 'bot2', name: 'سارا', bet: 0, folded: false, card1: null, card2: null };
-    let pBot3 = { id: 'bot3', name: 'آریا', bet: 0, folded: false, card1: null, card2: null };
-    let pBot4 = { id: 'bot4', name: 'نیما', bet: 0, folded: false, card1: null, card2: null };
-    let pBot5 = { id: 'bot5', name: 'رضا', bet: 0, folded: false, card1: null, card2: null };
+    let pHero = { id: 'hero', name: 'شما', bet: 0, folded: false, cards: [] };
+    let pBot1 = { id: 'bot1', name: 'مسعود', bet: 0, folded: false, cards: [] };
+    let pBot2 = { id: 'bot2', name: 'سارا', bet: 0, folded: false, cards: [] };
+    let pBot3 = { id: 'bot3', name: 'آریا', bet: 0, folded: false, cards: [] };
+    let pBot4 = { id: 'bot4', name: 'نیما', bet: 0, folded: false, cards: [] };
+    let pBot5 = { id: 'bot5', name: 'رضا', bet: 0, folded: false, cards: [] };
+
+    // تایمر نوبت ۱۵ ثانیه‌ای
+    let turnTimerInterval = null;
+    let turnTimeLeft = 15;
+
+    function startTurnTimer() {
+      clearInterval(turnTimerInterval);
+      turnTimeLeft = 15;
+      const wrap = document.getElementById('timer-bar-wrap');
+      const fill = document.getElementById('timer-bar-fill');
+      wrap.style.display = 'block';
+      fill.style.width = '100%';
+      document.getElementById('avatar-circle' in window ? '' : 'hero-avatar').classList.add('active-turn');
+
+      turnTimerInterval = setInterval(() => {
+        turnTimeLeft--;
+        const pct = (turnTimeLeft / 15) * 100;
+        fill.style.width = `${pct}%`;
+        document.getElementById('status-text').innerText = `⏱ نوبت شماست (${turnTimeLeft} ثانیه)`;
+
+        if (turnTimeLeft <= 0) {
+          clearInterval(turnTimerInterval);
+          wrap.style.display = 'none';
+          document.getElementById('hero-avatar').classList.remove('active-turn');
+          const toCall = currentHighestBet - pHero.bet;
+          if (toCall <= 0) {
+            userAction('check');
+          } else {
+            userAction('fold');
+          }
+        }
+      }, 1000);
+    }
+
+    function stopTurnTimer() {
+      clearInterval(turnTimerInterval);
+      document.getElementById('timer-bar-wrap').style.display = 'none';
+      document.getElementById('hero-avatar').classList.remove('active-turn');
+    }
 
     function buildDeck() {
       deck = [];
@@ -466,9 +497,7 @@
       }
       for (let i = deck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        const temp = deck[i];
-        deck[i] = deck[j];
-        deck[j] = temp;
+        [deck[i], deck[j]] = [deck[j], deck[i]];
       }
     }
 
@@ -479,83 +508,50 @@
 
     function onCustomRaiseInput(val) {
       let amt = parseInt(val) || 1;
-      if (amt > balance) amt = Math.max(1, balance);
-      if (amt < 1) amt = 1;
+      amt = Math.min(amt, Math.max(1, balance));
       selectedRaiseAmt = amt;
       document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} S)`;
     }
 
     function setRaiseAmount(amt) {
-      let finalAmt = Math.min(amt, Math.max(1, balance));
-      selectedRaiseAmt = finalAmt;
-      const inp = document.getElementById('custom-raise-input');
-      if (inp) inp.value = finalAmt;
-      document.getElementById('btn-raise').innerText = `افزایش (+${finalAmt} S)`;
+      selectedRaiseAmt = Math.min(amt, Math.max(1, balance));
+      document.getElementById('custom-raise-input').value = selectedRaiseAmt;
+      document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} S)`;
     }
 
     function setAllIn() {
       selectedRaiseAmt = Math.max(1, balance);
-      const inp = document.getElementById('custom-raise-input');
-      if (inp) inp.value = selectedRaiseAmt;
+      document.getElementById('custom-raise-input').value = selectedRaiseAmt;
       document.getElementById('btn-raise').innerText = `All-in (${selectedRaiseAmt} S)`;
     }
 
     function setButtonsState() {
+      if (pHero.folded) {
+        disableAllButtons();
+        return;
+      }
       const toCall = currentHighestBet - pHero.bet;
       document.getElementById('btn-fold').disabled = false;
-
       if (toCall <= 0) {
         document.getElementById('btn-check').disabled = false;
         document.getElementById('btn-call').disabled = true;
-        document.getElementById('btn-call').innerText = 'بررسی (Check)';
+        document.getElementById('btn-call').innerText = 'کال (Call)';
       } else {
         document.getElementById('btn-check').disabled = true;
         document.getElementById('btn-call').disabled = false;
         document.getElementById('btn-call').innerText = `کال (${toCall} S)`;
       }
-
-      document.getElementById('btn-raise').disabled = false;
+      document.getElementById('btn-raise').disabled = (balance <= toCall);
       document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} S)`;
+      startTurnTimer();
     }
 
     function disableAllButtons() {
+      stopTurnTimer();
       document.getElementById('btn-fold').disabled = true;
       document.getElementById('btn-check').disabled = true;
       document.getElementById('btn-call').disabled = true;
       document.getElementById('btn-raise').disabled = true;
-    }
-
-    function updateTableUI() {
-      document.getElementById('pot-amount').innerText = pot;
-      document.getElementById('chips-user').innerText = `${pHero.bet} S`;
-      document.getElementById('chips-bot1').innerText = `${pBot1.bet} S`;
-      document.getElementById('chips-bot2').innerText = `${pBot2.bet} S`;
-      document.getElementById('chips-bot3').innerText = `${pBot3.bet} S`;
-      document.getElementById('chips-bot4').innerText = `${pBot4.bet} S`;
-      document.getElementById('chips-bot5').innerText = `${pBot5.bet} S`;
-
-      // کارت‌های بازیکن اصلی
-      if (pHero.card1 && pHero.card2) {
-        document.getElementById('cards-user').innerHTML = renderCard(pHero.card1) + renderCard(pHero.card2);
-      }
-
-      const showBots = (stage === 4);
-      const renderBot = (bot) => (bot.card1 && bot.card2) ? (renderCard(bot.card1, !showBots) + renderCard(bot.card2, !showBots)) : '';
-
-      document.getElementById('cards-bot1').innerHTML = renderBot(pBot1);
-      document.getElementById('cards-bot2').innerHTML = renderBot(pBot2);
-      document.getElementById('cards-bot3').innerHTML = renderBot(pBot3);
-      document.getElementById('cards-bot4').innerHTML = renderBot(pBot4);
-      document.getElementById('cards-bot5').innerHTML = renderBot(pBot5);
-
-      // ۵ کارت زمین
-      let commHtml = '';
-      commHtml += (stage >= 1) ? renderCard(cCard1) : renderCard(null, true);
-      commHtml += (stage >= 1) ? renderCard(cCard2) : renderCard(null, true);
-      commHtml += (stage >= 1) ? renderCard(cCard3) : renderCard(null, true);
-      commHtml += (stage >= 2) ? renderCard(cCard4) : renderCard(null, true);
-      commHtml += (stage >= 3) ? renderCard(cCard5) : renderCard(null, true);
-      document.getElementById('community-cards').innerHTML = commHtml;
     }
 
     function getActiveBots() {
@@ -564,25 +560,67 @@
       return [pBot1, pBot2, pBot3, pBot4, pBot5];
     }
 
-    function startNewHand() {
-      if (balance < 2) {
-        alert('موجودی سکه برای ورود به دست کافی نیست!');
-        return;
+    function updateTableUI() {
+      document.getElementById('pot-amount').innerText = pot;
+      document.getElementById('chips-user').innerText = `${pHero.bet} S`;
+      
+      const bots = [pBot1, pBot2, pBot3, pBot4, pBot5];
+      bots.forEach((b, idx) => {
+        const id = idx + 1;
+        const elChips = document.getElementById(`chips-bot${id}`);
+        if (elChips) elChips.innerText = `${b.bet} S`;
+        const seatBox = document.getElementById(`seat-box-${id}`);
+        if (seatBox) seatBox.classList.toggle('folded', b.folded);
+      });
+      document.getElementById('seat-box-hero').classList.toggle('folded', pHero.folded);
+
+      // کارت‌های بازیکن
+      if (pHero.cards.length === 2) {
+        document.getElementById('cards-user').innerHTML = renderCard(pHero.cards[0]) + renderCard(pHero.cards);
       }
 
+      // کارت‌های ربات‌ها (فقط در مرحله شو‌داون رو می‌شوند)
+      const showBots = (stage === 4);
+      bots.forEach((b, idx) => {
+        const id = idx + 1;
+        const elCards = document.getElementById(`cards-bot${id}`);
+        if (!elCards) return;
+        if (b.cards.length === 2) {
+          elCards.innerHTML = renderCard(b.cards[0], !showBots) + renderCard(b.cards, !showBots);
+        } else {
+          elCards.innerHTML = '';
+        }
+      });
+
+      // کارت‌های زمین
+      let commHtml = '';
+      for (let i = 0; i < 5; i++) {
+        if (i < 3 && stage >= 1) commHtml += renderCard(communityCards[i]);
+        else if (i === 3 && stage >= 2) commHtml += renderCard(communityCards[i]);
+        else if (i === 4 && stage >= 3) commHtml += renderCard(communityCards[i]);
+        else commHtml += renderCard(null, true);
+      }
+      document.getElementById('community-cards').innerHTML = commHtml;
+    }
+
+    function startNewHand() {
+      if (balance < 2) {
+        alert('موجودی شما برای ورود به دست کافی نیست! (حداقل ۲ سکه)');
+        return;
+      }
       buildDeck();
       stage = 0;
       currentHighestBet = 2;
+      selectedRaiseAmt = 4;
 
-      pHero = { id: 'hero', name: 'شما', bet: 2, folded: false, card1: deck.pop(), card2: deck.pop() };
-      pBot1 = { id: 'bot1', name: 'مسعود', bet: 1, folded: false, card1: deck.pop(), card2: deck.pop() };
-      pBot2 = { id: 'bot2', name: 'سارا', bet: 2, folded: false, card1: deck.pop(), card2: deck.pop() };
-      pBot3 = { id: 'bot3', name: 'آریا', bet: 2, folded: false, card1: deck.pop(), card2: deck.pop() };
-      pBot4 = { id: 'bot4', name: 'نیما', bet: 2, folded: false, card1: deck.pop(), card2: deck.pop() };
-      pBot5 = { id: 'bot5', name: 'رضا', bet: 2, folded: false, card1: deck.pop(), card2: deck.pop() };
+      pHero = { id: 'hero', name: 'شما', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
+      pBot1 = { id: 'bot1', name: 'مسعود', bet: 1, folded: false, cards: [deck.pop(), deck.pop()] };
+      pBot2 = { id: 'bot2', name: 'سارا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
+      pBot3 = { id: 'bot3', name: 'آریا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
+      pBot4 = { id: 'bot4', name: 'نیما', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
+      pBot5 = { id: 'bot5', name: 'رضا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
 
-      cCard1 = deck.pop(); cCard2 = deck.pop(); cCard3 = deck.pop();
-      cCard4 = deck.pop(); cCard5 = deck.pop();
+      communityCards = [deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop()];
 
       balance -= 2;
       const activeBots = getActiveBots();
@@ -590,14 +628,17 @@
       saveBalance();
 
       document.getElementById('act-user').innerText = 'شرط: ۲S';
+      document.getElementById('act-user').style.color = 'var(--gold)';
       activeBots.forEach((b, i) => {
-        document.getElementById(`act-${b.id}`).innerText = (i === 0) ? 'اسمال: ۱S' : 'کال: ۲S';
+        const el = document.getElementById(`act-${b.id}`);
+        el.innerText = (i === 0) ? 'اسمال: ۱S' : 'کال: ۲S';
+        el.style.color = 'var(--gold)';
       });
 
       updateTableUI();
       document.getElementById('btn-start').style.display = 'none';
-      setButtonsState();
       document.getElementById('status-text').innerText = 'مرحله Pre-Flop: نوبت شماست';
+      setButtonsState();
     }
 
     function userAction(action) {
@@ -607,14 +648,17 @@
         pHero.folded = true;
         document.getElementById('act-user').innerText = 'فولد ✕';
         document.getElementById('act-user').style.color = '#ff3b30';
-        endHand('شما از این دست انصراف دادید.', false);
+        updateTableUI();
+        document.getElementById('status-text').innerText = 'شما فولد کردید — در حال تماشای ادامه بازی ربات‌ها... 👀';
+        // در حالت فولد، بازی بسته نمی‌شود؛ بازی تماشاچی اجرا می‌شود
+        setTimeout(runBotTurnsSequence, 1000);
         return;
       } else if (action === 'check') {
         document.getElementById('act-user').innerText = 'چک ✓';
         document.getElementById('act-user').style.color = '#5ac8fa';
       } else if (action === 'call') {
         const toCall = currentHighestBet - pHero.bet;
-        balance -= toCall;
+        balance = parseFloat((balance - toCall).toFixed(4));
         pot += toCall;
         pHero.bet += toCall;
         saveBalance();
@@ -624,9 +668,8 @@
         const toCall = currentHighestBet - pHero.bet;
         let actualRaise = selectedRaiseAmt;
         if (balance < toCall + actualRaise) actualRaise = Math.max(1, balance - toCall);
-
         const totalCost = toCall + actualRaise;
-        balance -= totalCost;
+        balance = parseFloat((balance - totalCost).toFixed(4));
         pot += totalCost;
         pHero.bet += totalCost;
         currentHighestBet = pHero.bet;
@@ -636,138 +679,209 @@
       }
 
       updateTableUI();
-      document.getElementById('status-text').innerText = 'ربات‌ها در حال تفکر...';
-      setTimeout(botTurns, 650);
+      document.getElementById('status-text').innerText = 'ربات‌ها در حال تصمیم‌گیری...';
+      setTimeout(runBotTurnsSequence, 800);
     }
 
-    function botTurns() {
+    // چرخش طبیعی و نوبتی ربات‌ها با تاخیر واقعی
+    async function runBotTurnsSequence() {
       const activeBots = getActiveBots();
 
-      activeBots.forEach(bot => {
-        if (bot.folded) return;
+      for (let bot of activeBots) {
+        if (bot.folded) continue;
+
+        const avatar = document.getElementById(`avatar-${bot.id}`);
+        const actEl = document.getElementById(`act-${bot.id}`);
+        if (avatar) avatar.classList.add('active-turn');
+        actEl.innerText = 'تفکر...';
+        actEl.style.color = '#00f2fe';
+
+        await new Promise(r => setTimeout(r, 650));
 
         let act = 'check';
         const rand = Math.random();
-
         if (difficulty === 'easy') {
           if (rand < 0.2) act = 'fold';
           else if (rand < 0.8) act = 'call';
           else act = 'check';
         } else if (difficulty === 'medium') {
-          if (rand < 0.12) act = 'fold';
-          else if (rand < 0.7) act = 'call';
+          if (rand < 0.1) act = 'fold';
+          else if (rand < 0.75) act = 'call';
           else act = 'raise';
         } else {
           if (rand < 0.05) act = 'fold';
-          else if (rand < 0.5) act = 'call';
+          else if (rand < 0.6) act = 'call';
           else act = 'raise';
         }
 
-        const actEl = document.getElementById(`act-${bot.id}`);
         if (act === 'fold') {
           bot.folded = true;
-          actEl.innerText = 'فولد';
+          actEl.innerText = 'فولد ✕';
           actEl.style.color = '#ff3b30';
         } else if (act === 'call') {
           const toCall = Math.max(0, currentHighestBet - bot.bet);
           pot += toCall;
           bot.bet += toCall;
-          actEl.innerText = 'کال';
-          actEl.style.color = '#34c759';
+          actEl.innerText = (toCall === 0) ? 'چک ✓' : `کال (${toCall}S)`;
+          actEl.style.color = (toCall === 0) ? '#5ac8fa' : '#34c759';
         } else if (act === 'raise') {
           const raiseAmt = (difficulty === 'hard') ? 5 : 2;
           const toCall = Math.max(0, currentHighestBet - bot.bet);
           pot += (toCall + raiseAmt);
           bot.bet += (toCall + raiseAmt);
           currentHighestBet = bot.bet;
-          actEl.innerText = 'افزایش';
+          actEl.innerText = `افزایش (+${raiseAmt}S)`;
           actEl.style.color = '#ffd700';
-        } else {
-          actEl.innerText = 'چک';
-          actEl.style.color = '#5ac8fa';
         }
-      });
 
+        if (avatar) avatar.classList.remove('active-turn');
+        updateTableUI();
+      }
+
+      // رفتن به مرحله بعدی زمین
       stage++;
       updateTableUI();
 
       if (stage === 1) {
-        document.getElementById('status-text').innerText = 'مرحله Flop (۳ کارت زمین رو شد)';
-        setButtonsState();
+        document.getElementById('status-text').innerText = 'مرحله Flop (۳ کارت زمین)';
+        if (!pHero.folded) setButtonsState();
+        else setTimeout(runBotTurnsSequence, 1200);
       } else if (stage === 2) {
-        document.getElementById('status-text').innerText = 'مرحله Turn (کارت چهارم رو شد)';
-        setButtonsState();
+        document.getElementById('status-text').innerText = 'مرحله Turn (کارت چهارم)';
+        if (!pHero.folded) setButtonsState();
+        else setTimeout(runBotTurnsSequence, 1200);
       } else if (stage === 3) {
-        document.getElementById('status-text').innerText = 'مرحله River (کارت پنجم رو شد)';
-        setButtonsState();
+        document.getElementById('status-text').innerText = 'مرحله River (کارت پنجم)';
+        if (!pHero.folded) setButtonsState();
+        else setTimeout(runBotTurnsSequence, 1200);
       } else {
         stage = 4;
         updateTableUI();
-        evaluateWinner();
+        document.getElementById('status-text').innerText = 'مرحله Showdown: بررسی دست‌ها و برنده...';
+        setTimeout(evaluateWinner, 1000);
       }
     }
 
+    // موتور ارزیابی دست استاندارد ۵ تایی تگزاس هولدم
     function eval5(c) {
       const vals = c.map(x => x.val).sort((a,b) => b-a);
       const suitsMap = c.map(x => x.suit);
       const isFlush = suitsMap.every(s => s === suitsMap[0]);
-
-      const counts = {};
-      vals.forEach(v => counts[v] = (counts[v] || 0) + 1);
-      const pairs = Object.entries(counts).map(([v, count]) => ({ val: parseInt(v), count })).sort((a,b) => b.count - a.count || b.val - a.val);
-
-      const uniqueVals = [...new Set(vals)];
+      
+      const uniqueVals = [...new Set(vals)].sort((a,b) => b-a);
       let isStraight = false;
+      let straightHigh = 0;
       if (uniqueVals.length === 5) {
-        if (uniqueVals[0] - uniqueVals === 4) isStraight = true;
-        if (uniqueVals[0] === 14 && uniqueVals === 5 && uniqueVals === 2) isStraight = true;
-      }
-
-      if (isFlush && isStraight) return { score: 9, name: 'استریت فلاش (Straight Flush)' };
-      if (pairs[0].count === 4) return { score: 7, name: 'کاره (Four of a Kind)' };
-      if (pairs[0].count === 3 && pairs?.count === 2) return { score: 6, name: 'فول هاوس (Full House)' };
-      if (isFlush) return { score: 5, name: 'رنگ (Flush)' };
-      if (isStraight) return { score: 4, name: 'ردیف (Straight)' };
-      if (pairs[0].count === 3) return { score: 3, name: 'سه تایی (Three of a Kind)' };
-      if (pairs[0].count === 2 && pairs?.count === 2) return { score: 2, name: 'دو جفت (Two Pair)' };
-      if (pairs[0].count === 2) return { score: 1, name: 'یک جفت (One Pair)' };
-      return { score: 0, name: 'کارت بالا (High Card)' };
-    }
-
-    function evaluateWinner() {
-      if (pHero.folded) {
-        endHand('شما فولد کرده بودید.', false);
-        return;
-      }
-
-      const u7 = [pHero.card1, pHero.card2, cCard1, cCard2, cCard3, cCard4, cCard5];
-      let bestUser = { score: -1, name: '' };
-
-      for (let i = 0; i < 7; i++) {
-        for (let j = i + 1; j < 7; j++) {
-          const combo = u7.filter((_, idx) => idx !== i && idx !== j);
-          const res = eval5(combo);
-          if (res.score > bestUser.score) bestUser = res;
+        if (uniqueVals[0] - uniqueVals === 4) {
+          isStraight = true;
+          straightHigh = uniqueVals[0];
+        } else if (uniqueVals[0] === 14 && uniqueVals === 5 && uniqueVals === 4 && uniqueVals === 3 && uniqueVals === 2) {
+          isStraight = true;
+          straightHigh = 5;
         }
       }
 
-      let botMaxScore = 0;
-      if (difficulty === 'easy') botMaxScore = Math.floor(Math.random() * 2);
-      else if (difficulty === 'medium') botMaxScore = Math.floor(Math.random() * 3);
-      else botMaxScore = Math.floor(Math.random() * 5);
+      const counts = {};
+      vals.forEach(v => counts[v] = (counts[v] || 0) + 1);
+      const groups = Object.entries(counts)
+        .map(([val, count]) => ({ val: Number(val), count }))
+        .sort((a,b) => b.count - a.count || b.val - a.val);
 
-      if (bestUser.score >= botMaxScore) {
-        balance += pot;
+      if (isFlush && isStraight) {
+        return { rank: 9, high: straightHigh, kickers: vals, name: straightHigh === 14 ? 'رویال فلاش (Royal Flush)' : 'استریت فلاش (Straight Flush)' };
+      }
+      if (groups[0].count === 4) {
+        return { rank: 8, high: groups[0].val, kickers: [groups[1].val], name: 'کاره (Four of a Kind)' };
+      }
+      if (groups[0].count === 3 && groups?.count === 2) {
+        return { rank: 7, high: groups[0].val, kickers: [groups[1].val], name: 'فول هاوس (Full House)' };
+      }
+      if (isFlush) {
+        return { rank: 6, high: vals[0], kickers: vals, name: 'رنگ (Flush)' };
+      }
+      if (isStraight) {
+        return { rank: 5, high: straightHigh, kickers: [straightHigh], name: 'ردیف (Straight)' };
+      }
+      if (groups[0].count === 3) {
+        return { rank: 4, high: groups[0].val, kickers: groups.slice(1).map(g => g.val), name: 'سه تایی (Three of a Kind)' };
+      }
+      if (groups[0].count === 2 && groups?.count === 2) {
+        return { rank: 3, high: Math.max(groups[0].val, groups.val), kickers: [Math.min(groups[0].val, groups.val), groups.val], name: 'دو جفت (Two Pair)' };
+      }
+      if (groups[0].count === 2) {
+        return { rank: 2, high: groups[0].val, kickers: groups.slice(1).map(g => g.val), name: 'یک جفت (One Pair)' };
+      }
+      return { rank: 1, high: vals[0], kickers: vals, name: 'کارت بالا (High Card)' };
+    }
+
+    // انتخاب بهترین ۵ کارت از ۷ کارت
+    function eval7(cards7) {
+      let best = null;
+      for (let i = 0; i < 7; i++) {
+        for (let j = i + 1; j < 7; j++) {
+          const combo = cards7.filter((_, idx) => idx !== i && idx !== j);
+          const res = eval5(combo);
+          if (!best || compareHands(res, best) > 0) {
+            best = res;
+          }
+        }
+      }
+      return best;
+    }
+
+    function compareHands(h1, h2) {
+      if (h1.rank !== h2.rank) return h1.rank - h2.rank;
+      if (h1.high !== h2.high) return h1.high - h2.high;
+      for (let i = 0; i < Math.min(h1.kickers.length, h2.kickers.length); i++) {
+        if (h1.kickers[i] !== h2.kickers[i]) return h1.kickers[i] - h2.kickers[i];
+      }
+      return 0;
+    }
+
+    // ارزیابی برنده نهایی به صورت کاملاً واقعی
+    function evaluateWinner() {
+      const activeBots = getActiveBots().filter(b => !b.folded);
+      let contenders = [];
+
+      // دست هیرو اگر فولد نکرده باشد
+      if (!pHero.folded) {
+        const u7 = [...pHero.cards, ...communityCards];
+        const hRes = eval7(u7);
+        contenders.push({ player: pHero, hand: hRes, isHero: true });
+      }
+
+      // دست واقعی تک‌تک ربات‌های فعال
+      activeBots.forEach(bot => {
+        const b7 = [...bot.cards, ...communityCards];
+        const bRes = eval7(b7);
+        contenders.push({ player: bot, hand: bRes, isHero: false });
+      });
+
+      if (contenders.length === 0) {
+        endHand('تمام بازیکنان فولد کردند.', false);
+        return;
+      }
+
+      // مرتب‌سازی دست‌ها از قوی‌ترین به ضعیف‌ترین
+      contenders.sort((a, b) => compareHands(b.hand, a.hand));
+      const winner = contenders[0];
+
+      if (winner.isHero) {
+        balance = parseFloat((balance + pot).toFixed(4));
         saveBalance();
-        endHand(`🎉 تبریک! شما با دست ${bestUser.name} برنده کل پات به ارزش ${pot} سکه شدید!`, true);
+        endHand(`🎉 تبریک! شما با دست برتر «${winner.hand.name}» برنده کل پات به ارزش ${pot} سکه شدید!`, true);
       } else {
-        const activeBots = getActiveBots().filter(b => !b.folded);
-        const winner = activeBots[0] || pBot3;
-        endHand(`🤖 ${winner.name} با دست برتر برنده پات ${pot} سکه شد. دست شما: ${bestUser.name}`, false);
+        if (pHero.folded) {
+          endHand(`🤖 ${winner.player.name} با دست «${winner.hand.name}» برنده پات ${pot} سکه شد.`, false);
+        } else {
+          const heroScore = contenders.find(c => c.isHero);
+          endHand(`🤖 ${winner.player.name} با دست «${winner.hand.name}» برنده شد.\nدست شما: «${heroScore.hand.name}»`, false);
+        }
       }
     }
 
     function endHand(msg, won) {
+      stopTurnTimer();
       document.getElementById('res-icon').innerText = won ? '🏆' : '🃏';
       document.getElementById('res-title').innerText = won ? 'پیروزی شما!' : 'پایان دست';
       document.getElementById('res-desc').innerText = msg;
