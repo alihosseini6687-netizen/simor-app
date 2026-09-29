@@ -486,19 +486,15 @@
       }
     } catch(e) {}
 
-    // سیستم موجودی سکه یکسان در تمام صفحات (پیش‌فرض ۵۰ سکه برای هر کاربر جدید)
+    // ================= سیستم همگام‌سازی ابری تلگرام (CloudStorage) =================
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    const FIRST_RUN_KEY = 'simab_initialized_' + uid;
+    const CLOUD_KEY_COINS = 'simab_user_coins';
+    const isCloudSupported = !!(tg?.isVersionAtLeast && tg.isVersionAtLeast('6.9') && tg?.CloudStorage);
 
     let balance = 50;
-    if (!localStorage.getItem(FIRST_RUN_KEY)) {
-      balance = 50;
-      localStorage.setItem(STORAGE_KEY_COINS, '50');
-      localStorage.setItem('user_balance', '50');
-      localStorage.setItem(FIRST_RUN_KEY, 'true');
-    } else {
+    try {
       balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
-    }
+    } catch(e) {}
 
     function renderCoins() {
       const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
@@ -507,6 +503,42 @@
       if (bTasks) bTasks.innerText = displayVal;
     }
     renderCoins();
+
+    // تابع ذخیره در هارد و سرور ابری تلگرام
+    function saveCoinsGlobal(newBal) {
+      balance = parseFloat(Number(newBal).toFixed(4));
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      renderCoins();
+
+      // ذخیره در سرور ابری تلگرام متصل به این اکانت
+      if (isCloudSupported) {
+        tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString(), (err) => {
+          if (err) console.warn('CloudStorage Save Error:', err);
+        });
+      }
+    }
+
+    // همگام‌سازی خودکار در شروع برنامه با ابر تلگرام
+    function syncWithTelegramCloud() {
+      if (!isCloudSupported) return;
+      tg.CloudStorage.getItem(CLOUD_KEY_COINS, (err, cloudVal) => {
+        if (!err && cloudVal !== null && cloudVal !== undefined && cloudVal !== '') {
+          const valNum = parseFloat(cloudVal);
+          if (!isNaN(valNum)) {
+            // دریافت آخرین موجودی از سرور تلگرام و اعمال در دستگاه فعلی
+            balance = valNum;
+            localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+            localStorage.setItem('user_balance', balance.toString());
+            renderCoins();
+          }
+        } else if (!err) {
+          // اگر اولین بار است که اکانت در تلگرام باز شده، ۵۰ سکه در ابر تلگرام ثبت شود
+          tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString());
+        }
+      });
+    }
+    syncWithTelegramCloud();
 
     function triggerHaptic(type = 'light') {
       try {
