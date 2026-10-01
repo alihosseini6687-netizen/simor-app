@@ -340,36 +340,80 @@
       }
     } catch(e) {}
 
-    let uid = "702007470";
-    try {
-      if (tg?.initDataUnsafe?.user?.id) {
-        uid = tg.initDataUnsafe.user.id.toString();
-      }
-    } catch(e) {}
-
-    function goBackToMother() {
-      try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = '../index.html';
-      }
+    let uid = "guest";
+  try {
+    if (tg?.initDataUnsafe?.user?.id) {
+      uid = tg.initDataUnsafe.user.id.toString();
     }
-    document.getElementById('btn-back-nav').onclick = (e) => {
-      e.preventDefault();
-      goBackToMother();
+  } catch(e) {}
+
+  function goBackToMother() {
+    try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = '../index.html';
+    }
+  }
+  document.getElementById('btn-back-nav').onclick = (e) => {
+    e.preventDefault();
+    goBackToMother();
+  };
+
+  // اتصال مستقیم به ابری تلگرام و حذف کلید مشترک
+  const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
+  const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+  const isCloudSupported = !!(tg && tg.CloudStorage);
+
+  let balance = 50;
+  if (uid === "702007470") {
+    balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
+  } else if (uid !== "guest") {
+    let saved = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '50');
+    if (saved >= 100000) saved = 50;
+    balance = saved;
+  }
+
+  function updateBalanceDisplay() {
+    const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+    document.getElementById('user-balance').innerText = displayVal;
+
+    localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+    localStorage.removeItem('user_balance');
+
+    // ذخیره ابری فوری پاداش روزانه
+    const payload = {
+      coins: balance,
+      chips: parseInt(localStorage.getItem('simab_chips_' + uid) || '0', 10),
+      inv: JSON.parse(localStorage.getItem('simab_chips_inv_' + uid) || '{"c1":0,"c5":0,"c25":0,"c100":0,"c500":0}'),
+      updated_at: Date.now()
     };
-
-    // همگام‌سازی سکه با لابی مادر (با حفظ دقیق اعشار)
-    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
-
-    function updateBalanceDisplay() {
-      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
-      document.getElementById('user-balance').innerText = displayVal;
+    localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
+    if (isCloudSupported && uid !== "guest") {
+      tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload));
     }
-    updateBalanceDisplay();
+  }
+  updateBalanceDisplay();
 
+  function syncWithTelegramCloud() {
+    if (!isCloudSupported || uid === "guest") return;
+    tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
+      if (err || !cloudRaw) return;
+      try {
+        const cloudData = JSON.parse(cloudRaw);
+        const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
+        if (cloudData.updated_at && cloudData.updated_at >= localTime) {
+          if (typeof cloudData.coins === 'number') {
+            if (uid !== "702007470" && cloudData.coins >= 100000) return;
+            balance = cloudData.coins;
+            localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+            document.getElementById('user-balance').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+          }
+        }
+      } catch(e) {}
+    });
+  }
+  syncWithTelegramCloud();
     // مقادیر دقیق پاداش برای ۷ روز
     const streakRewards = [
       { day: 1, reward: 1, icon: '🪙' },
@@ -482,27 +526,25 @@
     }
 
     function claimDailyReward() {
-      if (!isClaimableToday) return;
-      const nextDay = (currentDay % 7) + 1;
-      const reward = streakRewards[nextDay - 1].reward;
-      currentDay = nextDay;
-      
-      // افزایش بالانس با حفظ اعشار
-      balance = parseFloat((balance + reward).toFixed(4));
-      
-      localStorage.setItem(STORAGE_KEY_STREAK, currentDay.toString());
-      localStorage.setItem(STORAGE_KEY_LAST_DATE, today);
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      
-      isClaimableToday = false;
-      updateBalanceDisplay();
-      renderStreakUI();
+    if (!isClaimableToday) return;
+    const nextDay = (currentDay % 7) + 1;
+    const reward = streakRewards[nextDay - 1].reward;
+    currentDay = nextDay;
 
-      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-      showToast(`پاداش ${reward} سکه برای روز ${currentDay} با موفقیت دریافت شد! 🎉`);
-    }
+    // افزایش بالانس و ذخیره ایزوله برای این کاربر
+    balance = parseFloat((balance + reward).toFixed(4));
 
+    localStorage.setItem(STORAGE_KEY_STREAK, currentDay.toString());
+    localStorage.setItem(STORAGE_KEY_LAST_DATE, today);
+    localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+    localStorage.removeItem('user_balance'); // حذف کلید مشترک
+
+    isClaimableToday = false;
+    updateBalanceDisplay();
+    renderStreakUI();
+    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    showToast(`پاداش ${reward} سکه برای روز ${currentDay} با موفقیت دریافت شد! 🎉`);
+  }
     if (isStreakBroken) {
       showToast('به دلیل غیبت، روزشمار استریک شما از نو آغاز شد.');
     }
