@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SIMAB | صرافی و تبدیل ژتون بازی‌ها</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0c0c14;
+      --card-bg: rgba(20, 20, 32, 0.94);
+      --card-inner: rgba(28, 28, 44, 0.88);
+      --gold: #f5cf62;
+      --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
+      --cyan: #00f2fe;
+      --purple: #9d4edd;
+      --green: #00f5d4;
+      --text: #ffffff;
+      --text-muted: #a5a5bc;
+      --border: rgba(212, 175, 55, 0.25);
+      --red: #ff3b30;
+      --chip-white: #e5e5ea;
+      --chip-red: #ff453a;
+      --chip-green: #30d158;
+      --chip-black: #1c1c1e;
+      --chip-gold: #ffd60a;
+    }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      user-select: none; 
+      -webkit-tap-highlight-color: transparent; 
+    }
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 10%, #1e1338 0%, #0c0c14 70%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+      font-size: 14px;
+    }
+    .app-wrapper {
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      padding: 10px 10px 50px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (min-width: 500px) {
+      .app-wrapper {
+        max-width: 440px;
+        box-shadow: 0 0 35px rgba(0,0,0,0.9);
+        border-left: 1px solid rgba(255,255,255,0.05);
+        border-right: 1px solid rgba(255,255,255,0.05);
+      }
+    }
+    /* هدر */
+    .top-header {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 10px 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .btn-back {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: var(--gold);
+      width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      font-size: 17px; cursor: pointer; text-decoration: none;
+    }
+    .header-title { font-size: 16.5px; font-weight: 900; color: #fff; }
+    
+    /* کارت موجودی دوگانه (سکه و ژتون) */
+    .dual-wallet-card {
+      background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
+      border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+    .wallet-box {
+      background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px; padding: 10px 8px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .wallet-box .w-icon { font-size: 24px; }
+    .wallet-box .w-lbl { font-size: 11.5px; color: var(--text-muted); font-weight: bold; }
+    .wallet-box .w-val { font-size: 17px; font-weight: 900; color: #fff; }
+    .wallet-box.chips-box .w-val { color: var(--cyan); }
+    .wallet-box.coins-box .w-val { color: var(--gold); }
+
+    /* تفکیک ۵ رنگ ژتون */
+    .chip-rack-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 12px; text-align: right;
+    }
+    .chip-rack-title {
+      font-size: 12.5px; font-weight: 900; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+    }
+    .chip-rack-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center;
+    }
+    .chip-col {
+      background: var(--card-inner); border-radius: 10px; padding: 6px 2px;
+      display: flex; flex-direction: column; align-items: center; gap: 3px; border: 1px solid rgba(255,255,255,0.06);
+    }
+    .chip-circle {
+      width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 10.5px; font-weight: 900; border: 2px dashed rgba(255,255,255,0.4); box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    }
+    .chip-c-1 { background: #e5e5ea; color: #000; border-color: #8e8e93; }
+    .chip-c-5 { background: #ff453a; color: #fff; border-color: #ffd60a; }
+    .chip-c-25 { background: #30d158; color: #000; border-color: #fff; }
+    .chip-c-100 { background: #1c1c1e; color: #ffd60a; border-color: #ffd60a; }
+    .chip-c-500 { background: radial-gradient(circle, #ffd60a, #ff9f0a); color: #000; border-color: #fff; }
+    .chip-cnt { font-size: 11px; font-weight: 900; color: #fff; }
+    .chip-lbl { font-size: 9.5px; color: var(--text-muted); }
+
+    /* تب‌های تبدیل رفت و برگشت */
+    .swap-tabs-row {
+      display: flex; gap: 8px; background: rgba(0,0,0,0.4); border-radius: 14px; padding: 4px; border: 1px solid var(--border);
+    }
+    .btn-tab-swap {
+      flex: 1; padding: 10px; border-radius: 10px; font-size: 13.5px; font-weight: 900;
+      background: transparent; color: var(--text-muted); border: none; cursor: pointer; transition: 0.15s;
+    }
+    .btn-tab-swap.active {
+      background: var(--gold-gradient); color: #170f00; box-shadow: 0 2px 10px rgba(212,175,55,0.3);
+    }
+
+    /* باکس فرم تبدیل */
+    .swap-form-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 18px; padding: 16px 14px; text-align: right;
+    }
+    .swap-input-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--card-inner); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; margin-bottom: 10px;
+    }
+    .swap-input {
+      background: transparent; border: none; outline: none; font-size: 19px; font-weight: 900;
+      color: #fff; width: 60%; direction: ltr; text-align: right;
+    }
+    .swap-currency-tag { font-size: 13px; font-weight: 900; color: var(--gold); display: flex; align-items: center; gap: 4px; }
+    
+    .quick-chips-row {
+      display: flex; justify-content: space-between; gap: 5px; margin-bottom: 12px;
+    }
+    .btn-quick-chip {
+      flex: 1; background: var(--card-inner); border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-muted); padding: 7px 2px; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;
+    }
+    .btn-quick-chip:active { background: var(--gold-gradient); color: black; border-color: var(--gold); }
+    
+    .btn-submit-swap {
+      width: 100%; background: var(--gold-gradient); color: #150900; border: none;
+      padding: 13px; border-radius: 12px; font-size: 15px; font-weight: 900; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(212,175,55,0.4); transition: 0.15s;
+    }
+    .btn-submit-swap:active { transform: scale(0.97); }
+
+    /* کارت‌های دسترسی مستقیم بازی‌ها با ژتون لازم */
+    .section-title {
+      font-size: 14.5px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 6px;
+      margin-top: 6px; margin-bottom: 4px; text-align: right;
+    }
+    .games-stake-list { display: flex; flex-direction: column; gap: 8px; }
+    .stake-item-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .stake-item-info { display: flex; align-items: center; gap: 10px; text-align: right; }
+    .stake-item-icon {
+      width: 38px; height: 38px; border-radius: 10px; background: var(--card-inner);
+      display: flex; align-items: center; justify-content: center; font-size: 20px;
+    }
+    .stake-item-name { font-size: 13.5px; font-weight: 900; color: #fff; margin-bottom: 2px; }
+    .stake-item-req { font-size: 11px; font-weight: bold; color: var(--cyan); }
+    .btn-quick-enter {
+      background: rgba(0, 245, 212, 0.15); border: 1px solid var(--green); color: var(--green);
+      padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer; text-decoration: none;
+    }
+
+    .toast-msg {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient); color: #1a1200; padding: 8px 20px; border-radius: 25px;
+      font-size: 13px; font-weight: 900; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="toast-msg" id="toast-msg">انجام شد!</div>
+
+  <div class="app-wrapper">
+    <!-- هدر با بازگشت هوشمند به سربرگ تسک‌ها -->
+    <header class="top-header">
+      <a href="../index.html" class="btn-back" id="btn-back-nav" title="بازگشت">➔</a>
+      <div class="header-title">صرافی و تبدیل ژتون بازی‌ها</div>
+      <div style="width: 36px;"></div>
+    </header>
+
+    <!-- کیف پول دوگانه -->
+    <div class="dual-wallet-card">
+      <div class="wallet-box coins-box">
+        <span class="w-icon">🪙</span>
+        <span class="w-lbl">سکه اصلی سیماب</span>
+        <span class="w-val" id="disp-coins">50</span>
+      </div>
+      <div class="wallet-box chips-box">
+        <span class="w-icon">🎰</span>
+        <span class="w-lbl">صندوق ژتون بازی‌ها</span>
+        <span class="w-val" id="disp-chips">0</span>
+      </div>
+    </div>
+
+    <!-- رک و تفکیک رنگ ژتون‌ها -->
+    <div class="chip-rack-card">
+      <div class="chip-rack-title">
+        <span>🎨</span>
+        <span>موجودی تفکیک‌شده ژتون‌های شما سر میز:</span>
+      </div>
+      <div class="chip-rack-grid">
+        <div class="chip-col">
+          <div class="chip-circle chip-c-1">1</div>
+          <span class="chip-cnt" id="cnt-c1">0</span>
+          <span class="chip-lbl">سفید</span>
+        </div>
+        <div class="chip-col">
+          <div class="chip-circle chip-c-5">5</div>
+          <span class="chip-cnt" id="cnt-c5">0</span>
+          <span class="chip-lbl">قرمز</span>
+        </div>
+        <div class="chip-col">
+          <div class="chip-circle chip-c-25">25</div>
+          <span class="chip-cnt" id="cnt-c25">0</span>
+          <span class="chip-lbl">سبز</span>
+        </div>
+        <div class="chip-col">
+          <div class="chip-circle chip-c-100">100</div>
+          <span class="chip-cnt" id="cnt-c100">0</span>
+          <span class="chip-lbl">مشکی</span>
+        </div>
+        <div class="chip-col">
+          <div class="chip-circle chip-c-500">500</div>
+          <span class="chip-cnt" id="cnt-c500">0</span>
+          <span class="chip-lbl">طلایی</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- تب‌های تغییر جهت تبدیل -->
+    <div class="swap-tabs-row">
+      <button class="btn-tab-swap active" id="tab-buy-chips" onclick="switchSwapMode('buy')">
+        خرید ژتون بازی (سکه ➔ ژتون)
+      </button>
+      <button class="btn-tab-swap" id="tab-sell-chips" onclick="switchSwapMode('sell')">
+        نقد کردن ژتون (ژتون ➔ سکه)
+      </button>
+    </div>
+
+    <!-- فرم اصلی تبدیل -->
+    <div class="swap-form-card">
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;" id="swap-prompt-lbl">
+        تعداد سکه‌ای که می‌خواهید به ژتون تبدیل کنید را وارد کنید:
+      </div>
+      <div class="swap-input-row">
+        <input type="number" class="swap-input" id="swap-amt-input" value="50" min="1" oninput="updateExpectedSwap()">
+        <span class="swap-currency-tag" id="currency-tag">🪙 سکه</span>
+      </div>
+
+      <!-- دکمه‌های مقادیر سریع -->
+      <div class="quick-chips-row">
+        <button class="btn-quick-chip" onclick="setQuickSwap(25)">۲۵</button>
+        <button class="btn-quick-chip" onclick="setQuickSwap(50)">۵۰</button>
+        <button class="btn-quick-chip" onclick="setQuickSwap(100)">۱۰۰</button>
+        <button class="btn-quick-chip" onclick="setQuickSwap(250)">۲۵۰</button>
+        <button class="btn-quick-chip" onclick="setQuickSwap(500)">۵۰۰</button>
+        <button class="btn-quick-chip" style="color:var(--gold);" onclick="setSwapMax()">MAX</button>
+      </div>
+
+      <button class="btn-submit-swap" id="btn-submit-action" onclick="executeSwap()">
+        🔄 تبدیل ۵۰ سکه به ۵۰ ژتون بازی
+      </button>
+    </div>
+
+    <!-- لیست بازی‌ها با حداقل ژتون ورودی (قابل تنظیم در پنل ادمین) -->
+    <div class="section-title">
+      <span>🎮</span>
+      <span>حداقل ژتون مورد نیاز بازی‌ها:</span>
+    </div>
+    <div class="games-stake-list" id="games-stake-container"></div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(goBackToMother);
+        }
+      }
+    } catch(e) {}
+
+    let uid = "702007470";
+    try {
+      if (tg?.initDataUnsafe?.user?.id) {
+        uid = tg.initDataUnsafe.user.id.toString();
+      }
+    } catch(e) {}
+
+    function goBackToMother() {
+      try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = '../index.html';
+      }
+    }
+    document.getElementById('btn-back-nav').onclick = (e) => {
+      e.preventDefault();
+      goBackToMother();
+    };
+
+    // سکه‌های اصلی و ژتون‌ها
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
+
+    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+    let chips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
+
+    // موتور صوتی داخلی برخورد ژتون‌ها
+    let audioCtx = null;
+    function playChipClink() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!audioCtx) audioCtx = new AudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1400, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch(e) {}
+    }
+
+    function showToast(text) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = text;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    function updateWalletsUI() {
+      document.getElementById('disp-coins').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+      document.getElementById('disp-chips').innerText = Number(chips).toLocaleString(undefined, { maximumFractionDigits: 0 });
+
+      // محاسبه تفکیک ۵ رنگ ژتون بر اساس موجودی
+      let rem = Math.floor(chips);
+      const c500 = Math.floor(rem / 500); rem %= 500;
+      const c100 = Math.floor(rem / 100); rem %= 100;
+      const c25 = Math.floor(rem / 25); rem %= 25;
+      const c5 = Math.floor(rem / 5); rem %= 5;
+      const c1 = rem;
+
+      document.getElementById('cnt-c500').innerText = c500;
+      document.getElementById('cnt-c100').innerText = c100;
+      document.getElementById('cnt-c25').innerText = c25;
+      document.getElementById('cnt-c5').innerText = c5;
+      document.getElementById('cnt-c1').innerText = c1;
+    }
+
+    let swapMode = 'buy'; // 'buy': سکه به ژتون | 'sell': ژتون به سکه
+
+    function switchSwapMode(mode) {
+      swapMode = mode;
+      document.querySelectorAll('.btn-tab-swap').forEach(b => b.classList.remove('active'));
+      if (mode === 'buy') {
+        document.getElementById('tab-buy-chips').classList.add('active');
+        document.getElementById('swap-prompt-lbl').innerText = 'تعداد سکه‌ای که می‌خواهید به ژتون تبدیل کنید را وارد کنید:';
+        document.getElementById('currency-tag').innerText = '🪙 سکه';
+      } else {
+        document.getElementById('tab-sell-chips').classList.add('active');
+        document.getElementById('swap-prompt-lbl').innerText = 'تعداد ژتونی که می‌خواهید نقد کرده و به سکه تبدیل کنید:';
+        document.getElementById('currency-tag').innerText = '🎰 ژتون';
+      }
+      updateExpectedSwap();
+    }
+
+    function setQuickSwap(val) {
+      document.getElementById('swap-amt-input').value = val;
+      updateExpectedSwap();
+    }
+
+    function setSwapMax() {
+      const maxVal = (swapMode === 'buy') ? Math.floor(balance) : Math.floor(chips);
+      document.getElementById('swap-amt-input').value = Math.max(1, maxVal);
+      updateExpectedSwap();
+    }
+
+    function updateExpectedSwap() {
+      const amt = parseInt(document.getElementById('swap-amt-input').value, 10) || 0;
+      const btn = document.getElementById('btn-submit-action');
+      if (swapMode === 'buy') {
+        btn.innerHTML = `🔄 تبدیل ${amt.toLocaleString()} سکه به ${amt.toLocaleString()} ژتون بازی`;
+      } else {
+        btn.innerHTML = `✨ نقد کردن ${amt.toLocaleString()} ژتون و واریز به سکه`;
+      }
+    }
+
+    function executeSwap() {
+      const amt = parseInt(document.getElementById('swap-amt-input').value, 10);
+      if (isNaN(amt) || amt <= 0) {
+        showToast('لطفاً مبلغ معتبری وارد کنید.');
+        return;
+      }
+
+      if (swapMode === 'buy') {
+        if (balance < amt) {
+          showToast('موجودی سکه سیماب شما کافی نیست!');
+          return;
+        }
+        balance = parseFloat((balance - amt).toFixed(4));
+        chips = parseFloat((chips + amt).toFixed(0));
+        playChipClink();
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        showToast(`موفق: ${amt} سکه به ${amt} ژتون بازی تبدیل شد! 🎰`);
+      } else {
+        if (chips < amt) {
+          showToast('موجودی ژتون شما کافی نیست!');
+          return;
+        }
+        chips = parseFloat((chips - amt).toFixed(0));
+        balance = parseFloat((balance + amt).toFixed(4));
+        playChipClink();
+        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+        showToast(`موفق: ${amt} ژتون نقد شد و به سکه اصلی واریز شد! 🪙`);
+      }
+
+      // ذخیره‌سازی داده‌ها
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      localStorage.setItem(STORAGE_KEY_CHIPS, chips.toString());
+
+      updateWalletsUI();
+    }
+
+    // ================= تنظیمات بازی‌ها (قابل تغییر از پنل مدیریت) =================
+    const DEFAULT_GAME_STAKES = {
+      poker: { name: 'پوکر تگزاس', minChips: 40, icon: '🃏', url: '../games/poker/index.html', active: true },
+      slot: { name: 'رولر شانس', minChips: 10, icon: '🎰', url: '../games/slot/index.html', active: true },
+      backgammon: { name: 'تخته نرد', minChips: 25, icon: '🎲', url: '#', active: false },
+      hokm: { name: 'ورق (حکم)', minChips: 25, icon: '🎴', url: '#', active: false },
+      blackjack: { name: 'ورق (۲۱)', minChips: 20, icon: '♠️', url: '#', active: false },
+      haft_khabis: { name: '۷ خبیث', minChips: 10, icon: '🃏', url: '#', active: false },
+      mench: { name: 'منچ آنلاین', minChips: 15, icon: '🔴', url: '#', active: false },
+      snakes: { name: 'مار و پله', minChips: 10, icon: '🐍', url: '#', active: false },
+      dabalna: { name: 'دبلنا', minChips: 5, icon: '🔢', url: '#', active: false },
+      truth_dare: { name: 'جرأت یا حقیقت', minChips: 10, icon: '🎭', url: '#', active: false }
+    };
+
+    function renderGamesStakeList() {
+      const container = document.getElementById('games-stake-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      // خواندن تنظیمات اختصاصی پنل مدیریت یا مقادیر پیش‌فرض
+      let stakesConfig = DEFAULT_GAME_STAKES;
+      try {
+        const saved = localStorage.getItem('simab_game_stakes_config');
+        if (saved) stakesConfig = Object.assign({}, DEFAULT_GAME_STAKES, JSON.parse(saved));
+      } catch(e) {}
+
+      Object.keys(stakesConfig).forEach(gKey => {
+        const item = stakesConfig[gKey];
+        const card = document.createElement('div');
+        card.className = 'stake-item-card';
+
+        let btnHtml = '';
+        if (item.active) {
+          btnHtml = `<button class="btn-quick-enter" onclick="quickBuyinAndEnter('${gKey}')">ورود ➔</button>`;
+        } else {
+          btnHtml = `<span style="font-size:10px; color:var(--text-muted); font-weight:bold;">به‌زودی</span>`;
+        }
+
+        card.innerHTML = `
+          <div class="stake-item-info">
+            <div class="stake-item-icon">${item.icon}</div>
+            <div>
+              <div class="stake-item-name">${item.name}</div>
+              <div class="stake-item-req">ورودی میز: حداقل ${item.minChips} ژتون</div>
+            </div>
+          </div>
+          <div>${btnHtml}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function quickBuyinAndEnter(gKey) {
+      let stakesConfig = DEFAULT_GAME_STAKES;
+      try {
+        const saved = localStorage.getItem('simab_game_stakes_config');
+        if (saved) stakesConfig = Object.assign({}, DEFAULT_GAME_STAKES, JSON.parse(saved));
+      } catch(e) {}
+
+      const target = stakesConfig[gKey];
+      if (!target || !target.active) return;
+
+      // اگر کاربر به اندازه حداقل ژتون میز ندارد، خودکار تبدیل کند
+      if (chips < target.minChips) {
+        const needed = target.minChips - chips;
+        if (balance < needed) {
+          showToast(`برای ورود حداقل به ${target.minChips} ژتون نیاز دارید و سکه کافی ندارید!`);
+          return;
+        }
+        balance = parseFloat((balance - needed).toFixed(4));
+        chips = parseFloat((chips + needed).toFixed(0));
+        localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+        localStorage.setItem('user_balance', balance.toString());
+        localStorage.setItem(STORAGE_KEY_CHIPS, chips.toString());
+        playChipClink();
+      }
+
+      window.location.href = target.url;
+    }
+
+    updateWalletsUI();
+    renderGamesStakeList();
+    updateExpectedSwap();
+  </script>
+</body>
+</html>
