@@ -165,16 +165,13 @@
     </div>
   </div>
 
-  <!-- بخش ۵: ارسال پیام به کانال -->
+  <!-- بخش ۵: ارسال پیام به کانال (ساده و بدون نیاز به توکن) -->
   <div class="admin-card">
-    <h3>📢 ارسال پیام به کانال تلگرام</h3>
-    <input type="text" class="input-field" id="bot-token-input" placeholder="توکن ربات تلگرام (جهت ارسال مستقیم)">
-    <input type="text" class="input-field" id="channel-username-input" value="@SimorApp" placeholder="آیدی کانال مثلاً @SimorApp">
-    <textarea class="input-field" id="broadcast-text" rows="3" placeholder="متن اطلاعیه جهت انتشار در کانال..."></textarea>
-    <div style="display:flex; gap:6px;">
-      <button class="btn-action" style="background: var(--blue); color: #000;" onclick="sendToChannelDirect()">🚀 ارسال از سرور</button>
-      <button class="btn-action" style="background: #251a36; color: var(--gold); border: 1px solid var(--gold);" onclick="shareToTelegram()">📤 ارسال مستقیم تلگرام</button>
-    </div>
+    <h3>📢 ارسال پیام به کانال تلگرام (@SimorApp)</h3>
+    <textarea class="input-field" id="broadcast-text" rows="3" placeholder="متن اطلاعیه یا پیام خود را برای انتشار در کانال بنویسید..."></textarea>
+    <button class="btn-action" style="background: var(--gold-gradient); color: #170d00;" onclick="shareToTelegram()">
+      🚀 ارسال مستقیم پیام به کانال تلگرام
+    </button>
   </div>
 
   <!-- بخش ۶: ایجاد تسک جدید -->
@@ -408,77 +405,93 @@
       } catch(e) {}
     }
 
-    function transferCoinsDirect() {
-      const targetId = document.getElementById('target-user-id').value.trim();
-      const amount = parseFloat(document.getElementById('target-coin-amount').value);
-      if (!targetId || isNaN(amount) || amount <= 0) {
-        showPopup('خطا', 'شناسه کاربر و تعداد سکه را به درستی وارد کنید.', '⚠️');
-        return;
-      }
-      const targetKey = 'simor_coins_' + targetId;
-      let targetBal = parseFloat(localStorage.getItem(targetKey) || '50');
-      targetBal = parseFloat((targetBal + amount).toFixed(4));
-      localStorage.setItem(targetKey, targetBal.toString());
-      showPopup('واریز انجام شد', `${amount.toLocaleString()} سکه به کاربر ${targetId} واریز شد.`, '💸');
-      document.getElementById('target-user-id').value = '';
-      document.getElementById('target-coin-amount').value = '';
+    // واریز به کاربر و ساخت لینک اختصاصی هدیه
+  function transferCoinsDirect() {
+    const targetId = document.getElementById('target-user-id').value.trim();
+    const amount = parseFloat(document.getElementById('target-coin-amount').value);
+    if (!targetId || isNaN(amount) || amount <= 0) {
+      showPopup('خطا', 'شناسه عددی کاربر و تعداد سکه را به درستی وارد کنید.', '⚠️');
+      return;
+    }
+    const targetKey = 'simor_coins_' + targetId;
+    let targetBal = parseFloat(localStorage.getItem(targetKey) || '50');
+    targetBal = parseFloat((targetBal + amount).toFixed(4));
+    localStorage.setItem(targetKey, targetBal.toString());
+
+    // ایجاد لینک اختصاصی برای کاربر در صورتی که روی دستگاه دیگری باشد
+    const giftCode = 'gift_to_' + targetId + '_' + Date.now() + '_' + amount;
+    const giftUrl = `https://t.me/SimorApp_bot?startapp=${giftCode}`;
+
+    showPopup('واریز انجام شد', `${amount.toLocaleString()} سکه ثبت شد.\nهمچنین در صورت نیاز لینک تحویل هدیه ساخته شد:\n${giftUrl}`, '💸');
+    document.getElementById('target-user-id').value = '';
+    document.getElementById('target-coin-amount').value = '';
+  }
+
+  // ساخت لینک هدیه تلگرامی با کپی خودکار و ارسال در چت
+  function generateGiftLink() {
+    const amount = parseFloat(document.getElementById('target-coin-amount').value) || 100;
+    const giftCode = 'gift_' + Math.floor(100000 + Math.random() * 900000) + '_' + amount;
+    const giftUrl = `https://t.me/SimorApp_bot?startapp=${giftCode}`;
+    const msg = `🎁 شما یک هدیه ${amount.toLocaleString()} سکه‌ای در سیماب دریافت کردید! برای دریافت روی لینک زیر بزنید:\n${giftUrl}`;
+
+    navigator.clipboard.writeText(msg).then(() => {
+      showPopup('لینک ساخته شد 📋', `پیام و لینک هدیه کپی شد! می‌توانید آن را در چت تلگرام برای کاربر ارسال کنید:\n\n${giftUrl}`, '🎁');
+    }).catch(() => {
+      showPopup('لینک ساخته شد', `لینک هدیه:\n${giftUrl}`, '🎁');
+    });
+
+    if (tg?.openTelegramLink) {
+      tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(giftUrl)}&text=${encodeURIComponent(msg)}`);
+    }
+  }
+
+  // ارسال ساده و مستقیم به کانال @SimorApp
+  function shareToTelegram() {
+    const channel = "@SimorApp";
+    const text = document.getElementById('broadcast-text').value.trim();
+    if (!text) {
+      showPopup('خطا', 'لطفاً متن پیام را وارد کنید.', '⚠️');
+      return;
+    }
+    navigator.clipboard.writeText(text);
+    const url = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/SimorApp')}&text=${encodeURIComponent(text)}`;
+    if (tg?.openTelegramLink) {
+      tg.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank');
+    }
+    showPopup('در حال ارسال 📢', 'متن کپی شد و صفحه ارسال به کانال باز گردید.', '🚀');
+  }
+
+  // ایجاد ماموریت جدید و اتصال همزمان به صفحات تسک‌ها و ماموریت‌ها
+  function saveCustomTask() {
+    const title = document.getElementById('task-title').value.trim();
+    const url = document.getElementById('task-url').value.trim();
+    const reward = parseInt(document.getElementById('task-reward').value, 10);
+    const timer = parseInt(document.getElementById('task-timer').value, 10) || 20;
+
+    if (!title || !url || isNaN(reward)) {
+      showPopup('خطا', 'تمام فیلدها را پر کنید.', '⚠️');
+      return;
     }
 
-    function generateGiftLink() {
-      const amount = parseFloat(document.getElementById('target-coin-amount').value) || 100;
-      const giftCode = 'gift_' + Math.floor(100000 + Math.random() * 900000) + '_' + amount;
-      const giftUrl = `https://t.me/SimorApp_bot?startapp=${giftCode}`;
-      const msg = `🎁 شما یک هدیه ${amount} سکه‌ای دریافت کردید! روی لینک زیر بزنید:\n${giftUrl}`;
-      if (tg?.openTelegramLink) tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(giftUrl)}&text=${encodeURIComponent(msg)}`);
-      else { navigator.clipboard.writeText(msg); showPopup('لینک ساخته شد', `لینک کپی شد:\n${giftUrl}`, '📋'); }
-    }
+    const newTask = { id: 'quest_' + Date.now(), title, url, reward, timer };
 
-    async function sendToChannelDirect() {
-      const token = document.getElementById('bot-token-input').value.trim();
-      const channel = document.getElementById('channel-username-input').value.trim();
-      const text = document.getElementById('broadcast-text').value.trim();
-      if (!text) { showPopup('خطا', 'متن پیام را وارد کنید.', '⚠️'); return; }
-      if (!token) { showPopup('نیاز به توکن', 'توکن ربات را وارد کنید یا از دکمه ارسال مستقیم استفاده نمایید.', 'ℹ️'); return; }
+    // ذخیره همزمان در هر دو کلید تسک‌ها تا در تمام صفحات نمایش یابد
+    let tasks1 = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
+    tasks1.push(newTask);
+    localStorage.setItem('simab_custom_quests', JSON.stringify(tasks1));
 
-      try {
-        const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: channel, text: text })
-        });
-        const data = await res.json();
-        if (data.ok) { showPopup('ارسال موفق', `پیام در کانال ${channel} منتشر شد!`, '📢'); document.getElementById('broadcast-text').value = ''; }
-        else { showPopup('خطا', `خطای تلگرام: ${data.description}`, '❌'); }
-      } catch(e) {
-        showPopup('خطای شبکه', 'ارتباط مسدود شد؛ از دکمه ارسال مستقیم تلگرام استفاده کنید.', '⚠️');
-      }
-    }
+    let tasks2 = JSON.parse(localStorage.getItem('simor_custom_tasks') || '[]');
+    tasks2.push(newTask);
+    localStorage.setItem('simor_custom_tasks', JSON.stringify(tasks2));
 
-    function shareToTelegram() {
-      const channel = document.getElementById('channel-username-input').value.trim();
-      const text = document.getElementById('broadcast-text').value.trim();
-      if (!text) { showPopup('خطا', 'متن پیام را وارد کنید.', '⚠️'); return; }
-      const url = `https://t.me/share/url?url=${encodeURIComponent(channel)}&text=${encodeURIComponent(text)}`;
-      if (tg?.openTelegramLink) tg.openTelegramLink(url);
-      else window.open(url, '_blank');
-    }
-
-    function saveCustomTask() {
-      const title = document.getElementById('task-title').value.trim();
-      const url = document.getElementById('task-url').value.trim();
-      const reward = parseInt(document.getElementById('task-reward').value, 10);
-      const timer = parseInt(document.getElementById('task-timer').value, 10) || 20;
-      if (!title || !url || isNaN(reward)) { showPopup('خطا', 'تمام فیلدها را پر کنید.', '⚠️'); return; }
-
-      let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
-      tasks.push({ id: 'quest_' + Date.now(), title, url, reward, timer });
-      localStorage.setItem('simab_custom_quests', JSON.stringify(tasks));
-      renderTasks();
-      showPopup('ثبت شد', `ماموریت "${title}" با موفقیت اضافه شد.`, '➕');
-      document.getElementById('task-title').value = '';
-      document.getElementById('task-url').value = '';
-      document.getElementById('task-reward').value = '';
-    }
+    renderTasks();
+    showPopup('ثبت شد', `ماموریت "${title}" با پاداش ${reward} سکه با موفقیت اضافه شد و در صفحه تسک‌ها قرار گرفت.`, '➕');
+    document.getElementById('task-title').value = '';
+    document.getElementById('task-url').value = '';
+    document.getElementById('task-reward').value = '';
+  }
 
     function renderTasks() {
       let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
