@@ -214,7 +214,11 @@
         uid = tg.initDataUnsafe.user.id.toString();
       }
     } catch(e) {}
-
+    // قفل امنیتی: اخراج آنی افراد غیر ادمین
+    if (uid !== "702007470") {
+      alert('دسترسی غیرمجاز! این بخش مختص مدیریت است.');
+      window.location.href = '../index.html';
+    }
     try {
       if (tg) {
         tg.ready();
