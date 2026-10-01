@@ -700,8 +700,7 @@
       chipInventory.c100 += b.c100;
       chipInventory.c500 += b.c500;
 
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
+      saveCoinsGlobal(balance);
       playChipClink();
       saveInventory();
       if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
