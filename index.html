@@ -520,21 +520,24 @@
       }
     }
 
-    // همگام‌سازی خودکار در شروع برنامه با ابر تلگرام
+    // همگام‌سازی هوشمند با ابر تلگرام (بدون بازگرداندن سکه‌های خرج‌شده در صرافی و بازی‌ها)
     function syncWithTelegramCloud() {
       if (!isCloudSupported) return;
       tg.CloudStorage.getItem(CLOUD_KEY_COINS, (err, cloudVal) => {
         if (!err && cloudVal !== null && cloudVal !== undefined && cloudVal !== '') {
-          const valNum = parseFloat(cloudVal);
-          if (!isNaN(valNum)) {
-            // دریافت آخرین موجودی از سرور تلگرام و اعمال در دستگاه فعلی
-            balance = valNum;
+          const cloudNum = parseFloat(cloudVal);
+          const localNum = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '0');
+          
+          // اگر کاربر در صرافی یا بازی سکه خرج کرده و مقدار محلی کمتر است، ابر تلگرام باید آپدیت شود نه اینکه موجودی به عقب برگردد!
+          if (!isNaN(localNum) && localNum < cloudNum) {
+            saveCoinsGlobal(localNum);
+          } else if (!isNaN(cloudNum) && cloudNum > localNum) {
+            balance = cloudNum;
             localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
             localStorage.setItem('user_balance', balance.toString());
             renderCoins();
           }
         } else if (!err) {
-          // اگر اولین بار است که اکانت در تلگرام باز شده، ۵۰ سکه در ابر تلگرام ثبت شود
           tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString());
         }
       });
