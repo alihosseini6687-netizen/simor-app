@@ -228,7 +228,8 @@
 
     function goBack() {
       try { localStorage.setItem('simab_active_tab', 'home'); } catch(e) {}
-      window.location.href = '../index.html';
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = '../index.html';
     }
 
     // ================= سیستم همگام‌سازی ابری پنل ادمین (هماهنگ ۱۰۰٪ با لابی مادر) =================
@@ -236,7 +237,7 @@
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
-    const isCloudSupported = !!(tg?.isVersionAtLeast && tg.isVersionAtLeast('6.9') && tg?.CloudStorage);
+    const isCloudSupported = !!(tg && tg.CloudStorage);
 
     let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
 
