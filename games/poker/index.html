@@ -513,15 +513,12 @@
     // ================= اتصال ۱۰۰٪ به صندوق ژتون‌ها =================
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
-
     let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
     let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
-
     try {
       const savedInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
       if (savedInv) chipInventory = savedInv;
     } catch(e) {}
-
     function standardBreakdown(amount) {
       let rem = Math.floor(amount);
       const c1 = (rem >= 20) ? 20 : rem; rem -= c1 * 1;
@@ -529,25 +526,20 @@
       const c25 = (rem >= 400) ? 16 : Math.floor(rem / 25); rem -= c25 * 25;
       const c100 = (rem >= 2000) ? 20 : Math.floor(rem / 100); rem -= c100 * 100;
       const c500 = Math.floor(rem / 500); rem -= c500 * 500;
-
       let extra100 = Math.floor(rem / 100); rem %= 100;
       let extra25 = Math.floor(rem / 25); rem %= 25;
       let extra5 = Math.floor(rem / 5); rem %= 5;
       let extra1 = rem;
-
       return { c1: c1 + extra1, c5: c5 + extra5, c25: c25 + extra25, c100: c100 + extra100, c500: c500 };
     }
-
     function calcTotalChips() {
       return (chipInventory.c1 * 1) + (chipInventory.c5 * 5) + (chipInventory.c25 * 25) + (chipInventory.c100 * 100) + (chipInventory.c500 * 500);
     }
-
     // هماهنگ‌سازی خودکار دیتای ژتون
     if (totalChips > 0 && calcTotalChips() !== totalChips) {
       chipInventory = standardBreakdown(totalChips);
       localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
     }
-
     function saveChips() {
       totalChips = calcTotalChips();
       localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
@@ -555,7 +547,6 @@
       document.getElementById('user-chips-display').innerText = totalChips.toLocaleString();
       updateBreakdownUI();
     }
-
     // کسر ژتون از انبار تفکیک‌شده با خرد کردن خودکار در صورت نیاز
     function deductChipsFromInventory(amount) {
       if (totalChips < amount) return false;
