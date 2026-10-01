@@ -141,7 +141,7 @@
     .mode-box .m-title { font-size: 14px; font-weight: 900; color: #fff; }
     .mode-box .m-sub { font-size: 11px; color: var(--text-muted); }
 
-    /* انتخاب شرط و تایمر */
+    /* تنظیمات سختی ربات */
     .setting-row-label {
       font-size: 12.5px;
       font-weight: 800;
@@ -149,6 +149,30 @@
       margin-bottom: 6px;
       margin-top: 10px;
     }
+    .diff-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .diff-btn {
+      background: var(--card-inner);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      padding: 8px 2px;
+      border-radius: 10px;
+      font-size: 11.5px;
+      font-weight: 900;
+      cursor: pointer;
+      text-align: center;
+    }
+    .diff-btn.active {
+      background: var(--gold-gradient);
+      color: #170d00;
+      border-color: var(--gold);
+    }
+
+    /* انتخاب شرط و تایمر */
     .stakes-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -228,7 +252,7 @@
       to { transform: scale(1.3); opacity: 1; }
     }
 
-    /* ================= ۲. صفحه میز بازی تخته نرد ================= */
+    /* ================= ۲. صفحه اصلی میز تخته نرد ================= */
     .game-screen {
       display: none;
       flex-direction: column;
@@ -237,7 +261,6 @@
       margin: 0 auto;
     }
 
-    /* نوار حریف و بازیکن با تایمر */
     .player-status-strip {
       display: flex;
       justify-content: space-between;
@@ -289,7 +312,7 @@
       gap: 4px;
     }
 
-    /* قاب سنتی تخته نرد منبت‌کاری شده */
+    /* قاب سنتی تخته نرد */
     .board-frame {
       width: 100%;
       background: linear-gradient(180deg, var(--wood-frame) 0%, #200e04 50%, var(--wood-frame) 100%);
@@ -351,7 +374,7 @@
       border-radius: 8px;
     }
 
-    /* استایل مهره‌های سلطنتی با طرح منبت و نگین */
+    /* مهره‌ها */
     .checkers-stack {
       position: relative;
       z-index: 2;
@@ -379,7 +402,6 @@
       box-shadow: 0 4px 7px rgba(0,0,0,0.85);
       transition: transform 0.12s;
     }
-    /* مهره سفید: طرح عاج و نگین طلا */
     .checker.white {
       background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 45%, #cbd5e1 80%, #94a3b8 100%);
       border: 2px solid #e2e8f0;
@@ -393,7 +415,6 @@
       background: radial-gradient(circle, #ffd700, #b48618);
       border: 1px solid #784803;
     }
-    /* مهره سیاه: طرح آبنوس ذغالی و نگین نقره */
     .checker.black {
       background: radial-gradient(circle at 35% 35%, #475569 0%, #1e293b 50%, #0f172a 85%, #020617 100%);
       border: 2px solid #475569;
@@ -413,7 +434,7 @@
       cursor: pointer;
     }
 
-    /* پیشخوان چوبی وسط میز (Bar) */
+    /* پیشخوان وسط میز */
     .center-bar-divider {
       height: 48px;
       background: linear-gradient(90deg, #271105 0%, #46220d 50%, #271105 100%);
@@ -434,11 +455,11 @@
       font-weight: 800;
     }
 
-    /* ================= تاس‌های واقعی و شیک CSS (بدون کاراکتر خراب) ================= */
+    /* تاس‌ها */
     .dice-table-dock {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
     }
     .dice-face {
       width: 36px;
@@ -454,9 +475,9 @@
       transition: all 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     }
     .dice-face.used {
-      opacity: 0.35;
+      opacity: 0.3;
       filter: grayscale(90%);
-      transform: scale(0.92);
+      transform: scale(0.9);
     }
     .dice-face.rolling {
       animation: rollShake 0.4s infinite alternate;
@@ -486,7 +507,17 @@
     .dice-col { display: flex; flex-direction: column; justify-content: space-between; }
     .dice-face.val-4, .dice-face.val-5, .dice-face.val-6 { justify-content: space-between; }
 
-    /* انبار خروج مهره‌ها (Off Tray) */
+    .double-tag {
+      background: #e11d48;
+      color: white;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 6px;
+      margin-right: 4px;
+    }
+
+    /* انبار خروج مهره‌ها */
     .borne-off-bar {
       display: flex;
       justify-content: space-between;
@@ -499,7 +530,7 @@
       font-weight: 800;
     }
 
-    /* نوار کنترل‌های پایین بازی */
+    /* کنترل‌ها */
     .game-actions-card {
       background: var(--card-bg);
       border: 1.5px solid var(--border);
@@ -552,7 +583,7 @@
       filter: grayscale(40%);
     }
 
-    /* منوی پاپ‌آپ کری‌خوانی */
+    /* کری‌خوانی */
     .taunt-menu {
       display: none;
       position: absolute;
@@ -598,7 +629,7 @@
     }
     .speech-bubble.show { opacity: 1; transform: translateY(-5px); }
 
-    /* مودال‌ها و توست */
+    /* مودال‌ها */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -672,6 +703,16 @@
         </div>
       </div>
 
+      <!-- درجه سختی ربات (ویژه بازی با ربات) -->
+      <div id="bot-diff-section">
+        <div class="setting-row-label">🧠 درجه سختی هوش مصنوعی ربات:</div>
+        <div class="diff-grid">
+          <button class="diff-btn" onclick="setBotDifficulty('easy', this)">🟢 آسان</button>
+          <button class="diff-btn active" onclick="setBotDifficulty('medium', this)">🟡 متوسط</button>
+          <button class="diff-btn" onclick="setBotDifficulty('hard', this)">🔴 حرفه‌ای</button>
+        </div>
+      </div>
+
       <!-- مبلغ شرط‌بندی -->
       <div class="setting-row-label">💰 مبلغ شرط‌بندی ورودی هر بازیکن:</div>
       <div class="stakes-grid">
@@ -724,7 +765,7 @@
       <div class="player-tag">
         <span class="player-turn-dot" id="dot-opp"></span>
         <div class="checker black" style="width:20px; height:20px;"></div>
-        <span id="txt-opp-name">ربات بهروز 🤖</span>
+        <span id="txt-opp-name">ربات بهروز (متوسط) 🤖</span>
       </div>
       <div class="pot-center-card">
         🏆 پات: <span id="pot-amount-val">۵۰</span> ژتون (ضریب: <span id="cube-val-txt">x1</span>)
@@ -735,7 +776,6 @@
     <!-- قاب تخته نرد -->
     <div class="board-frame">
       <div class="inner-board">
-        <!-- نیمه بالای تخته (خانه‌های ۱۲ تا ۲۳) -->
         <div class="board-half top-half">
           <div class="board-quadrant" id="quad-top-left"></div>
           <div class="board-quadrant" id="quad-top-right"></div>
@@ -747,10 +787,9 @@
             <span style="color:#94a3b8;">خورده سیاه:</span>
             <div id="bar-black-slot"></div>
           </div>
-          <!-- تاس‌های سه‌بعدی CSS واقعی -->
+          <!-- داک تاس‌ها با پشتیبانی از جفت -->
           <div class="dice-table-dock" id="dice-dock">
-            <div id="die-dom-1"></div>
-            <div id="die-dom-2"></div>
+            <div id="dice-container-box" style="display:flex; align-items:center; gap:6px;"></div>
           </div>
           <div class="bar-holding-area">
             <span style="color:#cbd5e1;">خورده سفید:</span>
@@ -758,7 +797,6 @@
           </div>
         </div>
 
-        <!-- نیمه پایین تخته (خانه‌های ۱۱ تا ۰) -->
         <div class="board-half bottom-half">
           <div class="board-quadrant" id="quad-bottom-left"></div>
           <div class="board-quadrant" id="quad-bottom-right"></div>
@@ -794,14 +832,13 @@
     </div>
     <div class="speech-bubble" id="speech-bubble">سلام!</div>
 
-    <!-- کنترل‌های نوبت و پرتاب تاس جداگانه -->
+    <!-- کنترل‌ها -->
     <div class="game-actions-card">
       <div class="utility-btns-row">
         <button class="btn-util" onclick="toggleTauntMenu()">🗣️ کری‌خوانی</button>
         <button class="btn-util" style="color:var(--cyan);" onclick="offerDoubleCube()">⚡ دابل شرط (x2)</button>
         <button class="btn-util" style="color:#ef4444;" onclick="surrenderMatch()">🏳️ تسلیم</button>
       </div>
-      <!-- دکمه پرتاب تاس جداگانه و واضح -->
       <button class="btn-roll-dice" id="btn-roll-dice" onclick="rollPlayerDice()">
         <span>🎲 پرتاب تاس</span>
       </button>
@@ -965,7 +1002,7 @@
     syncWithTelegramCloud();
     renderChipsUI();
 
-    // ================= ۲. مولد تاس‌های واقعی CSS (Real Dot Dice) =================
+    // ================= ۲. مولد تاس‌های واقعی و شیک CSS =================
     function getDieHTML(val, isUsed = false) {
       if (!val) val = 1;
       let pipsHtml = '';
@@ -988,24 +1025,42 @@
         `;
       } else if (val === 6) {
         pipsHtml = `
-          <div class="dice-col"><span class="pip"></span><span class="pip"></span></div>
-          <div class="dice-col"><span class="pip"></span><span class="pip"></span></div>
+          <div class="dice-col"><span class="pip"></span><span class="pip"></span><span class="pip"></span></div>
+          <div class="dice-col"><span class="pip"></span><span class="pip"></span><span class="pip"></span></div>
         `;
       }
       return `<div class="dice-face val-${val} ${isUsed ? 'used' : ''}">${pipsHtml}</div>`;
     }
 
-    function renderDicePair(v1 = 1, v2 = 1, used1 = false, used2 = false) {
-      document.getElementById('die-dom-1').innerHTML = getDieHTML(v1, used1);
-      document.getElementById('die-dom-2').innerHTML = getDieHTML(v2, used2);
-    }
-    renderDicePair(6, 6);
+    function renderDiceList(diceArray, remainingArray) {
+      const container = document.getElementById('dice-container-box');
+      if (!container) return;
+      container.innerHTML = '';
 
-    // ================= ۳. تنظیمات لابی و انتخاب حریف =================
+      if (diceArray.length === 4) {
+        const doubleTag = document.createElement('span');
+        doubleTag.className = 'double-tag';
+        doubleTag.innerText = `جفت! (${remainingArray.length} باقی)`;
+        container.appendChild(doubleTag);
+      }
+
+      // به ازای هر تاس بررسی شود که آیا مصرف شده یا نه
+      let usedCount = diceArray.length - remainingArray.length;
+      for (let i = 0; i < diceArray.length; i++) {
+        const isUsed = (i < usedCount);
+        const dEl = document.createElement('div');
+        dEl.innerHTML = getDieHTML(diceArray[i], isUsed);
+        container.appendChild(dEl.firstElementChild);
+      }
+    }
+    renderDiceList([6, 6], [6, 6]);
+
+    // ================= ۳. تنظیمات لابی، حریف و درجه سختی =================
     let selectedMode = 'bot';
+    let selectedDifficulty = 'medium'; // 'easy' | 'medium' | 'hard'
     let selectedStake = 25;
     let selectedTimerSec = 30;
-    let currentOpponentName = 'ربات بهروز 🤖';
+    let currentOpponentName = 'ربات بهروز (متوسط) 🤖';
 
     function selectGameMode(mode) {
       selectedMode = mode;
@@ -1013,16 +1068,27 @@
       document.getElementById('mode-' + mode).classList.add('selected');
       const wCard = document.getElementById('waiting-room-card');
       const sBtn = document.getElementById('btn-start-action');
+      const diffSec = document.getElementById('bot-diff-section');
 
       if (mode === 'friend') {
         wCard.style.display = 'block';
         sBtn.style.display = 'none';
+        diffSec.style.display = 'none';
         const roomId = 'bg_' + uid.slice(0, 5);
         document.getElementById('room-link-text').innerText = `https://t.me/SimorApp_bot?startapp=${roomId}`;
       } else {
         wCard.style.display = 'none';
         sBtn.style.display = 'block';
+        diffSec.style.display = 'block';
       }
+    }
+
+    function setBotDifficulty(diff, btn) {
+      selectedDifficulty = diff;
+      document.querySelectorAll('.diff-grid .diff-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const titles = { easy: 'آسان', medium: 'متوسط', hard: 'حرفه‌ای' };
+      currentOpponentName = `ربات بهروز (${titles[diff]}) 🤖`;
     }
 
     function setStakes(amt, btn) {
@@ -1039,7 +1105,7 @@
 
     function onStartBtnClick() {
       if (selectedMode === 'bot') {
-        enterTableDirectly('ربات بهروز 🤖');
+        enterTableDirectly(currentOpponentName);
       }
     }
 
@@ -1201,7 +1267,7 @@
       document.getElementById('borne-opp-txt').innerText = `${offBlack} / ۱۵`;
     }
 
-    // ================= ۵. مدیریت نوبت، تاس و انتقال خودکار =================
+    // ================= ۵. نوبت و پرتاب تاس =================
     function setupTurnUI() {
       resetTurnTimer();
       clearHighlights();
@@ -1251,10 +1317,8 @@
       if (currentTurn !== 'white') return;
       document.getElementById('btn-roll-dice').disabled = true;
 
-      const d1 = document.getElementById('die-dom-1');
-      const d2 = document.getElementById('die-dom-2');
-      d1.firstElementChild?.classList.add('rolling');
-      d2.firstElementChild?.classList.add('rolling');
+      const diceDock = document.getElementById('dice-container-box');
+      diceDock.querySelectorAll('.dice-face').forEach(d => d.classList.add('rolling'));
 
       setTimeout(() => {
         const v1 = Math.floor(Math.random() * 6) + 1;
@@ -1262,8 +1326,8 @@
         currentDice = (v1 === v2) ? [v1, v1, v1, v1] : [v1, v2];
         remainingMoves = [...currentDice];
 
-        renderDicePair(v1, v2, false, false);
-        document.getElementById('board-guide-msg').innerText = `تاس ریخته شد: [${v1}] و [${v2}] — مهره را لمس کنید`;
+        renderDiceList(currentDice, remainingMoves);
+        document.getElementById('board-guide-msg').innerText = (v1 === v2) ? `جفت ${v1} نشستی! (۴ حرکت داری)` : `تاس‌ها: [${v1}] و [${v2}] — مهره را لمس کن`;
         renderCheckers();
 
         if (!hasAnyValidMove('white')) {
@@ -1287,7 +1351,7 @@
         const dist = (selectedPoint === 'bar') ? (24 - dest) : (selectedPoint - dest);
         const mIdx = remainingMoves.indexOf(dist);
 
-        if (mIdx !== -1 && canLandOn('white', dest)) {
+        if (mIdx !== -1 && canLandOn('white', dest, dist, selectedPoint)) {
           applyMove('white', selectedPoint, dest, dist);
           selectedPoint = null;
           clearHighlights();
@@ -1314,12 +1378,42 @@
       }
     }
 
-    function canLandOn(color, dest) {
-      if (dest < 0) return canBearOff(color);
-      if (dest >= 24) return false;
-      const oppColor = (color === 'white') ? 'black' : 'white';
-      if (board[dest].color === oppColor && board[dest].count > 1) return false;
-      return true;
+    // بررسی قانونی بودن حرکت و خروج طبق استانداردهای رسمی WBF
+    function canLandOn(color, dest, step, from) {
+      if (color === 'white') {
+        if (dest < 0) {
+          // خروج مهره (Bear off)
+          if (!canBearOff('white')) return false;
+          // اگر دقیقاً خارج می‌شود (dest == -1 یعنی از خانه ۰ با تاس ۱)
+          if (from - step === -1) return true;
+          // اگر تاس بزرگ‌تر است، تنها زمانی مجاز است که در خانه‌های بالاتر مهره‌ای نباشد
+          if (from - step < -1) {
+            for (let i = from + 1; i <= 5; i++) {
+              if (board[i].color === 'white' && board[i].count > 0) return false;
+            }
+            return true;
+          }
+          return true;
+        }
+        if (dest >= 24) return false;
+        if (board[dest].color === 'black' && board[dest].count > 1) return false;
+        return true;
+      } else {
+        if (dest >= 24) {
+          if (!canBearOff('black')) return false;
+          if (from + step === 24) return true;
+          if (from + step > 24) {
+            for (let i = from - 1; i >= 18; i--) {
+              if (board[i].color === 'black' && board[i].count > 0) return false;
+            }
+            return true;
+          }
+          return true;
+        }
+        if (dest < 0) return false;
+        if (board[dest].color === 'white' && board[dest].count > 1) return false;
+        return true;
+      }
     }
 
     function canBearOff(color) {
@@ -1345,7 +1439,7 @@
       }
       remainingMoves.forEach(step => {
         let dest = (from === 'bar') ? (24 - step) : (from - step);
-        if (canLandOn('white', dest)) {
+        if (canLandOn('white', dest, step, from)) {
           if (dest >= 0) {
             document.getElementById(`point-${dest}`)?.classList.add('highlight-target');
           }
@@ -1383,7 +1477,7 @@
 
         const idx = remainingMoves.indexOf(distUsed);
         if (idx !== -1) remainingMoves.splice(idx, 1);
-        updateDiceVisualState();
+        renderDiceList(currentDice, remainingMoves);
 
         if (offWhite >= 15) {
           declareGameWinner('white');
@@ -1391,25 +1485,15 @@
       }
     }
 
-    function updateDiceVisualState() {
-      const usedCount = currentDice.length - remainingMoves.length;
-      if (usedCount >= 1) {
-        document.getElementById('die-dom-1')?.firstElementChild?.classList.add('used');
-      }
-      if (usedCount >= 2) {
-        document.getElementById('die-dom-2')?.firstElementChild?.classList.add('used');
-      }
-    }
-
     function hasAnyValidMove(color) {
       if (remainingMoves.length === 0) return false;
       if (color === 'white') {
         if (barWhite > 0) {
-          return remainingMoves.some(step => canLandOn('white', 24 - step));
+          return remainingMoves.some(step => canLandOn('white', 24 - step, step, 'bar'));
         }
         for (let i = 0; i < 24; i++) {
           if (board[i].color === 'white' && board[i].count > 0) {
-            if (remainingMoves.some(step => canLandOn('white', i - step))) return true;
+            if (remainingMoves.some(step => canLandOn('white', i - step, step, i))) return true;
           }
         }
       }
@@ -1424,34 +1508,45 @@
       setupTurnUI();
     }
 
-    // ================= ۶. هوش مصنوعی ربات بهروز =================
-    function executeBotTurnSequence() {
+    // ================= ۶. هوش مصنوعی ربات (آسان، متوسط، حرفه‌ای) =================
+    async function executeBotTurnSequence() {
       const b1 = Math.floor(Math.random() * 6) + 1;
       const b2 = Math.floor(Math.random() * 6) + 1;
       const bDice = (b1 === b2) ? [b1, b1, b1, b1] : [b1, b2];
+      let bRemaining = [...bDice];
 
-      renderDicePair(b1, b2, false, false);
+      renderDiceList(bDice, bRemaining);
       document.getElementById('board-guide-msg').innerText = `حریف تاس ریخت: [${b1}] و [${b2}]`;
 
-      setTimeout(() => {
-        bDice.forEach(step => {
-          botPerformOneStep(step);
-        });
-        renderCheckers();
+      await new Promise(r => setTimeout(r, 650));
 
-        if (offBlack >= 15) {
-          declareGameWinner('black');
-          return;
+      // اجرای نوبتی و با تأخیر هر حرکت ربات
+      for (let step of bDice) {
+        if (offBlack >= 15) break;
+
+        const moved = botPerformStrategicMove(step, selectedDifficulty);
+        if (moved) {
+          const idx = bRemaining.indexOf(step);
+          if (idx !== -1) bRemaining.splice(idx, 1);
+          renderDiceList(bDice, bRemaining);
+          renderCheckers();
+          await new Promise(r => setTimeout(r, 600)); // مکث طبیعی برای دیدن حرکت
         }
+      }
 
-        setTimeout(autoPassTurn, 600);
-      }, 1000);
+      if (offBlack >= 15) {
+        declareGameWinner('black');
+        return;
+      }
+
+      setTimeout(autoPassTurn, 500);
     }
 
-    function botPerformOneStep(step) {
+    function botPerformStrategicMove(step, difficulty) {
+      // قانون تخته نرد: اگر مهره روی پیشخوان دارد، فقط و فقط حق دارد آن را وارد کند
       if (barBlack > 0) {
         let dest = step - 1;
-        if (board[dest].color !== 'white' || board[dest].count <= 1) {
+        if (canLandOn('black', dest, step, 'bar')) {
           barBlack--;
           if (board[dest].color === 'white' && board[dest].count === 1) {
             board[dest].count = 0;
@@ -1461,34 +1556,71 @@
           }
           board[dest].count++;
           board[dest].color = 'black';
-          return;
+          return true;
         }
+        // اگر نتوانست وارد شود، نوبت این تاس می‌سوزد و حق حرکت دادن سایر مهره‌ها را ندارد!
+        return false;
       }
 
+      // یافتن تمام حرکات قانونی ممکن
+      let legalMoves = [];
       for (let i = 0; i < 24; i++) {
         if (board[i].color === 'black' && board[i].count > 0) {
           let dest = i + step;
-          if (dest < 24 && (board[dest].color !== 'white' || board[dest].count <= 1)) {
-            board[i].count--;
-            if (board[i].count === 0) board[i].color = null;
-
-            if (board[dest].color === 'white' && board[dest].count === 1) {
-              board[dest].count = 0;
-              board[dest].color = null;
-              barWhite++;
-              showToast('حریف مهره شما را زد! 💥');
-            }
-            board[dest].count++;
-            board[dest].color = 'black';
-            return;
-          } else if (dest >= 24 && canBearOff('black')) {
-            board[i].count--;
-            if (board[i].count === 0) board[i].color = null;
-            offBlack++;
-            return;
+          if (canLandOn('black', dest, step, i)) {
+            legalMoves.push({ from: i, to: dest });
           }
         }
       }
+
+      if (legalMoves.length === 0) return false;
+
+      // ارزیابی استراتژیک بر اساس درجه سختی
+      let chosenMove = legalMoves[0];
+
+      if (difficulty === 'easy') {
+        // انتخاب تصادفی
+        chosenMove = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+      } else if (difficulty === 'medium') {
+        // اولویت به زدن مهره حریف
+        const hitMove = legalMoves.find(m => m.to < 24 && board[m.to].color === 'white' && board[m.to].count === 1);
+        if (hitMove) chosenMove = hitMove;
+        else chosenMove = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+      } else if (difficulty === 'hard') {
+        // هوش مصنوعی پیشرفته (امتیازدهی استراتژیک)
+        let bestScore = -9999;
+        for (let m of legalMoves) {
+          let score = 0;
+          if (m.to >= 24) score += 100; // خروج مهره اولویت دارد
+          else if (board[m.to].color === 'white' && board[m.to].count === 1) score += 60; // زدن مهره حریف
+          else if (board[m.to].color === 'black' && board[m.to].count === 1) score += 35; // ساخت جفت و بستن خانه
+          else if (board[m.from].count === 2) score -= 25; // ترجیحاً جفت‌های خود را خراب نکند
+          
+          if (score > bestScore) {
+            bestScore = score;
+            chosenMove = m;
+          }
+        }
+      }
+
+      // اعمال حرکت
+      board[chosenMove.from].count--;
+      if (board[chosenMove.from].count === 0) board[chosenMove.from].color = null;
+
+      if (chosenMove.to < 24) {
+        if (board[chosenMove.to].color === 'white' && board[chosenMove.to].count === 1) {
+          board[chosenMove.to].count = 0;
+          board[chosenMove.to].color = null;
+          barWhite++;
+          showToast('حریف مهره شما را زد! 💥');
+        }
+        board[chosenMove.to].count++;
+        board[chosenMove.to].color = 'black';
+      } else {
+        offBlack++;
+      }
+
+      return true;
     }
 
     function declareGameWinner(winner) {
@@ -1514,8 +1646,7 @@
 
     // ================= ۷. کری‌خوانی و دابل کیوب =================
     function toggleTauntMenu() {
-      const m = document.getElementById('taunt-menu');
-      m.classList.toggle('open');
+      document.getElementById('taunt-menu').classList.toggle('open');
     }
 
     function sendTaunt(msg) {
