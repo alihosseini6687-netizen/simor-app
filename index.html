@@ -455,55 +455,87 @@
       if (tg) {
         tg.ready();
         tg.expand();
+        // ۱. بستن فلش بازگشت و فعال‌سازی علامت ضربدر (✕) خروج تلگرام
+        if (tg.BackButton) {
+          tg.BackButton.hide();
+        }
       }
     } catch(e) {}
 
+    // مشخصات اختصاصی و انحصاری مدیر ارشد
+    const ADMIN_ID = "702007470";
+    const ADMIN_GAME_ID = "S5895861";
+
     let realUserId = null;
-    let uid = "702007470";
+    let uid = "guest";
+    let isRealAdmin = false;
 
     try {
       if (tg?.initDataUnsafe?.user) {
         const u = tg.initDataUnsafe.user;
         realUserId = u.id;
         uid = u.id.toString();
+        
         document.getElementById('user-name-txt').innerText = u.first_name || 'کاربر سیماب';
         document.getElementById('user-tg-username').innerText = u.username ? '@' + u.username : '';
         document.getElementById('user-num-id').innerText = u.id;
-        
-        let savedGameId = localStorage.getItem('simab_game_id');
-        if (!savedGameId) {
-          savedGameId = 'S' + Math.floor(1000000 + Math.random() * 9000000);
-          localStorage.setItem('simab_game_id', savedGameId);
+
+        // ۲. ثابت شدن شناسه بازی ادمین روی S5895861
+        if (uid === ADMIN_ID) {
+          isRealAdmin = true;
+          localStorage.setItem('simab_game_id_' + uid, ADMIN_GAME_ID);
+          localStorage.setItem('simab_game_id', ADMIN_GAME_ID);
+          document.getElementById('user-game-id').innerText = ADMIN_GAME_ID;
+        } else {
+          // شناسه بازی اختصاصی و مجزا برای سایر کاربران
+          let savedGameId = localStorage.getItem('simab_game_id_' + uid);
+          if (!savedGameId || savedGameId === ADMIN_GAME_ID || savedGameId === 'S0000000') {
+            savedGameId = 'S' + Math.floor(1000000 + Math.random() * 9000000);
+            localStorage.setItem('simab_game_id_' + uid, savedGameId);
+            localStorage.setItem('simab_game_id', savedGameId);
+          }
+          document.getElementById('user-game-id').innerText = savedGameId;
         }
-        document.getElementById('user-game-id').innerText = savedGameId;
 
         if (u.photo_url) {
           document.getElementById('avatar-container').innerHTML = `<img src="${u.photo_url}" alt="Avatar">`;
         }
       } else {
-        document.getElementById('user-num-id').innerText = uid;
-        let savedGameId = localStorage.getItem('simab_game_id') || 'S1069276';
-        document.getElementById('user-game-id').innerText = savedGameId;
+        // ورود خارج از تلگرام (کروم یا مرورگر دسکتاپ): حالت مهمان و بسته بودن کامل دسترسی‌ها
+        document.getElementById('user-name-txt').innerText = 'کاربر مهمان';
+        document.getElementById('user-num-id').innerText = 'خارج از تلگرام';
+        document.getElementById('user-game-id').innerText = 'S0000000';
       }
     } catch(e) {}
-    // نمایش دکمه مدیریت فقط و فقط برای ادمین ارشد (702007470)
-    const ADMIN_ID = "702007470";
+
+    // ۳. قفل کامل دکمه ادمین: فقط در صورت لاگین واقعی در تلگرام با آیدی 702007470
     const adminBtn = document.getElementById('btn-admin-bar');
     if (adminBtn) {
-      adminBtn.style.display = (uid === ADMIN_ID) ? 'flex' : 'none';
+      adminBtn.style.display = isRealAdmin ? 'flex' : 'none';
     }
-    // ================= سیستم همگام‌سازی ابری تلگرام (CloudStorage - هماهنگ بین موبایل و دسکتاپ) =================
+
+    // ================= ۴. سیستم دارایی و همگام‌سازی ابری تلگرام (CloudStorage) =================
     const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
+    const isCloudSupported = !!(tg && tg.CloudStorage);
 
-    const isCloudSupported = !!(tg?.isVersionAtLeast && tg.isVersionAtLeast('6.9') && tg?.CloudStorage);
-
+    // مقداردهی اولیه: ۵۰ سکه برای کاربر جدید و حفظ ۲,۱۷۵,۰۰۰ برای مدیر
     let balance = 50;
-    try {
-      balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
-    } catch(e) {}
+    if (isRealAdmin) {
+      balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
+    } else if (uid !== "guest") {
+      let saved = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '50');
+      // پاکسازی مقادیر میلیونی که قبلاً به اشتباه به اکانت دوم سرایت کرده بود
+      if (saved >= 100000) {
+        saved = 50;
+        localStorage.setItem(STORAGE_KEY_COINS, '50');
+      }
+      balance = saved;
+    } else {
+      balance = 50;
+    }
 
     function renderCoins() {
       const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
@@ -514,64 +546,63 @@
     }
     renderCoins();
 
-    // ذخیره سراسری سکه و ژتون با ثبت زمان دقیق آخرین تغییر
+    // ذخیره سراسری و زنده دارایی (همگام‌سازی بین گوشی، آیفون و تلگرام دسکتاپ)
     function saveUserDataGlobal(newCoins = null, newChips = null, newInv = null) {
       if (newCoins !== null) {
         balance = parseFloat(Number(newCoins).toFixed(4));
         localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-        localStorage.setItem('user_balance', balance.toString());
         renderCoins();
       }
-
       const currentCoins = balance;
       const currentChips = parseInt(localStorage.getItem(STORAGE_KEY_CHIPS) || '0', 10);
       let currentInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
       try {
         currentInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV)) || currentInv;
       } catch(e) {}
-
+      
       const payload = {
         coins: currentCoins,
         chips: newChips !== null ? newChips : currentChips,
         inv: newInv !== null ? newInv : currentInv,
         updated_at: Date.now()
       };
-
+      
       localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
-
-      if (isCloudSupported) {
+      
+      if (isCloudSupported && uid !== "guest") {
         tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload), (err) => {
           if (err) console.warn('خطا در ذخیره ابری تلگرام:', err);
         });
       }
     }
 
-    // پشتیبانی از توابع قبلی جهت جلوگیری از تداخل
     function saveCoinsGlobal(newBal) {
       saveUserDataGlobal(newBal);
     }
 
-    // همگام‌سازی هوشمند بدون رونویسی اشتباه
+    // خواندن خودکار موجودی از ابری تلگرام در ابتدای ورود روی هر دستگاهی (اندروید، آیفون، کامپیوتر)
     function syncWithTelegramCloud() {
-      if (!isCloudSupported) return;
-
+      if (!isCloudSupported || uid === "guest") return;
       tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
         if (err || !cloudRaw) {
-          // اگر بار اول است، داده اولیه این دستگاه در کلود ثبت شود
+          // اگر بار اول است، ۵۰ سکه در کلود ثبت شود تا در سایر دستگاه‌ها هم در دسترس باشد
           if (!err && !cloudRaw) saveUserDataGlobal();
           return;
         }
-
         try {
           const cloudData = JSON.parse(cloudRaw);
           const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
+          
+          // جلوگیری از سرایت ارقام میلیونی به کاربران عادی
+          if (!isRealAdmin && cloudData.coins >= 100000) {
+            saveUserDataGlobal(50, 0, { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 });
+            return;
+          }
 
-          // اولویت با نسخه‌ای است که زمان ویرایش جدیدتری دارد
           if (cloudData.updated_at && cloudData.updated_at >= localTime) {
             if (typeof cloudData.coins === 'number') {
               balance = cloudData.coins;
               localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-              localStorage.setItem('user_balance', balance.toString());
               renderCoins();
             }
             if (typeof cloudData.chips === 'number') {
@@ -582,7 +613,6 @@
             }
             localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
           } else {
-            // اگر تغییرات روی این دستگاه تازه‌تر بود، کلود تلگرام به‌روزرسانی شود
             saveUserDataGlobal();
           }
         } catch(e) {
@@ -590,9 +620,7 @@
         }
       });
     }
-
     syncWithTelegramCloud();
-
     function triggerHaptic(type = 'light') {
       try {
         if (tg?.HapticFeedback) {
