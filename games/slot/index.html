@@ -3,193 +3,619 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SIMAB | رولر شانس طلایی</title>
+  <title>SIMAB | رولر شانس طلایی (ماشین اسلات)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #0e0717;
-      --wood-dark: #2a1408;
-      --wood-mid: #502b12;
-      --wood-light: #733f1b;
+      --bg: #0c0616;
+      --wood-dark: #220f06;
+      --wood-mid: #4a240e;
+      --wood-light: #703c19;
       --gold: #f5cf62;
-      --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
-      --red: #ff3b30;
-      --green: #34c759;
-      --cyan: #00f2fe;
+      --gold-bright: #ffd700;
+      --gold-gradient: linear-gradient(135deg, #d4af37 0%, #fef3c7 50%, #b48618 100%);
+      --red: #ef4444;
+      --green: #22c55e;
+      --cyan: #38bdf8;
+      --purple: #a855f7;
       --text: #ffffff;
-      --text-muted: #a69bb8;
-      --card-bg: rgba(22, 13, 34, 0.92);
-      --border: rgba(212, 175, 55, 0.25);
+      --text-muted: #cbd5e1;
+      --card-bg: rgba(26, 14, 40, 0.94);
+      --border: rgba(212, 175, 55, 0.35);
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
     body {
-      background: radial-gradient(circle at 50% 12%, #291244 0%, #0a0412 100%);
-      color: var(--text); min-height: 100vh; padding: 8px; overflow-x: hidden; text-align: center;
+      background: radial-gradient(circle at 50% 10%, #2e124d 0%, #0a0413 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 10px 10px 30px;
+      overflow-x: hidden;
+      text-align: center;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
-    /* هدر */
+
+    /* نوار هدر بالای صفحه */
     .top-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 8px 12px; margin-bottom: 8px; font-size: 13px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.65);
     }
     .btn-back {
-      background: #25163a; color: var(--gold); border: 1px solid var(--border);
-      padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none;
+      background: linear-gradient(135deg, #2b1744, #1a0e2b);
+      color: var(--gold);
+      border: 1.5px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.1s;
     }
+    .btn-back:active { transform: scale(0.95); }
     .header-center-title {
-      font-size: 14px; font-weight: 900; color: var(--gold); display: flex; align-items: center; gap: 6px;
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: 0 2px 8px rgba(245,207,98,0.4);
     }
-    .header-controls { display: flex; align-items: center; gap: 8px; }
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
     .btn-sound-toggle {
-      background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--gold);
-      width: 32px; height: 32px; border-radius: 8px; font-size: 14px; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid var(--border);
+      color: var(--gold);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-sound-toggle:active { transform: scale(0.92); }
+    .header-balance-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,0,0,0.5);
+      border: 1.5px solid rgba(212,175,55,0.5);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--gold);
+      box-shadow: inset 0 1px 4px rgba(0,0,0,0.6);
     }
 
-    /* باکس نمایش برد و وضعیت */
+    /* باکس آخرین نتیجه و رکورد برد */
     .win-display-box {
-      background: rgba(18, 6, 12, 0.9); border: 1.5px solid #ff9f0a;
-      box-shadow: 0 0 16px rgba(255,159,10,0.35);
-      border-radius: 14px; padding: 6px 14px; margin: 0 auto 10px;
-      max-width: 330px; display: flex; align-items: center; justify-content: space-between;
+      background: rgba(20, 8, 30, 0.95);
+      border: 2px solid #ff9f0a;
+      box-shadow: 0 0 20px rgba(255,159,10,0.4), inset 0 1px 6px rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 10px 18px;
+      margin: 0 auto 14px;
+      max-width: 350px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
-    .win-title-lbl { font-size: 11px; color: var(--text-muted); font-weight: bold; }
-    .win-amount { font-size: 22px; font-weight: 900; color: #ffd700; font-family: monospace; }
-    .win-amount.negative { color: var(--red) !important; text-shadow: 0 0 10px var(--red); }
-    .win-amount.jackpot { color: #fff; text-shadow: 0 0 12px #ffd700; animation: glowJp 0.8s infinite alternate; }
-    @keyframes glowJp { from { transform: scale(1); } to { transform: scale(1.06); } }
+    .win-title-lbl {
+      font-size: 13.5px;
+      color: #e2e8f0;
+      font-weight: 700;
+    }
+    .win-amount {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--gold-bright);
+      text-shadow: 0 2px 10px rgba(255,215,0,0.5);
+      letter-spacing: 0.5px;
+    }
+    .win-amount.negative {
+      color: var(--red) !important;
+      text-shadow: 0 0 14px var(--red);
+    }
+    .win-amount.jackpot {
+      color: #ffffff;
+      text-shadow: 0 0 16px var(--gold-bright);
+      animation: glowJp 0.8s infinite alternate;
+    }
+    @keyframes glowJp {
+      from { transform: scale(1); }
+      to { transform: scale(1.08); }
+    }
 
-    /* قاب دستگاه اسلات ۳ رول وایکینگی */
+    /* قاب دستگاه ۳ رول شانس */
     .slot-machine-frame {
-      position: relative; width: 100%; max-width: 340px; margin: 16px auto 0;
+      position: relative;
+      width: 100%;
+      max-width: 350px;
+      margin: 18px auto 14px;
       background: linear-gradient(180deg, var(--wood-light) 0%, var(--wood-mid) 40%, var(--wood-dark) 100%);
-      border: 6px solid #1a0a03; border-radius: 24px; padding: 18px 12px 14px;
-      box-shadow: 0 12px 35px rgba(0,0,0,0.85), inset 0 2px 5px rgba(255,255,255,0.25);
+      border: 6px solid #160802;
+      border-radius: 26px;
+      padding: 22px 12px 16px;
+      box-shadow: 0 14px 40px rgba(0,0,0,0.9), inset 0 2px 6px rgba(255,255,255,0.3);
     }
     .roof-decor {
-      position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
-      background: var(--gold-gradient); color: #180d00; font-weight: 900; font-size: 11px;
-      padding: 3px 18px; border-radius: 10px; border: 2px solid #3d1c04; z-index: 11;
-      letter-spacing: 1px; box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--gold-gradient);
+      color: #1a0c02;
+      font-weight: 900;
+      font-size: 13px;
+      padding: 4px 22px;
+      border-radius: 12px;
+      border: 2px solid #3d1c04;
+      z-index: 11;
+      letter-spacing: 1.5px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.85);
     }
     .piggy-decor {
-      position: absolute; bottom: -12px; right: -8px; width: 42px; z-index: 10;
-      filter: drop-shadow(0 3px 6px rgba(0,0,0,0.8));
+      position: absolute;
+      bottom: -14px;
+      right: -10px;
+      width: 48px;
+      z-index: 10;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.85));
     }
 
     /* کانتینر رول‌ها */
     .reels-container {
-      display: flex; justify-content: center; gap: 8px;
-      background: #000000; border: 4px solid #150802;
-      border-radius: 16px; padding: 8px 6px; box-shadow: inset 0 0 25px rgba(0,0,0,0.95);
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      background: #000000;
+      border: 4px solid #140702;
+      border-radius: 18px;
+      padding: 10px 8px;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.98);
       position: relative;
     }
     .payline-marker {
-      position: absolute; top: 50%; left: 0; right: 0; height: 2px;
-      background: rgba(255, 59, 48, 0.7); pointer-events: none; transform: translateY(-50%);
-      box-shadow: 0 0 10px #ff3b30; z-index: 20;
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255, 59, 48, 0.85);
+      pointer-events: none;
+      transform: translateY(-50%);
+      box-shadow: 0 0 14px #ff3b30, 0 0 6px #ff3b30;
+      z-index: 20;
     }
 
     /* هر ستون رول */
     .reel-window {
-      width: 92px; height: 110px; overflow: hidden; position: relative;
-      background: radial-gradient(circle at center, #1f1f30 0%, #12121d 100%);
-      border-radius: 10px; border: 1.5px solid rgba(212,175,55,0.25);
+      width: 96px;
+      height: 118px;
+      overflow: hidden;
+      position: relative;
+      background: radial-gradient(circle at center, #242238 0%, #11111c 100%);
+      border-radius: 12px;
+      border: 2px solid rgba(212,175,55,0.35);
     }
     .reel-window.suspense-glow {
       border-color: var(--cyan);
-      box-shadow: 0 0 15px var(--cyan);
-      animation: pulseSuspense 0.4s infinite alternate;
+      box-shadow: 0 0 20px var(--cyan);
+      animation: pulseSuspense 0.35s infinite alternate;
     }
-    @keyframes pulseSuspense { from { transform: scale(1); } to { transform: scale(1.03); } }
-
+    @keyframes pulseSuspense {
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
+    }
     .reel-strip {
-      display: flex; flex-direction: column; align-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       will-change: transform;
     }
     .slot-item {
-      width: 92px; height: 110px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; flex-shrink: 0;
+      width: 96px;
+      height: 118px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
     }
     .slot-item img {
-      width: 54px; height: 54px; object-fit: contain;
-      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
     }
-    .slot-item span {
-      font-size: 10.5px; font-weight: 800; color: var(--gold); margin-top: 4px;
+    .slot-item .symbol-emoji-fallback {
+      font-size: 46px;
+      line-height: 1;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.7));
+    }
+    .slot-item span.symbol-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-top: 6px;
+      background: rgba(0, 0, 0, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 2px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     }
 
-    /* نوار کنترل شرط‌بندی ارتقایافته */
+    /* سینی ژتون‌های بازیکن (Casino Chip Rack) */
+    .chips-inventory-card {
+      max-width: 350px;
+      margin: 12px auto 10px;
+      background: linear-gradient(180deg, rgba(32, 17, 50, 0.95), rgba(18, 9, 30, 0.95));
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    }
+    .chips-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .chips-card-title {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chips-card-total {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #a7f3d0;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 2px 10px;
+      border-radius: 20px;
+    }
+    .chips-tray {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      justify-items: center;
+    }
+    .chip-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.12s;
+      padding: 4px;
+      border-radius: 12px;
+    }
+    .chip-item:active { transform: scale(0.92); }
+    .casino-chip {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 14px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.7), inset 0 2px 4px rgba(255,255,255,0.4);
+      position: relative;
+      border: 2px dashed rgba(255,255,255,0.8);
+    }
+    .casino-chip.c1 { background: radial-gradient(circle, #f8fafc, #94a3b8); color: #0f172a; border-color: #64748b; }
+    .casino-chip.c5 { background: radial-gradient(circle, #f87171, #b91c1c); color: #ffffff; }
+    .casino-chip.c25 { background: radial-gradient(circle, #34d399, #047857); color: #ffffff; }
+    .casino-chip.c100 { background: radial-gradient(circle, #60a5fa, #1d4ed8); color: #ffffff; }
+    .casino-chip.c500 { background: radial-gradient(circle, #c084fc, #6b21a8); color: #ffffff; }
+    .chip-count-badge {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #f1f5f9;
+      margin-top: 4px;
+      background: rgba(0,0,0,0.6);
+      padding: 1px 6px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    /* نوار کنترل شرط‌بندی ژتون */
     .bet-bar {
-      display: flex; flex-direction: column; gap: 8px;
-      max-width: 340px; margin: 12px auto 8px; background: rgba(25,12,38,0.85);
-      border: 1px solid var(--border); border-radius: 14px; padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 350px;
+      margin: 10px auto;
+      background: rgba(28, 14, 44, 0.94);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
     }
     .bet-row-top {
-      display: flex; justify-content: space-between; align-items: center; font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
     }
-    .bet-stepper { display: flex; align-items: center; gap: 6px; }
+    .bet-stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
     .btn-step {
-      background: #25163a; border: 1px solid var(--border); color: var(--gold);
-      width: 26px; height: 26px; border-radius: 6px; font-weight: 900; font-size: 14px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #381f59, #231238);
+      border: 1.5px solid var(--border);
+      color: var(--gold);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      font-weight: 900;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.1s;
     }
+    .btn-step:active { transform: scale(0.9); }
+    .bet-cost-badge {
+      color: var(--gold-bright);
+      font-size: 16px;
+      font-weight: 900;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid rgba(212,175,55,0.4);
+      padding: 4px 12px;
+      border-radius: 10px;
+      text-shadow: 0 1px 6px rgba(255,215,0,0.3);
+    }
+    .bet-multiplier-badge {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #93c5fd;
+      background: rgba(59, 130, 246, 0.18);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      padding: 4px 10px;
+      border-radius: 10px;
+    }
+
+    /* کلیدهای ضرایب شرط */
     .multiplier-group {
-      display: flex; justify-content: space-between; gap: 4px;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
     }
     .btn-multi {
-      flex: 1; background: #25163a; border: 1px solid var(--border); color: var(--text-muted);
-      padding: 5px 2px; border-radius: 6px; font-weight: 900; font-size: 11px; cursor: pointer;
-      transition: 0.15s;
+      flex: 1;
+      background: #24133a;
+      border: 1.5px solid var(--border);
+      color: #cbd5e1;
+      padding: 8px 4px;
+      border-radius: 10px;
+      font-weight: 900;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.15s;
     }
+    .btn-multi:active { transform: scale(0.94); }
     .btn-multi.active {
-      background: var(--gold-gradient); color: #170d00; border-color: var(--gold);
-      box-shadow: 0 0 10px rgba(212,175,55,0.4);
+      background: var(--gold-gradient);
+      color: #170d00;
+      border-color: var(--gold);
+      box-shadow: 0 0 14px rgba(212,175,55,0.55);
+      transform: scale(1.03);
     }
 
-    /* دکمه چرخش */
-    .spin-btn-container { margin: 6px auto; }
+    /* دکمه چرخش (SPIN) و چرخش خودکار */
+    .spin-btn-container {
+      margin: 12px auto 14px;
+    }
     .btn-spin-main {
-      width: 155px; height: 58px; background: var(--gold-gradient);
-      border: 2px solid #fff2ad; border-radius: 20px; color: #150900;
-      font-size: 19px; font-weight: 900; cursor: pointer;
-      box-shadow: 0 0 25px rgba(212,175,55,0.5); transition: transform 0.08s;
-      display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 175px;
+      height: 66px;
+      background: var(--gold-gradient);
+      border: 2.5px solid #fff6c7;
+      border-radius: 22px;
+      color: #180900;
+      font-size: 21px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 0 30px rgba(212,175,55,0.65), 0 6px 16px rgba(0,0,0,0.5);
+      transition: transform 0.08s;
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
     }
-    .btn-spin-main:active { transform: scale(0.95); }
-    .btn-spin-main:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-spin-main sub { font-size: 9.5px; font-weight: bold; margin-top: -2px; }
+    .btn-spin-main:active { transform: scale(0.94); }
+    .btn-spin-main:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+    }
+    .btn-spin-main sub {
+      font-size: 12px;
+      font-weight: 800;
+      margin-top: -3px;
+      color: #3d1c04;
+    }
     .btn-auto {
-      background: #25163a; color: white; border: 1px solid rgba(255,255,255,0.2);
-      padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; margin-top: 6px;
+      background: linear-gradient(135deg, #2b1744, #1b0c2e);
+      color: #ffffff;
+      border: 1.5px solid rgba(255,255,255,0.25);
+      padding: 9px 20px;
+      border-radius: 12px;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
-    .btn-auto.active { border-color: var(--red); color: var(--red); background: rgba(255,59,48,0.15); }
+    .btn-auto:active { transform: scale(0.95); }
+    .btn-auto.active {
+      border-color: var(--red);
+      color: #fee2e2;
+      background: rgba(239, 68, 68, 0.25);
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.4);
+    }
 
-    /* جدول جوایز */
+    /* جدول جوایز و قوانین */
     .payout-card {
-      max-width: 340px; margin: 10px auto 14px; background: rgba(25,12,38,0.9);
-      border: 1px solid var(--border); border-radius: 14px; padding: 10px; font-size: 11px;
+      max-width: 350px;
+      margin: 14px auto 20px;
+      background: rgba(26, 13, 40, 0.95);
+      border: 1.5px solid var(--border);
+      border-radius: 18px;
+      padding: 14px 14px 16px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.65);
     }
-    .payout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; text-align: right; }
+    .payout-card-header {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(212,175,55,0.25);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+    .payout-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      text-align: right;
+    }
     .payout-item {
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(0,0,0,0.4); padding: 5px 8px; border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .payout-name {
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .payout-reward {
+      font-size: 13.5px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+    .payout-item.full-width {
+      grid-column: span 2;
+    }
+    .payout-item.bomb-item {
+      border: 1.5px dashed var(--red);
+      background: rgba(239, 68, 68, 0.12);
     }
 
-    /* پاپ‌آپ جک‌پات و بمب */
+    /* پاپ‌آپ مودال بردهای بزرگ و انفجار */
     .modal-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-      z-index: 1000; align-items: center; justify-content: center; padding: 16px;
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(4px);
     }
     .modal-overlay.open { display: flex; }
     .alert-modal-box {
-      background: radial-gradient(circle, #3a1555, #140522); border: 2px solid var(--gold);
-      border-radius: 20px; padding: 22px 14px; width: 100%; max-width: 310px; text-align: center;
-      animation: popIn 0.2s ease;
+      background: radial-gradient(circle, #3d175b, #150624);
+      border: 2.5px solid var(--gold);
+      border-radius: 24px;
+      padding: 24px 18px;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 0 35px rgba(212,175,55,0.45);
+      animation: popIn 0.22s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     }
-    .alert-modal-box.danger { border-color: var(--red); }
-    @keyframes popIn { from { transform: scale(0.85); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .alert-modal-box.danger {
+      border-color: var(--red);
+      box-shadow: 0 0 35px rgba(239, 68, 68, 0.5);
+    }
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-icon { font-size: 56px; margin-bottom: 8px; }
+    .modal-title { font-size: 20px; font-weight: 900; color: var(--gold); margin-bottom: 8px; }
+    .modal-desc { font-size: 14.5px; font-weight: 700; color: #cbd5e1; margin-bottom: 14px; line-height: 1.5; }
+    .modal-amount { font-size: 30px; font-weight: 900; color: var(--gold-bright); margin-bottom: 18px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+    .btn-modal-action {
+      width: 100%;
+      padding: 13px;
+      background: var(--gold-gradient);
+      color: #170d00;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.6);
+      transition: transform 0.1s;
+    }
+    .btn-modal-action:active { transform: scale(0.96); }
+
+    .bot-footer {
+      margin-top: 15px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #94a3b8;
+      letter-spacing: 0.5px;
+    }
   </style>
 </head>
 <body>
@@ -200,56 +626,80 @@
       <span>🎰 رولر شانس طلایی</span>
     </div>
     <div class="header-controls">
-      <button class="btn-sound-toggle" id="btn-sound" onclick="toggleAudio()" title="صدا">🔊</button>
-      <div style="color: var(--gold); font-weight: 900;">
-        🪙 <span id="user-bal">50</span>
+      <button class="btn-sound-toggle" id="btn-sound" onclick="toggleAudio()" title="قطع/وصل صدا">🔊</button>
+      <div class="header-balance-badge" title="کل ژتون‌های شما">
+        🟣 <span id="header-chips-bal">۰</span>
       </div>
     </div>
   </div>
 
-  <!-- کادر وضعیت برد/باخت -->
+  <!-- کادر وضعیت آخرین نتیجه و پاداش -->
   <div class="win-display-box">
-    <span class="win-title-lbl" id="win-status-lbl">آخرین نتیجه:</span>
-    <span class="win-amount" id="win-display">۰ S</span>
+    <span class="win-title-lbl" id="win-status-lbl">آخرین نتیجه چرخش:</span>
+    <span class="win-amount" id="win-display">۰ ژتون</span>
   </div>
 
-  <!-- قاب دستگاه ۳ رول -->
+  <!-- قاب دستگاه ۳ رول شانس -->
   <div class="slot-machine-frame">
     <div class="roof-decor">SIMAB ROLLER</div>
     <div class="reels-container">
       <div class="payline-marker"></div>
       <!-- رول ۱ -->
       <div class="reel-window" id="reel-box-1">
-        <div class="reel-strip" id="strip-1">
-          <div class="slot-item"><img src="../../assets/chest-slot.png" onerror="this.src='../../assets/chest.png'"><span>صندوق</span></div>
-        </div>
+        <div class="reel-strip" id="strip-1"></div>
       </div>
       <!-- رول ۲ -->
       <div class="reel-window" id="reel-box-2">
-        <div class="reel-strip" id="strip-2">
-          <div class="slot-item"><img src="../../assets/coin.png"><span>سکه</span></div>
-        </div>
+        <div class="reel-strip" id="strip-2"></div>
       </div>
       <!-- رول ۳ -->
       <div class="reel-window" id="reel-box-3">
-        <div class="reel-strip" id="strip-3">
-          <div class="slot-item"><img src="../../assets/diamond.png"><span>الماس</span></div>
-        </div>
+        <div class="reel-strip" id="strip-3"></div>
       </div>
     </div>
     <img src="../../assets/piggy.png" class="piggy-decor" onerror="this.style.display='none'">
   </div>
 
-  <!-- نوار تنظیم شرط و ضرایب متنوع -->
+  <!-- سینی ژتون‌های بازیکن -->
+  <div class="chips-inventory-card">
+    <div class="chips-card-header">
+      <span class="chips-card-title">🎴 سینی ژتون‌های شما</span>
+      <span class="chips-card-total" id="tray-total-lbl">مجموع: ۰ ژتون</span>
+    </div>
+    <div class="chips-tray">
+      <div class="chip-item" onclick="quickSelectChip(1)" title="انتخاب ژتون ۱">
+        <div class="casino-chip c1">1</div>
+        <span class="chip-count-badge" id="cnt-c1">۰</span>
+      </div>
+      <div class="chip-item" onclick="quickSelectChip(5)" title="انتخاب ژتون ۵">
+        <div class="casino-chip c5">5</div>
+        <span class="chip-count-badge" id="cnt-c5">۰</span>
+      </div>
+      <div class="chip-item" onclick="quickSelectChip(25)" title="انتخاب ژتون ۲۵">
+        <div class="casino-chip c25">25</div>
+        <span class="chip-count-badge" id="cnt-c25">۰</span>
+      </div>
+      <div class="chip-item" onclick="quickSelectChip(100)" title="انتخاب ژتون ۱۰۰">
+        <div class="casino-chip c100">100</div>
+        <span class="chip-count-badge" id="cnt-c100">۰</span>
+      </div>
+      <div class="chip-item" onclick="quickSelectChip(500)" title="انتخاب ژتون ۵۰۰">
+        <div class="casino-chip c500">500</div>
+        <span class="chip-count-badge" id="cnt-c500">۰</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- نوار تنظیم شرط و ضرایب متنوع ژتونی -->
   <div class="bet-bar">
     <div class="bet-row-top">
       <div class="bet-stepper">
         <button class="btn-step" onclick="adjustMultiplier(-1)">-</button>
-        <span>مبلغ شرط:</span>
-        <b style="color: var(--gold); font-size: 13px;" id="bet-cost-text">۲ سکه</b>
+        <span style="font-weight: 800; color: #f8fafc;">مبلغ شرط:</span>
+        <span class="bet-cost-badge" id="bet-cost-text">۲ ژتون</span>
         <button class="btn-step" onclick="adjustMultiplier(1)">+</button>
       </div>
-      <span style="font-size: 10px; color: var(--text-muted);" id="current-multi-lbl">ضریب x1</span>
+      <span class="bet-multiplier-badge" id="current-multi-lbl">ضریب x1</span>
     </div>
     <div class="multiplier-group">
       <button class="btn-multi active" id="m-1" onclick="setMultiplier(1)">x1</button>
@@ -261,7 +711,7 @@
     </div>
   </div>
 
-  <!-- دکمه چرخش اصلی -->
+  <!-- دکمه چرخش اصلی و چرخش خودکار -->
   <div class="spin-btn-container">
     <button class="btn-spin-main" id="btn-spin" onclick="spinSlot()">
       <span>SPIN 🎰</span>
@@ -271,36 +721,66 @@
     <button class="btn-auto" id="btn-auto" onclick="toggleAutoSpin()">🔄 چرخش خودکار (Auto)</button>
   </div>
 
-  <!-- جدول جوایز -->
+  <!-- جدول جوایز و قوانین کامل -->
   <div class="payout-card">
-    <b style="color: var(--gold);">📜 جدول جوایز و قوانین (۳ نماد یکسان):</b>
+    <div class="payout-card-header">
+      <span>📜 جدول جوایز و قوانین (۳ نماد یکسان)</span>
+    </div>
     <div class="payout-grid">
-      <div class="payout-item"><span>📦 ۳ صندوق طلا</span><b style="color: #ffd700;">x50 (جک‌پات)</b></div>
-      <div class="payout-item"><span>💎 ۳ الماس آبی</span><b style="color: #5ac8fa;">x30</b></div>
-      <div class="payout-item"><span>🔴 ۳ هفت سرخ</span><b style="color: #ff3b30;">x20</b></div>
-      <div class="payout-item"><span>💰 ۳ سکه طلا</span><b style="color: #ffd700;">x10</b></div>
-      <div class="payout-item"><span>⚡ ۳ انرژی</span><b style="color: #34c759;">+۲۰ سکه</b></div>
-      <div class="payout-item"><span>🟢 ۳ چیپ</span><b style="color: var(--gold);">x5</b></div>
-      <div class="payout-item"><span>✨ ۲ نماد همسان</span><b style="color: #ffffff;">x2</b></div>
-      <div class="payout-item"><span>👖 ۳ شلوار / 💀 جمجمه</span><b style="color: #8e8e98;">پوچ (x0)</b></div>
-      <div class="payout-item" style="grid-column: span 2; border: 1px dashed var(--red);">
-        <span>💣 ۳ بمب انفجاری</span><b style="color: var(--red);">-۱۰ سکه (خسارت منفی!)</b>
+      <div class="payout-item">
+        <span class="payout-name">📦 ۳ صندوق طلا</span>
+        <span class="payout-reward" style="color: #ffd700;">x50 (جک‌پات)</span>
+      </div>
+      <div class="payout-item">
+        <span class="payout-name">💎 ۳ الماس آبی</span>
+        <span class="payout-reward" style="color: #38bdf8;">x30</span>
+      </div>
+      <div class="payout-item">
+        <span class="payout-name">🔴 ۳ هفت سرخ</span>
+        <span class="payout-reward" style="color: #ef4444;">x20</span>
+      </div>
+      <div class="payout-item">
+        <span class="payout-name">🪙 ۳ سکه طلا</span>
+        <span class="payout-reward" style="color: #ffd700;">x10</span>
+      </div>
+      <div class="payout-item">
+        <span class="payout-name">⚡ ۳ قوطی انرژی</span>
+        <span class="payout-reward" style="color: #22c55e;">+۲۰ ژتون</span>
+      </div>
+      <div class="payout-item">
+        <span class="payout-name">🟣 ۳ ژتون شانس</span>
+        <span class="payout-reward" style="color: #f5cf62;">x5</span>
+      </div>
+      <div class="payout-item">
+        <span class="payout-name">✨ ۲ نماد همسان</span>
+        <span class="payout-reward" style="color: #ffffff;">x2</span>
+      </div>
+      <div class="payout-item">
+        <span class="payout-name">👖 ۳ شلوار / 💀 جمجمه</span>
+        <span class="payout-reward" style="color: #94a3b8;">پوچ (x0)</span>
+      </div>
+      <div class="payout-item full-width bomb-item">
+        <span class="payout-name">💣 ۳ بمب انفجاری</span>
+        <span class="payout-reward" style="color: #ef4444;">-۱۰ ژتون (خسارت منفی!)</span>
       </div>
     </div>
   </div>
 
-  <!-- مودال جک‌پات و بمب -->
+  <!-- مودال جک‌پات و هشدارها -->
   <div class="modal-overlay" id="alert-modal">
     <div class="alert-modal-box" id="alert-box">
-      <div style="font-size: 50px; margin-bottom: 6px;" id="modal-icon">🎉</div>
-      <h2 style="color: var(--gold); margin-bottom: 6px;" id="modal-title">BIG WIN!</h2>
-      <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;" id="modal-desc">شما برنده شدید!</p>
-      <div style="font-size: 28px; font-weight: 900; color: #ffd700; margin-bottom: 16px;" id="modal-amount">+500 S</div>
-      <button class="btn-back" style="width: 100%; padding: 12px; background: var(--gold-gradient); color: #000; border: none; font-weight: 900;" onclick="closeAlertModal()">ادامه 🎰</button>
+      <div class="modal-icon" id="modal-icon">🎉</div>
+      <h2 class="modal-title" id="modal-title">BIG WIN!</h2>
+      <p class="modal-desc" id="modal-desc">شما برنده شدید!</p>
+      <div class="modal-amount" id="modal-amount">+۵۰۰ ژتون</div>
+      <button class="btn-modal-action" onclick="closeAlertModal()">ادامه بازی 🎰</button>
     </div>
   </div>
 
+  <div class="bot-footer">@SimorApp_bot</div>
+
   <script>
+    // ================= ۱. هماهنگی با مینی‌اپ تلگرام =================
     const tg = window.Telegram?.WebApp;
     try {
       if (tg) {
@@ -320,7 +800,6 @@
       }
     } catch(e) {}
 
-    // بازگشت هوشمند به سربرگ بازی‌ها
     function goBack() {
       try { localStorage.setItem('simab_active_tab', 'games'); } catch(e) {}
       if (window.history.length > 1) {
@@ -330,21 +809,154 @@
       }
     }
 
-    // موجودی هماهنگ با کل مینی‌اپ
+    // ================= ۲. سیستم ژتون‌های مجزا و سینک با موجودی کل =================
+    const STORAGE_KEY_CHIPS = 'simor_chips_' + uid;
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
 
-    function saveBalance() {
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      document.getElementById('user-bal').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+    let chipsInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
+    let totalChips = 0;
+
+    function calcTotal(inv) {
+      return (inv.c1 || 0) * 1 +
+             (inv.c5 || 0) * 5 +
+             (inv.c25 || 0) * 25 +
+             (inv.c100 || 0) * 100 +
+             (inv.c500 || 0) * 500;
     }
-    saveBalance();
 
-    // ================= موتور صوتی اختصاصی و سبک (بدون فایل دانلودی) =================
+    // تبدیل هوشمند موجودی به دسته‌های استاندارد ژتون
+    function standardBreakdown(amount) {
+      let rem = Math.max(0, Math.floor(amount));
+      let c1 = (rem >= 20) ? 20 : rem; rem -= c1 * 1;
+      let c5 = (rem >= 80) ? 16 : Math.floor(rem / 5); rem -= c5 * 5;
+      let c25 = (rem >= 400) ? 16 : Math.floor(rem / 25); rem -= c25 * 25;
+      let c100 = (rem >= 2000) ? 20 : Math.floor(rem / 100); rem -= c100 * 100;
+      let c500 = Math.floor(rem / 500); rem -= c500 * 500;
+
+      let extra100 = Math.floor(rem / 100); rem %= 100;
+      let extra25 = Math.floor(rem / 25); rem %= 25;
+      let extra5 = Math.floor(rem / 5); rem %= 5;
+      let extra1 = rem;
+
+      return {
+        c1: c1 + extra1,
+        c5: c5 + extra5,
+        c25: c25 + extra25,
+        c100: c100 + extra100,
+        c500: c500
+      };
+    }
+
+    // کسر ژتون از موجودی (با خرد کردن ژتون بزرگ‌تر در صورت لزوم)
+    function deductChips(inv, amount) {
+      let total = calcTotal(inv);
+      if (total < amount) return false;
+      
+      let rem = amount;
+      const denoms = [
+        { k: 'c500', v: 500 },
+        { k: 'c100', v: 100 },
+        { k: 'c25', v: 25 },
+        { k: 'c5', v: 5 },
+        { k: 'c1', v: 1 }
+      ];
+
+      for (let d of denoms) {
+        if (rem <= 0) break;
+        let take = Math.min(inv[d.k] || 0, Math.floor(rem / d.v));
+        inv[d.k] -= take;
+        rem -= take * d.v;
+      }
+
+      if (rem > 0) {
+        let candidates = [
+          { k: 'c5', v: 5 },
+          { k: 'c25', v: 25 },
+          { k: 'c100', v: 100 },
+          { k: 'c500', v: 500 }
+        ];
+        for (let d of candidates) {
+          if (d.v > rem && (inv[d.k] || 0) > 0) {
+            inv[d.k] -= 1;
+            let change = d.v - rem;
+            let c100 = Math.floor(change / 100); change %= 100;
+            let c25 = Math.floor(change / 25); change %= 25;
+            let c5 = Math.floor(change / 5); change %= 5;
+            let c1 = change;
+            inv.c100 = (inv.c100 || 0) + c100;
+            inv.c25 = (inv.c25 || 0) + c25;
+            inv.c5 = (inv.c5 || 0) + c5;
+            inv.c1 = (inv.c1 || 0) + c1;
+            rem = 0;
+            break;
+          }
+        }
+      }
+
+      return rem === 0;
+    }
+
+    // افزودن ژتون بابت برد
+    function addChips(inv, amount) {
+      let rem = Math.max(0, Math.floor(amount));
+      const c500 = Math.floor(rem / 500); rem %= 500;
+      const c100 = Math.floor(rem / 100); rem %= 100;
+      const c25 = Math.floor(rem / 25); rem %= 25;
+      const c5 = Math.floor(rem / 5); rem %= 5;
+      const c1 = rem;
+      inv.c500 = (inv.c500 || 0) + c500;
+      inv.c100 = (inv.c100 || 0) + c100;
+      inv.c25 = (inv.c25 || 0) + c25;
+      inv.c5 = (inv.c5 || 0) + c5;
+      inv.c1 = (inv.c1 || 0) + c1;
+    }
+
+    function loadChips() {
+      let rawCoins = localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance');
+      let coinBal = rawCoins !== null ? parseFloat(rawCoins) : 50;
+      if (isNaN(coinBal) || coinBal < 0) coinBal = 50;
+
+      let rawChips = localStorage.getItem(STORAGE_KEY_CHIPS);
+      if (rawChips) {
+        try {
+          chipsInv = JSON.parse(rawChips);
+          totalChips = calcTotal(chipsInv);
+          if (Math.abs(totalChips - coinBal) > 0.01) {
+            chipsInv = standardBreakdown(coinBal);
+            totalChips = calcTotal(chipsInv);
+          }
+        } catch(e) {
+          chipsInv = standardBreakdown(coinBal);
+          totalChips = calcTotal(chipsInv);
+        }
+      } else {
+        chipsInv = standardBreakdown(coinBal);
+        totalChips = calcTotal(chipsInv);
+      }
+      saveChips();
+    }
+
+    function saveChips() {
+      totalChips = calcTotal(chipsInv);
+      localStorage.setItem(STORAGE_KEY_CHIPS, JSON.stringify(chipsInv));
+      localStorage.setItem(STORAGE_KEY_COINS, totalChips.toString());
+      localStorage.setItem('user_balance', totalChips.toString());
+      renderChipsUI();
+    }
+
+    function renderChipsUI() {
+      document.getElementById('header-chips-bal').innerText = totalChips.toLocaleString('fa-IR');
+      document.getElementById('tray-total-lbl').innerText = `مجموع: ${totalChips.toLocaleString('fa-IR')} ژتون`;
+      document.getElementById('cnt-c1').innerText = (chipsInv.c1 || 0).toLocaleString('fa-IR');
+      document.getElementById('cnt-c5').innerText = (chipsInv.c5 || 0).toLocaleString('fa-IR');
+      document.getElementById('cnt-c25').innerText = (chipsInv.c25 || 0).toLocaleString('fa-IR');
+      document.getElementById('cnt-c100').innerText = (chipsInv.c100 || 0).toLocaleString('fa-IR');
+      document.getElementById('cnt-c500').innerText = (chipsInv.c500 || 0).toLocaleString('fa-IR');
+    }
+
+    // ================= ۳. موتور صوتی سبک با Web Audio API =================
     let audioEnabled = true;
     let audioCtx = null;
-
     function initAudio() {
       if (!audioCtx) {
         try {
@@ -352,25 +964,25 @@
           audioCtx = new AudioContext();
         } catch(e) {}
       }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
     }
-
     function toggleAudio() {
       audioEnabled = !audioEnabled;
       document.getElementById('btn-sound').innerText = audioEnabled ? '🔊' : '🔇';
     }
-
     function playTone(freq, type, duration, delay = 0) {
       if (!audioEnabled) return;
       initAudio();
       if (!audioCtx) return;
-
       setTimeout(() => {
         try {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
           osc.type = type;
           osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.09, audioCtx.currentTime);
           gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
           osc.connect(gain);
           gain.connect(audioCtx.destination);
@@ -379,53 +991,55 @@
         } catch(e) {}
       }, delay);
     }
-
     function playReelStopSound() {
-      playTone(160, 'square', 0.06);
+      playTone(180, 'square', 0.08);
     }
-
     function playWinSound() {
-      playTone(523, 'triangle', 0.15, 0);   // C5
-      playTone(659, 'triangle', 0.15, 120); // E5
-      playTone(783, 'triangle', 0.25, 240); // G5
-      playTone(1046, 'triangle', 0.4, 380); // C6
+      playTone(523, 'triangle', 0.16, 0);   // C5
+      playTone(659, 'triangle', 0.16, 110); // E5
+      playTone(783, 'triangle', 0.22, 220); // G5
+      playTone(1046, 'triangle', 0.4, 340); // C6
     }
-
     function playBombSound() {
-      playTone(80, 'sawtooth', 0.4);
+      playTone(75, 'sawtooth', 0.45);
     }
 
-    // ۹ نماد با شانس کاملاً مساوی و تصادفی (بدون هیچ وزن‌دهی یا دستکاری)
+    // ================= ۴. ۹ نماد شانس =================
     const symbols = [
-      { id: 'chest', name: 'صندوق', img: '../../assets/chest-slot.png', alt: '../../assets/chest.png', mult: 50 },
-      { id: 'diamond', name: 'الماس', img: '../../assets/diamond.png', alt: '', mult: 30 },
-      { id: 'seven', name: 'هفت سرخ', img: '../../assets/seven.png', alt: '', mult: 20 },
-      { id: 'coin', name: 'سکه', img: '../../assets/coin.png', alt: '', mult: 10 },
-      { id: 'energy', name: 'انرژی', img: '../../assets/energy.png', alt: '', mult: 10 },
-      { id: 'chip', name: 'چیپ', img: '../../assets/poker-chip.png', alt: '', mult: 5 },
-      { id: 'pants', name: 'شلوار', img: '../../assets/pants.png', alt: '', mult: 0 },
-      { id: 'skull', name: 'جمجمه', img: '../../assets/skull.png', alt: '', mult: 0 },
-      { id: 'bomb', name: 'بمب خطر', img: '../../assets/bomb.png', alt: '', mult: -10 }
+      { id: 'chest', name: 'صندوق طلا', img: '../../assets/chest-slot.png', alt: '../../assets/chest.png', emoji: '📦', mult: 50 },
+      { id: 'diamond', name: 'الماس آبی', img: '../../assets/diamond.png', alt: '', emoji: '💎', mult: 30 },
+      { id: 'seven', name: 'هفت سرخ', img: '../../assets/seven.png', alt: '', emoji: '🔴', mult: 20 },
+      { id: 'coin', name: 'سکه طلا', img: '../../assets/coin.png', alt: '', emoji: '🪙', mult: 10 },
+      { id: 'energy', name: 'قوطی انرژی', img: '../../assets/energy.png', alt: '', emoji: '⚡', mult: 10 },
+      { id: 'chip', name: 'ژتون شانس', img: '../../assets/poker-chip.png', alt: '', emoji: '🟣', mult: 5 },
+      { id: 'pants', name: 'شلوار', img: '../../assets/pants.png', alt: '', emoji: '👖', mult: 0 },
+      { id: 'skull', name: 'جمجمه', img: '../../assets/skull.png', alt: '', emoji: '💀', mult: 0 },
+      { id: 'bomb', name: 'بمب خطر', img: '../../assets/bomb.png', alt: '', emoji: '💣', mult: -10 }
     ];
 
-    // انتخاب ۱۰۰٪ رندوم و بر پایه بخت واقعی
     function getRandomSymbol() {
       const randIdx = Math.floor(Math.random() * symbols.length);
-      return symbols.at(randIdx);
-    }
-    function getSymbolHtml(s) {
-      const errHandler = s.alt ? `onerror="this.src='${s.alt}'"` : '';
-      return `<img src="${s.img}" ${errHandler}><span>${s.name}</span>`;
+      return symbols[randIdx];
     }
 
-    // ضرایب شرط
+    function getSymbolHtml(s) {
+      const errHandler = `onerror="this.onerror=null; this.style.display='none'; this.nextElementSibling.style.display='block';"`;
+      return `
+        <img src="${s.img}" ${errHandler}>
+        <span class="symbol-emoji-fallback" style="display:none;">${s.emoji}</span>
+        <span class="symbol-title">${s.name}</span>
+      `;
+    }
+
+    // ================= ۵. سیستم کنترل شرط و ضرایب =================
+    let baseCost = 2; // ژتون پایه
     let multiplier = 1;
-    const baseCost = 2;
     let isSpinning = false;
     let autoSpinActive = false;
 
     function updateBetUI() {
-      document.getElementById('bet-cost-text').innerText = `${baseCost * multiplier} سکه`;
+      const cost = baseCost * multiplier;
+      document.getElementById('bet-cost-text').innerText = `${cost.toLocaleString('fa-IR')} ژتون`;
       document.getElementById('current-multi-lbl').innerText = `ضریب x${multiplier}`;
       document.querySelectorAll('.btn-multi').forEach(b => b.classList.remove('active'));
       const activeBtn = document.getElementById('m-' + multiplier);
@@ -440,29 +1054,53 @@
 
     function adjustMultiplier(delta) {
       if (isSpinning) return;
-      const presets = "1,2,5,10,25,50".split(",").map(Number);
+      const presets = [1, 2, 5, 10, 25, 50];
       let idx = presets.indexOf(multiplier);
       if (idx === -1) idx = 0;
       let nextIdx = Math.max(0, Math.min(presets.length - 1, idx + delta));
-      multiplier = presets.slice(nextIdx, nextIdx + 1)[0];
+      multiplier = presets[nextIdx];
       updateBetUI();
     }
 
     function setMaxMultiplier() {
       if (isSpinning) return;
-      const affordable = Math.max(1, Math.floor(balance / baseCost));
+      const affordable = Math.max(1, Math.floor(totalChips / baseCost));
       multiplier = Math.min(50, affordable);
       updateBetUI();
       const maxBtn = document.getElementById('m-max');
       if (maxBtn) maxBtn.classList.add('active');
     }
 
-    
+    // انتخاب سریع شرط از روی سینی ژتون‌ها
+    function quickSelectChip(chipVal) {
+      if (isSpinning) return;
+      if (chipVal === 1) {
+        baseCost = 2;
+        multiplier = 1;
+      } else if (chipVal === 5) {
+        baseCost = 5;
+        multiplier = 1;
+      } else if (chipVal === 25) {
+        baseCost = 25;
+        multiplier = 1;
+      } else if (chipVal === 100) {
+        baseCost = 100;
+        multiplier = 1;
+      } else if (chipVal === 500) {
+        baseCost = 500;
+        multiplier = 1;
+      }
+      updateBetUI();
+      try {
+        if (tg?.HapticFeedback) tg.HapticFeedback.selectionChanged();
+      } catch(e) {}
+    }
 
-    function populateStrip(stripEl) {
+    // مقداردهی اولیه نوار رول‌ها
+    function populateStrip(stripEl, defaultSymbol) {
       stripEl.innerHTML = '';
       for (let i = 0; i < 28; i++) {
-        const s = symbols[Math.floor(Math.random() * symbols.length)];
+        const s = (i === 0 && defaultSymbol) ? defaultSymbol : symbols[Math.floor(Math.random() * symbols.length)];
         const div = document.createElement('div');
         div.className = 'slot-item';
         div.innerHTML = getSymbolHtml(s);
@@ -470,15 +1108,16 @@
       }
     }
 
-    populateStrip(document.getElementById('strip-1'));
-    populateStrip(document.getElementById('strip-2'));
-    populateStrip(document.getElementById('strip-3'));
+    populateStrip(document.getElementById('strip-1'), symbols[0]); // صندوق
+    populateStrip(document.getElementById('strip-2'), symbols[3]); // سکه
+    populateStrip(document.getElementById('strip-3'), symbols[1]); // الماس
 
+    // ================= ۶. چرخش رول‌ها و پردازش شرط ژتونی =================
     function spinSlot() {
       initAudio();
       const cost = baseCost * multiplier;
-      if (balance < cost) {
-        alert('موجودی سکه شما برای این ضریب شرط کافی نیست!');
+      if (totalChips < cost) {
+        showAlertModal('⚠️ موجودی ژتون ناکافی', `برای این شرط به ${cost.toLocaleString('fa-IR')} ژتون نیاز دارید ولی موجودی شما ${totalChips.toLocaleString('fa-IR')} است. لطفاً مبلغ شرط را کاهش دهید.`, `${cost.toLocaleString('fa-IR')} ژتون`, true);
         if (autoSpinActive) toggleAutoSpin();
         return;
       }
@@ -486,8 +1125,9 @@
       isSpinning = true;
       document.getElementById('btn-spin').disabled = true;
 
-      balance = parseFloat((balance - cost).toFixed(4));
-      saveBalance();
+      // کسر واقعی ژتون‌ها از موجودی با حفظ توزیع
+      deductChips(chipsInv, cost);
+      saveChips();
 
       try {
         if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
@@ -497,7 +1137,7 @@
       const s2 = getRandomSymbol();
       const s3 = getRandomSymbol();
 
-      // حالت تعلیق جک‌پات (اگر رول ۱ و ۲ نماد پرامتیاز باشند)
+      // حالت تعلیق جک‌پات
       const isSuspense = (s1.id === s2.id && (s1.id === 'chest' || s1.id === 'diamond' || s1.id === 'seven'));
       const r3Box = document.getElementById('reel-box-3');
       if (isSuspense) {
@@ -510,24 +1150,22 @@
         isSpinning = false;
         r3Box.classList.remove('suspense-glow');
         document.getElementById('btn-spin').disabled = false;
-        checkWin(s1, s2, s3);
-
+        checkWin(s1, s2, s3, cost);
         if (autoSpinActive) {
-          setTimeout(spinSlot, 850);
+          setTimeout(spinSlot, 900);
         }
       });
     }
 
-    // انیمیشن توقف فنری (Elastic Recoil)
+    // انیمیشن توقف فنری
     function animateReel(stripId, targetSymbol, duration, onComplete) {
       const strip = document.getElementById(stripId);
       const items = strip.children;
       items[items.length - 1].innerHTML = getSymbolHtml(targetSymbol);
-
       strip.style.transition = `transform ${duration}ms cubic-bezier(0.12, 0.9, 0.18, 1)`;
-      const targetY = -((items.length - 1) * 110);
+      const targetY = -((items.length - 1) * 118);
       strip.style.transform = `translateY(${targetY}px)`;
-
+      
       setTimeout(() => {
         playReelStopSound();
         try {
@@ -543,47 +1181,43 @@
       }, duration + 60);
     }
 
-    function checkWin(s1, s2, s3) {
+    // بررسی برد و پرداخت جوایز به ژتون
+    function checkWin(s1, s2, s3, cost) {
       const winDisplay = document.getElementById('win-display');
       const winLbl = document.getElementById('win-status-lbl');
       winDisplay.className = 'win-amount';
       winLbl.innerText = 'نتیجه چرخش:';
 
-      // ۱. شرط منفی: ۳ تا بمب
+      // ۱. شرط منفی: ۳ بمب انفجاری
       if (s1.id === 'bomb' && s2.id === 'bomb' && s3.id === 'bomb') {
         const penalty = 10 * multiplier;
-        balance = parseFloat(Math.max(0, balance - penalty).toFixed(4));
-        saveBalance();
+        deductChips(chipsInv, Math.min(totalChips, penalty));
+        saveChips();
         winDisplay.classList.add('negative');
-        winDisplay.innerText = `-${penalty} S`;
+        winDisplay.innerText = `-${penalty.toLocaleString('fa-IR')} ژتون`;
         playBombSound();
-
         try {
           if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
         } catch(e) {}
-
-        showAlertModal('💥 انفجار بمب!', `۳ بمب خطر ظاهر شد و ${penalty} سکه خسارت دیدید!`, `-${penalty} S`, true);
+        showAlertModal('💥 انفجار بمب!', `۳ بمب خطر روی رول‌ها نشست و ${penalty.toLocaleString('fa-IR')} ژتون خسارت دیدید!`, `-${penalty.toLocaleString('fa-IR')} ژتون`, true);
         return;
       }
 
       // ۲. شرط ۳ نماد یکسان
       if (s1.id === s2.id && s2.id === s3.id) {
         if (s1.mult > 0) {
-          const winCoins = (baseCost * multiplier) * s1.mult;
-          balance = parseFloat((balance + winCoins).toFixed(4));
-          saveBalance();
+          const winAmount = (s1.id === 'energy') ? (20 * multiplier) : (cost * s1.mult);
+          addChips(chipsInv, winAmount);
+          saveChips();
           playWinSound();
-
-          winDisplay.innerText = `+${winCoins.toLocaleString()} S`;
+          winDisplay.innerText = `+${winAmount.toLocaleString('fa-IR')} ژتون`;
           if (s1.mult >= 20) winDisplay.classList.add('jackpot');
-
           try {
             if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
           } catch(e) {}
-
-          if (s1.mult >= 10) {
-            const title = (s1.id === 'chest') ? '👑 JACKPOT بزرگ گنج طلایی!' : '🎉 برد بزرگ ۳ تایی!';
-            showAlertModal(title, `شما برنده پاداش ${s1.mult} برابری شدید!`, `+${winCoins.toLocaleString()} S`, false);
+          if (s1.mult >= 10 || s1.id === 'energy') {
+            const title = (s1.id === 'chest') ? '👑 JACKPOT بزرگ گنج طلایی!' : '🎉 برد بزرگ ۳ نماد طلایی!';
+            showAlertModal(title, `تبریک! ۳ نماد ${s1.name} با موفقیت جفت شد.`, `+${winAmount.toLocaleString('fa-IR')} ژتون`, false);
           }
         } else {
           winDisplay.innerText = 'پوچ (۰)';
@@ -594,18 +1228,19 @@
       // ۳. شرط ۲ نماد همسان مثبت
       const isPositive = (s) => s.id !== 'bomb' && s.id !== 'skull' && s.id !== 'pants';
       if ((s1.id === s2.id && isPositive(s1)) || (s2.id === s3.id && isPositive(s2)) || (s1.id === s3.id && isPositive(s1))) {
-        const winCoins = (baseCost * multiplier) * 2;
-        balance = parseFloat((balance + winCoins).toFixed(4));
-        saveBalance();
-        winDisplay.innerText = `+${winCoins.toLocaleString()} S`;
-        playTone(587, 'triangle', 0.2);
+        const winAmount = cost * 2;
+        addChips(chipsInv, winAmount);
+        saveChips();
+        winDisplay.innerText = `+${winAmount.toLocaleString('fa-IR')} ژتون`;
+        playTone(587, 'triangle', 0.22);
         return;
       }
 
-      // ۴. در بقیه حالات
-      winDisplay.innerText = '۰ S';
+      // ۴. در صورت عدم تطابق
+      winDisplay.innerText = '۰ ژتون';
     }
 
+    // چرخش خودکار
     function toggleAutoSpin() {
       autoSpinActive = !autoSpinActive;
       const b = document.getElementById('btn-auto');
@@ -619,12 +1254,13 @@
       }
     }
 
+    // پاپ‌آپ مودال بردهای بزرگ و انفجار
     function showAlertModal(title, desc, amount, isDanger) {
       const box = document.getElementById('alert-box');
       if (isDanger) {
         box.classList.add('danger');
         document.getElementById('modal-icon').innerText = '💣';
-        document.getElementById('modal-amount').style.color = '#ff3b30';
+        document.getElementById('modal-amount').style.color = '#ef4444';
       } else {
         box.classList.remove('danger');
         document.getElementById('modal-icon').innerText = '🎉';
@@ -639,6 +1275,10 @@
     function closeAlertModal() {
       document.getElementById('alert-modal').classList.remove('open');
     }
+
+    // بارگذاری اولیه
+    loadChips();
+    updateBetUI();
   </script>
 </body>
 </html>
