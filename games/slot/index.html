@@ -794,11 +794,11 @@
       }
     }
     // ================= ۲. اتصال مستقیم به صندوق ژتون‌های صرافی و پوکر =================
+    // ================= ۲. اتصال مستقیم به صندوق ژتون‌های صرافی و پوکر =================
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
     let totalChips = 0;
     let chipsInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
-
     function calcTotal(inv) {
       return (inv.c1 || 0) * 1 +
              (inv.c5 || 0) * 5 +
@@ -806,7 +806,6 @@
              (inv.c100 || 0) * 100 +
              (inv.c500 || 0) * 500;
     }
-
     function standardBreakdown(amount) {
       let rem = Math.max(0, Math.floor(amount));
       const c1 = (rem >= 20) ? 20 : rem; rem -= c1 * 1;
@@ -826,7 +825,6 @@
         c500: c500
       };
     }
-
     // لود استاندارد ژتون‌ها بدون تداخل با سکه‌های اصلی (user_balance)
     function loadChips() {
       totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
@@ -834,14 +832,12 @@
         const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
         if (saved) chipsInv = saved;
       } catch(e) {}
-
       if (totalChips > 0 && calcTotal(chipsInv) !== totalChips) {
         chipsInv = standardBreakdown(totalChips);
         localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipsInv));
       }
       renderChipsUI();
     }
-
     // ذخیره فقط روی ژتون‌ها (بدون دستکاری سکه‌های اصلی)
     function saveChips() {
       totalChips = calcTotal(chipsInv);
