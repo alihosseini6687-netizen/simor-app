@@ -435,28 +435,15 @@
       goBackToMother();
     };
 
+    // ================= سیستم همگام‌سازی ابری صرافی (هماهنگ ۱۰۰٪ با لابی مادر) =================
+    const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    const CLOUD_KEY_COINS = 'simab_user_coins';
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
+    const isCloudSupported = !!(tg?.isVersionAtLeast && tg.isVersionAtLeast('6.9') && tg?.CloudStorage);
 
     let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
     let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
-
-    // تابع ذخیره قطعی سکه در حافظه دستگاه و سرور ابری تلگرام
-    function saveCoinsGlobal(newBal) {
-      balance = parseFloat(Number(newBal).toFixed(4));
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      if (tg?.CloudStorage) {
-        tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString(), (err) => {
-          if (err) console.warn('Cloud save error:', err);
-        });
-      }
-      updateUI();
-    }
-
-    // آبجکت تفکیک فیزیکی ژتون‌ها
     let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
     try {
       const savedInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
@@ -484,27 +471,91 @@
       };
     }
 
-    // هماهنگ‌سازی خودکار دیتای قبلی
-    function checkMigration() {
-      const currentSum = (chipInventory.c1 * 1) + (chipInventory.c5 * 5) + (chipInventory.c25 * 25) + (chipInventory.c100 * 100) + (chipInventory.c500 * 500);
-      if (totalChips > 0 && currentSum !== totalChips) {
-        chipInventory = standardBreakdown(totalChips);
-        saveInventory();
-      }
-    }
-    checkMigration();
-
     function calcTotalChips() {
       return (chipInventory.c1 * 1) + (chipInventory.c5 * 5) + (chipInventory.c25 * 25) + (chipInventory.c100 * 100) + (chipInventory.c500 * 500);
     }
 
-    function saveInventory() {
+    // بررسی و تنظیم اولیه ژتون‌ها
+    function checkMigration() {
+      const currentSum = calcTotalChips();
+      if (totalChips > 0 && currentSum !== totalChips) {
+        chipInventory = standardBreakdown(totalChips);
+      }
+    }
+    checkMigration();
+
+    // تابع ذخیره همزمان سکه، ژتون‌ها و تایم‌استمپ در حافظه محلی و کلود تلگرام
+    function saveAllDataGlobal(newBal = null) {
+      if (newBal !== null) {
+        balance = parseFloat(Number(newBal).toFixed(4));
+        localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+        localStorage.setItem('user_balance', balance.toString());
+      }
       totalChips = calcTotalChips();
       localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
       localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
+
+      const payload = {
+        coins: balance,
+        chips: totalChips,
+        inv: chipInventory,
+        updated_at: Date.now()
+      };
+
+      // ثبت زمان دقیق آخرین ویرایش در دستگاه
+      localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
+
+      // ارسال آنی بسته اطلاعاتی به کلود تلگرام
+      if (isCloudSupported) {
+        tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload), (err) => {
+          if (err) console.warn('خطا در ذخیره ابری صرافی:', err);
+        });
+      }
       updateUI();
     }
 
+    // پل‌های ارتباطی برای توابع موجود در صرافی
+    function saveCoinsGlobal(newBal) {
+      saveAllDataGlobal(newBal);
+    }
+
+    function saveInventory() {
+      saveAllDataGlobal(null);
+    }
+
+    // همگام‌سازی ابری صرافی هنگام باز شدن صفحه
+    function syncWithTelegramCloud() {
+      if (!isCloudSupported) return;
+      tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
+        if (err || !cloudRaw) return;
+        try {
+          const cloudData = JSON.parse(cloudRaw);
+          const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
+          if (cloudData.updated_at && cloudData.updated_at >= localTime) {
+            if (typeof cloudData.coins === 'number') {
+              balance = cloudData.coins;
+              localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+              localStorage.setItem('user_balance', balance.toString());
+            }
+            if (typeof cloudData.chips === 'number') {
+              totalChips = cloudData.chips;
+              localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
+            }
+            if (cloudData.inv) {
+              chipInventory = cloudData.inv;
+              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
+            }
+            localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
+            updateUI();
+            if (typeof updateAutoPreview === 'function') updateAutoPreview();
+          }
+        } catch(e) {
+          console.error('خطا در خواندن کلود صرافی:', e);
+        }
+      });
+    }
+
+    syncWithTelegramCloud();
     let audioCtx = null;
     function playChipClink() {
       try {
