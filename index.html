@@ -487,9 +487,12 @@
       }
     } catch(e) {}
 
-    // ================= سیستم همگام‌سازی ابری تلگرام (CloudStorage) =================
+    // ================= سیستم همگام‌سازی ابری تلگرام (CloudStorage - هماهنگ بین موبایل و دسکتاپ) =================
+    const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    const CLOUD_KEY_COINS = 'simab_user_coins';
+    const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
+    const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
+
     const isCloudSupported = !!(tg?.isVersionAtLeast && tg.isVersionAtLeast('6.9') && tg?.CloudStorage);
 
     let balance = 50;
@@ -499,49 +502,90 @@
 
     function renderCoins() {
       const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
-      document.getElementById('user-balance-txt').innerText = displayVal;
+      const bHeader = document.getElementById('user-balance-txt');
+      if (bHeader) bHeader.innerText = displayVal;
       const bTasks = document.getElementById('tasks-balance-num');
       if (bTasks) bTasks.innerText = displayVal;
     }
     renderCoins();
 
-    // تابع ذخیره در هارد و سرور ابری تلگرام
-    function saveCoinsGlobal(newBal) {
-      balance = parseFloat(Number(newBal).toFixed(4));
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      renderCoins();
+    // ذخیره سراسری سکه و ژتون با ثبت زمان دقیق آخرین تغییر
+    function saveUserDataGlobal(newCoins = null, newChips = null, newInv = null) {
+      if (newCoins !== null) {
+        balance = parseFloat(Number(newCoins).toFixed(4));
+        localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+        localStorage.setItem('user_balance', balance.toString());
+        renderCoins();
+      }
 
-      // ذخیره در سرور ابری تلگرام متصل به این اکانت
+      const currentCoins = balance;
+      const currentChips = parseInt(localStorage.getItem(STORAGE_KEY_CHIPS) || '0', 10);
+      let currentInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
+      try {
+        currentInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV)) || currentInv;
+      } catch(e) {}
+
+      const payload = {
+        coins: currentCoins,
+        chips: newChips !== null ? newChips : currentChips,
+        inv: newInv !== null ? newInv : currentInv,
+        updated_at: Date.now()
+      };
+
+      localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
+
       if (isCloudSupported) {
-        tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString(), (err) => {
-          if (err) console.warn('CloudStorage Save Error:', err);
+        tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload), (err) => {
+          if (err) console.warn('خطا در ذخیره ابری تلگرام:', err);
         });
       }
     }
 
-    // همگام‌سازی هوشمند با ابر تلگرام (بدون بازگرداندن سکه‌های خرج‌شده در صرافی و بازی‌ها)
+    // پشتیبانی از توابع قبلی جهت جلوگیری از تداخل
+    function saveCoinsGlobal(newBal) {
+      saveUserDataGlobal(newBal);
+    }
+
+    // همگام‌سازی هوشمند بدون رونویسی اشتباه
     function syncWithTelegramCloud() {
       if (!isCloudSupported) return;
-      tg.CloudStorage.getItem(CLOUD_KEY_COINS, (err, cloudVal) => {
-        if (!err && cloudVal !== null && cloudVal !== undefined && cloudVal !== '') {
-          const cloudNum = parseFloat(cloudVal);
-          const localNum = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '0');
-          
-          // اگر کاربر در صرافی یا بازی سکه خرج کرده و مقدار محلی کمتر است، ابر تلگرام باید آپدیت شود نه اینکه موجودی به عقب برگردد!
-          if (!isNaN(localNum) && localNum < cloudNum) {
-            saveCoinsGlobal(localNum);
-          } else if (!isNaN(cloudNum) && cloudNum > localNum) {
-            balance = cloudNum;
-            localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-            localStorage.setItem('user_balance', balance.toString());
-            renderCoins();
+
+      tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
+        if (err || !cloudRaw) {
+          // اگر بار اول است، داده اولیه این دستگاه در کلود ثبت شود
+          if (!err && !cloudRaw) saveUserDataGlobal();
+          return;
+        }
+
+        try {
+          const cloudData = JSON.parse(cloudRaw);
+          const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
+
+          // اولویت با نسخه‌ای است که زمان ویرایش جدیدتری دارد
+          if (cloudData.updated_at && cloudData.updated_at >= localTime) {
+            if (typeof cloudData.coins === 'number') {
+              balance = cloudData.coins;
+              localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+              localStorage.setItem('user_balance', balance.toString());
+              renderCoins();
+            }
+            if (typeof cloudData.chips === 'number') {
+              localStorage.setItem(STORAGE_KEY_CHIPS, cloudData.chips.toString());
+            }
+            if (cloudData.inv) {
+              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(cloudData.inv));
+            }
+            localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
+          } else {
+            // اگر تغییرات روی این دستگاه تازه‌تر بود، کلود تلگرام به‌روزرسانی شود
+            saveUserDataGlobal();
           }
-        } else if (!err) {
-          tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString());
+        } catch(e) {
+          console.error('خطا در همگام‌سازی ابری:', e);
         }
       });
     }
+
     syncWithTelegramCloud();
 
     function triggerHaptic(type = 'light') {
