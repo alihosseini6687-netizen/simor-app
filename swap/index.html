@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SIMAB | صرافی و تبدیل ژتون بازی‌ها</title>
+  <title>SIMAB | صرافی و مدیریت ژتون‌ها</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -74,7 +74,7 @@
     }
     .header-title { font-size: 16.5px; font-weight: 900; color: #fff; }
     
-    /* کارت موجودی دوگانه (سکه و ژتون) */
+    /* کیف پول دوگانه */
     .dual-wallet-card {
       background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
       border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px;
@@ -87,70 +87,93 @@
     }
     .wallet-box .w-icon { font-size: 24px; }
     .wallet-box .w-lbl { font-size: 11.5px; color: var(--text-muted); font-weight: bold; }
-    .wallet-box .w-val { font-size: 17px; font-weight: 900; color: #fff; }
+    .wallet-box .w-val { font-size: 18px; font-weight: 900; color: #fff; }
     .wallet-box.chips-box .w-val { color: var(--cyan); }
     .wallet-box.coins-box .w-val { color: var(--gold); }
 
-    /* تفکیک ۵ رنگ ژتون */
+    /* رک ژتون‌ها و خرد کردن */
     .chip-rack-card {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 16px; padding: 12px; text-align: right;
+      border-radius: 18px; padding: 14px 12px; text-align: right;
+    }
+    .chip-rack-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
     }
     .chip-rack-title {
-      font-size: 12.5px; font-weight: 900; color: var(--gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 900; color: var(--gold); display: flex; align-items: center; gap: 6px;
     }
+    .btn-color-up {
+      background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold);
+      padding: 4px 10px; border-radius: 8px; font-size: 10.5px; font-weight: 900; cursor: pointer;
+    }
+
     .chip-rack-grid {
       display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center;
     }
     .chip-col {
-      background: var(--card-inner); border-radius: 10px; padding: 6px 2px;
-      display: flex; flex-direction: column; align-items: center; gap: 3px; border: 1px solid rgba(255,255,255,0.06);
+      background: var(--card-inner); border-radius: 12px; padding: 8px 2px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      border: 1px solid rgba(255,255,255,0.06); position: relative;
     }
     .chip-circle {
-      width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-      font-size: 10.5px; font-weight: 900; border: 2px dashed rgba(255,255,255,0.4); box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 11.5px; font-weight: 900; border: 2px dashed rgba(255,255,255,0.45); box-shadow: 0 3px 8px rgba(0,0,0,0.7);
     }
     .chip-c-1 { background: #e5e5ea; color: #000; border-color: #8e8e93; }
     .chip-c-5 { background: #ff453a; color: #fff; border-color: #ffd60a; }
     .chip-c-25 { background: #30d158; color: #000; border-color: #fff; }
     .chip-c-100 { background: #1c1c1e; color: #ffd60a; border-color: #ffd60a; }
     .chip-c-500 { background: radial-gradient(circle, #ffd60a, #ff9f0a); color: #000; border-color: #fff; }
-    .chip-cnt { font-size: 11px; font-weight: 900; color: #fff; }
-    .chip-lbl { font-size: 9.5px; color: var(--text-muted); }
-
-    /* تب‌های تبدیل رفت و برگشت */
-    .swap-tabs-row {
-      display: flex; gap: 8px; background: rgba(0,0,0,0.4); border-radius: 14px; padding: 4px; border: 1px solid var(--border);
+    .chip-cnt { font-size: 13px; font-weight: 900; color: #fff; }
+    .chip-lbl { font-size: 10px; color: var(--text-muted); }
+    
+    .btn-break-down {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255,255,255,0.15);
+      color: var(--cyan); padding: 3px 2px; border-radius: 6px; font-size: 9px; font-weight: 900;
+      cursor: pointer; width: 92%; margin-top: 2px;
     }
-    .btn-tab-swap {
-      flex: 1; padding: 10px; border-radius: 10px; font-size: 13.5px; font-weight: 900;
+    .btn-break-down:active { transform: scale(0.95); }
+    .btn-break-down:disabled { opacity: 0.25; cursor: default; }
+
+    /* تب‌های روش تبدیل */
+    .swap-nav-tabs {
+      display: flex; gap: 4px; background: rgba(0,0,0,0.4); border-radius: 12px; padding: 4px; border: 1px solid var(--border);
+    }
+    .btn-nav-tab {
+      flex: 1; padding: 8px 2px; border-radius: 9px; font-size: 11.5px; font-weight: 900;
       background: transparent; color: var(--text-muted); border: none; cursor: pointer; transition: 0.15s;
     }
-    .btn-tab-swap.active {
+    .btn-nav-tab.active {
       background: var(--gold-gradient); color: #170f00; box-shadow: 0 2px 10px rgba(212,175,55,0.3);
     }
 
-    /* باکس فرم تبدیل */
-    .swap-form-card {
+    /* فرم‌های تبدیل */
+    .swap-card {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 18px; padding: 16px 14px; text-align: right;
     }
     .swap-input-row {
       display: flex; align-items: center; justify-content: space-between;
-      background: var(--card-inner); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; margin-bottom: 10px;
+      background: var(--card-inner); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; margin-bottom: 8px;
     }
     .swap-input {
-      background: transparent; border: none; outline: none; font-size: 19px; font-weight: 900;
+      background: transparent; border: none; outline: none; font-size: 20px; font-weight: 900;
       color: #fff; width: 60%; direction: ltr; text-align: right;
     }
-    .swap-currency-tag { font-size: 13px; font-weight: 900; color: var(--gold); display: flex; align-items: center; gap: 4px; }
+    .swap-currency-tag { font-size: 13px; font-weight: 900; color: var(--gold); }
     
+    .breakdown-preview-box {
+      background: rgba(0, 245, 212, 0.05); border: 1px dashed rgba(0, 245, 212, 0.35);
+      border-radius: 10px; padding: 8px 10px; font-size: 11px; color: var(--cyan);
+      margin-bottom: 12px; line-height: 1.5;
+    }
+
     .quick-chips-row {
       display: flex; justify-content: space-between; gap: 5px; margin-bottom: 12px;
     }
     .btn-quick-chip {
       flex: 1; background: var(--card-inner); border: 1px solid rgba(255,255,255,0.08);
-      color: var(--text-muted); padding: 7px 2px; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;
+      color: var(--text-muted); padding: 7px 2px; border-radius: 8px; font-size: 12px; font-weight: 900; cursor: pointer;
     }
     .btn-quick-chip:active { background: var(--gold-gradient); color: black; border-color: var(--gold); }
     
@@ -161,7 +184,24 @@
     }
     .btn-submit-swap:active { transform: scale(0.97); }
 
-    /* کارت‌های دسترسی مستقیم بازی‌ها با ژتون لازم */
+    /* حالت انتخاب دستی */
+    .custom-selector-grid {
+      display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px;
+    }
+    .custom-chip-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--card-inner); padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.06);
+    }
+    .custom-chip-info { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 12px; }
+    .stepper-wrap { display: flex; align-items: center; gap: 6px; }
+    .btn-step {
+      background: #25163a; border: 1px solid var(--border); color: var(--gold);
+      width: 28px; height: 28px; border-radius: 6px; font-size: 16px; font-weight: 900;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .step-val { width: 34px; text-align: center; font-size: 14px; font-weight: 900; color: #fff; }
+
+    /* لیست بازی‌ها */
     .section-title {
       font-size: 14.5px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 6px;
       margin-top: 6px; margin-bottom: 4px; text-align: right;
@@ -217,77 +257,173 @@
       </div>
     </div>
 
-    <!-- رک و تفکیک رنگ ژتون‌ها -->
+    <!-- رک ژتون‌ها و کلیدهای خرد کردن فوری -->
     <div class="chip-rack-card">
-      <div class="chip-rack-title">
-        <span>🎨</span>
-        <span>موجودی تفکیک‌شده ژتون‌های شما سر میز:</span>
+      <div class="chip-rack-header">
+        <div class="chip-rack-title">
+          <span>🎨</span>
+          <span>موجودی ژتون‌های شما سر میز:</span>
+        </div>
+        <button class="btn-color-up" onclick="colorUpChips()" title="تجمیع ژتون‌های ریز به درشت">📦 تجمیع ژتون‌ها</button>
       </div>
+
       <div class="chip-rack-grid">
+        <!-- ژتون ۱ -->
         <div class="chip-col">
           <div class="chip-circle chip-c-1">1</div>
           <span class="chip-cnt" id="cnt-c1">0</span>
           <span class="chip-lbl">سفید</span>
+          <span style="font-size:8px; color:var(--text-muted); margin-top:2px;">ریزترین</span>
         </div>
+        <!-- ژتون ۵ -->
         <div class="chip-col">
           <div class="chip-circle chip-c-5">5</div>
           <span class="chip-cnt" id="cnt-c5">0</span>
           <span class="chip-lbl">قرمز</span>
+          <button class="btn-break-down" id="btn-break-5" onclick="breakDownChip(5)">🔨 خرد کن</button>
         </div>
+        <!-- ژتون ۲۵ -->
         <div class="chip-col">
           <div class="chip-circle chip-c-25">25</div>
           <span class="chip-cnt" id="cnt-c25">0</span>
           <span class="chip-lbl">سبز</span>
+          <button class="btn-break-down" id="btn-break-25" onclick="breakDownChip(25)">🔨 خرد کن</button>
         </div>
+        <!-- ژتون ۱۰۰ -->
         <div class="chip-col">
           <div class="chip-circle chip-c-100">100</div>
           <span class="chip-cnt" id="cnt-c100">0</span>
           <span class="chip-lbl">مشکی</span>
+          <button class="btn-break-down" id="btn-break-100" onclick="breakDownChip(100)">🔨 خرد کن</button>
         </div>
+        <!-- ژتون ۵۰۰ -->
         <div class="chip-col">
           <div class="chip-circle chip-c-500">500</div>
           <span class="chip-cnt" id="cnt-c500">0</span>
           <span class="chip-lbl">طلایی</span>
+          <button class="btn-break-down" id="btn-break-500" onclick="breakDownChip(500)">🔨 خرد کن</button>
         </div>
       </div>
     </div>
 
-    <!-- تب‌های تغییر جهت تبدیل -->
-    <div class="swap-tabs-row">
-      <button class="btn-tab-swap active" id="tab-buy-chips" onclick="switchSwapMode('buy')">
-        خرید ژتون بازی (سکه ➔ ژتون)
+    <!-- تب‌های روش تبدیل -->
+    <div class="swap-nav-tabs">
+      <button class="btn-nav-tab active" id="btn-tab-auto" onclick="switchSwapTab('auto')">
+        ⚖️ تقسیم استاندارد
       </button>
-      <button class="btn-tab-swap" id="tab-sell-chips" onclick="switchSwapMode('sell')">
-        نقد کردن ژتون (ژتون ➔ سکه)
+      <button class="btn-nav-tab" id="btn-tab-custom" onclick="switchSwapTab('custom')">
+        🖐️ انتخاب دستی ژتون‌ها
+      </button>
+      <button class="btn-nav-tab" id="btn-tab-sell" onclick="switchSwapTab('sell')">
+        ✨ نقد کردن ژتون
       </button>
     </div>
 
-    <!-- فرم اصلی تبدیل -->
-    <div class="swap-form-card">
-      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;" id="swap-prompt-lbl">
-        تعداد سکه‌ای که می‌خواهید به ژتون تبدیل کنید را وارد کنید:
+    <!-- فرم ۱: تقسیم استاندارد و خودکار -->
+    <div class="swap-card" id="view-swap-auto">
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">
+        مبلغ سکه برای تبدیل متوازن و استاندارد کازینویی:
       </div>
       <div class="swap-input-row">
-        <input type="number" class="swap-input" id="swap-amt-input" value="50" min="1" oninput="updateExpectedSwap()">
-        <span class="swap-currency-tag" id="currency-tag">🪙 سکه</span>
+        <input type="number" class="swap-input" id="auto-swap-input" value="100" min="1" oninput="updateAutoPreview()">
+        <span class="swap-currency-tag">🪙 سکه</span>
       </div>
 
-      <!-- دکمه‌های مقادیر سریع -->
+      <div class="breakdown-preview-box" id="auto-preview-text">
+        در حال محاسبه تفکیک هوشمند...
+      </div>
+
       <div class="quick-chips-row">
-        <button class="btn-quick-chip" onclick="setQuickSwap(25)">۲۵</button>
-        <button class="btn-quick-chip" onclick="setQuickSwap(50)">۵۰</button>
-        <button class="btn-quick-chip" onclick="setQuickSwap(100)">۱۰۰</button>
-        <button class="btn-quick-chip" onclick="setQuickSwap(250)">۲۵۰</button>
-        <button class="btn-quick-chip" onclick="setQuickSwap(500)">۵۰۰</button>
-        <button class="btn-quick-chip" style="color:var(--gold);" onclick="setSwapMax()">MAX</button>
+        <button class="btn-quick-chip" onclick="setAutoQuick(50)">۵۰</button>
+        <button class="btn-quick-chip" onclick="setAutoQuick(100)">۱۰۰</button>
+        <button class="btn-quick-chip" onclick="setAutoQuick(500)">۵۰۰</button>
+        <button class="btn-quick-chip" onclick="setAutoQuick(1000)">۱,۰۰۰</button>
+        <button class="btn-quick-chip" onclick="setAutoQuick(10000)">۱۰,۰۰۰</button>
+        <button class="btn-quick-chip" style="color:var(--gold);" onclick="setAutoMax()">MAX</button>
       </div>
 
-      <button class="btn-submit-swap" id="btn-submit-action" onclick="executeSwap()">
-        🔄 تبدیل ۵۰ سکه به ۵۰ ژتون بازی
+      <button class="btn-submit-swap" id="btn-submit-auto" onclick="executeAutoSwap()">
+        🔄 تبدیل متوازن به ژتون‌های بازی
       </button>
     </div>
 
-    <!-- لیست بازی‌ها با حداقل ژتون ورودی (قابل تنظیم در پنل ادمین) -->
+    <!-- فرم ۲: انتخاب دستی تعداد ژتون‌ها -->
+    <div class="swap-card" id="view-swap-custom" style="display:none;">
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+        تعداد ژتون‌های مورد نظرتان را دستی مشخص کنید:
+      </div>
+      <div class="custom-selector-grid">
+        <div class="custom-chip-row">
+          <div class="custom-chip-info"><span class="chip-circle chip-c-1">1</span> ژتون سفید (۱ سکه)</div>
+          <div class="stepper-wrap">
+            <button class="btn-step" onclick="stepCustomChip('c1', -1)">-</button>
+            <span class="step-val" id="cust-val-c1">0</span>
+            <button class="btn-step" onclick="stepCustomChip('c1', 1)">+</button>
+          </div>
+        </div>
+        <div class="custom-chip-row">
+          <div class="custom-chip-info"><span class="chip-circle chip-c-5">5</span> ژتون قرمز (۵ سکه)</div>
+          <div class="stepper-wrap">
+            <button class="btn-step" onclick="stepCustomChip('c5', -1)">-</button>
+            <span class="step-val" id="cust-val-c5">0</span>
+            <button class="btn-step" onclick="stepCustomChip('c5', 1)">+</button>
+          </div>
+        </div>
+        <div class="custom-chip-row">
+          <div class="custom-chip-info"><span class="chip-circle chip-c-25">25</span> ژتون سبز (۲۵ سکه)</div>
+          <div class="stepper-wrap">
+            <button class="btn-step" onclick="stepCustomChip('c25', -1)">-</button>
+            <span class="step-val" id="cust-val-c25">0</span>
+            <button class="btn-step" onclick="stepCustomChip('c25', 1)">+</button>
+          </div>
+        </div>
+        <div class="custom-chip-row">
+          <div class="custom-chip-info"><span class="chip-circle chip-c-100">100</span> ژتون مشکی (۱۰۰ سکه)</div>
+          <div class="stepper-wrap">
+            <button class="btn-step" onclick="stepCustomChip('c100', -1)">-</button>
+            <span class="step-val" id="cust-val-c100">0</span>
+            <button class="btn-step" onclick="stepCustomChip('c100', 1)">+</button>
+          </div>
+        </div>
+        <div class="custom-chip-row">
+          <div class="custom-chip-info"><span class="chip-circle chip-c-500">500</span> ژتون طلایی (۵۰۰ سکه)</div>
+          <div class="stepper-wrap">
+            <button class="btn-step" onclick="stepCustomChip('c500', -1)">-</button>
+            <span class="step-val" id="cust-val-c500">0</span>
+            <button class="btn-step" onclick="stepCustomChip('c500', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-submit-swap" id="btn-submit-custom" onclick="executeCustomSwap()">
+        🔄 تأیید و تبدیل دقیق ژتون‌های انتخابی (۰ سکه)
+      </button>
+    </div>
+
+    <!-- فرم ۳: نقد کردن ژتون به سکه -->
+    <div class="swap-card" id="view-swap-sell" style="display:none;">
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">
+        تعداد ژتونی که می‌خواهید نقد کرده و به حساب اصلی واریز کنید:
+      </div>
+      <div class="swap-input-row">
+        <input type="number" class="swap-input" id="sell-swap-input" value="50" min="1" oninput="updateSellPreview()">
+        <span class="swap-currency-tag">🎰 ژتون</span>
+      </div>
+
+      <div class="quick-chips-row">
+        <button class="btn-quick-chip" onclick="setSellQuick(25)">۲۵</button>
+        <button class="btn-quick-chip" onclick="setSellQuick(50)">۵۰</button>
+        <button class="btn-quick-chip" onclick="setSellQuick(100)">۱۰۰</button>
+        <button class="btn-quick-chip" onclick="setSellQuick(500)">۵۰۰</button>
+        <button class="btn-quick-chip" style="color:var(--gold);" onclick="setSellMax()">کل ژتون‌ها</button>
+      </div>
+
+      <button class="btn-submit-swap" id="btn-submit-sell" onclick="executeSellSwap()">
+        ✨ نقد کردن و واریز ۵۰ سکه به کیف پول
+      </button>
+    </div>
+
+    <!-- لیست بازی‌ها با حداقل ژتون ورودی -->
     <div class="section-title">
       <span>🎮</span>
       <span>حداقل ژتون مورد نیاز بازی‌ها:</span>
@@ -317,25 +453,72 @@
 
     function goBackToMother() {
       try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = '../index.html';
-      }
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = '../index.html';
     }
     document.getElementById('btn-back-nav').onclick = (e) => {
       e.preventDefault();
       goBackToMother();
     };
 
-    // سکه‌های اصلی و ژتون‌ها
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
+    const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
 
     let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
-    let chips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
+    let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
 
-    // موتور صوتی داخلی برخورد ژتون‌ها
+    // آبجکت تفکیک فیزیکی ژتون‌ها
+    let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
+    try {
+      const savedInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
+      if (savedInv) chipInventory = savedInv;
+    } catch(e) {}
+
+    // فرمول تقسیم متوازن استاندارد کازینویی
+    function standardBreakdown(amount) {
+      let rem = Math.floor(amount);
+      const c1 = (rem >= 20) ? 20 : rem; rem -= c1 * 1;
+      const c5 = (rem >= 80) ? 16 : Math.floor(rem / 5); rem -= c5 * 5;
+      const c25 = (rem >= 400) ? 16 : Math.floor(rem / 25); rem -= c25 * 25;
+      const c100 = (rem >= 2000) ? 20 : Math.floor(rem / 100); rem -= c100 * 100;
+      const c500 = Math.floor(rem / 500); rem -= c500 * 500;
+
+      let extra100 = Math.floor(rem / 100); rem %= 100;
+      let extra25 = Math.floor(rem / 25); rem %= 25;
+      let extra5 = Math.floor(rem / 5); rem %= 5;
+      let extra1 = rem;
+
+      return {
+        c1: c1 + extra1,
+        c5: c5 + extra5,
+        c25: c25 + extra25,
+        c100: c100 + extra100,
+        c500: c500
+      };
+    }
+
+    // هماهنگ‌سازی خودکار دیتای قبلی شما (مثلاً ۱۰,۰۰۰ ژتون قبلی متوازن شود)
+    function checkMigration() {
+      const currentSum = (chipInventory.c1 * 1) + (chipInventory.c5 * 5) + (chipInventory.c25 * 25) + (chipInventory.c100 * 100) + (chipInventory.c500 * 500);
+      if (totalChips > 0 && currentSum !== totalChips) {
+        chipInventory = standardBreakdown(totalChips);
+        saveInventory();
+      }
+    }
+    checkMigration();
+
+    function calcTotalChips() {
+      return (chipInventory.c1 * 1) + (chipInventory.c5 * 5) + (chipInventory.c25 * 25) + (chipInventory.c100 * 100) + (chipInventory.c500 * 500);
+    }
+
+    function saveInventory() {
+      totalChips = calcTotalChips();
+      localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
+      localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
+      updateUI();
+    }
+
     let audioCtx = null;
     function playChipClink() {
       try {
@@ -362,101 +545,274 @@
       setTimeout(() => t.classList.remove('show'), 2200);
     }
 
-    function updateWalletsUI() {
+    function updateUI() {
       document.getElementById('disp-coins').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
-      document.getElementById('disp-chips').innerText = Number(chips).toLocaleString(undefined, { maximumFractionDigits: 0 });
+      document.getElementById('disp-chips').innerText = Number(totalChips).toLocaleString(undefined, { maximumFractionDigits: 0 });
 
-      // محاسبه تفکیک ۵ رنگ ژتون بر اساس موجودی
-      let rem = Math.floor(chips);
-      const c500 = Math.floor(rem / 500); rem %= 500;
-      const c100 = Math.floor(rem / 100); rem %= 100;
-      const c25 = Math.floor(rem / 25); rem %= 25;
-      const c5 = Math.floor(rem / 5); rem %= 5;
-      const c1 = rem;
+      document.getElementById('cnt-c1').innerText = chipInventory.c1;
+      document.getElementById('cnt-c5').innerText = chipInventory.c5;
+      document.getElementById('cnt-c25').innerText = chipInventory.c25;
+      document.getElementById('cnt-c100').innerText = chipInventory.c100;
+      document.getElementById('cnt-c500').innerText = chipInventory.c500;
 
-      document.getElementById('cnt-c500').innerText = c500;
-      document.getElementById('cnt-c100').innerText = c100;
-      document.getElementById('cnt-c25').innerText = c25;
-      document.getElementById('cnt-c5').innerText = c5;
-      document.getElementById('cnt-c1').innerText = c1;
+      // وضعیت دکمه‌های خرد کردن
+      document.getElementById('btn-break-5').disabled = (chipInventory.c5 < 1);
+      document.getElementById('btn-break-25').disabled = (chipInventory.c25 < 1);
+      document.getElementById('btn-break-100').disabled = (chipInventory.c100 < 1);
+      document.getElementById('btn-break-500').disabled = (chipInventory.c500 < 1);
     }
 
-    let swapMode = 'buy'; // 'buy': سکه به ژتون | 'sell': ژتون به سکه
-
-    function switchSwapMode(mode) {
-      swapMode = mode;
-      document.querySelectorAll('.btn-tab-swap').forEach(b => b.classList.remove('active'));
-      if (mode === 'buy') {
-        document.getElementById('tab-buy-chips').classList.add('active');
-        document.getElementById('swap-prompt-lbl').innerText = 'تعداد سکه‌ای که می‌خواهید به ژتون تبدیل کنید را وارد کنید:';
-        document.getElementById('currency-tag').innerText = '🪙 سکه';
-      } else {
-        document.getElementById('tab-sell-chips').classList.add('active');
-        document.getElementById('swap-prompt-lbl').innerText = 'تعداد ژتونی که می‌خواهید نقد کرده و به سکه تبدیل کنید:';
-        document.getElementById('currency-tag').innerText = '🎰 ژتون';
-      }
-      updateExpectedSwap();
-    }
-
-    function setQuickSwap(val) {
-      document.getElementById('swap-amt-input').value = val;
-      updateExpectedSwap();
-    }
-
-    function setSwapMax() {
-      const maxVal = (swapMode === 'buy') ? Math.floor(balance) : Math.floor(chips);
-      document.getElementById('swap-amt-input').value = Math.max(1, maxVal);
-      updateExpectedSwap();
-    }
-
-    function updateExpectedSwap() {
-      const amt = parseInt(document.getElementById('swap-amt-input').value, 10) || 0;
-      const btn = document.getElementById('btn-submit-action');
-      if (swapMode === 'buy') {
-        btn.innerHTML = `🔄 تبدیل ${amt.toLocaleString()} سکه به ${amt.toLocaleString()} ژتون بازی`;
-      } else {
-        btn.innerHTML = `✨ نقد کردن ${amt.toLocaleString()} ژتون و واریز به سکه`;
+    // ================= ۱. خرد کردن ژتون‌ها (Change / Break Down 🔨) =================
+    function breakDownChip(val) {
+      if (val === 500 && chipInventory.c500 >= 1) {
+        chipInventory.c500 -= 1;
+        chipInventory.c100 += 4; // ۴۰۰
+        chipInventory.c25 += 4;  // ۱۰۰
+        playChipClink();
+        saveInventory();
+        showToast('یک ژتون ۵۰۰ به ۴ تا ۱۰۰ و ۴ تا ۲۵ خرد شد! 🔨');
+      } else if (val === 100 && chipInventory.c100 >= 1) {
+        chipInventory.c100 -= 1;
+        chipInventory.c25 += 4;
+        playChipClink();
+        saveInventory();
+        showToast('یک ژتون ۱۰۰ به ۴ تا ۲۵ خرد شد! 🔨');
+      } else if (val === 25 && chipInventory.c25 >= 1) {
+        chipInventory.c25 -= 1;
+        chipInventory.c5 += 5;
+        playChipClink();
+        saveInventory();
+        showToast('یک ژتون ۲۵ به ۵ تا ۵ تایی خرد شد! 🔨');
+      } else if (val === 5 && chipInventory.c5 >= 1) {
+        chipInventory.c5 -= 1;
+        chipInventory.c1 += 5;
+        playChipClink();
+        saveInventory();
+        showToast('یک ژتون ۵ به ۵ تا تک‌سکه خرد شد! 🔨');
       }
     }
 
-    function executeSwap() {
-      const amt = parseInt(document.getElementById('swap-amt-input').value, 10);
+    // تجمیع ژتون‌های ریز به درشت (Color Up 📦)
+    function colorUpChips() {
+      let changed = false;
+      if (chipInventory.c1 >= 5) {
+        const sets = Math.floor(chipInventory.c1 / 5);
+        chipInventory.c1 -= sets * 5;
+        chipInventory.c5 += sets;
+        changed = true;
+      }
+      if (chipInventory.c5 >= 5) {
+        const sets = Math.floor(chipInventory.c5 / 5);
+        chipInventory.c5 -= sets * 5;
+        chipInventory.c25 += sets;
+        changed = true;
+      }
+      if (chipInventory.c25 >= 4) {
+        const sets = Math.floor(chipInventory.c25 / 4);
+        chipInventory.c25 -= sets * 4;
+        chipInventory.c100 += sets;
+        changed = true;
+      }
+      if (chipInventory.c100 >= 5) {
+        const sets = Math.floor(chipInventory.c100 / 5);
+        chipInventory.c100 -= sets * 5;
+        chipInventory.c500 += sets;
+        changed = true;
+      }
+
+      if (changed) {
+        playChipClink();
+        saveInventory();
+        showToast('ژتون‌های ریز با موفقیت به ژتون‌های درشت‌تر تجمیع شدند! 📦');
+      } else {
+        showToast('تعداد ژتون‌های ریز برای تجمیع کافی نیست.');
+      }
+    }
+
+    // ================= ۲. کنترل تب‌های تبدیل =================
+    function switchSwapTab(tab) {
+      document.querySelectorAll('.btn-nav-tab').forEach(b => b.classList.remove('active'));
+      document.getElementById('view-swap-auto').style.display = 'none';
+      document.getElementById('view-swap-custom').style.display = 'none';
+      document.getElementById('view-swap-sell').style.display = 'none';
+
+      if (tab === 'auto') {
+        document.getElementById('btn-tab-auto').classList.add('active');
+        document.getElementById('view-swap-auto').style.display = 'block';
+        updateAutoPreview();
+      } else if (tab === 'custom') {
+        document.getElementById('btn-tab-custom').classList.add('active');
+        document.getElementById('view-swap-custom').style.display = 'block';
+        updateCustomTotal();
+      } else if (tab === 'sell') {
+        document.getElementById('btn-tab-sell').classList.add('active');
+        document.getElementById('view-swap-sell').style.display = 'block';
+        updateSellPreview();
+      }
+    }
+
+    // پیش‌نمایش تبدیل خودکار متوازن
+    function updateAutoPreview() {
+      const amt = parseInt(document.getElementById('auto-swap-input').value, 10) || 0;
+      const b = standardBreakdown(amt);
+      document.getElementById('auto-preview-text').innerHTML = `
+        <b>📦 تفکیک متوازن دریافتی شما:</b><br>
+        ⚪ <b>${b.c1}</b> سفید | 🔴 <b>${b.c5}</b> قرمز | 🟢 <b>${b.c25}</b> سبز | ⚫ <b>${b.c100}</b> مشکی | 🟡 <b>${b.c500}</b> طلایی
+      `;
+      document.getElementById('btn-submit-auto').innerHTML = `🔄 تبدیل ${amt.toLocaleString()} سکه به پکیج متوازن`;
+    }
+
+    function setAutoQuick(val) {
+      document.getElementById('auto-swap-input').value = val;
+      updateAutoPreview();
+    }
+    function setAutoMax() {
+      document.getElementById('auto-swap-input').value = Math.max(1, Math.floor(balance));
+      updateAutoPreview();
+    }
+
+    function executeAutoSwap() {
+      const amt = parseInt(document.getElementById('auto-swap-input').value, 10);
       if (isNaN(amt) || amt <= 0) {
         showToast('لطفاً مبلغ معتبری وارد کنید.');
         return;
       }
-
-      if (swapMode === 'buy') {
-        if (balance < amt) {
-          showToast('موجودی سکه سیماب شما کافی نیست!');
-          return;
-        }
-        balance = parseFloat((balance - amt).toFixed(4));
-        chips = parseFloat((chips + amt).toFixed(0));
-        playChipClink();
-        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        showToast(`موفق: ${amt} سکه به ${amt} ژتون بازی تبدیل شد! 🎰`);
-      } else {
-        if (chips < amt) {
-          showToast('موجودی ژتون شما کافی نیست!');
-          return;
-        }
-        chips = parseFloat((chips - amt).toFixed(0));
-        balance = parseFloat((balance + amt).toFixed(4));
-        playChipClink();
-        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-        showToast(`موفق: ${amt} ژتون نقد شد و به سکه اصلی واریز شد! 🪙`);
+      if (balance < amt) {
+        showToast('موجودی سکه سیماب شما کافی نیست!');
+        return;
       }
 
-      // ذخیره‌سازی داده‌ها
+      balance = parseFloat((balance - amt).toFixed(4));
+      const b = standardBreakdown(amt);
+      chipInventory.c1 += b.c1;
+      chipInventory.c5 += b.c5;
+      chipInventory.c25 += b.c25;
+      chipInventory.c100 += b.c100;
+      chipInventory.c500 += b.c500;
+
       localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
       localStorage.setItem('user_balance', balance.toString());
-      localStorage.setItem(STORAGE_KEY_CHIPS, chips.toString());
-
-      updateWalletsUI();
+      playChipClink();
+      saveInventory();
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      showToast(`${amt.toLocaleString()} سکه با موفقیت به پکیج متوازن ژتون‌ها تبدیل شد! 🎰`);
     }
 
-    // ================= تنظیمات بازی‌ها (قابل تغییر از پنل مدیریت) =================
+    // ================= ۳. انتخاب دستی و دلخواه ژتون‌ها =================
+    let customChoice = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
+
+    function stepCustomChip(key, delta) {
+      customChoice[key] = Math.max(0, customChoice[key] + delta);
+      document.getElementById(`cust-val-${key}`).innerText = customChoice[key];
+      updateCustomTotal();
+    }
+
+    function updateCustomTotal() {
+      const totalCost = (customChoice.c1 * 1) + (customChoice.c5 * 5) + (customChoice.c25 * 25) + (customChoice.c100 * 100) + (customChoice.c500 * 500);
+      const btn = document.getElementById('btn-submit-custom');
+      btn.innerHTML = `🔄 خرید ژتون‌های انتخابی (${totalCost.toLocaleString()} سکه)`;
+      btn.disabled = (totalCost === 0);
+    }
+
+    function executeCustomSwap() {
+      const totalCost = (customChoice.c1 * 1) + (customChoice.c5 * 5) + (customChoice.c25 * 25) + (customChoice.c100 * 100) + (customChoice.c500 * 500);
+      if (totalCost <= 0) return;
+      if (balance < totalCost) {
+        showToast('موجودی سکه کافی نیست!');
+        return;
+      }
+
+      balance = parseFloat((balance - totalCost).toFixed(4));
+      chipInventory.c1 += customChoice.c1;
+      chipInventory.c5 += customChoice.c5;
+      chipInventory.c25 += customChoice.c25;
+      chipInventory.c100 += customChoice.c100;
+      chipInventory.c500 += customChoice.c500;
+
+      // ریست انتخابگر دستی
+      customChoice = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
+      ['c1','c5','c25','c100','c500'].forEach(k => document.getElementById(`cust-val-${k}`).innerText = '0');
+      updateCustomTotal();
+
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      playChipClink();
+      saveInventory();
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      showToast('ژتون‌های دلخواه شما با موفقیت تحویل داده شدند! 🎨');
+    }
+
+    // ================= ۴. نقد کردن ژتون‌ها به سکه =================
+    function updateSellPreview() {
+      const amt = parseInt(document.getElementById('sell-swap-input').value, 10) || 0;
+      document.getElementById('btn-submit-sell').innerHTML = `✨ نقد کردن و واریز ${amt.toLocaleString()} سکه به کیف پول`;
+    }
+    function setSellQuick(val) {
+      document.getElementById('sell-swap-input').value = val;
+      updateSellPreview();
+    }
+    function setSellMax() {
+      document.getElementById('sell-swap-input').value = Math.max(1, Math.floor(totalChips));
+      updateSellPreview();
+    }
+
+    function executeSellSwap() {
+      const amt = parseInt(document.getElementById('sell-swap-input').value, 10);
+      if (isNaN(amt) || amt <= 0) {
+        showToast('مبلغ معتبر نیست.');
+        return;
+      }
+      if (totalChips < amt) {
+        showToast('موجودی ژتون شما کافی نیست!');
+        return;
+      }
+
+      // کسر عادلانه از موجودی تفکیک‌شده
+      let toDeduct = amt;
+      const denoms = [
+        { key: 'c500', val: 500 },
+        { key: 'c100', val: 100 },
+        { key: 'c25', val: 25 },
+        { key: 'c5', val: 5 },
+        { key: 'c1', val: 1 }
+      ];
+
+      for (let d of denoms) {
+        if (toDeduct <= 0) break;
+        const canTake = Math.min(chipInventory[d.key], Math.floor(toDeduct / d.val));
+        chipInventory[d.key] -= canTake;
+        toDeduct -= canTake * d.val;
+      }
+
+      // اگر مقداری خرده باقی ماند که با بزرگ‌ترها همخوانی نداشت، خرد شود
+      if (toDeduct > 0) {
+        for (let d of denoms.reverse()) {
+          if (chipInventory[d.key] > 0) {
+            chipInventory[d.key] -= 1;
+            toDeduct -= d.val;
+            break;
+          }
+        }
+        if (toDeduct < 0) {
+          const change = standardBreakdown(-toDeduct);
+          chipInventory.c1 += change.c1;
+          chipInventory.c5 += change.c5;
+          chipInventory.c25 += change.c25;
+          chipInventory.c100 += change.c100;
+          chipInventory.c500 += change.c500;
+        }
+      }
+
+      balance = parseFloat((balance + amt).toFixed(4));
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      playChipClink();
+      saveInventory();
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+      showToast(`${amt.toLocaleString()} ژتون با موفقیت نقد شد و به سکه تبدیل گردید! 🪙`);
+    }
+
+    // ================= ۵. حداقل ژتون مورد نیاز بازی‌ها =================
     const DEFAULT_GAME_STAKES = {
       poker: { name: 'پوکر تگزاس', minChips: 40, icon: '🃏', url: '../games/poker/index.html', active: true },
       slot: { name: 'رولر شانس', minChips: 10, icon: '🎰', url: '../games/slot/index.html', active: true },
@@ -475,7 +831,6 @@
       if (!container) return;
       container.innerHTML = '';
 
-      // خواندن تنظیمات اختصاصی پنل مدیریت یا مقادیر پیش‌فرض
       let stakesConfig = DEFAULT_GAME_STAKES;
       try {
         const saved = localStorage.getItem('simab_game_stakes_config');
@@ -518,27 +873,30 @@
       const target = stakesConfig[gKey];
       if (!target || !target.active) return;
 
-      // اگر کاربر به اندازه حداقل ژتون میز ندارد، خودکار تبدیل کند
-      if (chips < target.minChips) {
-        const needed = target.minChips - chips;
+      if (totalChips < target.minChips) {
+        const needed = target.minChips - totalChips;
         if (balance < needed) {
           showToast(`برای ورود حداقل به ${target.minChips} ژتون نیاز دارید و سکه کافی ندارید!`);
           return;
         }
         balance = parseFloat((balance - needed).toFixed(4));
-        chips = parseFloat((chips + needed).toFixed(0));
+        const b = standardBreakdown(needed);
+        chipInventory.c1 += b.c1;
+        chipInventory.c5 += b.c5;
+        chipInventory.c25 += b.c25;
+        chipInventory.c100 += b.c100;
+        chipInventory.c500 += b.c500;
         localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
         localStorage.setItem('user_balance', balance.toString());
-        localStorage.setItem(STORAGE_KEY_CHIPS, chips.toString());
-        playChipClink();
+        saveInventory();
       }
 
       window.location.href = target.url;
     }
 
-    updateWalletsUI();
+    updateUI();
+    updateAutoPreview();
     renderGamesStakeList();
-    updateExpectedSwap();
   </script>
 </body>
 </html>
