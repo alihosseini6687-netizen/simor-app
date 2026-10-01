@@ -16,8 +16,10 @@
       --purple: #8b3dff;
       --purple-gradient: linear-gradient(135deg, #7928ca, #ff0080);
       --card-bg: rgba(20, 16, 30, 0.95);
+      --card-inner: rgba(30, 22, 45, 0.88);
       --text: #ffffff;
-      --text-muted: #9d8eb5;
+      --text-muted: #a59cb8;
+      --border: rgba(212, 175, 55, 0.28);
       --red: #ff3b30;
       --green: #34c759;
       --blue: #00f2fe;
@@ -26,40 +28,47 @@
     body {
       background: radial-gradient(circle at 50% 10%, #1e1035 0%, #07030d 100%);
       color: var(--text); min-height: 100vh; padding: 6px; overflow-x: hidden; text-align: center;
+      font-size: 14px;
     }
-    /* نوار بالا */
+    /* نوار بالای صفحه */
     .top-bar {
       display: flex; justify-content: space-between; align-items: center;
-      background: var(--card-bg); border: 1px solid rgba(212,175,55,0.25);
-      border-radius: 12px; padding: 8px 12px; margin-bottom: 6px; font-size: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 8px 12px; margin-bottom: 6px; font-size: 13px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
     }
     .btn-back {
-      background: #251a36; color: var(--gold); border: 1px solid rgba(212,175,55,0.3);
-      padding: 5px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none;
+      background: #251a36; color: var(--gold); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 8px; font-weight: 900; cursor: pointer; text-decoration: none; font-size: 12.5px;
+    }
+    .top-actions { display: flex; align-items: center; gap: 6px; }
+    .btn-top-util {
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border); color: var(--gold);
+      padding: 5px 10px; border-radius: 8px; font-weight: 900; font-size: 11.5px; cursor: pointer;
     }
     .btn-private-room {
       background: var(--purple-gradient); color: white; border: none;
-      padding: 5px 12px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;
+      padding: 5px 10px; border-radius: 8px; font-weight: 900; font-size: 11px; cursor: pointer;
       box-shadow: 0 0 10px rgba(139,61,255,0.4);
     }
+
     /* نوار تنظیمات میز */
     .room-settings-bar {
       display: flex; justify-content: space-between; align-items: center;
-      background: rgba(0,0,0,0.45); border-radius: 8px; padding: 4px 10px; margin-bottom: 6px; font-size: 11px;
+      background: rgba(0,0,0,0.45); border-radius: 8px; padding: 5px 10px; margin-bottom: 6px; font-size: 12px;
     }
     .select-pill {
       background: #1c1527; color: var(--gold); border: 1px solid var(--gold);
-      padding: 2px 6px; border-radius: 6px; font-size: 10px; outline: none;
+      padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 900; outline: none;
     }
 
-    /* میز پوکر ارتقایافته و استاندارد */
+    /* میز پوکر عمودی */
     .poker-table-vertical {
-      position: relative; width: 98%; max-width: 380px; height: 505px;
+      position: relative; width: 98%; max-width: 385px; height: 515px;
       margin: 0 auto; background: var(--felt-grad);
       border: 8px solid var(--rail); outline: 2px solid var(--rail-border);
-      border-radius: 175px;
-      box-shadow: inset 0 0 40px rgba(0,0,0,0.95), 0 0 30px rgba(0,0,0,0.85);
+      border-radius: 180px;
+      box-shadow: inset 0 0 45px rgba(0,0,0,0.95), 0 0 30px rgba(0,0,0,0.85);
     }
 
     /* دیلر */
@@ -68,81 +77,77 @@
       display: flex; flex-direction: column; align-items: center; z-index: 10;
     }
     .dealer-img-box {
-      width: 40px; height: 40px; border-radius: 50%;
+      width: 42px; height: 42px; border-radius: 50%;
       background: radial-gradient(circle, #f9e8a2, #aa7c11);
       border: 2px solid var(--gold); display: flex; align-items: center;
-      justify-content: center; font-size: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.7);
+      justify-content: center; font-size: 22px; box-shadow: 0 2px 8px rgba(0,0,0,0.7);
     }
     .dealer-title {
-      background: #000; color: var(--gold); font-size: 8px; font-weight: 900;
-      padding: 1px 6px; border-radius: 6px; border: 1px solid var(--gold); margin-top: -4px;
+      background: #000; color: var(--gold); font-size: 9px; font-weight: 900;
+      padding: 1px 7px; border-radius: 6px; border: 1px solid var(--gold); margin-top: -4px;
     }
 
-    /* کپسول‌های یکپارچه بازیکنان */
+    /* صندلی‌ها و پاد بازیکنان با فونت‌های درشت */
     .seat {
       position: absolute; display: flex; flex-direction: column; align-items: center;
       z-index: 5; transition: all 0.25s ease;
     }
     .seat.folded { opacity: 0.35; filter: grayscale(80%); }
 
-    /* مختصات جدید و مهندسی‌شده برای جلوگیری از هرگونه تداخل */
-    .seat-p3 { top: 58px; left: 50%; transform: translateX(-50%); } /* آریا (بالا وسط) */
-    .seat-p2 { top: 110px; left: 8px; }   /* سارا (چپ بالا) */
-    .seat-p4 { top: 110px; right: 8px; }  /* نیما (راست بالا) */
-    .seat-p1 { top: 295px; left: 8px; }   /* مسعود (چپ پایین) */
-    .seat-p5 { top: 295px; right: 8px; }  /* رضا (راست پایین) */
-    .seat-hero { bottom: 8px; left: 50%; transform: translateX(-50%); z-index: 8; } /* شما (پایین) */
+    .seat-p3 { top: 60px; left: 50%; transform: translateX(-50%); }
+    .seat-p2 { top: 115px; left: 6px; }
+    .seat-p4 { top: 115px; right: 6px; }
+    .seat-p1 { top: 305px; left: 6px; }
+    .seat-p5 { top: 305px; right: 6px; }
+    .seat-hero { bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 8; }
 
-    /* پاد و اطلاعات هر ربات */
     .bot-pod {
-      display: flex; align-items: center; gap: 5px;
-      background: rgba(12, 8, 20, 0.88); border: 1px solid rgba(212,175,55,0.3);
-      padding: 3px 6px; border-radius: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(12, 8, 20, 0.92); border: 1.5px solid rgba(212,175,55,0.35);
+      padding: 4px 8px; border-radius: 18px; box-shadow: 0 3px 10px rgba(0,0,0,0.7);
     }
     .bot-avatar {
-      width: 28px; height: 28px; border-radius: 50%; background: #251a36;
-      border: 1.5px solid var(--gold); display: flex; align-items: center;
-      justify-content: center; font-weight: bold; font-size: 11px; color: white;
+      width: 32px; height: 32px; border-radius: 50%; background: #251a36;
+      border: 2px solid var(--gold); display: flex; align-items: center;
+      justify-content: center; font-weight: 900; font-size: 13px; color: white;
     }
     .bot-avatar.active-turn, .hero-avatar.active-turn {
-      border-color: var(--blue); box-shadow: 0 0 10px var(--blue);
+      border-color: var(--blue); box-shadow: 0 0 12px var(--blue);
       animation: pulseTurn 0.9s infinite alternate;
     }
     @keyframes pulseTurn { from { transform: scale(1); } to { transform: scale(1.08); } }
 
-    .bot-meta { display: flex; flex-direction: column; align-items: flex-start; text-align: start; line-height: 1.2; }
-    .bot-name { font-size: 9.5px; font-weight: 800; color: #fff; }
-    .bot-chips { font-size: 9px; font-weight: 900; color: var(--gold); }
+    .bot-meta { display: flex; flex-direction: column; align-items: flex-start; text-align: start; line-height: 1.25; }
+    .bot-name { font-size: 11.5px; font-weight: 900; color: #fff; }
+    .bot-chips { font-size: 11px; font-weight: 900; color: var(--cyan); }
     .bot-status {
-      font-size: 8.5px; font-weight: 800; padding: 1px 5px; border-radius: 4px;
-      background: rgba(0,0,0,0.6); color: var(--gold); margin-top: 2px;
+      font-size: 10px; font-weight: 900; padding: 2px 7px; border-radius: 6px;
+      background: rgba(0,0,0,0.7); color: var(--gold); margin-top: 2px;
     }
 
-    /* کارت‌های مینیاتوری ربات‌ها */
     .bot-cards-wrap { display: flex; gap: 2px; margin-bottom: 2px; }
     .card-mini {
-      width: 20px; height: 28px; border-radius: 3px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.6); border: 1px solid #ffffff;
+      width: 22px; height: 30px; border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.7); border: 1px solid #ffffff;
     }
 
-    /* مرکز میز: پات و ۵ کارت زمین */
+    /* پات وسط میز */
     .table-center-zone {
-      position: absolute; top: 220px; left: 50%; transform: translate(-50%, -50%);
-      display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 6;
-      width: 100%;
+      position: absolute; top: 225px; left: 50%; transform: translate(-50%, -50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 6; width: 100%;
     }
     .pot-pill {
-      background: rgba(0,0,0,0.85); border: 1.5px solid var(--gold);
-      border-radius: 16px; padding: 3px 14px; font-size: 12px; font-weight: 900;
-      color: var(--gold); box-shadow: 0 0 14px rgba(212,175,55,0.4);
+      background: rgba(0,0,0,0.88); border: 1.5px solid var(--gold);
+      border-radius: 18px; padding: 4px 16px; font-size: 14.5px; font-weight: 900;
+      color: var(--gold); box-shadow: 0 0 15px rgba(212,175,55,0.45);
     }
     .community-cards-row { display: flex; justify-content: center; gap: 5px; }
 
-    /* کارت‌های اصلی زمین و بازیکن */
+    /* کارت‌های اصلی */
     .card {
-      width: 38px; height: 54px; background: #ffffff; border-radius: 5px;
+      width: 40px; height: 58px; background: #ffffff; border-radius: 5px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 900; box-shadow: 0 4px 8px rgba(0,0,0,0.7);
+      font-size: 14px; font-weight: 900; box-shadow: 0 4px 10px rgba(0,0,0,0.7);
       line-height: 1; border: 1px solid #ccc;
     }
     .card.red { color: #d00000; }
@@ -152,34 +157,32 @@
       border: 1px solid #ffffff; color: transparent;
     }
 
-    /* بخش بازیکن اصلی (پایین) */
-    .hero-zone {
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-    }
+    /* صندلی شما (پایین) */
+    .hero-zone { display: flex; flex-direction: column; align-items: center; gap: 3px; }
     .hero-cards-row { display: flex; gap: 6px; margin-bottom: 2px; }
     .hero-card-item {
-      width: 46px; height: 64px; font-size: 15px; border: 2px solid var(--gold);
+      width: 48px; height: 68px; font-size: 16px; border: 2px solid var(--gold);
     }
     .hero-pod {
-      display: flex; align-items: center; gap: 6px;
-      background: rgba(15, 10, 24, 0.92); border: 1.5px solid var(--green);
-      padding: 3px 12px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.7);
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(15, 10, 24, 0.94); border: 2px solid var(--green);
+      padding: 4px 14px; border-radius: 22px; box-shadow: 0 3px 12px rgba(0,0,0,0.8);
     }
     .hero-avatar {
-      width: 30px; height: 30px; border-radius: 50%; background: #251a36;
+      width: 34px; height: 34px; border-radius: 50%; background: #251a36;
       border: 2px solid var(--green); display: flex; align-items: center;
-      justify-content: center; font-weight: 900; font-size: 13px; color: white;
+      justify-content: center; font-weight: 900; font-size: 14px; color: white;
     }
-    .hero-name { font-size: 10.5px; font-weight: 800; color: #fff; }
-    .hero-chips { font-size: 10px; font-weight: 900; color: var(--gold); }
+    .hero-name { font-size: 12.5px; font-weight: 900; color: #fff; }
+    .hero-chips { font-size: 12px; font-weight: 900; color: var(--cyan); }
     .hero-status {
-      font-size: 9px; font-weight: bold; color: var(--gold);
-      background: rgba(0,0,0,0.7); padding: 1px 8px; border-radius: 8px;
+      font-size: 10.5px; font-weight: 900; color: var(--gold);
+      background: rgba(0,0,0,0.75); padding: 2px 10px; border-radius: 8px;
     }
 
-    /* نوار زمان نوبت */
+    /* نوار زمان */
     .timer-bar-wrap {
-      width: 100%; height: 5px; background: rgba(255,255,255,0.1);
+      width: 100%; height: 6px; background: rgba(255,255,255,0.1);
       border-radius: 3px; overflow: hidden; margin-bottom: 6px; display: none;
     }
     .timer-bar-fill {
@@ -187,14 +190,14 @@
       transition: width 1s linear;
     }
 
-    /* پنل کنترل شرط‌بندی */
+    /* پنل کنترل شرط‌بندی درشت */
     .control-panel {
       margin-top: 6px; background: rgba(20, 15, 28, 0.96);
-      border: 1px solid rgba(212,175,55,0.3); border-radius: 14px; padding: 8px 10px;
+      border: 1px solid var(--border); border-radius: 14px; padding: 10px;
     }
-    .action-btn-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 6px; }
+    .action-btn-row { display: flex; gap: 6px; justify-content: center; margin-bottom: 8px; }
     .poker-btn {
-      flex: 1; padding: 10px 4px; border-radius: 8px; font-size: 12px;
+      flex: 1; padding: 11px 4px; border-radius: 10px; font-size: 13.5px;
       font-weight: 900; border: none; cursor: pointer; transition: 0.15s;
     }
     .poker-btn:active { transform: scale(0.96); }
@@ -203,19 +206,20 @@
     .btn-check { background: #152438; color: #5ac8fa; border: 1px solid #007aff; }
     .btn-call { background: #13331b; color: #4cd964; border: 1px solid #34c759; }
     .btn-raise { background: var(--gold-gradient); color: black; }
+
     .raise-bar {
-      display: flex; align-items: center; justify-content: center; gap: 5px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
       background: #150f20; border: 1px solid var(--gold); border-radius: 8px;
       padding: 4px 8px; margin-top: 4px;
     }
     .raise-input {
-      width: 60px; background: #000; border: 1px solid var(--gold);
-      border-radius: 4px; color: var(--gold); font-size: 12px; font-weight: bold;
-      padding: 3px; text-align: center; outline: none;
+      width: 70px; background: #000; border: 1px solid var(--gold);
+      border-radius: 4px; color: var(--gold); font-size: 14px; font-weight: 900;
+      padding: 4px; text-align: center; outline: none;
     }
     .chip-quick {
       background: #251a36; border: 1px solid rgba(212,175,55,0.4); color: var(--gold);
-      padding: 4px 8px; border-radius: 4px; font-size: 10.5px; font-weight: 900; cursor: pointer;
+      padding: 5px 8px; border-radius: 6px; font-size: 11.5px; font-weight: 900; cursor: pointer;
     }
 
     /* مودال‌ها */
@@ -226,17 +230,49 @@
     .modal-overlay.open { display: flex; }
     .modal-box {
       background: var(--card-bg); border: 2px solid var(--gold);
-      border-radius: 16px; width: 100%; max-width: 320px; padding: 18px; text-align: center;
+      border-radius: 18px; width: 100%; max-width: 330px; padding: 18px; text-align: center;
     }
+
+    /* پاد و استایل خرد کردن ژتون */
+    .rack-break-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin: 10px 0; text-align: center;
+    }
+    .rack-break-item {
+      background: var(--card-inner); border-radius: 8px; padding: 6px 2px;
+      display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px;
+    }
+    .chip-bubble {
+      width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 10px; border: 1.5px dashed rgba(255,255,255,0.4);
+    }
+    .btn-break-action {
+      width: 100%; background: var(--card-inner); border: 1px solid var(--border);
+      color: var(--cyan); padding: 8px; border-radius: 8px; font-size: 11.5px; font-weight: 900;
+      margin-bottom: 6px; cursor: pointer; text-align: right; display: flex; justify-content: space-between;
+    }
+    .btn-break-action:disabled { opacity: 0.3; cursor: default; }
+
+    .toast-msg {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient); color: #1a1200; padding: 8px 20px; border-radius: 25px;
+      font-size: 13px; font-weight: 900; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
-  <!-- نوار بالای صفحه -->
+  <div class="toast-msg" id="toast-msg">انجام شد!</div>
+
+  <!-- نوار بالای صفحه با نمایش ژتون‌ها و کلید خرد کردن -->
   <div class="top-bar">
     <button class="btn-back" onclick="goBack()">🔙 بازگشت</button>
-    <button class="btn-private-room" onclick="openPrivateRoomModal()">👥 اتاق دوستان</button>
-    <div style="color: var(--gold); font-weight: bold;">
-      🪙 <span id="user-bal-display">50</span>
+    <div class="top-actions">
+      <button class="btn-top-util" onclick="openBreakChipsModal()">🔨 خرد کردن</button>
+      <button class="btn-private-room" onclick="openPrivateRoomModal()">👥 اتاق</button>
+    </div>
+    <div style="color: var(--cyan); font-weight: 900; font-size: 13.5px;" onclick="window.location.href='../../swap/index.html'" title="ورود به صرافی">
+      🎰 <span id="user-chips-display">0</span> ژتون
     </div>
   </div>
 
@@ -260,7 +296,7 @@
     </div>
   </div>
 
-  <!-- میز عمودی ۶ نفره با جانمایی استاندارد و تمیز -->
+  <!-- میز عمودی با چیدمان بدون تداخل و فونت‌های بزرگ -->
   <div class="poker-table-vertical">
     <div class="dealer-avatar">
       <div class="dealer-img-box">💃</div>
@@ -274,7 +310,7 @@
         <div class="bot-avatar" id="avatar-bot3">A</div>
         <div class="bot-meta">
           <span class="bot-name">آریا 🤖</span>
-          <span class="bot-chips" id="chips-bot3">0 S</span>
+          <span class="bot-chips" id="chips-bot3">۰ ژتون</span>
         </div>
       </div>
       <span class="bot-status" id="act-bot3">-</span>
@@ -287,7 +323,7 @@
         <div class="bot-avatar" id="avatar-bot2">S</div>
         <div class="bot-meta">
           <span class="bot-name">سارا 🤖</span>
-          <span class="bot-chips" id="chips-bot2">0 S</span>
+          <span class="bot-chips" id="chips-bot2">۰ ژتون</span>
         </div>
       </div>
       <span class="bot-status" id="act-bot2">-</span>
@@ -300,17 +336,17 @@
         <div class="bot-avatar" id="avatar-bot4">N</div>
         <div class="bot-meta">
           <span class="bot-name">نیما 🤖</span>
-          <span class="bot-chips" id="chips-bot4">0 S</span>
+          <span class="bot-chips" id="chips-bot4">۰ ژتون</span>
         </div>
       </div>
       <span class="bot-status" id="act-bot4">-</span>
     </div>
 
-    <!-- مرکز میز: پات و ۵ کارت زمین بدون هیچ تداخلی -->
+    <!-- مرکز میز: پات و ۵ کارت زمین -->
     <div class="table-center-zone">
       <div class="pot-pill">
         <span>🏆 پات:</span>
-        <span id="pot-amount">۰</span> S
+        <span id="pot-amount">۰</span> ژتون
       </div>
       <div class="community-cards-row" id="community-cards"></div>
     </div>
@@ -322,7 +358,7 @@
         <div class="bot-avatar" id="avatar-bot1">M</div>
         <div class="bot-meta">
           <span class="bot-name">مسعود 🤖</span>
-          <span class="bot-chips" id="chips-bot1">0 S</span>
+          <span class="bot-chips" id="chips-bot1">۰ ژتون</span>
         </div>
       </div>
       <span class="bot-status" id="act-bot1">-</span>
@@ -335,13 +371,13 @@
         <div class="bot-avatar" id="avatar-bot5">R</div>
         <div class="bot-meta">
           <span class="bot-name">رضا 🤖</span>
-          <span class="bot-chips" id="chips-bot5">0 S</span>
+          <span class="bot-chips" id="chips-bot5">۰ ژتون</span>
         </div>
       </div>
       <span class="bot-status" id="act-bot5">-</span>
     </div>
 
-    <!-- بخش بازیکن شما (پایین میز با ۲ کارت واضح و بزرگ) -->
+    <!-- بخش بازیکن شما (پایین) -->
     <div class="seat seat-hero" id="seat-box-hero">
       <div class="hero-zone">
         <span class="hero-status" id="act-user">-</span>
@@ -349,7 +385,7 @@
         <div class="hero-pod">
           <div class="hero-avatar" id="hero-avatar">U</div>
           <span class="hero-name" id="user-name-tag">👤 شما</span>
-          <span class="hero-chips" id="chips-user">0 S</span>
+          <span class="hero-chips" id="chips-user">۰ ژتون</span>
         </div>
       </div>
     </div>
@@ -360,7 +396,7 @@
     <div class="timer-bar-wrap" id="timer-bar-wrap">
       <div class="timer-bar-fill" id="timer-bar-fill"></div>
     </div>
-    <div style="font-size: 12px; color: var(--gold); margin-bottom: 6px; font-weight: bold;" id="status-text">
+    <div style="font-size: 13.5px; color: var(--gold); margin-bottom: 6px; font-weight: 900;" id="status-text">
       برای شروع دست جدید روی دکمه زیر کلیک کنید
     </div>
     <div class="action-btn-row">
@@ -370,24 +406,59 @@
       <button class="poker-btn btn-raise" id="btn-raise" onclick="userAction('raise')" disabled>افزایش (Raise)</button>
     </div>
     <div class="raise-bar">
-      <span style="font-size: 10px; color: var(--text-muted);">مبلغ افزایش:</span>
+      <span style="font-size: 11px; color: var(--text-muted); font-weight: bold;">افزایش:</span>
       <input type="number" class="raise-input" id="custom-raise-input" value="4" min="1" oninput="onCustomRaiseInput(this.value)">
       <button class="chip-quick" onclick="setRaiseAmount(4)">+۴</button>
       <button class="chip-quick" onclick="setRaiseAmount(10)">+۱۰</button>
       <button class="chip-quick" onclick="setRaiseAmount(25)">+۲۵</button>
       <button class="chip-quick" style="border-color: var(--red); color: var(--red);" onclick="setAllIn()">All-in</button>
     </div>
-    <button class="poker-btn btn-raise" id="btn-start" style="width: 100%; margin-top: 8px; padding: 11px; font-size: 13px;" onclick="startNewHand()">🎲 پخش کارت و شروع دست (ورودی ۲ سکه)</button>
+    <button class="poker-btn btn-raise" id="btn-start" style="width: 100%; margin-top: 8px; padding: 12px; font-size: 14.5px;" onclick="startNewHand()">🎲 پخش کارت و شروع دست (ورودی ۲ ژتون)</button>
+  </div>
+
+  <!-- مودال خرد کردن ژتون سر میز -->
+  <div class="modal-overlay" id="break-chips-modal">
+    <div class="modal-box">
+      <h3 style="color: var(--gold); margin-bottom: 6px;">🔨 خرد کردن ژتون‌ها سر میز</h3>
+      <p style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 10px;">
+        موجودی تفکیک‌شده ژتون‌های شما سر میز:
+      </p>
+      
+      <!-- رک ژتون‌ها -->
+      <div class="rack-break-grid">
+        <div class="rack-break-item"><div class="chip-bubble" style="background:#e5e5ea; color:#000;">1</div><b id="bk-c1">0</b><span>سفید</span></div>
+        <div class="rack-break-item"><div class="chip-bubble" style="background:#ff453a; color:#fff;">5</div><b id="bk-c5">0</b><span>قرمز</span></div>
+        <div class="rack-break-item"><div class="chip-bubble" style="background:#30d158; color:#000;">25</div><b id="bk-c25">0</b><span>سبز</span></div>
+        <div class="rack-break-item"><div class="chip-bubble" style="background:#1c1c1e; color:#ffd60a;">100</div><b id="bk-c100">0</b><span>مشکی</span></div>
+        <div class="rack-break-item"><div class="chip-bubble" style="background:#ffd60a; color:#000;">500</div><b id="bk-c500">0</b><span>طلایی</span></div>
+      </div>
+
+      <!-- گزینه‌های خرد کردن سریع -->
+      <button class="btn-break-action" id="act-bk-500" onclick="tableBreakDownChip(500)">
+        <span>🔨 خرد کردن ۱ ژتون ۵۰۰:</span> <b>۴ تا ۱۰۰ + ۴ تا ۲۵</b>
+      </button>
+      <button class="btn-break-action" id="act-bk-100" onclick="tableBreakDownChip(100)">
+        <span>🔨 خرد کردن ۱ ژتون ۱۰۰:</span> <b>۴ تا ۲۵ تایی</b>
+      </button>
+      <button class="btn-break-action" id="act-bk-25" onclick="tableBreakDownChip(25)">
+        <span>🔨 خرد کردن ۱ ژتون ۲۵:</span> <b>۵ تا ۵ تایی</b>
+      </button>
+      <button class="btn-break-action" id="act-bk-5" onclick="tableBreakDownChip(5)">
+        <span>🔨 خرد کردن ۱ ژتون ۵:</span> <b>۵ تا ۱ تایی</b>
+      </button>
+
+      <button class="poker-btn" style="width: 100%; background: #251a36; color: white; margin-top: 6px;" onclick="closeBreakChipsModal()">بستن ✕</button>
+    </div>
   </div>
 
   <!-- مودال اتاق دوستان -->
   <div class="modal-overlay" id="private-room-modal">
     <div class="modal-box">
       <h3 style="color: var(--gold); margin-bottom: 6px;">👥 ساخت اتاق اختصاصی</h3>
-      <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 14px;">
+      <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
         لینک دعوت زیر را برای دوستان خود بفرستید تا سر همین میز بنشینند:
       </p>
-      <div style="background: #150f20; border: 1px dashed var(--gold); border-radius: 8px; padding: 10px; margin-bottom: 12px; font-size: 12px;">
+      <div style="background: #150f20; border: 1px dashed var(--gold); border-radius: 8px; padding: 10px; margin-bottom: 12px; font-size: 13px;">
         <span style="color: var(--gold); font-weight: bold;" id="room-code-display">کد میز: ROOM-7020</span>
       </div>
       <div style="display: flex; gap: 8px; margin-bottom: 12px;">
@@ -401,10 +472,10 @@
   <!-- مودال نتیجه دست -->
   <div class="modal-overlay" id="result-modal">
     <div class="modal-box">
-      <div style="font-size: 40px; margin-bottom: 6px;" id="res-icon">🏆</div>
-      <h3 style="color: var(--gold); margin-bottom: 6px;" id="res-title">پایان دست</h3>
-      <p style="font-size: 13px; line-height: 1.6; margin-bottom: 14px;" id="res-desc">برنده بازی مشخص شد.</p>
-      <button class="poker-btn btn-raise" style="width: 100%;" onclick="closeResultModal()">دست بعدی 🎲</button>
+      <div style="font-size: 44px; margin-bottom: 6px;" id="res-icon">🏆</div>
+      <h3 style="color: var(--gold); margin-bottom: 6px; font-size: 17px;" id="res-title">پایان دست</h3>
+      <p style="font-size: 13.5px; line-height: 1.6; margin-bottom: 14px;" id="res-desc">برنده بازی مشخص شد.</p>
+      <button class="poker-btn btn-raise" style="width: 100%; font-size: 15px;" onclick="closeResultModal()">دست بعدی 🎲</button>
     </div>
   </div>
 
@@ -435,23 +506,161 @@
 
     function goBack() {
       try { localStorage.setItem('simab_active_tab', 'games'); } catch(e) {}
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = '../../index.html';
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = '../../index.html';
+    }
+
+    // ================= اتصال ۱۰۰٪ به صندوق ژتون‌ها =================
+    const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
+    const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
+
+    let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
+    let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
+
+    try {
+      const savedInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
+      if (savedInv) chipInventory = savedInv;
+    } catch(e) {}
+
+    function standardBreakdown(amount) {
+      let rem = Math.floor(amount);
+      const c1 = (rem >= 20) ? 20 : rem; rem -= c1 * 1;
+      const c5 = (rem >= 80) ? 16 : Math.floor(rem / 5); rem -= c5 * 5;
+      const c25 = (rem >= 400) ? 16 : Math.floor(rem / 25); rem -= c25 * 25;
+      const c100 = (rem >= 2000) ? 20 : Math.floor(rem / 100); rem -= c100 * 100;
+      const c500 = Math.floor(rem / 500); rem -= c500 * 500;
+
+      let extra100 = Math.floor(rem / 100); rem %= 100;
+      let extra25 = Math.floor(rem / 25); rem %= 25;
+      let extra5 = Math.floor(rem / 5); rem %= 5;
+      let extra1 = rem;
+
+      return { c1: c1 + extra1, c5: c5 + extra5, c25: c25 + extra25, c100: c100 + extra100, c500: c500 };
+    }
+
+    function calcTotalChips() {
+      return (chipInventory.c1 * 1) + (chipInventory.c5 * 5) + (chipInventory.c25 * 25) + (chipInventory.c100 * 100) + (chipInventory.c500 * 500);
+    }
+
+    // هماهنگ‌سازی خودکار دیتای ژتون
+    if (totalChips > 0 && calcTotalChips() !== totalChips) {
+      chipInventory = standardBreakdown(totalChips);
+      localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
+    }
+
+    function saveChips() {
+      totalChips = calcTotalChips();
+      localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
+      localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
+      document.getElementById('user-chips-display').innerText = totalChips.toLocaleString();
+      updateBreakdownUI();
+    }
+
+    // کسر ژتون از انبار تفکیک‌شده با خرد کردن خودکار در صورت نیاز
+    function deductChipsFromInventory(amount) {
+      if (totalChips < amount) return false;
+      let rem = amount;
+      const denoms = [
+        { k: 'c500', v: 500 },
+        { k: 'c100', v: 100 },
+        { k: 'c25', v: 25 },
+        { k: 'c5', v: 5 },
+        { k: 'c1', v: 1 }
+      ];
+
+      for (let d of denoms) {
+        if (rem <= 0) break;
+        let take = Math.min(chipInventory[d.k], Math.floor(rem / d.v));
+        chipInventory[d.k] -= take;
+        rem -= take * d.v;
       }
+
+      if (rem > 0) {
+        for (let d of denoms.reverse()) {
+          if (d.v > rem && chipInventory[d.k] > 0) {
+            chipInventory[d.k] -= 1;
+            let change = d.v - rem;
+            let c100 = Math.floor(change / 100); change %= 100;
+            let c25 = Math.floor(change / 25); change %= 25;
+            let c5 = Math.floor(change / 5); change %= 5;
+            let c1 = change;
+            chipInventory.c100 += c100;
+            chipInventory.c25 += c25;
+            chipInventory.c5 += c5;
+            chipInventory.c1 += c1;
+            rem = 0;
+            break;
+          }
+        }
+      }
+      saveChips();
+      return true;
     }
 
-    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
-
-    function saveBalance() {
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      document.getElementById('user-bal-display').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+    function addChipsToInventory(amount) {
+      const b = standardBreakdown(amount);
+      chipInventory.c1 += b.c1;
+      chipInventory.c5 += b.c5;
+      chipInventory.c25 += b.c25;
+      chipInventory.c100 += b.c100;
+      chipInventory.c500 += b.c500;
+      saveChips();
     }
-    saveBalance();
 
+    function showToast(text) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = text;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // ================= مودال خرد کردن ژتون سر میز =================
+    function openBreakChipsModal() {
+      updateBreakdownUI();
+      document.getElementById('break-chips-modal').classList.add('open');
+    }
+    function closeBreakChipsModal() {
+      document.getElementById('break-chips-modal').classList.remove('open');
+    }
+
+    function updateBreakdownUI() {
+      document.getElementById('bk-c1').innerText = chipInventory.c1;
+      document.getElementById('bk-c5').innerText = chipInventory.c5;
+      document.getElementById('bk-c25').innerText = chipInventory.c25;
+      document.getElementById('bk-c100').innerText = chipInventory.c100;
+      document.getElementById('bk-c500').innerText = chipInventory.c500;
+
+      document.getElementById('act-bk-5').disabled = (chipInventory.c5 < 1);
+      document.getElementById('act-bk-25').disabled = (chipInventory.c25 < 1);
+      document.getElementById('act-bk-100').disabled = (chipInventory.c100 < 1);
+      document.getElementById('act-bk-500').disabled = (chipInventory.c500 < 1);
+    }
+
+    function tableBreakDownChip(val) {
+      if (val === 500 && chipInventory.c500 >= 1) {
+        chipInventory.c500 -= 1;
+        chipInventory.c100 += 4;
+        chipInventory.c25 += 4;
+        showToast('یک ژتون ۵۰۰ به ۴ تا ۱۰۰ و ۴ تا ۲۵ خرد شد! 🔨');
+      } else if (val === 100 && chipInventory.c100 >= 1) {
+        chipInventory.c100 -= 1;
+        chipInventory.c25 += 4;
+        showToast('یک ژتون ۱۰۰ به ۴ تا ۲۵ خرد شد! 🔨');
+      } else if (val === 25 && chipInventory.c25 >= 1) {
+        chipInventory.c25 -= 1;
+        chipInventory.c5 += 5;
+        showToast('یک ژتون ۲۵ به ۵ تا ۵ تایی خرد شد! 🔨');
+      } else if (val === 5 && chipInventory.c5 >= 1) {
+        chipInventory.c5 -= 1;
+        chipInventory.c1 += 5;
+        showToast('یک ژتون ۵ به ۵ تا ۱ تایی خرد شد! 🔨');
+      }
+      saveChips();
+    }
+
+    saveChips();
+
+    // ================= تنظیمات میز و ربات‌ها =================
     let difficulty = 'medium';
     function changeDifficulty(val) { difficulty = val; }
 
@@ -471,12 +680,8 @@
       const roomId = 'poker_' + uid.slice(0, 5);
       const shareUrl = `https://t.me/SimorMiniApp_bot?startapp=${roomId}`;
       const text = `بیا با هم پوکر بزنیم! وارد میز من شو:`;
-      if (tg?.openTelegramLink) {
-        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(text)}`);
-      } else {
-        navigator.clipboard.writeText(shareUrl);
-        alert('لینک دعوت کپی شد!');
-      }
+      if (tg?.openTelegramLink) tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(text)}`);
+      else { navigator.clipboard.writeText(shareUrl); alert('لینک دعوت کپی شد!'); }
     }
     function copyRoomLink() {
       const roomId = 'poker_' + uid.slice(0, 5);
@@ -553,10 +758,9 @@
       }
     }
 
-    // رندر کارت بدون ارور undefined
     function renderCard(card, faceDown = false, isHero = false) {
       if (faceDown || !card) return `<div class="card card-back ${isHero ? 'hero-card-item' : ''}"></div>`;
-      return `<div class="card ${card.color} ${isHero ? 'hero-card-item' : ''}"><span>${card.rank}</span><span style="font-size:12px; margin-top:2px;">${card.suit}</span></div>`;
+      return `<div class="card ${card.color} ${isHero ? 'hero-card-item' : ''}"><span>${card.rank}</span><span style="font-size:13px; margin-top:2px;">${card.suit}</span></div>`;
     }
 
     function renderMiniCard(faceDown = true) {
@@ -565,21 +769,21 @@
 
     function onCustomRaiseInput(val) {
       let amt = parseInt(val) || 1;
-      amt = Math.min(amt, Math.max(1, balance));
+      amt = Math.min(amt, Math.max(1, totalChips));
       selectedRaiseAmt = amt;
-      document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} S)`;
+      document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} ژتون)`;
     }
 
     function setRaiseAmount(amt) {
-      selectedRaiseAmt = Math.min(amt, Math.max(1, balance));
+      selectedRaiseAmt = Math.min(amt, Math.max(1, totalChips));
       document.getElementById('custom-raise-input').value = selectedRaiseAmt;
-      document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} S)`;
+      document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} ژتون)`;
     }
 
     function setAllIn() {
-      selectedRaiseAmt = Math.max(1, balance);
+      selectedRaiseAmt = Math.max(1, totalChips);
       document.getElementById('custom-raise-input').value = selectedRaiseAmt;
-      document.getElementById('btn-raise').innerText = `All-in (${selectedRaiseAmt} S)`;
+      document.getElementById('btn-raise').innerText = `All-in (${selectedRaiseAmt} ژتون)`;
     }
 
     function setButtonsState() {
@@ -592,14 +796,14 @@
       if (toCall <= 0) {
         document.getElementById('btn-check').disabled = false;
         document.getElementById('btn-call').disabled = true;
-        document.getElementById('btn-call').innerText = 'کال (Call)';
+        document.getElementById('btn-call').innerText = 'بررسی (Check)';
       } else {
         document.getElementById('btn-check').disabled = true;
         document.getElementById('btn-call').disabled = false;
-        document.getElementById('btn-call').innerText = `کال (${toCall} S)`;
+        document.getElementById('btn-call').innerText = `کال (${toCall} ژتون)`;
       }
-      document.getElementById('btn-raise').disabled = (balance <= toCall);
-      document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} S)`;
+      document.getElementById('btn-raise').disabled = (totalChips <= toCall);
+      document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} ژتون)`;
       startTurnTimer();
     }
 
@@ -619,19 +823,18 @@
 
     function updateTableUI() {
       document.getElementById('pot-amount').innerText = pot;
-      document.getElementById('chips-user').innerText = `${pHero.bet} S`;
+      document.getElementById('chips-user').innerText = `${pHero.bet} ژتون`;
       
       const bots = [pBot1, pBot2, pBot3, pBot4, pBot5];
       bots.forEach((b, idx) => {
         const id = idx + 1;
         const elChips = document.getElementById(`chips-bot${id}`);
-        if (elChips) elChips.innerText = `${b.bet} S`;
+        if (elChips) elChips.innerText = `${b.bet} ژتون`;
         const seatBox = document.getElementById(`seat-box-${id}`);
         if (seatBox) seatBox.classList.toggle('folded', b.folded);
       });
       document.getElementById('seat-box-hero').classList.toggle('folded', pHero.folded);
 
-      // رندر قطعی ۲ کارت هیرو با ساختار بدون باگ
       if (pHero.cards.length >= 2) {
         const firstCard = pHero.cards.slice(0, 1)[0];
         const secondCard = pHero.cards.slice(1, 2)[0];
@@ -640,7 +843,6 @@
         document.getElementById('cards-user').innerHTML = '';
       }
 
-      // کارت‌های ربات‌ها
       const showBots = (stage === 4);
       bots.forEach((b, idx) => {
         const id = idx + 1;
@@ -659,7 +861,6 @@
         }
       });
 
-      // ۵ کارت مشترک زمین
       let commHtml = '';
       for (let i = 0; i < 5; i++) {
         const cardItem = communityCards.slice(i, i + 1)[0];
@@ -672,8 +873,9 @@
     }
 
     function startNewHand() {
-      if (balance < 2) {
-        alert('موجودی شما برای شروع دست کافی نیست! (حداقل ۲ سکه)');
+      if (totalChips < 2) {
+        showToast('ژتون شما کافی نیست! لطفاً از صرافی ژتون تهیه کنید.');
+        setTimeout(() => { window.location.href = '../../swap/index.html'; }, 1500);
         return;
       }
       buildDeck();
@@ -690,16 +892,15 @@
 
       communityCards = [deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop()];
 
-      balance -= 2;
+      deductChipsFromInventory(2);
       const activeBots = getActiveBots();
       pot = 2 + activeBots.reduce((sum, b) => sum + b.bet, 0);
-      saveBalance();
 
-      document.getElementById('act-user').innerText = 'شرط: ۲S';
+      document.getElementById('act-user').innerText = 'شرط: ۲ ژتون';
       document.getElementById('act-user').style.color = 'var(--gold)';
       activeBots.forEach((b, i) => {
         const el = document.getElementById(`act-${b.id}`);
-        el.innerText = (i === 0) ? 'اسمال: ۱S' : 'کال: ۲S';
+        el.innerText = (i === 0) ? 'اسمال: ۱ ژتون' : 'کال: ۲ ژتون';
         el.style.color = 'var(--gold)';
       });
 
@@ -725,23 +926,21 @@
         document.getElementById('act-user').style.color = '#5ac8fa';
       } else if (action === 'call') {
         const toCall = currentHighestBet - pHero.bet;
-        balance = parseFloat((balance - toCall).toFixed(4));
+        deductChipsFromInventory(toCall);
         pot += toCall;
         pHero.bet += toCall;
-        saveBalance();
-        document.getElementById('act-user').innerText = `کال (${toCall}S)`;
+        document.getElementById('act-user').innerText = `کال (${toCall} ژتون)`;
         document.getElementById('act-user').style.color = '#34c759';
       } else if (action === 'raise') {
         const toCall = currentHighestBet - pHero.bet;
         let actualRaise = selectedRaiseAmt;
-        if (balance < toCall + actualRaise) actualRaise = Math.max(1, balance - toCall);
+        if (totalChips < toCall + actualRaise) actualRaise = Math.max(1, totalChips - toCall);
         const totalCost = toCall + actualRaise;
-        balance = parseFloat((balance - totalCost).toFixed(4));
+        deductChipsFromInventory(totalCost);
         pot += totalCost;
         pHero.bet += totalCost;
         currentHighestBet = pHero.bet;
-        saveBalance();
-        document.getElementById('act-user').innerText = `افزایش (+${actualRaise}S)`;
+        document.getElementById('act-user').innerText = `افزایش (+${actualRaise} ژتون)`;
         document.getElementById('act-user').style.color = '#ffd700';
       }
 
@@ -788,7 +987,7 @@
           const toCall = Math.max(0, currentHighestBet - bot.bet);
           pot += toCall;
           bot.bet += toCall;
-          actEl.innerText = (toCall === 0) ? 'چک ✓' : `کال (${toCall}S)`;
+          actEl.innerText = (toCall === 0) ? 'چک ✓' : `کال (${toCall} ژتون)`;
           actEl.style.color = (toCall === 0) ? '#5ac8fa' : '#34c759';
         } else if (act === 'raise') {
           const raiseAmt = (difficulty === 'hard') ? 5 : 2;
@@ -796,7 +995,7 @@
           pot += (toCall + raiseAmt);
           bot.bet += (toCall + raiseAmt);
           currentHighestBet = bot.bet;
-          actEl.innerText = `افزایش (+${raiseAmt}S)`;
+          actEl.innerText = `افزایش (+${raiseAmt} ژتون)`;
           actEl.style.color = '#ffd700';
         }
 
@@ -932,12 +1131,11 @@
       const winner = contenders.slice(0, 1)[0];
 
       if (winner.isHero) {
-        balance = parseFloat((balance + pot).toFixed(4));
-        saveBalance();
-        endHand(`🎉 تبریک! شما با دست برتر «${winner.hand.name}» برنده کل پات به ارزش ${pot} سکه شدید!`, true);
+        addChipsToInventory(pot);
+        endHand(`🎉 تبریک! شما با دست برتر «${winner.hand.name}» برنده کل پات به ارزش ${pot.toLocaleString()} ژتون شدید!`, true);
       } else {
         if (pHero.folded) {
-          endHand(`🤖 ${winner.player.name} با دست «${winner.hand.name}» برنده پات ${pot} سکه شد.`, false);
+          endHand(`🤖 ${winner.player.name} با دست «${winner.hand.name}» برنده پات ${pot.toLocaleString()} ژتون شد.`, false);
         } else {
           const heroScore = contenders.find(c => c.isHero);
           endHand(`🤖 ${winner.player.name} با دست «${winner.hand.name}» برنده شد.\nدست شما: «${heroScore.hand.name}»`, false);
