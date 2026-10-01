@@ -233,7 +233,6 @@
 
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
     let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
-
     function saveBalance() {
       localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
       localStorage.setItem('user_balance', balance.toString());
