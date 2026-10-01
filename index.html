@@ -486,7 +486,12 @@
         document.getElementById('user-game-id').innerText = savedGameId;
       }
     } catch(e) {}
-
+    // نمایش دکمه مدیریت فقط و فقط برای ادمین ارشد (702007470)
+    const ADMIN_ID = "702007470";
+    const adminBtn = document.getElementById('btn-admin-bar');
+    if (adminBtn) {
+      adminBtn.style.display = (uid === ADMIN_ID) ? 'flex' : 'none';
+    }
     // ================= سیستم همگام‌سازی ابری تلگرام (CloudStorage - هماهنگ بین موبایل و دسکتاپ) =================
     const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
