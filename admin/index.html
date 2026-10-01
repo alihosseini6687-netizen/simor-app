@@ -206,23 +206,30 @@
 
   <script>
     const tg = window.Telegram?.WebApp;
-    const ADMIN_ID = 702007470;
+    const ADMIN_ID = "702007470";
+    let uid = "guest";
+    let isRealAdmin = false;
 
-    let uid = "702007470";
     try {
       if (tg?.initDataUnsafe?.user?.id) {
         uid = tg.initDataUnsafe.user.id.toString();
+        if (uid === ADMIN_ID) {
+          isRealAdmin = true;
+        }
       }
     } catch(e) {}
-    // قفل امنیتی: اخراج آنی افراد غیر ادمین
-    if (uid !== "702007470") {
+
+    // قفل امنیتی قطعی: اگر خارج از تلگرام (کروم) یا با اکانتی غیر از شما باز شود، فوراً اخراج می‌شود
+    if (!isRealAdmin) {
       alert('دسترسی غیرمجاز! این بخش مختص مدیریت است.');
       window.location.href = '../index.html';
     }
+
     try {
       if (tg) {
         tg.ready();
         tg.expand();
+        // در داخل پنل ادمین فلش برگشت فعال باشد تا به لابی مادر برگردید
         if (tg.BackButton) {
           tg.BackButton.show();
           tg.BackButton.onClick(goBack);
@@ -236,27 +243,26 @@
       else window.location.href = '../index.html';
     }
 
-    // ================= سیستم همگام‌سازی ابری پنل ادمین (هماهنگ ۱۰۰٪ با لابی مادر) =================
+    // ================= سیستم همگام‌سازی ابری پنل ادمین (هماهنگ ۱۰۰٪ با لابی مادر بدون کلید مشترک) =================
     const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
     const isCloudSupported = !!(tg && tg.CloudStorage);
 
-    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+    // بارگذاری موجودی واقعی ادمین (حفظ ۲,۱۷۵,۰۰۰)
+    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
 
     function renderAdminBalance() {
       const el = document.getElementById('current-bal');
       if (el) el.innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 }) + ' S';
     }
 
-    // ذخیره آنی موجودی ادمین در دستگاه و کلود تلگرام با ثبت زمان تغییر
+    // ذخیره آنی موجودی در حافظه اختصاصی و کلود تلگرام (حذف کامل user_balance جهت جلوگیری از سرایت به سایرین)
     function saveBalance() {
       localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
       renderAdminBalance();
 
-      // خواندن ژتون‌ها جهت حفظ آن‌ها در پکیج ابری
       const currentChips = parseInt(localStorage.getItem(STORAGE_KEY_CHIPS) || '0', 10);
       let currentInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
       try {
@@ -270,20 +276,17 @@
         updated_at: Date.now()
       };
 
-      // ثبت زمان آخرین ویرایش
       localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
 
-      // ارسال مستقیم به کلود تلگرام
       if (isCloudSupported) {
         tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload), (err) => {
           if (err) console.warn('خطا در ذخیره ابری ادمین:', err);
         });
       }
     }
-
     renderAdminBalance();
 
-    // همگام‌سازی ابری هنگام باز شدن پنل ادمین
+    // همگام‌سازی ابری هنگام باز شدن پنل مدیریت
     function syncWithTelegramCloud() {
       if (!isCloudSupported) return;
       tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
@@ -295,7 +298,6 @@
             if (typeof cloudData.coins === 'number') {
               balance = cloudData.coins;
               localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-              localStorage.setItem('user_balance', balance.toString());
               renderAdminBalance();
             }
             if (typeof cloudData.chips === 'number') {
@@ -311,7 +313,6 @@
         }
       });
     }
-
     syncWithTelegramCloud();
     function showPopup(title, msg, icon = '✅') {
       document.getElementById('pop-icon').innerText = icon;
