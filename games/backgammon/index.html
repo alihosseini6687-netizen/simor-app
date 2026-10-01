@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SIMAB | تخته نرد آنلاین</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #090511;
+      --wood-dark: #1f1107;
+      --wood-frame: #3b1d0c;
+      --wood-inner: #160c05;
+      --gold: #f5cf62;
+      --gold-gradient: linear-gradient(135deg, #d4af37 0%, #fef3c7 50%, #b48618 100%);
+      --felt-gold: #c59b27;
+      --felt-dark: #451b0a;
+      --card-bg: rgba(22, 14, 34, 0.95);
+      --card-inner: rgba(32, 20, 50, 0.88);
+      --text: #ffffff;
+      --text-muted: #b8abc9;
+      --border: rgba(212, 175, 55, 0.35);
+      --cyan: #00f2fe;
+      --green: #22c55e;
+      --red: #ef4444;
+      --checker-white: radial-gradient(circle at 35% 35%, #ffffff 0%, #e2e8f0 55%, #94a3b8 100%);
+      --checker-black: radial-gradient(circle at 35% 35%, #475569 0%, #1e293b 60%, #090d16 100%);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Vazirmatn', system-ui, -apple-system, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background: radial-gradient(circle at 50% 10%, #201035 0%, #06030c 100%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 6px 8px 30px;
+      overflow-x: hidden;
+      text-align: center;
+      font-size: 13.5px;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 8px 12px;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+    }
+    .btn-back {
+      background: #25163a;
+      color: var(--gold);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 12.5px;
+    }
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-top-util {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      padding: 5px 9px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 11.5px;
+      cursor: pointer;
+    }
+    .btn-room {
+      background: linear-gradient(135deg, #7928ca, #ff0080);
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 11.5px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(139,61,255,0.4);
+    }
+    .chips-badge {
+      color: var(--cyan);
+      font-weight: 900;
+      font-size: 13.5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* نوار حریف و اطلاعات بازی */
+    .game-info-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      font-size: 12px;
+    }
+    .player-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+    }
+    .player-mini-checker {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
+    .pot-center-pill {
+      background: var(--gold-gradient);
+      color: #1a0f00;
+      font-weight: 900;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+
+    /* تخته نرد عمودی اصیل */
+    .bg-board-frame {
+      width: 100%;
+      max-width: 390px;
+      margin: 0 auto;
+      background: linear-gradient(180deg, var(--wood-frame) 0%, var(--wood-dark) 100%);
+      border: 6px solid #231206;
+      border-radius: 20px;
+      padding: 8px 6px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.9), inset 0 2px 6px rgba(255,255,255,0.25);
+      position: relative;
+    }
+    .bg-inner-board {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: var(--wood-inner);
+      border-radius: 14px;
+      padding: 6px 4px;
+      border: 2px solid #361c0a;
+      box-shadow: inset 0 0 25px rgba(0,0,0,0.95);
+      position: relative;
+    }
+    .board-half {
+      display: flex;
+      justify-content: space-between;
+      height: 175px;
+      position: relative;
+    }
+    .board-side {
+      display: flex;
+      width: 45%;
+      height: 100%;
+      justify-content: space-around;
+      position: relative;
+    }
+    .point-col {
+      flex: 1;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+    .point-triangle {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.88;
+    }
+    .point-col.highlight-target {
+      background: rgba(0, 242, 254, 0.22);
+      border-radius: 6px;
+      box-shadow: 0 0 10px var(--cyan);
+    }
+    .point-col.highlight-selected {
+      background: rgba(245, 207, 98, 0.28);
+      border-radius: 6px;
+    }
+
+    /* چیدمان مهره‌ها */
+    .checkers-stack {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2px 0;
+    }
+    .point-col.top-half .checkers-stack {
+      justify-content: flex-start;
+    }
+    .point-col.bottom-half .checkers-stack {
+      justify-content: flex-end;
+    }
+    .checker {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.85), inset 0 1px 2px rgba(255,255,255,0.4);
+      margin: -3px 0;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .checker.white {
+      background: var(--checker-white);
+      color: #1a202c;
+      border: 1.5px solid #cbd5e1;
+    }
+    .checker.black {
+      background: var(--checker-black);
+      color: #f8fafc;
+      border: 1.5px solid #475569;
+    }
+    .checker.active-selectable {
+      box-shadow: 0 0 12px var(--gold);
+      transform: scale(1.08);
+      cursor: pointer;
+    }
+
+    /* پیشخوان وسط میز (Bar) */
+    .board-center-bar {
+      height: 38px;
+      background: linear-gradient(90deg, #2b170c 0%, #462615 50%, #2b170c 100%);
+      border: 2px solid #552f19;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      z-index: 5;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    }
+    .bar-zone {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .bar-title {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+
+    /* باکس تاس‌ها در وسط */
+    .dice-center-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .die-cube {
+      width: 32px;
+      height: 32px;
+      background: #ffffff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 900;
+      color: #111;
+      border: 1.5px solid #ccc;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.7);
+      transition: transform 0.2s;
+    }
+    .die-cube.used {
+      opacity: 0.35;
+      filter: grayscale(80%);
+    }
+    .die-cube.rolling {
+      animation: rollAnim 0.35s infinite alternate;
+    }
+    @keyframes rollAnim {
+      from { transform: rotate(-10deg) scale(0.95); }
+      to { transform: rotate(10deg) scale(1.05); }
+    }
+
+    /* انبار خروج مهره‌ها (Off Tray) */
+    .off-trays-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.5);
+      border-radius: 10px;
+      padding: 6px 12px;
+      margin-top: 6px;
+      font-size: 12px;
+    }
+    .off-tray-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* پنل کنترل شرط و پرتاب تاس */
+    .controls-card {
+      max-width: 390px;
+      margin: 8px auto 0;
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    }
+    .stakes-selector {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .btn-stake-pill {
+      flex: 1;
+      background: var(--card-inner);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text-muted);
+      padding: 6px 2px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-stake-pill.active {
+      background: var(--gold-gradient);
+      color: #170d00;
+      border-color: var(--gold);
+      font-weight: 900;
+    }
+    .action-btn-row {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-main-play {
+      flex: 2;
+      background: var(--gold-gradient);
+      color: #170d00;
+      border: none;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(212,175,55,0.4);
+    }
+    .btn-main-play:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+    .btn-pass-turn {
+      flex: 1;
+      background: var(--card-inner);
+      border: 1px solid var(--border);
+      color: var(--cyan);
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .btn-pass-turn:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    /* بنر تماشاچی */
+    .spectator-banner {
+      display: none;
+      background: rgba(0, 242, 254, 0.15);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 5px 12px;
+      border-radius: 10px;
+      font-weight: 900;
+      font-size: 12px;
+      margin-bottom: 6px;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .spectator-reactions {
+      display: none;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 8px;
+    }
+    .btn-react {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid var(--border);
+      font-size: 20px;
+      padding: 6px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    /* پاپ‌آپ‌ها */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.86);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      backdrop-filter: blur(5px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: radial-gradient(circle, #2d1445, #11051e);
+      border: 2px solid var(--gold);
+      border-radius: 20px;
+      padding: 20px 16px;
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+      box-shadow: 0 0 35px rgba(212,175,55,0.45);
+    }
+    .toast-msg {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient);
+      color: #1a1200;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 13px;
+      font-weight: 900;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      z-index: 100001;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
+  </style>
+</head>
+<body>
+  <div class="toast-msg" id="toast-msg">انجام شد!</div>
+
+  <!-- نوار بالای صفحه -->
+  <div class="top-bar">
+    <button class="btn-back" onclick="goBack()">🔙 بازگشت</button>
+    <div class="top-actions">
+      <button class="btn-top-util" onclick="openBreakModal()">🔨 ژتون‌ها</button>
+      <button class="btn-room" onclick="openRoomModal()">👥 اتاق دوستان</button>
+    </div>
+    <div class="chips-badge" onclick="window.location.href='../../swap/index.html'" title="ورود به صرافی">
+      🎰 <span id="user-chips-bal">۰</span> ژتون
+    </div>
+  </div>
+
+  <!-- بنر حالت تماشاچی -->
+  <div class="spectator-banner" id="spectator-banner">
+    <span>👀 شما در حال تماشای زنده بازی هستید (Spectator Mode)</span>
+  </div>
+
+  <!-- نوار مشخصات حریف و پات -->
+  <div class="game-info-bar">
+    <div class="player-pill">
+      <div class="player-mini-checker" style="background:var(--checker-black);"></div>
+      <span id="opp-name">ربات بهروز 🤖</span>
+      <span style="color:var(--text-muted);" id="opp-off-count">(خارج: ۰)</span>
+    </div>
+    <div class="pot-center-pill">
+      🏆 پات: <span id="pot-amount">۵۰</span> ژتون
+    </div>
+    <div class="player-pill">
+      <div class="player-mini-checker" style="background:var(--checker-white);"></div>
+      <span id="hero-name">شما 👤</span>
+      <span style="color:var(--text-muted);" id="hero-off-count">(خارج: ۰)</span>
+    </div>
+  </div>
+
+  <!-- قاب اصلی تخته نرد عمودی -->
+  <div class="bg-board-frame">
+    <div class="bg-inner-board">
+      
+      <!-- نیمه بالای تخته (خانه‌های ۱۲ تا ۲۳) -->
+      <div class="board-half top-half" id="top-board-half">
+        <div class="board-side left-side" id="side-top-left"></div>
+        <div class="board-side right-side" id="side-top-right"></div>
+      </div>
+
+      <!-- پیشخوان وسط و تاس‌ها (Bar) -->
+      <div class="board-center-bar">
+        <div class="bar-zone" id="bar-black-zone">
+          <span class="bar-title">خورده سیاه:</span>
+          <div id="bar-black-checkers"></div>
+        </div>
+        <!-- تاس‌ها در مرکز -->
+        <div class="dice-center-area">
+          <div class="die-cube" id="die-1">🎲</div>
+          <div class="die-cube" id="die-2">🎲</div>
+        </div>
+        <div class="bar-zone" id="bar-white-zone">
+          <span class="bar-title">خورده سفید:</span>
+          <div id="bar-white-checkers"></div>
+        </div>
+      </div>
+
+      <!-- نیمه پایین تخته (خانه‌های ۱۱ تا ۰) -->
+      <div class="board-half bottom-half" id="bottom-board-half">
+        <div class="board-side left-side" id="side-bottom-left"></div>
+        <div class="board-side right-side" id="side-bottom-right"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- انبار مهره‌های خارج شده -->
+  <div class="off-trays-container">
+    <div class="off-tray-item">
+      <span>⚪ مهره‌های خارج شده شما:</span>
+      <b style="color:var(--gold);" id="hero-borne-off">۰ / ۱۵</b>
+    </div>
+    <div class="off-tray-item">
+      <span>⚫ مهره‌های خارج شده حریف:</span>
+      <b style="color:#94a3b8;" id="opp-borne-off">۰ / ۱۵</b>
+    </div>
+  </div>
+
+  <!-- ری‌اکشن‌های تماشاچی -->
+  <div class="spectator-reactions" id="spectator-reactions">
+    <button class="btn-react" onclick="sendReaction('👏')">👏</button>
+    <button class="btn-react" onclick="sendReaction('🔥')">🔥</button>
+    <button class="btn-react" onclick="sendReaction('🎲')">🎲</button>
+    <button class="btn-react" onclick="sendReaction('😱')">😱</button>
+  </div>
+
+  <!-- پنل کنترل و گزینه‌های شرط‌بندی -->
+  <div class="controls-card" id="player-controls">
+    <div style="font-size:11.5px; color:var(--text-muted); margin-bottom:6px; font-weight:800;" id="turn-status-text">
+      میز خود را انتخاب کرده و برای شروع دست دکمه را بزنید
+    </div>
+    <!-- انتخاب میز شرط‌بندی -->
+    <div class="stakes-selector">
+      <button class="btn-stake-pill active" onclick="setTableStake(25, this)">۲۵ ژتون (برنز)</button>
+      <button class="btn-stake-pill" onclick="setTableStake(100, this)">۱۰۰ ژتون (نقره)</button>
+      <button class="btn-stake-pill" onclick="setTableStake(500, this)">۵۰۰ ژتون (طلا)</button>
+      <button class="btn-stake-pill" onclick="setTableStake(2000, this)">۲,۰۰۰ (VIP)</button>
+    </div>
+    <div class="action-btn-row">
+      <button class="btn-main-play" id="btn-roll" onclick="rollDiceAction()">🎲 پرتاب تاس و بازی</button>
+      <button class="btn-pass-turn" id="btn-pass" onclick="endTurnAction()" disabled>پایان نوبت ➔</button>
+    </div>
+  </div>
+
+  <!-- مودال اتاق دوستان و تماشاچی -->
+  <div class="modal-overlay" id="room-modal">
+    <div class="modal-box">
+      <h3 style="color:var(--gold); margin-bottom:6px;">👥 اتاق تخته نرد دونفره</h3>
+      <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+        لینک بازی اختصاصی را به دوست خود بدهید تا دوئل کنید یا دوستانتان به عنوان تماشاچی وارد شوند:
+      </p>
+      <div style="background:#170928; border:1px dashed var(--gold); border-radius:10px; padding:10px; margin-bottom:12px; font-weight:bold; color:var(--cyan);" id="room-code-tag">
+        کد میز: BG-7020
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px; margin-bottom:12px;">
+        <button class="btn-main-play" style="padding:10px; font-size:13px;" onclick="shareMatchLink()">🚀 دعوت از حریف (بازی ۲ نفره)</button>
+        <button class="btn-main-play" style="background:var(--card-inner); color:var(--cyan); border:1px solid var(--border); padding:10px; font-size:13px;" onclick="shareSpectatorLink()">👀 لینک تماشاچی (دیدن زنده)</button>
+      </div>
+      <button class="btn-pass-turn" style="width:100%; padding:10px;" onclick="closeRoomModal()">بستن ✕</button>
+    </div>
+  </div>
+
+  <!-- مودال پایان بازی -->
+  <div class="modal-overlay" id="game-result-modal">
+    <div class="modal-box">
+      <div style="font-size:46px; margin-bottom:6px;" id="res-icon">🏆</div>
+      <h2 style="color:var(--gold); font-size:18px; margin-bottom:6px;" id="res-title">پایان بازی</h2>
+      <p style="font-size:13.5px; line-height:1.6; margin-bottom:16px;" id="res-desc">نتیجه دست مشخص شد.</p>
+      <button class="btn-main-play" style="width:100%;" onclick="closeResultModal()">دست بعدی 🎲</button>
+    </div>
+  </div>
+
+  <script>
+    // ================= ۱. تنظیمات تلگرام و شناسه =================
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(goBack);
+        }
+        if (tg.initDataUnsafe?.user?.first_name) {
+          document.getElementById('hero-name').innerText = tg.initDataUnsafe.user.first_name + ' 👤';
+        }
+      }
+    } catch(e) {}
+
+    let uid = "702007470";
+    try {
+      if (tg?.initDataUnsafe?.user?.id) {
+        uid = tg.initDataUnsafe.user.id.toString();
+      }
+    } catch(e) {}
+
+    function goBack() {
+      try { localStorage.setItem('simab_active_tab', 'games'); } catch(e) {}
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = '../../index.html';
+    }
+
+    // ================= ۲. اتصال ابری به ژتون‌ها (هماهنگ با تلگرام) =================
+    const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
+    const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
+    const isCloudSupported = !!(tg && tg.CloudStorage);
+
+    let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
+    let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
+    try {
+      const savedInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
+      if (savedInv) chipInventory = savedInv;
+    } catch(e) {}
+
+    function standardBreakdown(amount) {
+      let rem = Math.floor(amount);
+      const c1 = (rem >= 20) ? 20 : rem; rem -= c1 * 1;
+      const c5 = (rem >= 80) ? 16 : Math.floor(rem / 5); rem -= c5 * 5;
+      const c25 = (rem >= 400) ? 16 : Math.floor(rem / 25); rem -= c25 * 25;
+      const c100 = (rem >= 2000) ? 20 : Math.floor(rem / 100); rem -= c100 * 100;
+      const c500 = Math.floor(rem / 500); rem -= c500 * 500;
+      let extra100 = Math.floor(rem / 100); rem %= 100;
+      let extra25 = Math.floor(rem / 25); rem %= 25;
+      let extra5 = Math.floor(rem / 5); rem %= 5;
+      let extra1 = rem;
+      return { c1: c1 + extra1, c5: c5 + extra5, c25: c25 + extra25, c100: c100 + extra100, c500: c500 };
+    }
+
+    function calcTotalChips() {
+      return (chipInventory.c1 * 1) + (chipInventory.c5 * 5) + (chipInventory.c25 * 25) + (chipInventory.c100 * 100) + (chipInventory.c500 * 500);
+    }
+
+    if (totalChips > 0 && calcTotalChips() !== totalChips) {
+      chipInventory = standardBreakdown(totalChips);
+      localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
+    }
+
+    function renderChipsUI() {
+      document.getElementById('user-chips-bal').innerText = totalChips.toLocaleString('fa-IR');
+    }
+
+    function saveChips() {
+      totalChips = calcTotalChips();
+      localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
+      localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
+      renderChipsUI();
+
+      let currentCoins = 50;
+      try {
+        currentCoins = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+      } catch(e) {}
+
+      const payload = {
+        coins: currentCoins,
+        chips: totalChips,
+        inv: chipInventory,
+        updated_at: Date.now()
+      };
+
+      localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
+
+      if (isCloudSupported) {
+        tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload), (err) => {
+          if (err) console.warn('Cloud save error in backgammon:', err);
+        });
+      }
+    }
+
+    function deductChips(amount) {
+      if (totalChips < amount) return false;
+      let rem = amount;
+      const denoms = [
+        { k: 'c500', v: 500 }, { k: 'c100', v: 100 }, { k: 'c25', v: 25 }, { k: 'c5', v: 5 }, { k: 'c1', v: 1 }
+      ];
+      for (let d of denoms) {
+        if (rem <= 0) break;
+        let take = Math.min(chipInventory[d.k], Math.floor(rem / d.v));
+        chipInventory[d.k] -= take;
+        rem -= take * d.v;
+      }
+      if (rem > 0) {
+        for (let d of denoms.reverse()) {
+          if (d.v > rem && chipInventory[d.k] > 0) {
+            chipInventory[d.k] -= 1;
+            let change = d.v - rem;
+            let c100 = Math.floor(change / 100); change %= 100;
+            let c25 = Math.floor(change / 25); change %= 25;
+            let c5 = Math.floor(change / 5); change %= 5;
+            let c1 = change;
+            chipInventory.c100 += c100;
+            chipInventory.c25 += c25;
+            chipInventory.c5 += c5;
+            chipInventory.c1 += c1;
+            rem = 0;
+            break;
+          }
+        }
+      }
+      saveChips();
+      return true;
+    }
+
+    function addChips(amount) {
+      const b = standardBreakdown(amount);
+      chipInventory.c1 += b.c1;
+      chipInventory.c5 += b.c5;
+      chipInventory.c25 += b.c25;
+      chipInventory.c100 += b.c100;
+      chipInventory.c500 += b.c500;
+      saveChips();
+    }
+
+    function syncWithTelegramCloud() {
+      if (!isCloudSupported) return;
+      tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
+        if (err || !cloudRaw) return;
+        try {
+          const cloudData = JSON.parse(cloudRaw);
+          const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
+          if (cloudData.updated_at && cloudData.updated_at >= localTime) {
+            if (typeof cloudData.chips === 'number') {
+              totalChips = cloudData.chips;
+              localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
+            }
+            if (cloudData.inv) {
+              chipInventory = cloudData.inv;
+              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
+            }
+            localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
+            renderChipsUI();
+          }
+        } catch(e) {}
+      });
+    }
+
+    syncWithTelegramCloud();
+    renderChipsUI();
+
+    // ================= ۳. موتور صوتی Web Audio API =================
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) {
+        try {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContext();
+        } catch(e) {}
+      }
+      if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playTone(freq, type, duration, vol = 0.08) {
+      initAudio();
+      if (!audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch(e) {}
+    }
+
+    function playDiceSound() {
+      playTone(320, 'square', 0.08, 0.09);
+      setTimeout(() => playTone(240, 'triangle', 0.12, 0.08), 80);
+    }
+    function playMoveSound() {
+      playTone(480, 'sine', 0.09, 0.09);
+    }
+    function playHitSound() {
+      playTone(130, 'sawtooth', 0.25, 0.15);
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('warning');
+    }
+    function playWinSound() {
+      playTone(523, 'triangle', 0.18);
+      setTimeout(() => playTone(659, 'triangle', 0.2), 120);
+      setTimeout(() => playTone(784, 'triangle', 0.25), 240);
+      setTimeout(() => playTone(1046, 'triangle', 0.4), 380);
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // ================= ۴. تخته و موقعیت مهره‌ها =================
+    // ۲۴ خانه استاندارد: ۰ تا ۲۳
+    // بازیکن سفید (شما): حرکت از ۲۳ به سمت ۰ (خانه پایانی: ۵ تا ۰)
+    // بازیکن سیاه (حریف): حرکت از ۰ به سمت ۲۳ (خانه پایانی: ۱۸ تا ۲۳)
+    let board = [];
+    let barWhite = 0;
+    let barBlack = 0;
+    let offWhite = 0;
+    let offBlack = 0;
+
+    let currentBet = 25;
+    let pot = 50;
+    let dice = [];
+    let availableMoves = [];
+    let selectedPoint = null;
+    let turn = 'white'; // 'white' (Hero) or 'black' (Bot)
+    let gameActive = false;
+    let isSpectator = false;
+
+    // چیدمان استاندارد تخته نرد ۲-۵-۳-۵
+    function initBoard() {
+      board = Array(24).fill(null).map(() => ({ count: 0, color: null }));
+      
+      // سفید (Hero):
+      board[23] = { count: 2, color: 'white' };
+      board[12] = { count: 5, color: 'white' };
+      board[7]  = { count: 3, color: 'white' };
+      board[5]  = { count: 5, color: 'white' };
+
+      // سیاه (Bot):
+      board[0]  = { count: 2, color: 'black' };
+      board[11] = { count: 5, color: 'black' };
+      board[16] = { count: 3, color: 'black' };
+      board[18] = { count: 5, color: 'black' };
+
+      barWhite = 0;
+      barBlack = 0;
+      offWhite = 0;
+      offBlack = 0;
+      selectedPoint = null;
+      dice = [];
+      availableMoves = [];
+    }
+
+    // تولید کدهای گرافیکی خانه‌ها
+    function renderBoardDOM() {
+      const sTopLeft = document.getElementById('side-top-left');
+      const sTopRight = document.getElementById('side-top-right');
+      const sBotLeft = document.getElementById('side-bottom-left');
+      const sBotRight = document.getElementById('side-bottom-right');
+
+      sTopLeft.innerHTML = '';
+      sTopRight.innerHTML = '';
+      sBotLeft.innerHTML = '';
+      sBotRight.innerHTML = '';
+
+      // ۱۲ تا ۱۷ (چپ بالا) و ۱۸ تا ۲۳ (راست بالا)
+      for (let i = 12; i <= 17; i++) sTopLeft.appendChild(createPointDOM(i, true));
+      for (let i = 18; i <= 23; i++) sTopRight.appendChild(createPointDOM(i, true));
+
+      // ۱۱ تا ۶ (چپ پایین) و ۵ تا ۰ (راست پایین)
+      for (let i = 11; i >= 6; i--) sBotLeft.appendChild(createPointDOM(i, false));
+      for (let i = 5; i >= 0; i--) sBotRight.appendChild(createPointDOM(i, false));
+
+      updateCheckersDOM();
+    }
+
+    function createPointDOM(idx, isTop) {
+      const col = document.createElement('div');
+      col.className = `point-col ${isTop ? 'top-half' : 'bottom-half'}`;
+      col.id = `point-${idx}`;
+      col.onclick = () => onPointClick(idx);
+
+      const isEven = (idx % 2 === 0);
+      const color1 = isEven ? '#6b2d12' : '#d4af37';
+      const color2 = isEven ? '#381406' : '#8c6e1d';
+
+      col.innerHTML = `
+        <svg class="point-triangle" viewBox="0 0 40 160" preserveAspectRatio="none">
+          <polygon points="${isTop ? '0,0 40,0 20,160' : '0,160 40,160 20,0'}" fill="${color1}" stroke="${color2}" stroke-width="1"/>
+        </svg>
+        <div class="checkers-stack" id="stack-${idx}"></div>
+      `;
+      return col;
+    }
+
+    function updateCheckersDOM() {
+      for (let i = 0; i < 24; i++) {
+        const stackEl = document.getElementById(`stack-${i}`);
+        if (!stackEl) continue;
+        stackEl.innerHTML = '';
+
+        const p = board[i];
+        if (p.count > 0 && p.color) {
+          const isTop = (i >= 12);
+          const showMax = 5;
+          const displayCount = Math.min(p.count, showMax);
+
+          for (let c = 0; c < displayCount; c++) {
+            const el = document.createElement('div');
+            el.className = `checker ${p.color}`;
+            if (c === displayCount - 1 && p.count > showMax) {
+              el.innerText = p.count;
+            }
+            if (p.color === 'white' && turn === 'white' && barWhite === 0) {
+              el.classList.add('active-selectable');
+            }
+            stackEl.appendChild(el);
+          }
+        }
+      }
+
+      // پیشخوان بار
+      const bwEl = document.getElementById('bar-white-checkers');
+      bwEl.innerHTML = '';
+      if (barWhite > 0) {
+        const el = document.createElement('div');
+        el.className = 'checker white active-selectable';
+        el.innerText = barWhite;
+        el.onclick = () => onBarClick('white');
+        bwEl.appendChild(el);
+      }
+
+      const bbEl = document.getElementById('bar-black-checkers');
+      bbEl.innerHTML = '';
+      if (barBlack > 0) {
+        const el = document.createElement('div');
+        el.className = 'checker black';
+        el.innerText = barBlack;
+        bbEl.appendChild(el);
+      }
+
+      // مهره‌های خارج شده
+      document.getElementById('hero-borne-off').innerText = `${offWhite} / ۱۵`;
+      document.getElementById('opp-borne-off').innerText = `${offBlack} / ۱۵`;
+      document.getElementById('hero-off-count').innerText = `(خارج: ${offWhite})`;
+      document.getElementById('opp-off-count').innerText = `(خارج: ${offBlack})`;
+    }
+
+    // ================= ۵. تعامل کاربر، تاس و حرکت =================
+    function setTableStake(amt, btn) {
+      if (gameActive) return;
+      currentBet = amt;
+      pot = amt * 2;
+      document.getElementById('pot-amount').innerText = pot.toLocaleString('fa-IR');
+      document.querySelectorAll('.btn-stake-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    function rollDiceAction() {
+      if (isSpectator) return;
+      if (!gameActive) {
+        if (totalChips < currentBet) {
+          showToast(`ژتون شما کافی نیست! حداقل ${currentBet} ژتون نیاز است.`);
+          setTimeout(() => { window.location.href = '../../swap/index.html'; }, 1500);
+          return;
+        }
+        deductChips(currentBet);
+        initBoard();
+        renderBoardDOM();
+        gameActive = true;
+        document.getElementById('pot-amount').innerText = pot.toLocaleString('fa-IR');
+      }
+
+      playDiceSound();
+      const d1El = document.getElementById('die-1');
+      const d2El = document.getElementById('die-2');
+      d1El.classList.add('rolling');
+      d2El.classList.add('rolling');
+
+      setTimeout(() => {
+        d1El.classList.remove('rolling');
+        d2El.classList.remove('rolling');
+
+        const v1 = Math.floor(Math.random() * 6) + 1;
+        const v2 = Math.floor(Math.random() * 6) + 1;
+        const diceGlyphs = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+        d1El.innerText = diceGlyphs[v1];
+        d2El.innerText = diceGlyphs[v2];
+        d1El.classList.remove('used');
+        d2El.classList.remove('used');
+
+        dice = (v1 === v2) ? [v1, v1, v1, v1] : [v1, v2];
+        availableMoves = [...dice];
+
+        document.getElementById('btn-roll').disabled = true;
+        document.getElementById('btn-pass').disabled = false;
+        document.getElementById('turn-status-text').innerText = `تاس‌های شما: ${v1} و ${v2} — مهره را لمس کنید`;
+      }, 400);
+    }
+
+    function onBarClick(color) {
+      if (turn !== 'white' || barWhite === 0) return;
+      selectedPoint = 'bar';
+      highlightValidTargetsFrom('bar');
+    }
+
+    function onPointClick(idx) {
+      if (turn !== 'white' || availableMoves.length === 0) return;
+
+      if (selectedPoint !== null) {
+        const destPoint = idx;
+        const moveDist = (selectedPoint === 'bar') ? (24 - destPoint) : (selectedPoint - destPoint);
+
+        const moveIdx = availableMoves.indexOf(moveDist);
+        if (moveIdx !== -1 && isValidMove('white', selectedPoint, destPoint)) {
+          executeMove('white', selectedPoint, destPoint, moveDist);
+          clearHighlights();
+          selectedPoint = null;
+          updateCheckersDOM();
+          checkPostMove();
+          return;
+        }
+      }
+
+      if (barWhite > 0) {
+        showToast('ابتدا باید مهره خورده‌شده از پیشخوان را وارد بازی کنید!');
+        return;
+      }
+
+      if (board[idx].color === 'white' && board[idx].count > 0) {
+        selectedPoint = idx;
+        highlightValidTargetsFrom(idx);
+      } else {
+        clearHighlights();
+        selectedPoint = null;
+      }
+    }
+
+    function isValidMove(color, from, to) {
+      if (color === 'white') {
+        if (to < 0) {
+          return canBearOff('white');
+        }
+        if (to >= 24) return false;
+        const target = board[to];
+        if (target.color === 'black' && target.count > 1) return false;
+        return true;
+      }
+      return false;
+    }
+
+    function canBearOff(color) {
+      if (color === 'white') {
+        if (barWhite > 0) return false;
+        for (let i = 6; i < 24; i++) {
+          if (board[i].color === 'white' && board[i].count > 0) return false;
+        }
+        return true;
+      }
+      return false;
+    }
+
+    function highlightValidTargetsFrom(from) {
+      clearHighlights();
+      if (from !== 'bar') {
+        const pEl = document.getElementById(`point-${from}`);
+        if (pEl) pEl.classList.add('highlight-selected');
+      }
+
+      availableMoves.forEach(step => {
+        let dest = (from === 'bar') ? (24 - step) : (from - step);
+        if (dest >= 0 && isValidMove('white', from, dest)) {
+          const dEl = document.getElementById(`point-${dest}`);
+          if (dEl) dEl.classList.add('highlight-target');
+        }
+      });
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll('.point-col').forEach(c => {
+        c.classList.remove('highlight-selected', 'highlight-target');
+      });
+    }
+
+    function executeMove(color, from, to, distUsed) {
+      if (color === 'white') {
+        if (from === 'bar') barWhite--;
+        else {
+          board[from].count--;
+          if (board[from].count === 0) board[from].color = null;
+        }
+
+        if (to >= 0) {
+          if (board[to].color === 'black' && board[to].count === 1) {
+            board[to].count = 0;
+            board[to].color = null;
+            barBlack++;
+            playHitSound();
+            showToast('مهره حریف را زدید! 💥');
+          } else {
+            playMoveSound();
+          }
+          board[to].count++;
+          board[to].color = 'white';
+        } else {
+          offWhite++;
+          playMoveSound();
+          showToast('یک مهره با موفقیت خارج شد! ✨');
+        }
+
+        const mIdx = availableMoves.indexOf(distUsed);
+        if (mIdx !== -1) availableMoves.splice(mIdx, 1);
+      }
+    }
+
+    function checkPostMove() {
+      if (offWhite >= 15) {
+        winGame('white');
+        return;
+      }
+      if (availableMoves.length === 0) {
+        endTurnAction();
+      }
+    }
+
+    function endTurnAction() {
+      clearHighlights();
+      selectedPoint = null;
+      availableMoves = [];
+      document.getElementById('btn-roll').disabled = true;
+      document.getElementById('btn-pass').disabled = true;
+
+      turn = 'black';
+      document.getElementById('turn-status-text').innerText = 'ربات در حال ریختن تاس و حرکت... 🤖';
+      setTimeout(botTurn, 1000);
+    }
+
+    // ================= ۶. هوش مصنوعی ربات (Bot AI) =================
+    function botTurn() {
+      playDiceSound();
+      const b1 = Math.floor(Math.random() * 6) + 1;
+      const b2 = Math.floor(Math.random() * 6) + 1;
+      const bDice = (b1 === b2) ? [b1, b1, b1, b1] : [b1, b2];
+
+      document.getElementById('turn-status-text').innerText = `تاس ربات: ${b1} و ${b2}`;
+
+      setTimeout(() => {
+        bDice.forEach(step => {
+          botStepMove(step);
+        });
+        updateCheckersDOM();
+
+        if (offBlack >= 15) {
+          winGame('black');
+          return;
+        }
+
+        turn = 'white';
+        document.getElementById('btn-roll').disabled = false;
+        document.getElementById('turn-status-text').innerText = 'نوبت شماست؛ تاس بریزید!';
+      }, 900);
+    }
+
+    function botStepMove(step) {
+      if (barBlack > 0) {
+        let dest = step - 1;
+        if (board[dest].color !== 'white' || board[dest].count <= 1) {
+          barBlack--;
+          if (board[dest].color === 'white' && board[dest].count === 1) {
+            board[dest].count = 0;
+            board[dest].color = null;
+            barWhite++;
+            playHitSound();
+          }
+          board[dest].count++;
+          board[dest].color = 'black';
+          return;
+        }
+      }
+
+      for (let i = 0; i < 24; i++) {
+        if (board[i].color === 'black' && board[i].count > 0) {
+          let dest = i + step;
+          if (dest < 24 && (board[dest].color !== 'white' || board[dest].count <= 1)) {
+            board[i].count--;
+            if (board[i].count === 0) board[i].color = null;
+
+            if (board[dest].color === 'white' && board[dest].count === 1) {
+              board[dest].count = 0;
+              board[dest].color = null;
+              barWhite++;
+              playHitSound();
+            }
+            board[dest].count++;
+            board[dest].color = 'black';
+            return;
+          } else if (dest >= 24) {
+            board[i].count--;
+            if (board[i].count === 0) board[i].color = null;
+            offBlack++;
+            return;
+          }
+        }
+      }
+    }
+
+    function winGame(winner) {
+      gameActive = false;
+      document.getElementById('btn-roll').disabled = false;
+      document.getElementById('btn-pass').disabled = true;
+
+      const isGammon = (winner === 'white') ? (offBlack === 0) : (offWhite === 0);
+      const mult = isGammon ? 2 : 1;
+      const winPayout = pot * mult;
+
+      if (winner === 'white') {
+        addChips(winPayout);
+        playWinSound();
+        showResultModal('🏆 پیروزی درخشان!', `تبریک! شما برنده شدید ${isGammon ? '(مارس با ضریب ۲ برابر!)' : ''} و مبلغ ${winPayout.toLocaleString('fa-IR')} ژتون به صندوق شما اضافه شد!`, '🎉');
+      } else {
+        showResultModal('🃏 پایان دست', `ربات بهروز برنده شد ${isGammon ? '(شما مارس شدید)' : ''}. دوباره شانس خود را امتحان کنید!`, '🤖');
+      }
+    }
+
+    function showResultModal(title, desc, icon) {
+      document.getElementById('res-icon').innerText = icon;
+      document.getElementById('res-title').innerText = title;
+      document.getElementById('res-desc').innerText = desc;
+      document.getElementById('game-result-modal').classList.add('open');
+    }
+    function closeResultModal() {
+      document.getElementById('game-result-modal').classList.remove('open');
+    }
+
+    // ================= ۷. اتاق دوستان و حالت تماشاچی =================
+    function openRoomModal() {
+      document.getElementById('room-modal').classList.add('open');
+    }
+    function closeRoomModal() {
+      document.getElementById('room-modal').classList.remove('open');
+    }
+    function openBreakModal() {
+      showToast('برای خرد یا تجمیع ژتون‌ها وارد صرافی شوید.');
+      setTimeout(() => { window.location.href = '../../swap/index.html'; }, 1000);
+    }
+
+    function shareMatchLink() {
+      const roomId = 'bg_' + uid.slice(0, 5);
+      const url = `https://t.me/SimorApp_bot?startapp=${roomId}`;
+      const msg = `تخته‌باز قهاری هستی؟ وارد بازی شو تا سر ۲۵ ژتون با هم رقابت کنیم! 🎲:\n${url}`;
+      if (tg?.openTelegramLink) tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(msg)}`);
+      else { navigator.clipboard.writeText(url); showToast('لینک اتاق کپی شد!'); }
+    }
+
+    function shareSpectatorLink() {
+      const roomId = 'bg_watch_' + uid.slice(0, 5);
+      const url = `https://t.me/SimorApp_bot?startapp=${roomId}`;
+      const msg = `بیا بازی تخته نرد مرا به صورت زنده تماشا کن! 👀:\n${url}`;
+      if (tg?.openTelegramLink) tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(msg)}`);
+      else { navigator.clipboard.writeText(url); showToast('لینک تماشاچی کپی شد!'); }
+    }
+
+    if (window.location.search.includes('watch') || window.location.hash.includes('watch')) {
+      isSpectator = true;
+      document.getElementById('spectator-banner').style.display = 'flex';
+      document.getElementById('spectator-reactions').style.display = 'flex';
+      document.getElementById('player-controls').style.display = 'none';
+    }
+
+    function sendReaction(emoji) {
+      playTone(540, 'triangle', 0.1);
+      showToast(`ری‌اکشن ارسال شد: ${emoji}`);
+    }
+
+    // شروع و چیدمان اولیه
+    initBoard();
+    renderBoardDOM();
+  </script>
+</body>
+</html>
