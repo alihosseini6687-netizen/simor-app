@@ -462,12 +462,23 @@
     };
 
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    const CLOUD_KEY_COINS = 'simab_user_coins';
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
-
     let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
     let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
 
+    // تابع ذخیره قطعی سکه در حافظه دستگاه و سرور ابری تلگرام
+    function saveCoinsGlobal(newBal) {
+      balance = parseFloat(Number(newBal).toFixed(4));
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      if (tg?.CloudStorage) {
+        tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString(), (err) => {
+          if (err) console.warn('Cloud save error:', err);
+        });
+      }
+    }
     // آبجکت تفکیک فیزیکی ژتون‌ها
     let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
     try {
