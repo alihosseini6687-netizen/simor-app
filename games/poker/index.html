@@ -667,16 +667,17 @@
 
     function openPrivateRoomModal() { document.getElementById('private-room-modal').classList.add('open'); }
     function closePrivateRoomModal() { document.getElementById('private-room-modal').classList.remove('open'); }
+    // اصلاح آدرس ربات تلگرام به @SimorApp_bot
     function shareRoomLink() {
       const roomId = 'poker_' + uid.slice(0, 5);
-      const shareUrl = `https://t.me/SimorMiniApp_bot?startapp=${roomId}`;
+      const shareUrl = `https://t.me/SimorApp_bot?startapp=${roomId}`;
       const text = `بیا با هم پوکر بزنیم! وارد میز من شو:`;
       if (tg?.openTelegramLink) tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(text)}`);
       else { navigator.clipboard.writeText(shareUrl); alert('لینک دعوت کپی شد!'); }
     }
     function copyRoomLink() {
       const roomId = 'poker_' + uid.slice(0, 5);
-      navigator.clipboard.writeText(`https://t.me/SimorMiniApp_bot?startapp=${roomId}`);
+      navigator.clipboard.writeText(`https://t.me/SimorApp_bot?startapp=${roomId}`);
       alert('لینک دعوت در کلیپ‌بورد کپی شد!');
     }
 
@@ -686,7 +687,6 @@
       { r: '6', v: 6 }, { r: '7', v: 7 }, { r: '8', v: 8 }, { r: '9', v: 9 },
       { r: '10', v: 10 }, { r: 'J', v: 11 }, { r: 'Q', v: 12 }, { r: 'K', v: 13 }, { r: 'A', v: 14 }
     ];
-
     let deck = [];
     let pot = 0;
     let stage = 0;
@@ -694,7 +694,8 @@
     let selectedRaiseAmt = 4;
     let communityCards = [];
 
-    let pHero = { id: 'hero', name: 'شما', bet: 0, folded: false, cards: [] };
+    // اضافه شدن وضعیت isAllIn برای قفل کردن دکمه‌ها پس از آل-این
+    let pHero = { id: 'hero', name: 'شما', bet: 0, folded: false, isAllIn: false, cards: [] };
     let pBot1 = { id: 'bot1', name: 'مسعود', bet: 0, folded: false, cards: [] };
     let pBot2 = { id: 'bot2', name: 'سارا', bet: 0, folded: false, cards: [] };
     let pBot3 = { id: 'bot3', name: 'آریا', bet: 0, folded: false, cards: [] };
@@ -712,13 +713,11 @@
       wrap.style.display = 'block';
       fill.style.width = '100%';
       document.getElementById('hero-avatar').classList.add('active-turn');
-
       turnTimerInterval = setInterval(() => {
         turnTimeLeft--;
         const pct = (turnTimeLeft / 15) * 100;
         fill.style.width = `${pct}%`;
         document.getElementById('status-text').innerText = `⏱ نوبت شماست (${turnTimeLeft} ثانیه)`;
-
         if (turnTimeLeft <= 0) {
           clearInterval(turnTimerInterval);
           wrap.style.display = 'none';
@@ -777,11 +776,17 @@
       document.getElementById('btn-raise').innerText = `All-in (${selectedRaiseAmt} ژتون)`;
     }
 
+    // رفع باگ آل-این: اگر بازیکن آل-این کرده باشد دکمه کال دیگر فعال نمی‌شود
     function setButtonsState() {
-      if (pHero.folded) {
+      if (pHero.folded || pHero.isAllIn || totalChips <= 0) {
         disableAllButtons();
+        if (pHero.isAllIn) {
+          document.getElementById('status-text').innerText = 'شما All-in هستید — در حال رو شدن خودکار کارت‌ها... 👀';
+          setTimeout(runBotTurnsSequence, 1000);
+        }
         return;
       }
+
       const toCall = currentHighestBet - pHero.bet;
       document.getElementById('btn-fold').disabled = false;
       if (toCall <= 0) {
@@ -791,7 +796,8 @@
       } else {
         document.getElementById('btn-check').disabled = true;
         document.getElementById('btn-call').disabled = false;
-        document.getElementById('btn-call').innerText = `کال (${toCall} ژتون)`;
+        const callAmt = Math.min(totalChips, toCall);
+        document.getElementById('btn-call').innerText = `کال (${callAmt} ژتون)`;
       }
       document.getElementById('btn-raise').disabled = (totalChips <= toCall);
       document.getElementById('btn-raise').innerText = `افزایش (+${selectedRaiseAmt} ژتون)`;
@@ -873,14 +879,12 @@
       stage = 0;
       currentHighestBet = 2;
       selectedRaiseAmt = 4;
-
-      pHero = { id: 'hero', name: 'شما', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
+      pHero = { id: 'hero', name: 'شما', bet: 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
       pBot1 = { id: 'bot1', name: 'مسعود', bet: 1, folded: false, cards: [deck.pop(), deck.pop()] };
       pBot2 = { id: 'bot2', name: 'سارا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
       pBot3 = { id: 'bot3', name: 'آریا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
       pBot4 = { id: 'bot4', name: 'نیما', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
       pBot5 = { id: 'bot5', name: 'رضا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
-
       communityCards = [deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop()];
 
       deductChipsFromInventory(2);
@@ -903,7 +907,6 @@
 
     function userAction(action) {
       disableAllButtons();
-
       if (action === 'fold') {
         pHero.folded = true;
         document.getElementById('act-user').innerText = 'فولد ✕';
@@ -917,22 +920,35 @@
         document.getElementById('act-user').style.color = '#5ac8fa';
       } else if (action === 'call') {
         const toCall = currentHighestBet - pHero.bet;
-        deductChipsFromInventory(toCall);
-        pot += toCall;
-        pHero.bet += toCall;
-        document.getElementById('act-user').innerText = `کال (${toCall} ژتون)`;
-        document.getElementById('act-user').style.color = '#34c759';
+        const actualCall = Math.min(totalChips, toCall);
+        deductChipsFromInventory(actualCall);
+        pot += actualCall;
+        pHero.bet += actualCall;
+        if (totalChips === 0) {
+          pHero.isAllIn = true;
+          document.getElementById('act-user').innerText = 'آل-این (All-in) 👑';
+          document.getElementById('act-user').style.color = '#ffd700';
+        } else {
+          document.getElementById('act-user').innerText = `کال (${actualCall} ژتون)`;
+          document.getElementById('act-user').style.color = '#34c759';
+        }
       } else if (action === 'raise') {
-        const toCall = currentHighestBet - pHero.bet;
+        const toCall = Math.max(0, currentHighestBet - pHero.bet);
         let actualRaise = selectedRaiseAmt;
         if (totalChips < toCall + actualRaise) actualRaise = Math.max(1, totalChips - toCall);
-        const totalCost = toCall + actualRaise;
+        const totalCost = Math.min(totalChips, toCall + actualRaise);
         deductChipsFromInventory(totalCost);
         pot += totalCost;
         pHero.bet += totalCost;
         currentHighestBet = pHero.bet;
-        document.getElementById('act-user').innerText = `افزایش (+${actualRaise} ژتون)`;
-        document.getElementById('act-user').style.color = '#ffd700';
+        if (totalChips === 0) {
+          pHero.isAllIn = true;
+          document.getElementById('act-user').innerText = `All-in (+${totalCost} ژتون) 👑`;
+          document.getElementById('act-user').style.color = '#ffd700';
+        } else {
+          document.getElementById('act-user').innerText = `افزایش (+${actualRaise} ژتون)`;
+          document.getElementById('act-user').style.color = '#ffd700';
+        }
       }
 
       updateTableUI();
@@ -942,16 +958,13 @@
 
     async function runBotTurnsSequence() {
       const activeBots = getActiveBots();
-
       for (let bot of activeBots) {
         if (bot.folded) continue;
-
         const avatar = document.getElementById(`avatar-${bot.id}`);
         const actEl = document.getElementById(`act-${bot.id}`);
         if (avatar) avatar.classList.add('active-turn');
         actEl.innerText = 'تفکر...';
         actEl.style.color = '#00f2fe';
-
         await new Promise(r => setTimeout(r, 600));
 
         let act = 'check';
@@ -989,7 +1002,6 @@
           actEl.innerText = `افزایش (+${raiseAmt} ژتون)`;
           actEl.style.color = '#ffd700';
         }
-
         if (avatar) avatar.classList.remove('active-turn');
         updateTableUI();
       }
@@ -997,17 +1009,18 @@
       stage++;
       updateTableUI();
 
+      // رو شدن خودکار ورق‌ها در صورت فولد یا آل-این بازیکن
       if (stage === 1) {
         document.getElementById('status-text').innerText = 'مرحله Flop (۳ کارت زمین رو شد)';
-        if (!pHero.folded) setButtonsState();
+        if (!pHero.folded && !pHero.isAllIn) setButtonsState();
         else setTimeout(runBotTurnsSequence, 1100);
       } else if (stage === 2) {
         document.getElementById('status-text').innerText = 'مرحله Turn (کارت چهارم رو شد)';
-        if (!pHero.folded) setButtonsState();
+        if (!pHero.folded && !pHero.isAllIn) setButtonsState();
         else setTimeout(runBotTurnsSequence, 1100);
       } else if (stage === 3) {
         document.getElementById('status-text').innerText = 'مرحله River (کارت پنجم رو شد)';
-        if (!pHero.folded) setButtonsState();
+        if (!pHero.folded && !pHero.isAllIn) setButtonsState();
         else setTimeout(runBotTurnsSequence, 1100);
       } else {
         stage = 4;
