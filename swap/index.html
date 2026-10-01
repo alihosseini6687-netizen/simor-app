@@ -470,14 +470,15 @@
 
     // تابع ذخیره قطعی سکه در حافظه دستگاه و سرور ابری تلگرام
     function saveCoinsGlobal(newBal) {
-      balance = parseFloat(Number(newBal).toFixed(4));
-      saveCoinsGlobal(balance);
-      if (tg?.CloudStorage) {
-        tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString(), (err) => {
-          if (err) console.warn('Cloud save error:', err);
-        });
-      }
-    }
+  balance = parseFloat(Number(newBal).toFixed(4));
+  localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+  localStorage.setItem('user_balance', balance.toString());
+  if (tg?.CloudStorage) {
+    tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString(), (err) => {
+      if (err) console.warn('Cloud save error:', err);
+    });
+  }
+}
     // آبجکت تفکیک فیزیکی ژتون‌ها
     let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
     try {
