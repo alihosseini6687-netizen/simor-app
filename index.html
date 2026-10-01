@@ -735,8 +735,59 @@
     }
 
     renderGames();
-    // همیشه در ورود اول در تب خانه باز شود
-    switchNavTab('home');
+
+    // ۱. بازگشت هوشمند به سربرگ قبلی (تسک‌ها یا بازی‌ها) به جای پرتاب اجباری به خانه
+    const savedActiveTab = localStorage.getItem('simab_active_tab') || 'home';
+    switchNavTab(savedActiveTab);
+
+    // ذخیره خودکار سربرگ فعال در هر بار کلیک کاربر روی منوی پایین
+    const origSwitchNavTab = switchNavTab;
+    switchNavTab = function(tab) {
+      try { localStorage.setItem('simab_active_tab', tab); } catch(e) {}
+      origSwitchNavTab(tab);
+    };
+
+    // ۲. پردازش و فعال‌سازی کدهای ورودی تلگرام (لینک‌های هدیه ادمین و کدهای رفرال دعوت دوستان)
+    function processStartParams() {
+      let startParam = tg?.initDataUnsafe?.start_param;
+      if (!startParam) {
+        const urlParams = new URLSearchParams(window.location.search);
+        startParam = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp') || urlParams.get('start');
+      }
+      if (!startParam) return;
+
+      // الف) دریافت و واریز خودکار هدیه تلگرامی ادمین
+      if (startParam.startsWith('gift_')) {
+        const parts = startParam.split('_');
+        const giftCode = startParam;
+        const giftAmount = parseFloat(parts[2]) || 100;
+        const claimKey = 'simab_gift_claimed_' + giftCode + '_' + uid;
+
+        if (!localStorage.getItem(claimKey)) {
+          localStorage.setItem(claimKey, 'true');
+          const newBalance = parseFloat((balance + giftAmount).toFixed(4));
+          saveCoinsGlobal(newBalance);
+          showToast(`🎁 تبریک! هدیه ${giftAmount.toLocaleString()} سکه‌ای دریافت شد!`);
+        }
+      }
+
+      // ب) ثبت خودکار دعوت دوستان (افزایش شمارنده رفرال معرف)
+      else if (startParam.startsWith('S') || startParam.startsWith('ref_')) {
+        const inviterCode = startParam;
+        const refKey = 'simab_joined_by_' + uid;
+
+        if (!localStorage.getItem(refKey)) {
+          localStorage.setItem(refKey, inviterCode);
+          // ثبت در شمارنده معرف جهت باز شدن جوایز رفرال
+          const inviterCountKey = 'simab_ref_count_' + inviterCode;
+          let currentInvites = parseInt(localStorage.getItem(inviterCountKey) || '0', 10);
+          localStorage.setItem(inviterCountKey, (currentInvites + 1).toString());
+
+          showToast(`👥 شما با دعوت کاربر ${inviterCode} به سیماب پیوستید! ✨`);
+        }
+      }
+    }
+    setTimeout(processStartParams, 600);
   </script>
 </body>
 </html>
