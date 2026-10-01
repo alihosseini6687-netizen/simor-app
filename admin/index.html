@@ -26,7 +26,6 @@
       background: radial-gradient(circle at 50% 10%, #1e1035 0%, #07030d 100%);
       color: var(--text); min-height: 100vh; padding: 12px; padding-bottom: 40px;
     }
-    /* هدر */
     .header-bar {
       display: flex; justify-content: space-between; align-items: center;
       background: var(--card-bg); border: 1px solid var(--border);
@@ -40,8 +39,6 @@
     .admin-title {
       color: var(--gold); font-weight: 900; font-size: 15px; display: flex; align-items: center; gap: 6px;
     }
-
-    /* کارت‌های مدیریت */
     .admin-card {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: 16px; padding: 14px; margin-bottom: 14px;
@@ -63,8 +60,6 @@
       font-size: 13.5px; cursor: pointer; transition: 0.15s;
     }
     .btn-action:active { transform: scale(0.97); }
-
-    /* دکمه‌های شارژ خودتان */
     .charge-grid {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px;
     }
@@ -74,8 +69,6 @@
       font-size: 11px; cursor: pointer;
     }
     .btn-charge:active { transform: scale(0.95); background: var(--gold-gradient); color: black; }
-
-    /* ابزارهای تست */
     .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; }
     .btn-tool {
       background: var(--card-inner); border: 1px solid var(--border);
@@ -86,18 +79,12 @@
     .btn-tool.green { border-color: var(--green); color: var(--green); }
     .btn-tool.purple { border-color: #a370f7; color: #a370f7; }
     .btn-tool.red { border-color: var(--red); color: var(--red); }
-
-    /* لیست تسک‌ها */
     .custom-task-item {
       display: flex; justify-content: space-between; align-items: center;
       background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
       border-radius: 8px; padding: 8px 12px; margin-top: 6px; font-size: 12px;
     }
-    .btn-del {
-      background: none; border: none; color: var(--red); font-size: 15px; cursor: pointer;
-    }
-
-    /* پاپ‌آپ پیام */
+    .btn-del { background: none; border: none; color: var(--red); font-size: 15px; cursor: pointer; }
     .modal-overlay {
       display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
       z-index: 1000; align-items: center; justify-content: center; padding: 16px;
@@ -110,20 +97,18 @@
   </style>
 </head>
 <body>
-  <!-- هدر بالای پنل -->
+  <!-- هدر -->
   <div class="header-bar">
     <button class="btn-back" onclick="goBack()">🔙 بازگشت به لابی</button>
     <div class="admin-title">👑 پنل مدیریت ارشد سیماب</div>
   </div>
 
-  <!-- بخش ۱: شارژ نامحدود و همه‌جانبه حساب خودتان -->
+  <!-- بخش ۱: شارژ خودتان -->
   <div class="admin-card">
     <h3>🪙 شارژ سریع حساب خودتان</h3>
     <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">
       موجودی فعال حساب شما: <b id="current-bal" style="color: var(--gold); font-size: 14px;">50 S</b>
     </div>
-    
-    <!-- دکمه‌های شارژ سریع -->
     <div class="charge-grid">
       <button class="btn-charge" onclick="addMyCoins(100)">+۱۰۰</button>
       <button class="btn-charge" onclick="addMyCoins(500)">+۵۰۰</button>
@@ -134,8 +119,6 @@
       <button class="btn-charge" onclick="addMyCoins(100000)">+۱۰۰,۰۰۰</button>
       <button class="btn-charge" style="border-color:var(--blue); color:var(--blue);" onclick="addMyCoins(500000)">VIP 👑</button>
     </div>
-
-    <!-- شارژ مبلغ دلخواه خودتان -->
     <div style="display: flex; gap: 6px; margin-top: 4px;">
       <input type="number" class="input-field" id="custom-my-coin" placeholder="مبلغ دلخواه برای شارژ خودتان..." style="margin-bottom:0;">
       <button class="btn-action" style="width: 100px; padding: 8px;" onclick="chargeCustomMyCoins()">افزایش</button>
@@ -143,7 +126,7 @@
     <button class="btn-tool red" style="width: 100%; margin-top: 6px;" onclick="resetMyCoins()">تنظیم موجودی روی ۵۰ (حالت پیش‌فرض)</button>
   </div>
 
-  <!-- بخش ۲: ابزارهای تست بخش‌های پروژه (ماینر، گردونه، روزانه) -->
+  <!-- بخش ۲: ابزارهای تست -->
   <div class="admin-card">
     <h3>⚙️ جعبه ابزار و تست ماینر، گردونه و استریک</h3>
     <div class="tools-grid">
@@ -154,32 +137,47 @@
     </div>
   </div>
 
-  <!-- بخش ۳: واریز سکه برای دیگران و ساخت لینک هدیه -->
+  <!-- بخش ۳: تنظیم حداقل ژتون بازی‌ها (کارت جدید درخواستی شما) -->
+  <div class="admin-card">
+    <h3>🎰 تنظیم حداقل ژتون ورودی بازی‌ها سر میز</h3>
+    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+      مبالغ زیر به عنوان حداقل ژتون ورودی در صفحه صرافی (Swap) برای کاربران نمایش داده می‌شود:
+    </div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; font-size:11px;">
+      <div>پوکر تگزاس: <input type="number" class="input-field" id="cfg-poker" value="40"></div>
+      <div>رولر شانس: <input type="number" class="input-field" id="cfg-slot" value="10"></div>
+      <div>تخته نرد: <input type="number" class="input-field" id="cfg-backgammon" value="25"></div>
+      <div>ورق حکم: <input type="number" class="input-field" id="cfg-hokm" value="25"></div>
+      <div>ورق (۲۱): <input type="number" class="input-field" id="cfg-blackjack" value="20"></div>
+      <div>۷ خبیث: <input type="number" class="input-field" id="cfg-haft_khabis" value="10"></div>
+    </div>
+    <button class="btn-action" style="margin-top:6px;" onclick="saveGamesStakesConfig()">ذخیره تنظیمات ژتون‌ها 💾</button>
+  </div>
+
+  <!-- بخش ۴: واریز به کاربران و لینک هدیه -->
   <div class="admin-card">
     <h3>💸 واریز سکه به کاربران یا ساخت لینک هدیه</h3>
     <input type="text" class="input-field" id="target-user-id" placeholder="شناسه عددی تلگرام کاربر (User ID)">
     <input type="number" class="input-field" id="target-coin-amount" placeholder="تعداد سکه واریزی...">
     <button class="btn-action" onclick="transferCoinsDirect()">واریز به شناسه کاربر</button>
-    
     <div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px;">
       <button class="btn-tool purple" style="width: 100%;" onclick="generateGiftLink()">🎁 ساخت لینک هدیه تلگرامی (ارسال در چت)</button>
     </div>
   </div>
 
-  <!-- بخش ۴: ارسال پیام به کانال تلگرام -->
+  <!-- بخش ۵: ارسال پیام به کانال -->
   <div class="admin-card">
     <h3>📢 ارسال پیام به کانال تلگرام</h3>
-    <input type="text" class="input-field" id="bot-token-input" placeholder="توکن ربات تلگرام (اختیاری جهت ارسال مستقیم بدون فیلتر)">
+    <input type="text" class="input-field" id="bot-token-input" placeholder="توکن ربات تلگرام (جهت ارسال مستقیم)">
     <input type="text" class="input-field" id="channel-username-input" value="@SimorApp" placeholder="آیدی کانال مثلاً @SimorApp">
     <textarea class="input-field" id="broadcast-text" rows="3" placeholder="متن اطلاعیه جهت انتشار در کانال..."></textarea>
-    
     <div style="display:flex; gap:6px;">
       <button class="btn-action" style="background: var(--blue); color: #000;" onclick="sendToChannelDirect()">🚀 ارسال از سرور</button>
       <button class="btn-action" style="background: #251a36; color: var(--gold); border: 1px solid var(--gold);" onclick="shareToTelegram()">📤 ارسال مستقیم تلگرام</button>
     </div>
   </div>
 
-  <!-- بخش ۵: ایجاد تسک و ماموریت جدید -->
+  <!-- بخش ۶: ایجاد تسک جدید -->
   <div class="admin-card">
     <h3>➕ ایجاد ماموریت جدید برای صفحه تسک‌ها</h3>
     <input type="text" class="input-field" id="task-title" placeholder="عنوان ماموریت (مثلاً عضویت در چنل یوتیوب)">
@@ -192,12 +190,11 @@
       </select>
     </div>
     <button class="btn-action" onclick="saveCustomTask()">ثبت و انتشار تسک</button>
-
     <h4 style="color: var(--text-muted); font-size: 11px; margin-top: 12px; margin-bottom: 4px;">تسک‌های سفارشی فعال:</h4>
     <div id="tasks-list"></div>
   </div>
 
-  <!-- پاپ‌آپ پیام اختصاصی -->
+  <!-- پاپ‌آپ پیام -->
   <div class="modal-overlay" id="popup-modal">
     <div class="modal-box">
       <div style="font-size: 38px; margin-bottom: 6px;" id="pop-icon">✅</div>
@@ -234,7 +231,6 @@
       window.location.href = '../index.html';
     }
 
-    // موجودی ادمین
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
     let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
 
@@ -255,17 +251,16 @@
       document.getElementById('popup-modal').classList.remove('open');
     }
 
-    // ================= ۱. شارژ حساب خودتان =================
     function addMyCoins(num) {
       balance = parseFloat((balance + num).toFixed(4));
       saveBalance();
-      showPopup('شارژ موفق', `مبلغ +${num.toLocaleString()} سکه با موفقیت به حساب اصلی شما اضافه شد و در لابی و بازی‌ها ثبت گردید.`, '🪙');
+      showPopup('شارژ موفق', `مبلغ +${num.toLocaleString()} سکه با موفقیت به حساب اصلی شما اضافه شد.`, '🪙');
     }
 
     function chargeCustomMyCoins() {
       const amt = parseFloat(document.getElementById('custom-my-coin').value);
       if (isNaN(amt) || amt <= 0) {
-        showPopup('خطا', 'لطفاً مبلغ معتبری برای افزایش وارد کنید.', '⚠️');
+        showPopup('خطا', 'لطفاً مبلغ معتبری وارد کنید.', '⚠️');
         return;
       }
       addMyCoins(amt);
@@ -275,22 +270,21 @@
     function resetMyCoins() {
       balance = 50;
       saveBalance();
-      showPopup('بازنشانی', 'موجودی شما روی ۵۰ سکه (حالت استاندارد کاربر جدید) تنظیم شد.', '⚙️');
+      showPopup('بازنشانی', 'موجودی شما روی ۵۰ سکه تنظیم شد.', '⚙️');
     }
 
-    // ================= ۲. ابزارهای تست ماینر، گردونه و استریک =================
     function adminMaxMiner() {
-      localStorage.setItem('simab_miner_tier_' + uid, '4'); // ماینر سطح ۴ اولترا
-      localStorage.setItem('simab_miner_tank_' + uid, '8000'); // مخزن پر ۸۰۰۰
+      localStorage.setItem('simab_miner_tier_' + uid, '4');
+      localStorage.setItem('simab_miner_tank_' + uid, '8000');
       localStorage.setItem('simab_miner_cycle_start_' + uid, Date.now().toString());
-      showPopup('ماینر ارتقا یافت', 'ماینر شما به «سطح ۴ اولترا» با مخزن فول ۸۰۰۰ سکه ارتقا پیدا کرد!', '⚡');
+      showPopup('ماینر ارتقا یافت', 'ماینر به سطح ۴ با مخزن ۸۰۰۰ ارتقا پیدا کرد!', '⚡');
     }
 
     function resetWheelTimer() {
       const now = new Date();
       const cycleKey = `simab_wheel_free_${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}_${uid}`;
       localStorage.removeItem(cycleKey);
-      showPopup('ریست گردونه', 'شانس چرخش رایگان امروز برای شما مجدداً فعال شد!', '🎡');
+      showPopup('ریست گردونه', 'چرخش رایگان امروز مجدداً فعال شد!', '🎡');
     }
 
     function advanceStreakDay() {
@@ -298,29 +292,56 @@
       cur = (cur % 7) + 1;
       localStorage.setItem('simab_streak_day_' + uid, cur.toString());
       localStorage.removeItem('simab_streak_last_date_' + uid);
-      showPopup('استریک روزانه', `روز استریک شما به روز ${cur} منتقل شد و پاداش آماده دریافت است!`, '🎁');
+      showPopup('استریک روزانه', `روز استریک به روز ${cur} منتقل شد.`, '🎁');
     }
 
     function resetStreak() {
       localStorage.setItem('simab_streak_day_' + uid, '0');
       localStorage.removeItem('simab_streak_last_date_' + uid);
-      showPopup('ریست استریک', 'روزهای متوالی استریک روزانه صفر شد.', '🔄');
+      showPopup('ریست استریک', 'روزهای استریک صفر شد.', '🔄');
     }
 
-    // ================= ۳. واریز به دیگران و لینک هدیه =================
+    // ذخیره تنظیمات ژتون‌ها برای صرافی
+    function saveGamesStakesConfig() {
+      const cfg = {
+        poker: { minChips: parseInt(document.getElementById('cfg-poker').value, 10) || 40 },
+        slot: { minChips: parseInt(document.getElementById('cfg-slot').value, 10) || 10 },
+        backgammon: { minChips: parseInt(document.getElementById('cfg-backgammon').value, 10) || 25 },
+        hokm: { minChips: parseInt(document.getElementById('cfg-hokm').value, 10) || 25 },
+        blackjack: { minChips: parseInt(document.getElementById('cfg-blackjack').value, 10) || 20 },
+        haft_khabis: { minChips: parseInt(document.getElementById('cfg-haft_khabis').value, 10) || 10 }
+      };
+      localStorage.setItem('simab_game_stakes_config', JSON.stringify(cfg));
+      showPopup('ذخیره شد', 'حداقل ژتون ورودی بازی‌ها با موفقیت ذخیره و در صرافی اعمال گردید.', '🎰');
+    }
+
+    function loadGamesStakesConfig() {
+      try {
+        const saved = localStorage.getItem('simab_game_stakes_config');
+        if (saved) {
+          const cfg = JSON.parse(saved);
+          if (cfg.poker?.minChips) document.getElementById('cfg-poker').value = cfg.poker.minChips;
+          if (cfg.slot?.minChips) document.getElementById('cfg-slot').value = cfg.slot.minChips;
+          if (cfg.backgammon?.minChips) document.getElementById('cfg-backgammon').value = cfg.backgammon.minChips;
+          if (cfg.hokm?.minChips) document.getElementById('cfg-hokm').value = cfg.hokm.minChips;
+          if (cfg.blackjack?.minChips) document.getElementById('cfg-blackjack').value = cfg.blackjack.minChips;
+          if (cfg.haft_khabis?.minChips) document.getElementById('cfg-haft_khabis').value = cfg.haft_khabis.minChips;
+        }
+      } catch(e) {}
+    }
+
     function transferCoinsDirect() {
       const targetId = document.getElementById('target-user-id').value.trim();
       const amount = parseFloat(document.getElementById('target-coin-amount').value);
       if (!targetId || isNaN(amount) || amount <= 0) {
-        showPopup('خطا', 'لطفاً شناسه عددی کاربر و تعداد سکه را به درستی وارد کنید.', '⚠️');
+        showPopup('خطا', 'شناسه کاربر و تعداد سکه را به درستی وارد کنید.', '⚠️');
         return;
       }
       const targetKey = 'simor_coins_' + targetId;
       let targetBal = parseFloat(localStorage.getItem(targetKey) || '50');
       targetBal = parseFloat((targetBal + amount).toFixed(4));
       localStorage.setItem(targetKey, targetBal.toString());
-
-      showPopup('واریز انجام شد', `تعداد ${amount.toLocaleString()} سکه به شناسه ${targetId} ثبت شد.\nموجودی جدید: ${targetBal.toLocaleString()} S`, '💸');
+      showPopup('واریز انجام شد', `${amount.toLocaleString()} سکه به کاربر ${targetId} واریز شد.`, '💸');
       document.getElementById('target-user-id').value = '';
       document.getElementById('target-coin-amount').value = '';
     }
@@ -329,30 +350,17 @@
       const amount = parseFloat(document.getElementById('target-coin-amount').value) || 100;
       const giftCode = 'gift_' + Math.floor(100000 + Math.random() * 900000) + '_' + amount;
       const giftUrl = `https://t.me/SimorApp_bot?startapp=${giftCode}`;
-      const msg = `🎁 شما یک هدیه ${amount} سکه‌ای دریافت کردید! برای دریافت روی لینک زیر بزنید:\n${giftUrl}`;
-      
-      if (tg?.openTelegramLink) {
-        tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(giftUrl)}&text=${encodeURIComponent(msg)}`);
-      } else {
-        navigator.clipboard.writeText(msg);
-        showPopup('لینک هدیه ساخته شد', `لینک هدیه ${amount} سکه‌ای در کلیپ‌بورد کپی شد:\n\n${giftUrl}`, '📋');
-      }
+      const msg = `🎁 شما یک هدیه ${amount} سکه‌ای دریافت کردید! روی لینک زیر بزنید:\n${giftUrl}`;
+      if (tg?.openTelegramLink) tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(giftUrl)}&text=${encodeURIComponent(msg)}`);
+      else { navigator.clipboard.writeText(msg); showPopup('لینک ساخته شد', `لینک کپی شد:\n${giftUrl}`, '📋'); }
     }
 
-    // ================= ۴. ارسال پیام به کانال =================
     async function sendToChannelDirect() {
       const token = document.getElementById('bot-token-input').value.trim();
       const channel = document.getElementById('channel-username-input').value.trim();
       const text = document.getElementById('broadcast-text').value.trim();
-
-      if (!text) {
-        showPopup('خطا', 'لطفاً متن اطلاعیه را وارد کنید.', '⚠️');
-        return;
-      }
-      if (!token) {
-        showPopup('نیاز به توکن', 'برای ارسال مستقیم از سرور، توکن ربات را در فیلد مربوطه وارد کنید یا از دکمه «ارسال مستقیم تلگرام» استفاده نمایید.', 'ℹ️');
-        return;
-      }
+      if (!text) { showPopup('خطا', 'متن پیام را وارد کنید.', '⚠️'); return; }
+      if (!token) { showPopup('نیاز به توکن', 'توکن ربات را وارد کنید یا از دکمه ارسال مستقیم استفاده نمایید.', 'ℹ️'); return; }
 
       try {
         const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
@@ -361,47 +369,34 @@
           body: JSON.stringify({ chat_id: channel, text: text })
         });
         const data = await res.json();
-        if (data.ok) {
-          showPopup('ارسال موفق', `پیام با موفقیت در کانال ${channel} منتشر شد!`, '📢');
-          document.getElementById('broadcast-text').value = '';
-        } else {
-          showPopup('خطای تلگرام', `خطا: ${data.description}`, '❌');
-        }
+        if (data.ok) { showPopup('ارسال موفق', `پیام در کانال ${channel} منتشر شد!`, '📢'); document.getElementById('broadcast-text').value = ''; }
+        else { showPopup('خطا', `خطای تلگرام: ${data.description}`, '❌'); }
       } catch(e) {
-        showPopup('خطای شبکه', 'ارتباط با سرور تلگرام به دلیل محدودیت اینترنت مسدود شد. از دکمه «ارسال مستقیم تلگرام» استفاده کنید.', '⚠️');
+        showPopup('خطای شبکه', 'ارتباط مسدود شد؛ از دکمه ارسال مستقیم تلگرام استفاده کنید.', '⚠️');
       }
     }
 
     function shareToTelegram() {
       const channel = document.getElementById('channel-username-input').value.trim();
       const text = document.getElementById('broadcast-text').value.trim();
-      if (!text) {
-        showPopup('خطا', 'لطفاً متن پیام را وارد کنید.', '⚠️');
-        return;
-      }
+      if (!text) { showPopup('خطا', 'متن پیام را وارد کنید.', '⚠️'); return; }
       const url = `https://t.me/share/url?url=${encodeURIComponent(channel)}&text=${encodeURIComponent(text)}`;
       if (tg?.openTelegramLink) tg.openTelegramLink(url);
       else window.open(url, '_blank');
     }
 
-    // ================= ۵. ایجاد تسک‌های سفارشی =================
     function saveCustomTask() {
       const title = document.getElementById('task-title').value.trim();
       const url = document.getElementById('task-url').value.trim();
       const reward = parseInt(document.getElementById('task-reward').value, 10);
       const timer = parseInt(document.getElementById('task-timer').value, 10) || 20;
-
-      if (!title || !url || isNaN(reward)) {
-        showPopup('خطا', 'لطفاً تمام فیلدهای تسک را کامل پر کنید.', '⚠️️');
-        return;
-      }
+      if (!title || !url || isNaN(reward)) { showPopup('خطا', 'تمام فیلدها را پر کنید.', '⚠️'); return; }
 
       let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
       tasks.push({ id: 'quest_' + Date.now(), title, url, reward, timer });
       localStorage.setItem('simab_custom_quests', JSON.stringify(tasks));
       renderTasks();
-
-      showPopup('تسک ایجاد شد', `ماموریت "${title}" با پاداش ${reward} سکه و تایمر ${timer}s با موفقیت ثبت شد.`, '➕');
+      showPopup('ثبت شد', `ماموریت "${title}" با موفقیت اضافه شد.`, '➕');
       document.getElementById('task-title').value = '';
       document.getElementById('task-url').value = '';
       document.getElementById('task-reward').value = '';
@@ -429,6 +424,7 @@
       renderTasks();
     }
 
+    loadGamesStakesConfig();
     renderTasks();
   </script>
 </body>
