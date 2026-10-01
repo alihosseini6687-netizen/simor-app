@@ -685,82 +685,67 @@
     }
 
     function handleMinerAction() {
-      if (currentTier === 0) return;
-      const cfg = MINER_TIERS[currentTier];
-      const now = Date.now();
-      const elapsed = Math.max(0, now - cycleStart);
-      const cycleMined = Math.min(cfg.daily, Math.min(tankRemaining, (elapsed / CYCLE_DURATION_MS) * cfg.daily));
+    if (currentTier === 0) return;
+    const cfg = MINER_TIERS[currentTier];
+    const now = Date.now();
+    const elapsed = Math.max(0, now - cycleStart);
+    const cycleMined = Math.min(cfg.daily, Math.min(tankRemaining, (elapsed / CYCLE_DURATION_MS) * cfg.daily));
+    if (cycleMined < 0.01 || tankRemaining <= 0) return;
+    const claimAmount = cycleMined;
+    balance = parseFloat((balance + claimAmount).toFixed(4));
+    tankRemaining = parseFloat(Math.max(0, tankRemaining - claimAmount).toFixed(4));
 
-      if (cycleMined < 0.01 || tankRemaining <= 0) return;
+    cycleStart = Date.now();
+    localStorage.setItem(KEY_TANK, tankRemaining.toString());
+    localStorage.setItem(KEY_START, cycleStart.toString());
+    updateBalanceDisplay();
+    updateMinerEngine();
+    syncShopUI();
+    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    showToast(`+${claimAmount.toFixed(4)} سکه برداشت شد و دوره جدید استارت خورد! 🎉`);
+  }
 
-      const claimAmount = cycleMined;
-      balance = parseFloat((balance + claimAmount).toFixed(4));
-      tankRemaining = parseFloat(Math.max(0, tankRemaining - claimAmount).toFixed(4));
-      
-      // استارت دوباره چرخه ۲۴ ساعته از همین لحظه
-      cycleStart = Date.now();
-
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      localStorage.setItem(KEY_TANK, tankRemaining.toString());
-      localStorage.setItem(KEY_START, cycleStart.toString());
-
-      updateBalanceDisplay();
-      updateMinerEngine();
-      syncShopUI();
-      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-      showToast(`+${claimAmount.toFixed(4)} سکه برداشت شد و دوره جدید استارت خورد! 🎉`);
+  function rechargeMinerTank() {
+    if (currentTier === 0) return;
+    const cfg = MINER_TIERS[currentTier];
+    if (balance < cfg.recharge) {
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+      showToast(`موجودی کافی نیست! به ${cfg.recharge} سکه نیاز دارید.`);
+      return;
     }
+    balance = parseFloat((balance - cfg.recharge).toFixed(4));
+    tankRemaining = cfg.tank;
+    cycleStart = Date.now();
+    localStorage.setItem(KEY_TANK, tankRemaining.toString());
+    localStorage.setItem(KEY_START, cycleStart.toString());
+    updateBalanceDisplay();
+    updateMinerEngine();
+    syncShopUI();
+    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    showToast(`مخزن با موفقیت کامل شارژ شد! ⚡`);
+  }
 
-    function rechargeMinerTank() {
-      if (currentTier === 0) return;
-      const cfg = MINER_TIERS[currentTier];
-      if (balance < cfg.recharge) {
-        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-        showToast(`موجودی کافی نیست! به ${cfg.recharge} سکه نیاز دارید.`);
-        return;
-      }
-      balance = parseFloat((balance - cfg.recharge).toFixed(4));
-      tankRemaining = cfg.tank;
-      cycleStart = Date.now();
-
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      localStorage.setItem(KEY_TANK, tankRemaining.toString());
-      localStorage.setItem(KEY_START, cycleStart.toString());
-
-      updateBalanceDisplay();
-      updateMinerEngine();
-      syncShopUI();
-      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-      showToast(`مخزن با موفقیت کامل شارژ شد! ⚡`);
+  function buyOrUpgradeMiner(tierNum) {
+    const target = MINER_TIERS[tierNum];
+    if (currentTier === tierNum) return;
+    if (balance < target.cost) {
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+      showToast(`موجودی کافی نیست! به ${target.cost} سکه نیاز دارید.`);
+      return;
     }
-
-    function buyOrUpgradeMiner(tierNum) {
-      const target = MINER_TIERS[tierNum];
-      if (currentTier === tierNum) return;
-      if (balance < target.cost) {
-        if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-        showToast(`موجودی کافی نیست! به ${target.cost} سکه نیاز دارید.`);
-        return;
-      }
-      balance = parseFloat((balance - target.cost).toFixed(4));
-      currentTier = tierNum;
-      tankRemaining = target.tank;
-      cycleStart = Date.now();
-
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      localStorage.setItem(KEY_TIER, currentTier.toString());
-      localStorage.setItem(KEY_TANK, tankRemaining.toString());
-      localStorage.setItem(KEY_START, cycleStart.toString());
-
-      updateBalanceDisplay();
-      updateMinerEngine();
-      syncShopUI();
-      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-      showToast(`${target.name} با موفقیت فعال شد! 🚀`);
-    }
+    balance = parseFloat((balance - target.cost).toFixed(4));
+    currentTier = tierNum;
+    tankRemaining = target.tank;
+    cycleStart = Date.now();
+    localStorage.setItem(KEY_TIER, currentTier.toString());
+    localStorage.setItem(KEY_TANK, tankRemaining.toString());
+    localStorage.setItem(KEY_START, cycleStart.toString());
+    updateBalanceDisplay();
+    updateMinerEngine();
+    syncShopUI();
+    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    showToast(`${target.name} با موفقیت فعال شد! 🚀`);
+  }
 
     function syncShopUI() {
       const tiers = Object.keys(MINER_TIERS).map(Number);
