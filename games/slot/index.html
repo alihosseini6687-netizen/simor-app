@@ -44,7 +44,6 @@
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
-
     /* نوار هدر بالای صفحه */
     .top-bar {
       display: flex;
@@ -113,8 +112,8 @@
       font-weight: 900;
       color: var(--gold);
       box-shadow: inset 0 1px 4px rgba(0,0,0,0.6);
+      cursor: pointer;
     }
-
     /* باکس آخرین نتیجه و رکورد برد */
     .win-display-box {
       background: rgba(20, 8, 30, 0.95);
@@ -153,7 +152,6 @@
       from { transform: scale(1); }
       to { transform: scale(1.08); }
     }
-
     /* قاب دستگاه ۳ رول شانس */
     .slot-machine-frame {
       position: relative;
@@ -190,7 +188,6 @@
       z-index: 10;
       filter: drop-shadow(0 4px 8px rgba(0,0,0,0.85));
     }
-
     /* کانتینر رول‌ها */
     .reels-container {
       display: flex;
@@ -215,7 +212,6 @@
       box-shadow: 0 0 14px #ff3b30, 0 0 6px #ff3b30;
       z-index: 20;
     }
-
     /* هر ستون رول */
     .reel-window {
       width: 96px;
@@ -274,7 +270,6 @@
       white-space: nowrap;
       text-shadow: 0 1px 3px rgba(0,0,0,0.9);
     }
-
     /* سینی ژتون‌های بازیکن (Casino Chip Rack) */
     .chips-inventory-card {
       max-width: 350px;
@@ -309,6 +304,7 @@
       border: 1px solid rgba(16, 185, 129, 0.4);
       padding: 2px 10px;
       border-radius: 20px;
+      cursor: pointer;
     }
     .chips-tray {
       display: grid;
@@ -354,7 +350,6 @@
       border-radius: 8px;
       border: 1px solid rgba(255,255,255,0.12);
     }
-
     /* نوار کنترل شرط‌بندی ژتون */
     .bet-bar {
       display: flex;
@@ -414,7 +409,6 @@
       padding: 4px 10px;
       border-radius: 10px;
     }
-
     /* کلیدهای ضرایب شرط */
     .multiplier-group {
       display: flex;
@@ -441,7 +435,6 @@
       box-shadow: 0 0 14px rgba(212,175,55,0.55);
       transform: scale(1.03);
     }
-
     /* دکمه چرخش (SPIN) و چرخش خودکار */
     .spin-btn-container {
       margin: 12px auto 14px;
@@ -497,67 +490,71 @@
       background: rgba(239, 68, 68, 0.25);
       box-shadow: 0 0 14px rgba(239, 68, 68, 0.4);
     }
-
-    /* جدول جوایز و قوانین */
+    /* جدول جوایز و قوانین (طراحی جمع‌وجور و ضد بیرون‌زدگی) */
     .payout-card {
+      width: 100%;
       max-width: 350px;
-      margin: 14px auto 20px;
-      background: rgba(26, 13, 40, 0.95);
-      border: 1.5px solid var(--border);
-      border-radius: 18px;
-      padding: 14px 14px 16px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.65);
+      margin: 10px auto 16px;
+      background: rgba(22, 11, 34, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 8px 10px;
+      box-sizing: border-box;
+      overflow: hidden;
     }
     .payout-card-header {
-      font-size: 15px;
-      font-weight: 900;
+      font-size: 12px;
+      font-weight: 800;
       color: var(--gold);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid rgba(212,175,55,0.25);
-      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+      gap: 5px;
+      margin-bottom: 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid rgba(212,175,55,0.2);
     }
     .payout-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 5px;
       text-align: right;
+      width: 100%;
+      box-sizing: border-box;
     }
     .payout-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 8px 10px;
-      border-radius: 10px;
-      font-size: 13px;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 5px 7px;
+      border-radius: 8px;
+      font-size: 11px;
       font-weight: 700;
+      min-width: 0;
+      box-sizing: border-box;
     }
     .payout-name {
-      color: #f8fafc;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      color: #f1f5f9;
+      font-size: 10.5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
     .payout-reward {
-      font-size: 13.5px;
+      font-size: 11px;
       font-weight: 900;
       white-space: nowrap;
+      margin-right: 4px;
     }
     .payout-item.full-width {
       grid-column: span 2;
     }
     .payout-item.bomb-item {
-      border: 1.5px dashed var(--red);
-      background: rgba(239, 68, 68, 0.12);
+      border: 1px dashed var(--red);
+      background: rgba(239, 68, 68, 0.1);
     }
-
     /* پاپ‌آپ مودال بردهای بزرگ و انفجار */
     .modal-overlay {
       display: none;
@@ -608,7 +605,6 @@
       transition: transform 0.1s;
     }
     .btn-modal-action:active { transform: scale(0.96); }
-
     .bot-footer {
       margin-top: 15px;
       font-size: 12.5px;
@@ -627,18 +623,16 @@
     </div>
     <div class="header-controls">
       <button class="btn-sound-toggle" id="btn-sound" onclick="toggleAudio()" title="قطع/وصل صدا">🔊</button>
-      <div class="header-balance-badge" title="کل ژتون‌های شما">
+      <div class="header-balance-badge" onclick="window.location.href='../../swap/index.html'" title="صندوق ژتون‌های شما (ورود به صرافی)">
         🟣 <span id="header-chips-bal">۰</span>
       </div>
     </div>
   </div>
-
   <!-- کادر وضعیت آخرین نتیجه و پاداش -->
   <div class="win-display-box">
     <span class="win-title-lbl" id="win-status-lbl">آخرین نتیجه چرخش:</span>
     <span class="win-amount" id="win-display">۰ ژتون</span>
   </div>
-
   <!-- قاب دستگاه ۳ رول شانس -->
   <div class="slot-machine-frame">
     <div class="roof-decor">SIMAB ROLLER</div>
@@ -659,12 +653,11 @@
     </div>
     <img src="../../assets/piggy.png" class="piggy-decor" onerror="this.style.display='none'">
   </div>
-
   <!-- سینی ژتون‌های بازیکن -->
   <div class="chips-inventory-card">
     <div class="chips-card-header">
       <span class="chips-card-title">🎴 سینی ژتون‌های شما</span>
-      <span class="chips-card-total" id="tray-total-lbl">مجموع: ۰ ژتون</span>
+      <span class="chips-card-total" id="tray-total-lbl" onclick="window.location.href='../../swap/index.html'" title="ورود به صرافی">مجموع: ۰ ژتون</span>
     </div>
     <div class="chips-tray">
       <div class="chip-item" onclick="quickSelectChip(1)" title="انتخاب ژتون ۱">
@@ -689,7 +682,6 @@
       </div>
     </div>
   </div>
-
   <!-- نوار تنظیم شرط و ضرایب متنوع ژتونی -->
   <div class="bet-bar">
     <div class="bet-row-top">
@@ -710,7 +702,6 @@
       <button class="btn-multi" id="m-max" onclick="setMaxMultiplier()">MAX</button>
     </div>
   </div>
-
   <!-- دکمه چرخش اصلی و چرخش خودکار -->
   <div class="spin-btn-container">
     <button class="btn-spin-main" id="btn-spin" onclick="spinSlot()">
@@ -720,8 +711,7 @@
     <br>
     <button class="btn-auto" id="btn-auto" onclick="toggleAutoSpin()">🔄 چرخش خودکار (Auto)</button>
   </div>
-
-  <!-- جدول جوایز و قوانین کامل -->
+  <!-- جدول جوایز و قوانین کامل و جمع‌وجور -->
   <div class="payout-card">
     <div class="payout-card-header">
       <span>📜 جدول جوایز و قوانین (۳ نماد یکسان)</span>
@@ -765,7 +755,6 @@
       </div>
     </div>
   </div>
-
   <!-- مودال جک‌پات و هشدارها -->
   <div class="modal-overlay" id="alert-modal">
     <div class="alert-modal-box" id="alert-box">
@@ -773,12 +762,10 @@
       <h2 class="modal-title" id="modal-title">BIG WIN!</h2>
       <p class="modal-desc" id="modal-desc">شما برنده شدید!</p>
       <div class="modal-amount" id="modal-amount">+۵۰۰ ژتون</div>
-      <button class="btn-modal-action" onclick="closeAlertModal()">ادامه بازی 🎰</button>
+      <button class="btn-modal-action" id="btn-modal-close" onclick="closeAlertModal()">ادامه بازی 🎰</button>
     </div>
   </div>
-
   <div class="bot-footer">@SimorApp_bot</div>
-
   <script>
     // ================= ۱. هماهنگی با مینی‌اپ تلگرام =================
     const tg = window.Telegram?.WebApp;
@@ -792,14 +779,12 @@
         }
       }
     } catch(e) {}
-
     let uid = "702007470";
     try {
       if (tg?.initDataUnsafe?.user?.id) {
         uid = tg.initDataUnsafe.user.id.toString();
       }
     } catch(e) {}
-
     function goBack() {
       try { localStorage.setItem('simab_active_tab', 'games'); } catch(e) {}
       if (window.history.length > 1) {
@@ -809,12 +794,16 @@
       }
     }
 
-    // ================= ۲. سیستم ژتون‌های مجزا و سینک با موجودی کل =================
+    // ================= ۲. اتصال مستقیم به صندوق ژتون‌های صرافی و پوکر =================
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
 
+    let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
     let chipsInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
-    let totalChips = 0;
+    try {
+      const savedInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
+      if (savedInv) chipsInv = savedInv;
+    } catch(e) {}
 
     function calcTotal(inv) {
       return (inv.c1 || 0) * 1 +
@@ -824,20 +813,17 @@
              (inv.c500 || 0) * 500;
     }
 
-    // تبدیل هوشمند موجودی به دسته‌های استاندارد ژتون
     function standardBreakdown(amount) {
       let rem = Math.max(0, Math.floor(amount));
-      let c1 = (rem >= 20) ? 20 : rem; rem -= c1 * 1;
-      let c5 = (rem >= 80) ? 16 : Math.floor(rem / 5); rem -= c5 * 5;
-      let c25 = (rem >= 400) ? 16 : Math.floor(rem / 25); rem -= c25 * 25;
-      let c100 = (rem >= 2000) ? 20 : Math.floor(rem / 100); rem -= c100 * 100;
-      let c500 = Math.floor(rem / 500); rem -= c500 * 500;
-
+      const c1 = (rem >= 20) ? 20 : rem; rem -= c1 * 1;
+      const c5 = (rem >= 80) ? 16 : Math.floor(rem / 5); rem -= c5 * 5;
+      const c25 = (rem >= 400) ? 16 : Math.floor(rem / 25); rem -= c25 * 25;
+      const c100 = (rem >= 2000) ? 20 : Math.floor(rem / 100); rem -= c100 * 100;
+      const c500 = Math.floor(rem / 500); rem -= c500 * 500;
       let extra100 = Math.floor(rem / 100); rem %= 100;
       let extra25 = Math.floor(rem / 25); rem %= 25;
       let extra5 = Math.floor(rem / 5); rem %= 5;
       let extra1 = rem;
-
       return {
         c1: c1 + extra1,
         c5: c5 + extra5,
@@ -845,6 +831,20 @@
         c100: c100 + extra100,
         c500: c500
       };
+    }
+
+    // هماهنگ‌سازی اولیه موجودی با انبار ژتون‌ها
+    if (totalChips > 0 && calcTotal(chipsInv) !== totalChips) {
+      chipsInv = standardBreakdown(totalChips);
+      localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipsInv));
+    }
+
+    // ذخیره فقط روی ژتون‌ها (بدون دستکاری سکه‌های اصلی)
+    function saveChips() {
+      totalChips = calcTotal(chipsInv);
+      localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
+      localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipsInv));
+      renderChipsUI();
     }
 
     // کسر ژتون از موجودی (با خرد کردن ژتون بزرگ‌تر در صورت لزوم)
@@ -860,14 +860,12 @@
         { k: 'c5', v: 5 },
         { k: 'c1', v: 1 }
       ];
-
       for (let d of denoms) {
         if (rem <= 0) break;
         let take = Math.min(inv[d.k] || 0, Math.floor(rem / d.v));
         inv[d.k] -= take;
         rem -= take * d.v;
       }
-
       if (rem > 0) {
         let candidates = [
           { k: 'c5', v: 5 },
@@ -892,7 +890,6 @@
           }
         }
       }
-
       return rem === 0;
     }
 
@@ -909,39 +906,6 @@
       inv.c25 = (inv.c25 || 0) + c25;
       inv.c5 = (inv.c5 || 0) + c5;
       inv.c1 = (inv.c1 || 0) + c1;
-    }
-
-    function loadChips() {
-      let rawCoins = localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance');
-      let coinBal = rawCoins !== null ? parseFloat(rawCoins) : 50;
-      if (isNaN(coinBal) || coinBal < 0) coinBal = 50;
-
-      let rawChips = localStorage.getItem(STORAGE_KEY_CHIPS);
-      if (rawChips) {
-        try {
-          chipsInv = JSON.parse(rawChips);
-          totalChips = calcTotal(chipsInv);
-          if (Math.abs(totalChips - coinBal) > 0.01) {
-            chipsInv = standardBreakdown(coinBal);
-            totalChips = calcTotal(chipsInv);
-          }
-        } catch(e) {
-          chipsInv = standardBreakdown(coinBal);
-          totalChips = calcTotal(chipsInv);
-        }
-      } else {
-        chipsInv = standardBreakdown(coinBal);
-        totalChips = calcTotal(chipsInv);
-      }
-      saveChips();
-    }
-
-    function saveChips() {
-      totalChips = calcTotal(chipsInv);
-      localStorage.setItem(STORAGE_KEY_CHIPS, JSON.stringify(chipsInv));
-      localStorage.setItem(STORAGE_KEY_COINS, totalChips.toString());
-      localStorage.setItem('user_balance', totalChips.toString());
-      renderChipsUI();
     }
 
     function renderChipsUI() {
@@ -1117,7 +1081,7 @@
       initAudio();
       const cost = baseCost * multiplier;
       if (totalChips < cost) {
-        showAlertModal('⚠️ موجودی ژتون ناکافی', `برای این شرط به ${cost.toLocaleString('fa-IR')} ژتون نیاز دارید ولی موجودی شما ${totalChips.toLocaleString('fa-IR')} است. لطفاً مبلغ شرط را کاهش دهید.`, `${cost.toLocaleString('fa-IR')} ژتون`, true);
+        showAlertModal('⚠️ موجودی ژتون ناکافی', `برای این شرط به ${cost.toLocaleString('fa-IR')} ژتون نیاز دارید ولی موجودی شما ${totalChips.toLocaleString('fa-IR')} است. لطفاً از صرافی ژتون تهیه کنید.`, `${cost.toLocaleString('fa-IR')} ژتون`, true, true);
         if (autoSpinActive) toggleAutoSpin();
         return;
       }
@@ -1254,12 +1218,13 @@
       }
     }
 
-    // پاپ‌آپ مودال بردهای بزرگ و انفجار
-    function showAlertModal(title, desc, amount, isDanger) {
+    // پاپ‌آپ مودال بردهای بزرگ، انفجار یا نیاز به صرافی
+    function showAlertModal(title, desc, amount, isDanger, isGoToSwap = false) {
       const box = document.getElementById('alert-box');
+      const actionBtn = document.getElementById('btn-modal-close');
       if (isDanger) {
         box.classList.add('danger');
-        document.getElementById('modal-icon').innerText = '💣';
+        document.getElementById('modal-icon').innerText = isGoToSwap ? '🪙' : '💣';
         document.getElementById('modal-amount').style.color = '#ef4444';
       } else {
         box.classList.remove('danger');
@@ -1269,6 +1234,14 @@
       document.getElementById('modal-title').innerText = title;
       document.getElementById('modal-desc').innerText = desc;
       document.getElementById('modal-amount').innerText = amount;
+      
+      if (isGoToSwap) {
+        actionBtn.innerText = 'ورود به صرافی 🔄';
+        actionBtn.onclick = () => { window.location.href = '../../swap/index.html'; };
+      } else {
+        actionBtn.innerText = 'ادامه بازی 🎰';
+        actionBtn.onclick = closeAlertModal;
+      }
       document.getElementById('alert-modal').classList.add('open');
     }
 
@@ -1277,7 +1250,7 @@
     }
 
     // بارگذاری اولیه
-    loadChips();
+    renderChipsUI();
     updateBetUI();
   </script>
 </body>
