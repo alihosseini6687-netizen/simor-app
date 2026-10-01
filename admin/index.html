@@ -128,12 +128,12 @@
 
   <!-- بخش ۲: ابزارهای تست -->
   <div class="admin-card">
-    <h3>⚙️ جعبه ابزار و تست ماینر، گردونه و استریک</h3>
+    <h3>⚙️ جعبه ابزار و تست ماینر، گردونه و پاداش روزانه</h3>
     <div class="tools-grid">
       <button class="btn-tool cyan" onclick="adminMaxMiner()">⚡ ماینر سطح ۴ + مخزن فول</button>
       <button class="btn-tool purple" onclick="resetWheelTimer()">🎡 ریست چرخش گردونه</button>
-      <button class="btn-tool green" onclick="advanceStreakDay()">🎁 پرش به روز بعد استریک</button>
-      <button class="btn-tool red" onclick="resetStreak()">🔄 صفر کردن روزهای استریک</button>
+      <button class="btn-tool green" onclick="advanceStreakDay()">🎁 پرش به روز بعد (روزانه)</button>
+      <button class="btn-tool red" onclick="resetStreak()">🔄 صفر کردن روزانه</button>
     </div>
   </div>
 
@@ -361,18 +361,23 @@
     }
 
     function advanceStreakDay() {
-      let cur = parseInt(localStorage.getItem('simab_streak_day_' + uid) || '0', 10);
-      cur = (cur % 7) + 1;
-      localStorage.setItem('simab_streak_day_' + uid, cur.toString());
-      localStorage.removeItem('simab_streak_last_date_' + uid);
-      showPopup('استریک روزانه', `روز استریک به روز ${cur} منتقل شد.`, '🎁');
-    }
+    let cur = parseInt(localStorage.getItem('simab_streak_day_' + uid) || '0', 10);
+    cur = (cur % 7) + 1;
 
-    function resetStreak() {
-      localStorage.setItem('simab_streak_day_' + uid, '0');
-      localStorage.removeItem('simab_streak_last_date_' + uid);
-      showPopup('ریست استریک', 'روزهای استریک صفر شد.', '🔄');
-    }
+    // محاسبه تاریخ دیروز تا سیستم روزانه متوجه شود کاربر امروز آمده و نوبت روز بعدی است
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const yStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+
+    localStorage.setItem('simab_streak_day_' + uid, (cur - 1).toString());
+    localStorage.setItem('simab_streak_last_date_' + uid, yStr);
+    showPopup('پاداش روزانه', `پاداش روزانه با موفقیت به روز ${cur} منتقل شد و آماده دریافت است.`, '🎁');
+  }
+
+  function resetStreak() {
+    localStorage.setItem('simab_streak_day_' + uid, '0');
+    localStorage.removeItem('simab_streak_last_date_' + uid);
+    showPopup('پاداش روزانه', 'روزهای پاداش روزانه با موفقیت صفر شد.', '🔄');
+  }
 
     // ذخیره تنظیمات ژتون‌ها برای صرافی
     function saveGamesStakesConfig() {
