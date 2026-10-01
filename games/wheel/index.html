@@ -371,35 +371,80 @@
       }
     } catch(e) {}
 
-    let uid = "702007470";
-    try {
-      if (tg?.initDataUnsafe?.user?.id) {
-        uid = tg.initDataUnsafe.user.id.toString();
-      }
-    } catch(e) {}
-
-    function goBackToMother() {
-      try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = '../../index.html';
-      }
+    let uid = "guest";
+  try {
+    if (tg?.initDataUnsafe?.user?.id) {
+      uid = tg.initDataUnsafe.user.id.toString();
     }
-    document.getElementById('btn-back-nav').onclick = (e) => {
-      e.preventDefault();
-      goBackToMother();
+  } catch(e) {}
+
+  function goBackToMother() {
+    try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = '../../index.html';
+    }
+  }
+  document.getElementById('btn-back-nav').onclick = (e) => {
+    e.preventDefault();
+    goBackToMother();
+  };
+
+  // اتصال مستقیم به ابری تلگرام و حذف کلید مشترک قدیمی
+  const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
+  const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+  const isCloudSupported = !!(tg && tg.CloudStorage);
+
+  let balance = 50;
+  if (uid === "702007470") {
+    balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
+  } else if (uid !== "guest") {
+    let saved = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '50');
+    if (saved >= 100000) saved = 50;
+    balance = saved;
+  }
+
+  function updateBalanceDisplay() {
+    const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+    document.getElementById('user-balance-txt').innerText = displayVal;
+
+    localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+    localStorage.removeItem('user_balance'); // حذف کلید مشترک قدیمی
+
+    // ذخیره فوری برد یا باخت در ابری تلگرام برای هماهنگی با لابی مادر
+    const payload = {
+      coins: balance,
+      chips: parseInt(localStorage.getItem('simab_chips_' + uid) || '0', 10),
+      inv: JSON.parse(localStorage.getItem('simab_chips_inv_' + uid) || '{"c1":0,"c5":0,"c25":0,"c100":0,"c500":0}'),
+      updated_at: Date.now()
     };
-
-    // موجودی سکه مشترک با کل برنامه
-    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
-
-    function updateBalanceDisplay() {
-      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
-      document.getElementById('user-balance-txt').innerText = displayVal;
+    localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
+    if (isCloudSupported && uid !== "guest") {
+      tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload));
     }
-    updateBalanceDisplay();
+  }
+  updateBalanceDisplay();
+
+  function syncWithTelegramCloud() {
+    if (!isCloudSupported || uid === "guest") return;
+    tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
+      if (err || !cloudRaw) return;
+      try {
+        const cloudData = JSON.parse(cloudRaw);
+        const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
+        if (cloudData.updated_at && cloudData.updated_at >= localTime) {
+          if (typeof cloudData.coins === 'number') {
+            if (uid !== "702007470" && cloudData.coins >= 100000) return;
+            balance = cloudData.coins;
+            localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+            document.getElementById('user-balance-txt').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+          }
+        }
+      } catch(e) {}
+    });
+  }
+  syncWithTelegramCloud();
 
     function triggerHaptic(type = 'light') {
       try {
@@ -520,66 +565,58 @@
     }
 
     function spinWheel() {
-      if (isSpinningWheel) return;
+    if (isSpinningWheel) return;
+    const cycleKey = getWheelCycleKey();
+    const hasUsedFree = (localStorage.getItem(cycleKey) === 'true');
+    let spinType = 'رایگان 🎁';
 
-      const cycleKey = getWheelCycleKey();
-      const hasUsedFree = (localStorage.getItem(cycleKey) === 'true');
-      let spinType = 'رایگان 🎁';
-
-      // اگر رایگان نباشد، ۲ سکه کسر شود
-      if (hasUsedFree) {
-        if (balance < EXTRA_SPIN_COST) {
-          showToast(`موجودی کافی نیست! به ${EXTRA_SPIN_COST} سکه نیاز دارید.`);
-          return;
-        }
-        balance = parseFloat((balance - EXTRA_SPIN_COST).toFixed(4));
-        spinType = `پولی (-${EXTRA_SPIN_COST} 🪙)`;
-      } else {
-        localStorage.setItem(cycleKey, 'true');
+    // اگر چرخش رایگان نباشد، ۲ سکه کسر شود
+    if (hasUsedFree) {
+      if (balance < EXTRA_SPIN_COST) {
+        showToast(`موجودی کافی نیست! به ${EXTRA_SPIN_COST} سکه نیاز دارید.`);
+        return;
       }
-
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
-      updateBalanceDisplay();
-
-      isSpinningWheel = true;
-      const btn = document.getElementById('btn-spin-action');
-      if (btn) btn.disabled = true;
-      triggerHaptic('heavy');
-
-      const winningIndex = pickWheelIndex();
-      const num = WHEEL_SECTORS.length;
-      const sectorDeg = 360 / num;
-      const targetCenter = (winningIndex * sectorDeg) + (sectorDeg / 2);
-      const extraSpins = 5 * 360;
-      const stopAngle = extraSpins + ((270 - targetCenter - (wheelRotation % 360) + 720) % 360);
-      wheelRotation += stopAngle;
-
-      const canvas = document.getElementById('wheelCanvas');
-      if (canvas) canvas.style.transform = `rotate(${wheelRotation}deg)`;
-
-      setTimeout(() => {
-        isSpinningWheel = false;
-        const won = WHEEL_SECTORS[winningIndex];
-
-        if (won.val > 0) {
-          balance = parseFloat((balance + won.val).toFixed(4));
-          localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-          localStorage.setItem('user_balance', balance.toString());
-          updateBalanceDisplay();
-          triggerHaptic('success');
-          showToast(`تبریک! برنده ${won.val} سکه شدید 🎉`);
-          saveWheelHistory(spinType, `+${won.val} سکه 🪙`);
-        } else {
-          triggerHaptic('warning');
-          showToast('پوچ شد! متاسفانه این بار شانسی نداشتید.');
-          saveWheelHistory(spinType, 'پوچ 💨');
-        }
-
-        checkSpinStatus();
-        renderWheelHistory();
-      }, 4600);
+      balance = parseFloat((balance - EXTRA_SPIN_COST).toFixed(4));
+      spinType = `پولی (-${EXTRA_SPIN_COST} 🪙)`;
+    } else {
+      localStorage.setItem(cycleKey, 'true');
     }
+
+    updateBalanceDisplay(); // ثبت کسر سکه در کلود و حذف خودکار user_balance
+    isSpinningWheel = true;
+    const btn = document.getElementById('btn-spin-action');
+    if (btn) btn.disabled = true;
+    triggerHaptic('heavy');
+
+    const winningIndex = pickWheelIndex();
+    const num = WHEEL_SECTORS.length;
+    const sectorDeg = 360 / num;
+    const targetCenter = (winningIndex * sectorDeg) + (sectorDeg / 2);
+    const extraSpins = 5 * 360;
+    const stopAngle = extraSpins + ((270 - targetCenter - (wheelRotation % 360) + 720) % 360);
+    wheelRotation += stopAngle;
+
+    const canvas = document.getElementById('wheelCanvas');
+    if (canvas) canvas.style.transform = `rotate(${wheelRotation}deg)`;
+
+    setTimeout(() => {
+      isSpinningWheel = false;
+      const won = WHEEL_SECTORS[winningIndex];
+      if (won.val > 0) {
+        balance = parseFloat((balance + won.val).toFixed(4));
+        updateBalanceDisplay(); // ثبت جایزه در کلود و حذف خودکار user_balance
+        triggerHaptic('success');
+        showToast(`تبریک! برنده ${won.val} سکه شدید 🎉`);
+        saveWheelHistory(spinType, `+${won.val} سکه 🪙`);
+      } else {
+        triggerHaptic('warning');
+        showToast('پوچ شد! متاسفانه این بار شانسی نداشتید.');
+        saveWheelHistory(spinType, 'پوچ 💨');
+      }
+      checkSpinStatus();
+      renderWheelHistory();
+    }, 4600);
+  }
 
     function saveWheelHistory(spinType, rewardText) {
       try {
