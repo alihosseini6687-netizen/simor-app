@@ -471,8 +471,7 @@
     // تابع ذخیره قطعی سکه در حافظه دستگاه و سرور ابری تلگرام
     function saveCoinsGlobal(newBal) {
       balance = parseFloat(Number(newBal).toFixed(4));
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
+      saveCoinsGlobal(balance);
       if (tg?.CloudStorage) {
         tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString(), (err) => {
           if (err) console.warn('Cloud save error:', err);
