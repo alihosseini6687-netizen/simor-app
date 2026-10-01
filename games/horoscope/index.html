@@ -486,7 +486,7 @@
       }
     } catch(e) {}
 
-    let uid = "702007470";
+    let uid = "guest";
     try {
       if (tg?.initDataUnsafe?.user?.id) {
         uid = tg.initDataUnsafe.user.id.toString();
@@ -506,15 +506,62 @@
       goBackToMother();
     };
 
-    // موجودی سکه مشترک با کل برنامه
+    // اتصال مستقیم به دیتای ابری تلگرام و حذف کلید مشترک قدیمی
+    const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+    const isCloudSupported = !!(tg && tg.CloudStorage);
+
+    let balance = 50;
+    if (uid === "702007470") {
+      balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
+    } else if (uid !== "guest") {
+      let saved = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '50');
+      if (saved >= 100000) saved = 50;
+      balance = saved;
+    }
 
     function updateBalanceDisplay() {
       const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
       document.getElementById('user-balance').innerText = displayVal;
+
+      // ذخیره در حافظه محلی و حذف کلید مشترک قدیمی
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.removeItem('user_balance');
+
+      // ارسال آنی موجودی و ثبت تایم‌استمپ جدید تا لابی مادر کسر سکه ماینر را نادیده نگیرد
+      const payload = {
+        coins: balance,
+        chips: parseInt(localStorage.getItem('simab_chips_' + uid) || '0', 10),
+        inv: JSON.parse(localStorage.getItem('simab_chips_inv_' + uid) || '{"c1":0,"c5":0,"c25":0,"c100":0,"c500":0}'),
+        updated_at: Date.now()
+      };
+      localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
+      if (isCloudSupported && uid !== "guest") {
+        tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload));
+      }
     }
     updateBalanceDisplay();
+
+    // همگام‌سازی ابری در بدو ورود به ماینر
+    function syncWithTelegramCloud() {
+      if (!isCloudSupported || uid === "guest") return;
+      tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
+        if (err || !cloudRaw) return;
+        try {
+          const cloudData = JSON.parse(cloudRaw);
+          const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
+          if (cloudData.updated_at && cloudData.updated_at >= localTime) {
+            if (typeof cloudData.coins === 'number') {
+              if (uid !== "702007470" && cloudData.coins >= 100000) return;
+              balance = cloudData.coins;
+              localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+              document.getElementById('user-balance').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+            }
+          }
+        } catch(e) {}
+      });
+    }
+    syncWithTelegramCloud();
 
     // تنظیمات ۴ ماینر
     const MINER_TIERS = {
