@@ -90,7 +90,6 @@
     .wallet-box .w-val { font-size: 18px; font-weight: 900; color: #fff; }
     .wallet-box.chips-box .w-val { color: var(--cyan); }
     .wallet-box.coins-box .w-val { color: var(--gold); }
-
     /* رک ژتون‌ها و خرد کردن */
     .chip-rack-card {
       background: var(--card-bg); border: 1px solid var(--border);
@@ -106,7 +105,6 @@
       background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); color: var(--gold);
       padding: 4px 10px; border-radius: 8px; font-size: 10.5px; font-weight: 900; cursor: pointer;
     }
-
     .chip-rack-grid {
       display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center;
     }
@@ -134,7 +132,6 @@
     }
     .btn-break-down:active { transform: scale(0.95); }
     .btn-break-down:disabled { opacity: 0.25; cursor: default; }
-
     /* تب‌های روش تبدیل */
     .swap-nav-tabs {
       display: flex; gap: 4px; background: rgba(0,0,0,0.4); border-radius: 12px; padding: 4px; border: 1px solid var(--border);
@@ -146,7 +143,6 @@
     .btn-nav-tab.active {
       background: var(--gold-gradient); color: #170f00; box-shadow: 0 2px 10px rgba(212,175,55,0.3);
     }
-
     /* فرم‌های تبدیل */
     .swap-card {
       background: var(--card-bg); border: 1px solid var(--border);
@@ -167,7 +163,6 @@
       border-radius: 10px; padding: 8px 10px; font-size: 11px; color: var(--cyan);
       margin-bottom: 12px; line-height: 1.5;
     }
-
     .quick-chips-row {
       display: flex; justify-content: space-between; gap: 5px; margin-bottom: 12px;
     }
@@ -183,7 +178,6 @@
       box-shadow: 0 4px 18px rgba(212,175,55,0.4); transition: 0.15s;
     }
     .btn-submit-swap:active { transform: scale(0.97); }
-
     /* حالت انتخاب دستی */
     .custom-selector-grid {
       display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px;
@@ -200,7 +194,6 @@
       cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
     .step-val { width: 34px; text-align: center; font-size: 14px; font-weight: 900; color: #fff; }
-
     /* لیست بازی‌ها */
     .section-title {
       font-size: 14.5px; font-weight: 900; color: #fff; display: flex; align-items: center; gap: 6px;
@@ -222,7 +215,6 @@
       background: rgba(0, 245, 212, 0.15); border: 1px solid var(--green); color: var(--green);
       padding: 6px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer; text-decoration: none;
     }
-
     .toast-msg {
       position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
       background: var(--gold-gradient); color: #1a1200; padding: 8px 20px; border-radius: 25px;
@@ -234,7 +226,6 @@
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
-
   <div class="app-wrapper">
     <!-- هدر با بازگشت هوشمند به سربرگ تسک‌ها -->
     <header class="top-header">
@@ -242,7 +233,6 @@
       <div class="header-title">صرافی و تبدیل ژتون بازی‌ها</div>
       <div style="width: 36px;"></div>
     </header>
-
     <!-- کیف پول دوگانه -->
     <div class="dual-wallet-card">
       <div class="wallet-box coins-box">
@@ -256,7 +246,6 @@
         <span class="w-val" id="disp-chips">0</span>
       </div>
     </div>
-
     <!-- رک ژتون‌ها و کلیدهای خرد کردن فوری -->
     <div class="chip-rack-card">
       <div class="chip-rack-header">
@@ -266,7 +255,6 @@
         </div>
         <button class="btn-color-up" onclick="colorUpChips()" title="تجمیع ژتون‌های ریز به درشت">📦 تجمیع ژتون‌ها</button>
       </div>
-
       <div class="chip-rack-grid">
         <!-- ژتون ۱ -->
         <div class="chip-col">
@@ -305,7 +293,6 @@
         </div>
       </div>
     </div>
-
     <!-- تب‌های روش تبدیل -->
     <div class="swap-nav-tabs">
       <button class="btn-nav-tab active" id="btn-tab-auto" onclick="switchSwapTab('auto')">
@@ -318,7 +305,6 @@
         ✨ نقد کردن ژتون
       </button>
     </div>
-
     <!-- فرم ۱: تقسیم استاندارد و خودکار -->
     <div class="swap-card" id="view-swap-auto">
       <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">
@@ -328,11 +314,9 @@
         <input type="number" class="swap-input" id="auto-swap-input" value="100" min="1" oninput="updateAutoPreview()">
         <span class="swap-currency-tag">🪙 سکه</span>
       </div>
-
       <div class="breakdown-preview-box" id="auto-preview-text">
         در حال محاسبه تفکیک هوشمند...
       </div>
-
       <div class="quick-chips-row">
         <button class="btn-quick-chip" onclick="setAutoQuick(50)">۵۰</button>
         <button class="btn-quick-chip" onclick="setAutoQuick(100)">۱۰۰</button>
@@ -341,12 +325,10 @@
         <button class="btn-quick-chip" onclick="setAutoQuick(10000)">۱۰,۰۰۰</button>
         <button class="btn-quick-chip" style="color:var(--gold);" onclick="setAutoMax()">MAX</button>
       </div>
-
       <button class="btn-submit-swap" id="btn-submit-auto" onclick="executeAutoSwap()">
         🔄 تبدیل متوازن به ژتون‌های بازی
       </button>
     </div>
-
     <!-- فرم ۲: انتخاب دستی تعداد ژتون‌ها -->
     <div class="swap-card" id="view-swap-custom" style="display:none;">
       <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
@@ -394,12 +376,10 @@
           </div>
         </div>
       </div>
-
       <button class="btn-submit-swap" id="btn-submit-custom" onclick="executeCustomSwap()">
         🔄 تأیید و تبدیل دقیق ژتون‌های انتخابی (۰ سکه)
       </button>
     </div>
-
     <!-- فرم ۳: نقد کردن ژتون به سکه -->
     <div class="swap-card" id="view-swap-sell" style="display:none;">
       <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">
@@ -409,7 +389,6 @@
         <input type="number" class="swap-input" id="sell-swap-input" value="50" min="1" oninput="updateSellPreview()">
         <span class="swap-currency-tag">🎰 ژتون</span>
       </div>
-
       <div class="quick-chips-row">
         <button class="btn-quick-chip" onclick="setSellQuick(25)">۲۵</button>
         <button class="btn-quick-chip" onclick="setSellQuick(50)">۵۰</button>
@@ -417,12 +396,10 @@
         <button class="btn-quick-chip" onclick="setSellQuick(500)">۵۰۰</button>
         <button class="btn-quick-chip" style="color:var(--gold);" onclick="setSellMax()">کل ژتون‌ها</button>
       </div>
-
       <button class="btn-submit-swap" id="btn-submit-sell" onclick="executeSellSwap()">
         ✨ نقد کردن و واریز ۵۰ سکه به کیف پول
       </button>
     </div>
-
     <!-- لیست بازی‌ها با حداقل ژتون ورودی -->
     <div class="section-title">
       <span>🎮</span>
@@ -430,7 +407,6 @@
     </div>
     <div class="games-stake-list" id="games-stake-container"></div>
   </div>
-
   <script>
     const tg = window.Telegram?.WebApp;
     try {
@@ -443,14 +419,12 @@
         }
       }
     } catch(e) {}
-
     let uid = "702007470";
     try {
       if (tg?.initDataUnsafe?.user?.id) {
         uid = tg.initDataUnsafe.user.id.toString();
       }
     } catch(e) {}
-
     function goBackToMother() {
       try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
       if (window.history.length > 1) window.history.back();
@@ -465,20 +439,23 @@
     const CLOUD_KEY_COINS = 'simab_user_coins';
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
+
     let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
     let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
 
     // تابع ذخیره قطعی سکه در حافظه دستگاه و سرور ابری تلگرام
     function saveCoinsGlobal(newBal) {
-  balance = parseFloat(Number(newBal).toFixed(4));
-  localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-  localStorage.setItem('user_balance', balance.toString());
-  if (tg?.CloudStorage) {
-    tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString(), (err) => {
-      if (err) console.warn('Cloud save error:', err);
-    });
-  }
-}
+      balance = parseFloat(Number(newBal).toFixed(4));
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.setItem('user_balance', balance.toString());
+      if (tg?.CloudStorage) {
+        tg.CloudStorage.setItem(CLOUD_KEY_COINS, balance.toString(), (err) => {
+          if (err) console.warn('Cloud save error:', err);
+        });
+      }
+      updateUI();
+    }
+
     // آبجکت تفکیک فیزیکی ژتون‌ها
     let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
     try {
@@ -494,12 +471,10 @@
       const c25 = (rem >= 400) ? 16 : Math.floor(rem / 25); rem -= c25 * 25;
       const c100 = (rem >= 2000) ? 20 : Math.floor(rem / 100); rem -= c100 * 100;
       const c500 = Math.floor(rem / 500); rem -= c500 * 500;
-
       let extra100 = Math.floor(rem / 100); rem %= 100;
       let extra25 = Math.floor(rem / 25); rem %= 25;
       let extra5 = Math.floor(rem / 5); rem %= 5;
       let extra1 = rem;
-
       return {
         c1: c1 + extra1,
         c5: c5 + extra5,
@@ -509,7 +484,7 @@
       };
     }
 
-    // هماهنگ‌سازی خودکار دیتای قبلی شما (مثلاً ۱۰,۰۰۰ ژتون قبلی متوازن شود)
+    // هماهنگ‌سازی خودکار دیتای قبلی
     function checkMigration() {
       const currentSum = (chipInventory.c1 * 1) + (chipInventory.c5 * 5) + (chipInventory.c25 * 25) + (chipInventory.c100 * 100) + (chipInventory.c500 * 500);
       if (totalChips > 0 && currentSum !== totalChips) {
@@ -559,26 +534,23 @@
     function updateUI() {
       document.getElementById('disp-coins').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
       document.getElementById('disp-chips').innerText = Number(totalChips).toLocaleString(undefined, { maximumFractionDigits: 0 });
-
       document.getElementById('cnt-c1').innerText = chipInventory.c1;
       document.getElementById('cnt-c5').innerText = chipInventory.c5;
       document.getElementById('cnt-c25').innerText = chipInventory.c25;
       document.getElementById('cnt-c100').innerText = chipInventory.c100;
       document.getElementById('cnt-c500').innerText = chipInventory.c500;
-
-      // وضعیت دکمه‌های خرد کردن
       document.getElementById('btn-break-5').disabled = (chipInventory.c5 < 1);
       document.getElementById('btn-break-25').disabled = (chipInventory.c25 < 1);
       document.getElementById('btn-break-100').disabled = (chipInventory.c100 < 1);
       document.getElementById('btn-break-500').disabled = (chipInventory.c500 < 1);
     }
 
-    // ================= ۱. خرد کردن ژتون‌ها (Change / Break Down 🔨) =================
+    // ================= ۱. خرد کردن ژتون‌ها =================
     function breakDownChip(val) {
       if (val === 500 && chipInventory.c500 >= 1) {
         chipInventory.c500 -= 1;
-        chipInventory.c100 += 4; // ۴۰۰
-        chipInventory.c25 += 4;  // ۱۰۰
+        chipInventory.c100 += 4;
+        chipInventory.c25 += 4;
         playChipClink();
         saveInventory();
         showToast('یک ژتون ۵۰۰ به ۴ تا ۱۰۰ و ۴ تا ۲۵ خرد شد! 🔨');
@@ -603,7 +575,7 @@
       }
     }
 
-    // تجمیع ژتون‌های ریز به درشت (Color Up 📦)
+    // تجمیع ژتون‌های ریز به درشت
     function colorUpChips() {
       let changed = false;
       if (chipInventory.c1 >= 5) {
@@ -630,7 +602,6 @@
         chipInventory.c500 += sets;
         changed = true;
       }
-
       if (changed) {
         playChipClink();
         saveInventory();
@@ -646,7 +617,6 @@
       document.getElementById('view-swap-auto').style.display = 'none';
       document.getElementById('view-swap-custom').style.display = 'none';
       document.getElementById('view-swap-sell').style.display = 'none';
-
       if (tab === 'auto') {
         document.getElementById('btn-tab-auto').classList.add('active');
         document.getElementById('view-swap-auto').style.display = 'block';
@@ -658,11 +628,10 @@
       } else if (tab === 'sell') {
         document.getElementById('btn-tab-sell').classList.add('active');
         document.getElementById('view-swap-sell').style.display = 'block';
-        updateSellPreview();  
+        updateSellPreview();
       }
     }
 
-    // پیش‌نمایش تبدیل خودکار متوازن
     function updateAutoPreview() {
       const amt = parseInt(document.getElementById('auto-swap-input').value, 10) || 0;
       const b = standardBreakdown(amt);
@@ -677,6 +646,7 @@
       document.getElementById('auto-swap-input').value = val;
       updateAutoPreview();
     }
+
     function setAutoMax() {
       document.getElementById('auto-swap-input').value = Math.max(1, Math.floor(balance));
       updateAutoPreview();
@@ -692,16 +662,14 @@
         showToast('موجودی سکه سیماب شما کافی نیست!');
         return;
       }
-
-      balance = parseFloat((balance - amt).toFixed(4));
+      const newBal = parseFloat((balance - amt).toFixed(4));
+      saveCoinsGlobal(newBal);
       const b = standardBreakdown(amt);
       chipInventory.c1 += b.c1;
       chipInventory.c5 += b.c5;
       chipInventory.c25 += b.c25;
       chipInventory.c100 += b.c100;
       chipInventory.c500 += b.c500;
-
-      saveCoinsGlobal(balance);
       playChipClink();
       saveInventory();
       if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -710,7 +678,6 @@
 
     // ================= ۳. انتخاب دستی و دلخواه ژتون‌ها =================
     let customChoice = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
-
     function stepCustomChip(key, delta) {
       customChoice[key] = Math.max(0, customChoice[key] + delta);
       document.getElementById(`cust-val-${key}`).innerText = customChoice[key];
@@ -731,21 +698,16 @@
         showToast('موجودی سکه کافی نیست!');
         return;
       }
-
-      balance = parseFloat((balance - totalCost).toFixed(4));
+      const newBal = parseFloat((balance - totalCost).toFixed(4));
+      saveCoinsGlobal(newBal);
       chipInventory.c1 += customChoice.c1;
       chipInventory.c5 += customChoice.c5;
       chipInventory.c25 += customChoice.c25;
       chipInventory.c100 += customChoice.c100;
       chipInventory.c500 += customChoice.c500;
-
-      // ریست انتخابگر دستی
       customChoice = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
       ['c1','c5','c25','c100','c500'].forEach(k => document.getElementById(`cust-val-${k}`).innerText = '0');
       updateCustomTotal();
-
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
       playChipClink();
       saveInventory();
       if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -757,10 +719,12 @@
       const amt = parseInt(document.getElementById('sell-swap-input').value, 10) || 0;
       document.getElementById('btn-submit-sell').innerHTML = `✨ نقد کردن و واریز ${amt.toLocaleString()} سکه به کیف پول`;
     }
+
     function setSellQuick(val) {
       document.getElementById('sell-swap-input').value = val;
       updateSellPreview();
     }
+
     function setSellMax() {
       document.getElementById('sell-swap-input').value = Math.max(1, Math.floor(totalChips));
       updateSellPreview();
@@ -776,8 +740,6 @@
         showToast('موجودی ژتون شما کافی نیست!');
         return;
       }
-
-      // کسر عادلانه از موجودی تفکیک‌شده
       let toDeduct = amt;
       const denoms = [
         { key: 'c500', val: 500 },
@@ -786,15 +748,12 @@
         { key: 'c5', val: 5 },
         { key: 'c1', val: 1 }
       ];
-
       for (let d of denoms) {
         if (toDeduct <= 0) break;
         const canTake = Math.min(chipInventory[d.key], Math.floor(toDeduct / d.val));
         chipInventory[d.key] -= canTake;
         toDeduct -= canTake * d.val;
       }
-
-      // اگر مقداری خرده باقی ماند که با بزرگ‌ترها همخوانی نداشت، خرد شود
       if (toDeduct > 0) {
         for (let d of denoms.reverse()) {
           if (chipInventory[d.key] > 0) {
@@ -812,10 +771,8 @@
           chipInventory.c500 += change.c500;
         }
       }
-
-      balance = parseFloat((balance + amt).toFixed(4));
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.setItem('user_balance', balance.toString());
+      const newBal = parseFloat((balance + amt).toFixed(4));
+      saveCoinsGlobal(newBal);
       playChipClink();
       saveInventory();
       if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
@@ -840,25 +797,21 @@
       const container = document.getElementById('games-stake-container');
       if (!container) return;
       container.innerHTML = '';
-
       let stakesConfig = DEFAULT_GAME_STAKES;
       try {
         const saved = localStorage.getItem('simab_game_stakes_config');
         if (saved) stakesConfig = Object.assign({}, DEFAULT_GAME_STAKES, JSON.parse(saved));
       } catch(e) {}
-
       Object.keys(stakesConfig).forEach(gKey => {
         const item = stakesConfig[gKey];
         const card = document.createElement('div');
         card.className = 'stake-item-card';
-
         let btnHtml = '';
         if (item.active) {
           btnHtml = `<button class="btn-quick-enter" onclick="quickBuyinAndEnter('${gKey}')">ورود ➔</button>`;
         } else {
           btnHtml = `<span style="font-size:10px; color:var(--text-muted); font-weight:bold;">به‌زودی</span>`;
         }
-
         card.innerHTML = `
           <div class="stake-item-info">
             <div class="stake-item-icon">${item.icon}</div>
@@ -879,28 +832,24 @@
         const saved = localStorage.getItem('simab_game_stakes_config');
         if (saved) stakesConfig = Object.assign({}, DEFAULT_GAME_STAKES, JSON.parse(saved));
       } catch(e) {}
-
       const target = stakesConfig[gKey];
       if (!target || !target.active) return;
-
       if (totalChips < target.minChips) {
         const needed = target.minChips - totalChips;
         if (balance < needed) {
           showToast(`برای ورود حداقل به ${target.minChips} ژتون نیاز دارید و سکه کافی ندارید!`);
           return;
         }
-        balance = parseFloat((balance - needed).toFixed(4));
+        const newBal = parseFloat((balance - needed).toFixed(4));
+        saveCoinsGlobal(newBal);
         const b = standardBreakdown(needed);
         chipInventory.c1 += b.c1;
         chipInventory.c5 += b.c5;
         chipInventory.c25 += b.c25;
         chipInventory.c100 += b.c100;
         chipInventory.c500 += b.c500;
-        localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-        localStorage.setItem('user_balance', balance.toString());
         saveInventory();
       }
-
       window.location.href = target.url;
     }
 
