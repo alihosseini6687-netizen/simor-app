@@ -289,18 +289,53 @@ Deno.serve(async (request) => {
     return reply(401, { error: "telegram_auth_failed", reason });
   }
 
+  // Authoritative server wallet: only signed Telegram user identity is accepted.
+  // Browser never sends old balance, game outcome, RNG, or a credited reward.
+  if (payload.action === "wallet") {
+    const walletAction=typeof payload.walletAction==="string"?payload.walletAction:"";
+    const allowed=new Set(["state","daily","wheel","miner_start","miner_claim",
+      "exchange_to_chips","exchange_to_coins","slot"]);
+    if (!allowed.has(walletAction)) return reply(400,{error:"invalid_wallet_action"});
+    const mutating=walletAction!=="state";
+    const requestId=typeof payload.requestId==="string"?payload.requestId:"";
+    if (mutating && !/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(requestId))
+      return reply(400,{error:"invalid_request_id"});
+    const amount=payload.amount===undefined?0:payload.amount;
+    if (!Number.isSafeInteger(amount) || amount<0 || amount>1000)
+      return reply(400,{error:"invalid_wallet_amount"});
+    if (walletAction==="slot" && (amount<1 || amount>50))
+      return reply(400,{error:"invalid_slot_bet"});
+    if ((walletAction==="exchange_to_chips" || walletAction==="exchange_to_coins") && amount<1)
+      return reply(400,{error:"invalid_exchange_amount"});
+    const {data,error}=await db.rpc("simab_secure_wallet_action",{
+      p_subject:subject,p_action:walletAction,p_amount:amount,
+      p_request_id:mutating?requestId:null,
+    });
+    if (error) {
+      const known=new Set(["insufficient_coins","insufficient_chips","invalid_bet",
+        "invalid_amount","wallet_limit","invalid_subject","missing_request_id"]);
+      const code=known.has(error.message)?error.message:"wallet_unavailable";
+      return reply(known.has(error.message)?409:503,{error:code});
+    }
+    if (!data || data.serverWallet!==true) return reply(503,{error:"wallet_unavailable"});
+    return reply(200,{...data,legacyWalletImported:false});
+  }
+
   // User rewards use VERIFIED Telegram identity; never trust browser balance.
   // These actions happen BEFORE the admin authorization block.
   if (payload.action === "my_rewards") {
-    const [b,c] = await Promise.all([
-      db.from("simab_verified_quest_balances").select("coins")
-        .eq("telegram_subject", subject).maybeSingle(),
-      db.from("simab_verified_quest_claims").select("quest_id,created_at,reward_coins")
-        .eq("telegram_subject", subject).order("created_at",{ascending:false}).limit(50),
-    ]);
-    if (b.error || c.error) return reply(503,{error:"verified_ledger_unavailable"});
-    return reply(200,{verifiedCoins:Number(b.data?.coins||0),
-      claimedQuestIds:(c.data||[]).map(x=>x.quest_id),spendableInGames:false});
+    const {data:claims,error:claimsError}=await db.from("simab_verified_quest_claims")
+      .select("quest_id,created_at,reward_coins")
+      .eq("telegram_subject", subject).order("created_at",{ascending:false}).limit(50);
+    if (claimsError) return reply(503,{error:"verified_ledger_unavailable"});
+    const {data:wallet,error:walletError}=await db.rpc("simab_secure_wallet_action",{
+      p_subject:subject,p_action:"state",p_amount:0,p_request_id:null,
+    });
+    if (walletError || !wallet) return reply(503,{error:"wallet_unavailable"});
+    return reply(200,{verifiedCoins:Number(wallet.coins||0),
+      verifiedChips:Number(wallet.chips||0),
+      claimedQuestIds:(claims||[]).map(x=>x.quest_id),spendableInGames:true,
+      legacyWalletImported:false});
   }
   if (payload.action === "claim") {
     const id=typeof payload.questId==="string"?payload.questId:"";
@@ -339,7 +374,7 @@ Deno.serve(async (request) => {
       return reply(503,{error:"reward_ledger_unavailable"});
     return reply(200,{granted:data[0].granted===true,alreadyClaimed:data[0].granted!==true,
       rewardCoins:data[0].reward_coins,verifiedCoins:Number(data[0].verified_coins),
-      spendableInGames:false});
+      spendableInGames:true});
   }
 
   // Never rely on a user-id supplied in JSON, localStorage, query string, or initDataUnsafe.
