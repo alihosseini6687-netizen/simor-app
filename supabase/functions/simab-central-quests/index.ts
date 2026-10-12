@@ -148,6 +148,27 @@ Deno.serve(async (request) => {
   if (adminError) return reply(503, { error: "admin_lookup_unavailable" });
   if (!admin) return reply(403, { error: "admin_only" });
 
+  if (payload.action === "broadcast") {
+    const message = typeof payload.message === "string" ? payload.message.trim() : "";
+    const channel = Deno.env.get("SIMAB_TELEGRAM_CHANNEL") || "";
+    if (message.length < 1 || message.length > 1500)
+      return reply(400, { error: "invalid_message" });
+    if (!/^(?:@[A-Za-z0-9_]{5,}|-100[0-9]{6,})$/.test(channel))
+      return reply(503, { error: "channel_not_configured" });
+    try {
+      const tgResponse = await fetch("https://api.telegram.org/bot" + botToken + "/sendMessage", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ chat_id: channel, text: message, disable_web_page_preview: true }),
+        signal: AbortSignal.timeout(9000),
+      });
+      const result = await tgResponse.json();
+      if (!tgResponse.ok || !result?.ok)
+        return reply(503, { error: "telegram_send_failed" });
+      return reply(200, { ok: true, sent: true, messageId: result.result?.message_id ?? null });
+    } catch { return reply(503, { error: "telegram_send_failed" }); }
+  }
+
   if (payload.action === "create") {
     const task = payload.task;
     if (!task || typeof task !== "object" || Array.isArray(task))
