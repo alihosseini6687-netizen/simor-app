@@ -342,7 +342,7 @@
     verifiedCard.style.cssText = "display:block;margin:10px 0;padding:14px;border-color:#b58a37";
     const verifiedTitle=el("div","quest-title","🔐 سکه‌های تأییدشده در سرور");
     const verifiedValue=el("div","quest-reward","در حال بررسی...");
-    const verifiedNote=el("small","","این موجودی در دفتر مستقل سرور ثبت می‌شود و هنوز با سکه‌های قدیمی قابل خرج در بازی یکی نشده است.");
+    const verifiedNote=el("small","","سکه‌های تأییدشده فقط در کیف پول سروری، صرافی امن و رولر امن قابل استفاده‌اند؛ با سکه‌های قدیمی مرورگر یکی نیستند.");
     verifiedNote.style.cssText="display:block;line-height:1.8;margin-top:8px;opacity:.85";
     verifiedCard.append(verifiedTitle,verifiedValue,verifiedNote);
     parent.after(verifiedCard);
@@ -411,7 +411,7 @@
                 const outcome=await doAdmin("claim",{questId:q.id});
                 claim.textContent="✓ پاداش ثبت شد";
                 popup("ثبت سروری",outcome.granted ?
-                  Number(outcome.rewardCoins)+" سکه تأییدشده ثبت شد؛ هنوز در بازی قابل خرج نیست." :
+                  Number(outcome.rewardCoins)+" سکه سروری ثبت شد؛ برای استفاده به کیف پول سروری برو." :
                   "این جایزه قبلاً یک بار ثبت شده است.","✅");
                 await loadVerifiedWallet();
               }catch(e){
