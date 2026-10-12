@@ -1,0 +1,3 @@
+# SIMAB functions. Admin endpoints use Telegram initData HMAC instead of Supabase JWT.
+[functions.simab-central-quests]
+verify_jwt = false
