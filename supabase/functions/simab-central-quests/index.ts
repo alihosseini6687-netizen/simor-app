@@ -71,6 +71,68 @@ async function verifyTelegramInitData(
 }
 
 
+
+// Telegram production Ed25519 key published at core.telegram.org/bots/webapps.
+// This is not a bypass: we verify the official Telegram signature bound to
+// the bot id returned from getMe before trusting even the user id.
+const telegramProductionEd25519PublicKey =
+  "e7bf03a2fa4602af4580703d88dda5bb59f32ed8b02a56c187fe7d34caed242d";
+async function verifyTelegramEd25519(
+  raw: string, botId: string,
+  nowSeconds = Math.floor(Date.now() / 1000),
+  publicKeyHex = telegramProductionEd25519PublicKey,
+): Promise<{ telegramUserId: string; displayName: string }> {
+  if (typeof raw !== "string" || !raw || raw.length > 8192 || !/^[1-9]\d{4,19}$/.test(botId))
+    throw new TelegramAuthError("invalid_payload");
+  const params = new URLSearchParams(raw);
+  const seen = new Set<string>();
+  for (const [k] of params) {
+    if (seen.has(k)) throw new TelegramAuthError("invalid_payload");
+    seen.add(k);
+  }
+  const sigText = params.get("signature") ?? "";
+  const authDate = params.get("auth_date") ?? "";
+  const userText = params.get("user") ?? "";
+  if (!/^[A-Za-z0-9_-]{85,88}={0,2}$/.test(sigText) || !/^\d{10,12}$/.test(authDate) || !userText)
+    throw new TelegramAuthError("missing_fields");
+  const issuedAt = Number(authDate);
+  if (!Number.isSafeInteger(issuedAt)) throw new TelegramAuthError("invalid_payload");
+  if (issuedAt > nowSeconds + 30) throw new TelegramAuthError("clock_mismatch");
+  if (nowSeconds - issuedAt > allowedAgeSeconds) throw new TelegramAuthError("expired");
+  if (!/^[0-9a-f]{64}$/i.test(publicKeyHex)) throw new TelegramAuthError("invalid_payload");
+  let signature: Uint8Array;
+  try {
+    const encoded = sigText.replace(/-/g, "+").replace(/_/g, "/");
+    const bytes = atob(encoded + "=".repeat((4 - encoded.length % 4) % 4));
+    signature = Uint8Array.from(bytes, c => c.charCodeAt(0));
+    if (signature.length !== 64) throw new Error("invalid_length");
+  } catch { throw new TelegramAuthError("invalid_payload"); }
+  const entries = [...params.entries()]
+    .filter(([k]) => k !== "hash" && k !== "signature")
+    .sort(([a], [b]) => a < b ? -1 : a > b ? 1 : 0)
+    .map(([k, v]) => k + "=" + v);
+  const checkString = botId + ":WebAppData\n" + entries.join("\n");
+  const publicKeyBytes = Uint8Array.from(publicKeyHex.match(/../g)!, h => Number.parseInt(h, 16));
+  try {
+    const key = await crypto.subtle.importKey("raw", publicKeyBytes, { name: "Ed25519" }, false, ["verify"]);
+    const valid = await crypto.subtle.verify({ name: "Ed25519" }, key, signature, enc.encode(checkString));
+    if (!valid) throw new TelegramAuthError("signature_mismatch");
+  } catch (error) {
+    if (error instanceof TelegramAuthError) throw error;
+    throw new TelegramAuthError("signature_mismatch");
+  }
+  let user: Record<string, unknown>;
+  try { user = JSON.parse(userText); } catch { throw new TelegramAuthError("invalid_payload"); }
+  if (!user || typeof user !== "object" || Array.isArray(user) ||
+      typeof user.id !== "number" || !Number.isSafeInteger(user.id) || user.id <= 0)
+    throw new TelegramAuthError("invalid_payload");
+  const first = typeof user.first_name === "string" ? user.first_name : "";
+  const last = typeof user.last_name === "string" ? user.last_name : "";
+  const cleanName = (first + " " + last).replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, 80);
+  return { telegramUserId: String(user.id), displayName: cleanName || "بازیکن" };
+}
+
+
 const allowedOrigin = "https://alihosseini6687-netizen.github.io";
 const httpHeaders = {
   "content-type": "application/json; charset=utf-8",
@@ -94,18 +156,22 @@ function serviceKey(): string | undefined {
   return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 }
 
-let botCache: { name: string; until: number } | null = null;
-async function botPublicName(token: string): Promise<string | null> {
-  if (botCache && botCache.until > Date.now()) return botCache.name;
+// Official Telegram /getMe contains the BOT ID needed by third-party
+// signature verification. Never return the bot token or log signed initData.
+let botCache: { id: string; name: string; until: number } | null = null;
+async function getBotIdentity(token: string): Promise<{ id: string; name: string } | null> {
+  if (botCache && botCache.until > Date.now()) return { id: botCache.id, name: botCache.name };
   try {
     const response = await fetch("https://api.telegram.org/bot" + token + "/getMe", {
       method: "GET", signal: AbortSignal.timeout(6000),
     });
     if (!response.ok) return null;
     const j = await response.json();
-    const name = j?.ok && typeof j?.result?.username === "string" ? j.result.username : null;
-    if (name) botCache = { name, until: Date.now() + 300000 };
-    return name;
+    const name = j?.ok && typeof j?.result?.username === "string" ? j.result.username : "";
+    const id = j?.ok && Number.isSafeInteger(j.result?.id) && j.result.id > 0 ? String(j.result.id) : "";
+    if (!name || !id) return null;
+    botCache = { id, name, until: Date.now() + 300000 };
+    return { id, name };
   } catch { return null; }
 }
 
@@ -134,10 +200,10 @@ Deno.serve(async (request) => {
   if (request.method === "GET" && url.searchParams.get("health") === "1") {
     const token = Deno.env.get("SIMAB_TELEGRAM_BOT_TOKEN");
     if (!token) return reply(503, { error: "bot_not_configured" });
-    const botName = await botPublicName(token);
-    if (!botName) return reply(503, { error: "bot_identity_unavailable" });
-    return reply(200, { ok: true, botUsername: "@" + botName,
-      botMatchesExpected: botName.toLowerCase() === "simorapp_bot",
+    const bot = await getBotIdentity(token);
+    if (!bot) return reply(503, { error: "bot_identity_unavailable" });
+    return reply(200, { ok: true, botUsername: "@" + bot.name,
+      botMatchesExpected: bot.name.toLowerCase() === "simorapp_bot",
       channelConfigured: Boolean(Deno.env.get("SIMAB_TELEGRAM_CHANNEL")), rewardsEnabled: false });
   }
   if (request.method === "GET") {
@@ -164,7 +230,20 @@ Deno.serve(async (request) => {
   if (!botToken) return reply(503, { error: "not_configured" });
   let subject = "";
   try {
-    const verified = await verifyTelegramInitData(payload.initData as string, botToken);
+    let verified;
+    try {
+      verified = await verifyTelegramInitData(payload.initData as string, botToken);
+    } catch (error) {
+      if (!(error instanceof TelegramAuthError) || error.code !== "signature_mismatch" ||
+          typeof payload.initData !== "string" ||
+          !new URLSearchParams(payload.initData).has("signature")) throw error;
+      const bot = await getBotIdentity(botToken);
+      // Fall back only for this known bot and a valid official Telegram
+      // Ed25519 signature explicitly bound to its verified bot id.
+      if (!bot || bot.name.toLowerCase() !== "simorapp_bot")
+        throw new TelegramAuthError("signature_mismatch");
+      verified = await verifyTelegramEd25519(payload.initData, bot.id);
+    }
     subject = verified.telegramUserId;
   } catch (error) {
     const reason = error instanceof TelegramAuthError ? error.code : "invalid_payload";
