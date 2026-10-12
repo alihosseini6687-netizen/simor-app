@@ -267,6 +267,10 @@
   <script src="../../assets/js/simab-legacy-guard.js?v=1"></script>
 
 <link rel="stylesheet" href="../../assets/css/simab-secure-entry-v7.css?v=7">
+<link rel="stylesheet" href="../../assets/css/simab-v8-core.css?v=8">
+<link rel="stylesheet" href="../../assets/css/simab-poker-v8.css?v=8">
+<script src="../../assets/js/simab-poker-ai-v8.js?v=8"></script>
+<script src="../../assets/js/simab-game-sound-v8.js?v=8"></script>
 </head>
 <body>
 
@@ -278,12 +282,13 @@
     <div class="top-actions">
       <button class="btn-top-util" onclick="openBreakChipsModal()">🔨 خرد کردن</button>
       <button class="btn-private-room" onclick="openPrivateRoomModal()">👥 اتاق</button>
+      <button type="button" class="v8-audio-toggle" onclick="SimabSound.toggle(this)" aria-pressed="false">🔇 صدا خاموش</button>
     </div>
     <div style="color: var(--cyan); font-weight: 900; font-size: 13.5px;" onclick="window.location.href='../../swap/index.html'" title="ورود به صرافی">
       🎰 <span id="user-chips-display">0</span> ژتون
     </div>
   </div>
-  <a class="simab-secure-entry" href="../../wallet/index.html"><strong>🔐 کیف پول سروری ←</strong><small>پوکر فعلی تمرینی و محلی است؛ برد و باخت این میز به کیف پول معتبر سرور اضافه نمی‌شود.</small></a>
+  <a class="simab-secure-entry" href="../../wallet/index.html"><strong>🎮 پوکر تمرینی سیماب</strong><small>ژتون‌ها مجازی و فقط برای بازی هستند؛ برداشت نقدی وجود ندارد. کیف بازی ←</small></a>
 
 
   <!-- نوار تنظیمات میز -->
@@ -306,6 +311,7 @@
     </div>
   </div>
 
+  <div class="v8-poker-round"><span>🃏 تگزاس هولدم • میز تمرینی</span><span>🤖 شخصیت‌های متفاوت ربات</span></div>
   <!-- میز عمودی با چیدمان بدون تداخل و فونت‌های بزرگ -->
   <div class="poker-table-vertical">
     <div class="dealer-avatar">
@@ -401,6 +407,7 @@
     </div>
   </div>
 
+  <p class="v8-poker-help">🎯 ربات‌ها بر اساس قدرت دست و اندازه پات تصمیم می‌گیرند. اعتبار این میز آزمایشی است و به کیف سروری افزوده نمی‌شود.</p>
   <!-- پنل کنترل -->
   <div class="control-panel">
     <div class="timer-bar-wrap" id="timer-bar-wrap">
@@ -705,12 +712,12 @@
     let communityCards = [];
 
     // اضافه شدن وضعیت isAllIn برای قفل کردن دکمه‌ها پس از آل-این
-    let pHero = { id: 'hero', name: 'شما', bet: 0, folded: false, isAllIn: false, cards: [] };
-    let pBot1 = { id: 'bot1', name: 'مسعود', bet: 0, folded: false, cards: [] };
-    let pBot2 = { id: 'bot2', name: 'سارا', bet: 0, folded: false, cards: [] };
-    let pBot3 = { id: 'bot3', name: 'آریا', bet: 0, folded: false, cards: [] };
-    let pBot4 = { id: 'bot4', name: 'نیما', bet: 0, folded: false, cards: [] };
-    let pBot5 = { id: 'bot5', name: 'رضا', bet: 0, folded: false, cards: [] };
+    let pHero = { id: 'hero', name: 'شما', bet: 0, roundBet: 0, folded: false, isAllIn: false, cards: [] };
+    let pBot1 = { id: 'bot1', name: 'مسعود', bet: 0, roundBet: 0, stack: SimabPokerAI.profiles.bot1.opening, folded: false, isAllIn: false, cards: [] };
+    let pBot2 = { id: 'bot2', name: 'سارا', bet: 0, roundBet: 0, stack: SimabPokerAI.profiles.bot2.opening, folded: false, isAllIn: false, cards: [] };
+    let pBot3 = { id: 'bot3', name: 'آریا', bet: 0, roundBet: 0, stack: SimabPokerAI.profiles.bot3.opening, folded: false, isAllIn: false, cards: [] };
+    let pBot4 = { id: 'bot4', name: 'نیما', bet: 0, roundBet: 0, stack: SimabPokerAI.profiles.bot4.opening, folded: false, isAllIn: false, cards: [] };
+    let pBot5 = { id: 'bot5', name: 'رضا', bet: 0, roundBet: 0, stack: SimabPokerAI.profiles.bot5.opening, folded: false, isAllIn: false, cards: [] };
 
     let turnTimerInterval = null;
     let turnTimeLeft = 15;
@@ -732,7 +739,7 @@
           clearInterval(turnTimerInterval);
           wrap.style.display = 'none';
           document.getElementById('hero-avatar').classList.remove('active-turn');
-          const toCall = currentHighestBet - pHero.bet;
+          const toCall = currentHighestBet - pHero.roundBet;
           if (toCall <= 0) userAction('check');
           else userAction('fold');
         }
@@ -797,7 +804,7 @@
         return;
       }
 
-      const toCall = currentHighestBet - pHero.bet;
+      const toCall = currentHighestBet - pHero.roundBet;
       document.getElementById('btn-fold').disabled = false;
       if (toCall <= 0) {
         document.getElementById('btn-check').disabled = false;
@@ -880,6 +887,7 @@
     }
 
     function startNewHand() {
+      SimabSound.play('deal');
       if (totalChips < 2) {
         showToast('ژتون شما کافی نیست! لطفاً از صرافی ژتون تهیه کنید.');
         setTimeout(() => { window.location.href = '../../swap/index.html'; }, 1500);
@@ -889,12 +897,12 @@
       stage = 0;
       currentHighestBet = 2;
       selectedRaiseAmt = 4;
-      pHero = { id: 'hero', name: 'شما', bet: 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
-      pBot1 = { id: 'bot1', name: 'مسعود', bet: 1, folded: false, cards: [deck.pop(), deck.pop()] };
-      pBot2 = { id: 'bot2', name: 'سارا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
-      pBot3 = { id: 'bot3', name: 'آریا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
-      pBot4 = { id: 'bot4', name: 'نیما', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
-      pBot5 = { id: 'bot5', name: 'رضا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
+      pHero = { id: 'hero', name: 'شما', bet: 2, roundBet: 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
+      pBot1 = { id: 'bot1', name: 'مسعود', bet: 1, roundBet: 1, stack: SimabPokerAI.profiles.bot1.opening - 1, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
+      pBot2 = { id: 'bot2', name: 'سارا', bet: 2, roundBet: 2, stack: SimabPokerAI.profiles.bot2.opening - 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
+      pBot3 = { id: 'bot3', name: 'آریا', bet: 2, roundBet: 2, stack: SimabPokerAI.profiles.bot3.opening - 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
+      pBot4 = { id: 'bot4', name: 'نیما', bet: 2, roundBet: 2, stack: SimabPokerAI.profiles.bot4.opening - 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
+      pBot5 = { id: 'bot5', name: 'رضا', bet: 2, roundBet: 2, stack: SimabPokerAI.profiles.bot5.opening - 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
       communityCards = [deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop()];
 
       deductChipsFromInventory(2);
@@ -918,6 +926,7 @@
     function userAction(action) {
       disableAllButtons();
       if (action === 'fold') {
+        SimabSound.play('fold');
         pHero.folded = true;
         document.getElementById('act-user').innerText = 'فولد ✕';
         document.getElementById('act-user').style.color = '#ff3b30';
@@ -929,11 +938,13 @@
         document.getElementById('act-user').innerText = 'چک ✓';
         document.getElementById('act-user').style.color = '#5ac8fa';
       } else if (action === 'call') {
-        const toCall = currentHighestBet - pHero.bet;
+        SimabSound.play('chip');
+        const toCall = currentHighestBet - pHero.roundBet;
         const actualCall = Math.min(totalChips, toCall);
         deductChipsFromInventory(actualCall);
         pot += actualCall;
         pHero.bet += actualCall;
+        pHero.roundBet += actualCall;
         if (totalChips === 0) {
           pHero.isAllIn = true;
           document.getElementById('act-user').innerText = 'آل-این (All-in) 👑';
@@ -943,14 +954,16 @@
           document.getElementById('act-user').style.color = '#34c759';
         }
       } else if (action === 'raise') {
-        const toCall = Math.max(0, currentHighestBet - pHero.bet);
+        SimabSound.play('raise');
+        const toCall = Math.max(0, currentHighestBet - pHero.roundBet);
         let actualRaise = selectedRaiseAmt;
         if (totalChips < toCall + actualRaise) actualRaise = Math.max(1, totalChips - toCall);
         const totalCost = Math.min(totalChips, toCall + actualRaise);
         deductChipsFromInventory(totalCost);
         pot += totalCost;
         pHero.bet += totalCost;
-        currentHighestBet = pHero.bet;
+        pHero.roundBet += totalCost;
+        currentHighestBet = pHero.roundBet;
         if (totalChips === 0) {
           pHero.isAllIn = true;
           document.getElementById('act-user').innerText = `All-in (+${totalCost} ژتون) 👑`;
