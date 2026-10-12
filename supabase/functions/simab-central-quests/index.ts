@@ -321,6 +321,15 @@ Deno.serve(async (request) => {
     return reply(200,{...data,legacyWalletImported:false});
   }
 
+  if (payload.action === "wallet_history") {
+    const {data,error}=await db.from("simab_secure_wallet_events")
+      .select("action,coin_delta,chip_delta,created_at")
+      .eq("telegram_subject",subject)
+      .order("created_at",{ascending:false}).limit(30);
+    if (error) return reply(503,{error:"wallet_history_unavailable"});
+    return reply(200,{events:data||[]});
+  }
+
   // User rewards use VERIFIED Telegram identity; never trust browser balance.
   // These actions happen BEFORE the admin authorization block.
   if (payload.action === "my_rewards") {
@@ -334,7 +343,7 @@ Deno.serve(async (request) => {
     if (walletError || !wallet) return reply(503,{error:"wallet_unavailable"});
     return reply(200,{verifiedCoins:Number(wallet.coins||0),
       verifiedChips:Number(wallet.chips||0),
-      claimedQuestIds:(claims||[]).map(x=>x.quest_id),spendableInGames:true,
+      claimedQuestIds:(claims||[]).map(x=>x.quest_id),spendableInGames:false,spendableInSecureGames:true,
       legacyWalletImported:false});
   }
   if (payload.action === "claim") {
@@ -374,7 +383,7 @@ Deno.serve(async (request) => {
       return reply(503,{error:"reward_ledger_unavailable"});
     return reply(200,{granted:data[0].granted===true,alreadyClaimed:data[0].granted!==true,
       rewardCoins:data[0].reward_coins,verifiedCoins:Number(data[0].verified_coins),
-      spendableInGames:true});
+      spendableInGames:false,spendableInSecureGames:true});
   }
 
   // Never rely on a user-id supplied in JSON, localStorage, query string, or initDataUnsafe.
