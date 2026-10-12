@@ -1001,8 +1001,8 @@
           const cloudData = JSON.parse(cloudRaw);
           const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
           if (cloudData.updated_at && cloudData.updated_at >= localTime) {
-            if (typeof cloudData.chips === 'number') totalChips = cloudData.chips;
-            if (cloudData.inv) chipInventory = cloudData.inv;
+            if (typeof cloudData.chips === 'number' && Number.isFinite(cloudData.chips) && cloudData.chips >= 0 && cloudData.chips <= 1000000000000) totalChips = cloudData.chips;
+            if (cloudData.inv) chipInventory = SimabLegacy.sanitizeInventory(cloudData.inv);
             localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
             saveChips();
           }
