@@ -175,6 +175,35 @@ async function getBotIdentity(token: string): Promise<{ id: string; name: string
   } catch { return null; }
 }
 
+// Public official channel provided by owner. This is NOT a secret.
+const OFFICIAL_CHANNEL = "@SimorApp";
+let channelAdminCache: { ready: boolean; expires: number } | null = null;
+function isOfficialChannelUrl(raw: string): boolean {
+  try {
+    const link = new URL(raw);
+    return link.protocol === "https:" && link.hostname.toLowerCase() === "t.me" &&
+      !link.username && !link.password && !link.port &&
+      link.pathname.replace(/\/$/, "").toLowerCase() === "/simorapp" &&
+      !link.search && !link.hash;
+  } catch { return false; }
+}
+async function isBotAdminInOfficialChannel(token: string, botId: string): Promise<boolean> {
+  if (channelAdminCache && channelAdminCache.expires > Date.now()) return channelAdminCache.ready;
+  let ready = false;
+  try {
+    const response = await fetch("https://api.telegram.org/bot" + token + "/getChatMember", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({chat_id: OFFICIAL_CHANNEL, user_id: Number(botId)}),
+      signal: AbortSignal.timeout(7000),
+    });
+    const result = await response.json();
+    ready = response.ok && result?.ok === true &&
+      ["creator", "administrator"].includes(result?.result?.status);
+  } catch { ready = false; }
+  channelAdminCache = { ready, expires: Date.now() + (ready ? 15000 : 30000) };
+  return ready;
+}
+
 const toPublic = (item: Record<string, unknown>) => ({
   id: item.id,
   title: item.title,
@@ -202,9 +231,11 @@ Deno.serve(async (request) => {
     if (!token) return reply(503, { error: "bot_not_configured" });
     const bot = await getBotIdentity(token);
     if (!bot) return reply(503, { error: "bot_identity_unavailable" });
+    const channelBotIsAdmin = await isBotAdminInOfficialChannel(token, bot.id);
     return reply(200, { ok: true, botUsername: "@" + bot.name,
       botMatchesExpected: bot.name.toLowerCase() === "simorapp_bot",
-      channelConfigured: Boolean(Deno.env.get("SIMAB_TELEGRAM_CHANNEL")), rewardsEnabled: false });
+      officialChannel: OFFICIAL_CHANNEL, channelConfigured: true, channelBotIsAdmin,
+      rewardsEnabled: channelBotIsAdmin && bot.name.toLowerCase() === "simorapp_bot" });
   }
   if (request.method === "GET") {
     const { data, error } = await db.from("simab_central_quests")
@@ -213,19 +244,14 @@ Deno.serve(async (request) => {
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) return reply(503, { error: "catalog_unavailable" });
-    const channel = Deno.env.get("SIMAB_TELEGRAM_CHANNEL") || "";
-    const rewardsEnabled = /^@[A-Za-z0-9_]{5,}$/.test(channel);
-    const quests = (data ?? []).map(q => {
-      let eligible = false;
-      try {
-        const link = new URL(q.url);
-        eligible = rewardsEnabled && q.verification_mode === "telegram_membership" &&
-          q.reward_coins > 0 && link.hostname.toLowerCase() === "t.me" &&
-          link.pathname.replace(/^\//,"").toLowerCase() === channel.slice(1).toLowerCase() &&
-          !link.search && !link.hash;
-      } catch { /* invalid URL is never payable */ }
-      return { ...toPublic(q), rewardAvailable: eligible };
-    });
+    const botToken = Deno.env.get("SIMAB_TELEGRAM_BOT_TOKEN") || "";
+    const bot = botToken ? await getBotIdentity(botToken) : null;
+    const rewardsEnabled = !!bot && bot.name.toLowerCase() === "simorapp_bot" &&
+      await isBotAdminInOfficialChannel(botToken, bot.id);
+    const quests = (data ?? []).map(q => ({...toPublic(q),
+      rewardAvailable: rewardsEnabled && q.verification_mode === "telegram_membership" &&
+        q.reward_coins > 0 && isOfficialChannelUrl(q.url),
+    }));
     return reply(200, { quests, rewardsEnabled });
   }
 
@@ -280,20 +306,17 @@ Deno.serve(async (request) => {
     const id=typeof payload.questId==="string"?payload.questId:"";
     if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(id))
       return reply(400,{error:"invalid_quest_id"});
-    const channel=Deno.env.get("SIMAB_TELEGRAM_CHANNEL")||"";
-    if (!/^@[A-Za-z0-9_]{5,}$/.test(channel))
-      return reply(503,{error:"membership_channel_not_configured"});
+    const channel = OFFICIAL_CHANNEL;
+    const verifiedBot = await getBotIdentity(botToken);
+    if (!verifiedBot || verifiedBot.name.toLowerCase() !== "simorapp_bot" ||
+        !await isBotAdminInOfficialChannel(botToken, verifiedBot.id))
+      return reply(503,{error:"channel_bot_not_admin"});
     const {data:q,error:lookupError}=await db.from("simab_central_quests")
       .select("id,url,reward_coins,verification_mode,is_published").eq("id",id).maybeSingle();
     if (lookupError) return reply(503,{error:"quest_lookup_unavailable"});
     if (!q || !q.is_published || q.verification_mode!=="telegram_membership" || q.reward_coins<1)
       return reply(409,{error:"quest_not_rewardable"});
-    try {
-      const link=new URL(q.url);
-      if (link.protocol!=="https:" || link.hostname.toLowerCase()!=="t.me" ||
-        link.pathname.replace(/^\//,"").toLowerCase()!==channel.slice(1).toLowerCase() ||
-        link.search || link.hash) return reply(409,{error:"channel_mismatch"});
-    } catch {return reply(409,{error:"channel_mismatch"});}
+    if (!isOfficialChannelUrl(q.url)) return reply(409,{error:"channel_mismatch"});
     const userId=Number(subject);
     if (!Number.isSafeInteger(userId)||userId<=0) return reply(401,{error:"invalid_telegram_subject"});
     let member:{status?:string;is_member?:boolean};
@@ -329,11 +352,13 @@ Deno.serve(async (request) => {
 
   if (payload.action === "broadcast") {
     const message = typeof payload.message === "string" ? payload.message.trim() : "";
-    const channel = Deno.env.get("SIMAB_TELEGRAM_CHANNEL") || "";
+    const channel = OFFICIAL_CHANNEL;
     if (message.length < 1 || message.length > 1500)
       return reply(400, { error: "invalid_message" });
-    if (!/^(?:@[A-Za-z0-9_]{5,}|-100[0-9]{6,})$/.test(channel))
-      return reply(503, { error: "channel_not_configured" });
+    const verifiedBot = await getBotIdentity(botToken);
+    if (!verifiedBot || verifiedBot.name.toLowerCase() !== "simorapp_bot" ||
+        !await isBotAdminInOfficialChannel(botToken, verifiedBot.id))
+      return reply(503, { error: "channel_bot_not_admin" });
     try {
       const tgResponse = await fetch("https://api.telegram.org/bot" + botToken + "/sendMessage", {
         method: "POST",
@@ -366,10 +391,7 @@ Deno.serve(async (request) => {
       reward > 10000 || !Number.isSafeInteger(timer) || timer < 10 || timer > 120)
       return reply(400, { error: "invalid_task" });
     const mode = t.verificationMode === "telegram_membership" &&
-      parsed.hostname.toLowerCase() === "t.me" &&
-      /^\/[A-Za-z][A-Za-z0-9_]{4,}$/.test(parsed.pathname) &&
-      !parsed.pathname.toLowerCase().endsWith("bot")
-      ? "telegram_membership" : "external_visit";
+      isOfficialChannelUrl(parsed.href) ? "telegram_membership" : "external_visit";
     const { data, error } = await db.from("simab_central_quests")
       .insert({
         title, url: parsed.href, reward_coins: reward,
