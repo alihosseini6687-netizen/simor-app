@@ -27,8 +27,9 @@ test("V8 core CSS scrolled container and all active mobile pages",()=>{
 test("home has one popular cards section with hero navigation but no duplicate quick access",()=>{
  const html=read("index.html");
  assert.match(html,/v8-hero-focus/);
- assert.match(html,/v8-card-enhanced/);
- assert.equal((html.match(/v8-card-enhanced/g)||[]).length,3);
+ assert.doesNotMatch(html,/v8-card-enhanced/);
+ assert.doesNotMatch(html,/class="v3-featured-grid"/);
+ assert.equal((html.match(/class="v8-hero-focus"/g)||[]).length,1);
  assert.doesNotMatch(html,/⚡ دسترسی سریع/);
  assert.doesNotMatch(html,/class="v4-pulse-banner"/);
 });
