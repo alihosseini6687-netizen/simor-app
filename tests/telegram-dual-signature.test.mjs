@@ -76,3 +76,23 @@ test("Production code never skips verification and never trusts initDataUnsafe",
   assert.match(input, /telegram_auth_failed/);
   assert.doesNotMatch(input, /Deno\.env\.get\("ALLOW_INSECURE_AUTH"\)/);
 });
+
+test("the root page keeps launch initData only in this tab and only for one hour", () => {
+  const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
+  assert.match(html, /simab_signed_launch_init_data_v1/);
+  assert.match(html, /sessionStorage\.setItem/);
+  assert.match(html, /age <= 3600/);
+  assert.doesNotMatch(html, /localStorage\.setItem\("simab_signed_launch_init_data_v1"/);
+});
+test("admin retries at most two signed inputs, never bypasses server authentication", () => {
+  const client = readFileSync(new URL("../assets/js/simab-central-quests.js", import.meta.url), "utf8");
+  assert.match(client, /signedInitDataCandidates/);
+  assert.match(client, /new Set\(\[fromLaunch, direct\]\)/);
+  assert.match(client, /j\.reason !== "signature_mismatch"/);
+  assert.match(client, /if \(!r\.ok\) throw new Error/);
+  assert.match(client, /JSON\.stringify\(\{ initData: used, action/);
+  for(const file of ["admin/index.html","quests/index.html"]) {
+    const html = readFileSync(new URL("../"+file, import.meta.url), "utf8");
+    assert.match(html, /simab-central-quests\.js\?v=5/);
+  }
+});
