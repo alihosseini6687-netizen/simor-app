@@ -54,7 +54,13 @@
     });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(
-      r.status === 401 ? describeTelegram401(initData) :
+      r.status === 401 ? (
+        j.reason === "expired" ? "اطلاعات ورود تلگرام بیش از یک ساعت عمر دارد؛ مینی‌اپ را کامل ببند و از ربات باز کن." :
+        j.reason === "signature_mismatch" ? "امضای ورود پذیرفته نشد؛ هویت ربات ثبت‌شده در Supabase را بررسی کن (توکن را ارسال نکن)." :
+        j.reason === "clock_mismatch" ? "زمان گوشی یا زمان ورود تلگرام هماهنگ نیست." :
+        j.reason === "missing_fields" ? "اطلاعات ورود تلگرام ناقص است؛ مینی‌اپ را از دکمه ربات باز کن." :
+        describeTelegram401(initData)
+      ) :
       r.status === 403 ? "این حساب از سمت سرور مجوز مدیریت ندارد." :
       "ثبت سروری انجام نشد (HTTP " + r.status + ")."
     );
@@ -103,10 +109,88 @@
       }
     } catch {
       list.replaceChildren(el("p", "", "ارتباط با سرور مأموریت‌ها برقرار نیست؛ چیزی منتشر یا حذف نشده است."));
+      const retry=el("button","btn-tool","🔄 تلاش دوباره");
+      retry.type="button";retry.addEventListener("click",renderAdmin);
+      list.append(retry);
     }
   }
 
   if (isAdmin) {
+    const DRAFT_KEY = "simab_central_quest_drafts_v2";
+    const getDrafts = () => {
+      try {
+        const drafts = JSON.parse(localStorage.getItem(DRAFT_KEY) || "[]");
+        return Array.isArray(drafts) ? drafts.slice(0,20) : [];
+      } catch { return []; }
+    };
+    const storeDrafts = arr => {
+      try { localStorage.setItem(DRAFT_KEY, JSON.stringify(arr.slice(0,20))); return true; }
+      catch { return false; }
+    };
+    function renderDrafts() {
+      const list = document.getElementById("quest-drafts-list");
+      if (!list) return;
+      list.replaceChildren();
+      const drafts = getDrafts();
+      if (!drafts.length) return;
+      list.append(el("p", "", "📝 پیش‌نویس‌های منتشرنشده:"));
+      drafts.forEach((item,index) => {
+        const row = el("div","custom-task-item");
+        const title = el("span","",item.title);
+        const restore = el("button","btn-tool","ویرایش");
+        restore.type="button";
+        restore.addEventListener("click",()=>{
+          document.getElementById("task-title").value=item.title||"";
+          document.getElementById("task-url").value=item.url||"";
+          document.getElementById("task-reward").value=item.rewardCoins??0;
+          document.getElementById("task-timer").value=String(item.timerSeconds||20);
+          popup("پیش‌نویس بارگذاری شد","برای انتشار دکمه ثبت مرکزی را بزن.","📝");
+        });
+        const del=el("button","btn-del","حذف");
+        del.type="button";
+        del.addEventListener("click",()=>{const items=getDrafts();items.splice(index,1);storeDrafts(items);renderDrafts();});
+        row.append(title,restore,del);
+        list.append(row);
+      });
+    }
+    window.simabSaveQuestDraft = () => {
+      const task = {
+        title:document.getElementById("task-title")?.value?.trim()||"",
+        url:document.getElementById("task-url")?.value?.trim()||"",
+        rewardCoins:Number(document.getElementById("task-reward")?.value),
+        timerSeconds:Number(document.getElementById("task-timer")?.value),
+      };
+      if (!task.title || !task.url) { popup("ناقص","عنوان و لینک را وارد کن.","⚠️");return; }
+      const items=getDrafts();items.unshift(task);
+      if (storeDrafts(items)) {
+        renderDrafts();
+        popup("ذخیره شد","پیش‌نویس روی همین دستگاه ذخیره شد؛ هنوز عمومی نیست.","💾");
+      } else popup("ذخیره نشد","فضای ذخیره کافی نیست.","⚠️");
+    };
+    window.simabCheckMissionsConnection = async () => {
+      const label = document.getElementById("quest-server-status");
+      if(label) label.textContent="در حال بررسی سرور و ربات...";
+      try {
+        const res=await fetch(endpoint+"?health=1",{method:"GET",cache:"no-store"});
+        const h=await res.json().catch(()=>({}));
+        if(!res.ok || !h.ok) throw Error("نسخه جدید تابع Supabase هنوز مستقر نشده یا در دسترس نیست.");
+        if(!h.botMatchesExpected) {
+          if(label) label.textContent="⚠️ توکن ذخیره‌شده در Supabase متعلق به "+String(h.botUsername||"ربات دیگری")+" است، نه @SimorApp_bot. توکن را اینجا ارسال نکن.";
+          return;
+        }
+        if(label) label.textContent="✅ ربات "+h.botUsername+" تأیید شد؛ در حال بررسی امضای مدیر...";
+        try {
+          await doAdmin("ping",{});
+          if(label) label.textContent="✅ سرور، امضای ورود و مجوز مدیریت تأیید شدند."+(h.channelConfigured?"":" ارسال کانال تا تنظیم کانال ربات غیرفعال است.");
+        } catch(e) {
+          if(label) label.textContent="⚠️ اتصال برقرار است، اما اجازه مدیریت تأیید نشد: "+String(e.message||e);
+        }
+      } catch(e) {
+        if(label) label.textContent="❌ "+String(e.message||e);
+      }
+    };
+    renderDrafts();
+    window.simabCheckMissionsConnection();
     window.saveCustomTask = async () => {
       const title = document.getElementById("task-title")?.value?.trim() || "";
       const inputUrl = document.getElementById("task-url")?.value?.trim() || "";
@@ -127,7 +211,7 @@
         await doAdmin("create", {
           task: {
             title, url: url.href, rewardCoins: reward, timerSeconds: timer,
-            verificationMode: /^https:\/\/t\.me\//i.test(url.href) ? "telegram_membership" : "external_visit",
+            verificationMode: /^https:\/\/t\.me\//i.test(url.href) && !url.pathname.toLowerCase().endsWith("bot") ? "telegram_membership" : "external_visit",
           },
         });
         document.getElementById("task-title").value = "";
@@ -236,6 +320,9 @@
         }
       } catch {
         area.replaceChildren(el("p", "", "دریافت مأموریت‌های مرکزی فعلاً در دسترس نیست."));
+        const retry=el("button","btn-quest-action","🔄 تلاش دوباره");
+        retry.type="button";retry.addEventListener("click",()=>location.reload());
+        area.append(retry);
       }
     })();
   }
