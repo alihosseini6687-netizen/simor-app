@@ -14,11 +14,13 @@
     if (isAdmin && typeof window.showPopup === "function") window.showPopup(title, message, icon);
     else if (typeof window.showToast === "function") window.showToast(message);
   };
+  let rewardsEnabled = false;
   async function readPublished() {
     const r = await fetch(endpoint, { method: "GET", cache: "no-store", headers: { accept: "application/json" } });
     if (!r.ok) throw new Error("catalog_" + r.status);
     const json = await r.json();
     if (!Array.isArray(json.quests)) throw new Error("invalid_catalog");
+    rewardsEnabled = json.rewardsEnabled === true;
     return json.quests.filter(t => t && typeof t.id === "string" && typeof t.title === "string");
   }
   // Only used to explain 401s. This decoded timestamp is never treated as identity,
@@ -89,7 +91,11 @@
         j.reason === "missing_fields" ? "اطلاعات امضاشده تلگرام ناقص است؛ از دکمه مینی‌اپ ربات باز کن." :
         describeTelegram401(used)
       ) :
-      r.status === 403 ? "شناسه این حساب در فهرست مدیران سرور وجود ندارد." :
+      r.status === 403 ? (j.error === "channel_membership_required"
+        ? "عضویت در کانال تأیید نشد؛ ابتدا در کانال عضو شو."
+        : "دسترسی برای انجام این عملیات تأیید نشد.") :
+      r.status === 409 ? "این مأموریت شرایط پرداخت سروری را ندارد." :
+      r.status === 503 ? "سرور تأیید عضویت یا دفتر جایزه در دسترس نیست؛ هیچ سکه‌ای پرداخت نشده است." :
       "درخواست سروری ناموفق بود (HTTP " + r.status + ")."
     );
     return j;
@@ -116,7 +122,7 @@
       for (const task of quests) {
         currentTasks.set(task.id, task);
         const row = el("div", "custom-task-item");
-        const text = el("span", "", task.title + " (پاداش پیشنهادی: " + task.rewardCoins + " سکه — هنوز غیرفعال)");
+        const text = el("span", "", task.title + " (" + task.rewardCoins + " سکه؛ " + (task.rewardAvailable ? "قابل بررسی عضویت" : "پاداش غیرفعال") + ")");
         const del = el("button", "btn-del", "✕");
         del.type = "button";
         del.setAttribute("aria-label", "حذف مأموریت " + task.title);
@@ -245,7 +251,7 @@
         document.getElementById("task-title").value = "";
         document.getElementById("task-url").value = "";
         document.getElementById("task-reward").value = "";
-        popup("منتشر شد", "مأموریت برای همه کاربران نمایش داده می‌شود؛ پرداخت پاداش تا راه‌اندازی تأیید سروری غیرفعال است.", "✅");
+        popup("منتشر شد", "مأموریت برای همه نمایش داده شد. فقط عضویت تأییدشده در کانالِ تنظیم‌شده ربات، پاداش امن دارد.", "✅");
         await renderAdmin();
       } catch (e) {
         popup("منتشر نشد", String(e.message || e), "⚠️");
@@ -311,6 +317,26 @@
     const bar = document.getElementById("progress-bar");
     if (bar) bar.style.width = "0%";
     const parent = document.getElementById("quests-container");
+    // Verified reward balance is separate from legacy browser/CloudStorage coins.
+    const verifiedCard = el("div","quest-card");
+    verifiedCard.style.cssText = "display:block;margin:10px 0;padding:14px;border-color:#b58a37";
+    const verifiedTitle=el("div","quest-title","🔐 سکه‌های تأییدشده در سرور");
+    const verifiedValue=el("div","quest-reward","در حال بررسی...");
+    const verifiedNote=el("small","","این موجودی در دفتر مستقل سرور ثبت می‌شود و هنوز با سکه‌های قدیمی قابل خرج در بازی یکی نشده است.");
+    verifiedNote.style.cssText="display:block;line-height:1.8;margin-top:8px;opacity:.85";
+    verifiedCard.append(verifiedTitle,verifiedValue,verifiedNote);
+    parent.after(verifiedCard);
+    let claimedIds=new Set();
+    async function loadVerifiedWallet(){
+      try{
+        const v=await doAdmin("my_rewards",{});
+        verifiedValue.textContent=Number(v.verifiedCoins||0).toLocaleString("fa-IR")+" سکه تأییدشده";
+        claimedIds=new Set(v.claimedQuestIds||[]);
+      }catch{
+        verifiedValue.textContent="کیف پول سروری در دسترس نیست؛ هیچ سکه‌ای تغییر نکرده است.";
+        claimedIds=new Set();
+      }
+    }
     const heading = el("h3", "", "📢 مأموریت‌های منتشرشده");
     heading.style.cssText = "font-size:15px;color:#f5cf62;padding:12px 4px 4px";
     const area = el("div", "");
@@ -319,6 +345,8 @@
     (async () => {
       try {
         const quests = await readPublished();
+        if (rewardsEnabled) await loadVerifiedWallet();
+        else verifiedValue.textContent="پرداخت سروری فعلاً غیرفعال است؛ هیچ جایزه‌ای قابل دریافت نیست.";
         area.replaceChildren();
         if (!quests.length) {
           area.append(el("p", "", "مأموریت مرکزی فعالی وجود ندارد."));
@@ -330,7 +358,9 @@
           const art = el("div", "quest-icon-box", "🎯");
           const body = el("div", "");
           body.append(el("div", "quest-title", q.title),
-                      el("div", "quest-reward", "پاداش پیشنهادی: " + q.rewardCoins + " سکه (پس از تأیید سرور)"));
+                      el("div", "quest-reward", q.rewardAvailable ?
+                        "پس از تأیید عضویت: " + q.rewardCoins + " سکه سروری" :
+                        "پاداش پیشنهادی: " + q.rewardCoins + " سکه — فعلاً قابل دریافت نیست"));
           info.append(art, body);
           const btn = el("button", "btn-quest-action", "مشاهده ←");
           btn.type = "button";
@@ -344,6 +374,29 @@
             } catch { /* ignore invalid remote URL */ }
           });
           row.append(info, btn);
+          if(q.rewardAvailable){
+            const claim=el("button","btn-quest-action","✅ بررسی عضویت و دریافت");
+            claim.type="button";claim.style.margin="8px 0";
+            if(claimedIds.has(q.id)){claim.disabled=true;claim.textContent="✓ پاداش قبلاً ثبت شده";}
+            claim.addEventListener("click",async()=>{
+              if(claim.disabled)return;
+              claim.disabled=true;
+              claim.textContent="در حال بررسی عضویت توسط تلگرام...";
+              try{
+                const outcome=await doAdmin("claim",{questId:q.id});
+                claim.textContent="✓ پاداش ثبت شد";
+                popup("ثبت سروری",outcome.granted ?
+                  q.rewardCoins+" سکه تأییدشده ثبت شد؛ هنوز در بازی قابل خرج نیست." :
+                  "این جایزه قبلاً یک بار ثبت شده است.","✅");
+                await loadVerifiedWallet();
+              }catch(e){
+                claim.disabled=false;
+                claim.textContent="✅ بررسی عضویت و دریافت";
+                popup("جایزه ثبت نشد",String(e.message||e)+"؛ ربات باید مدیر همان کانال باشد.","⚠️");
+              }
+            });
+            row.append(claim);
+          }
           area.append(row);
         }
       } catch {
