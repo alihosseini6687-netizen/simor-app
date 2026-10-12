@@ -27,7 +27,7 @@
     try {
       const fields = new URLSearchParams(initData);
       const authDate = fields.get("auth_date");
-      if (!authDate || !/^\\d{10,12}$/.test(authDate) || !fields.get("user") || !fields.get("hash")) {
+      if (!authDate || !/^\d{10,12}$/.test(authDate) || !fields.get("user") || !fields.get("hash")) {
         return "اطلاعات ورود تلگرام ناقص است. مینی‌اپ را از دکمه ربات باز کن؛ در صورت تکرار، نحوه راه‌اندازی را بررسی می‌کنیم.";
       }
       const ageSeconds = Math.floor(Date.now() / 1000) - Number(authDate);
