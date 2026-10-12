@@ -296,6 +296,8 @@
   <script src="assets/js/simab-legacy-guard.js?v=1"></script>
 
 <link rel="stylesheet" href="assets/css/simab-secure-entry-v7.css?v=7">
+<link rel="stylesheet" href="assets/css/simab-v8-core.css?v=8">
+<link rel="stylesheet" href="assets/css/simab-v8-home.css?v=8">
 </head>
 <body>
 
@@ -313,7 +315,7 @@
         <button class="btn-gear" onclick="openAboutModal()" title="درباره سیماب">⭐</button>
       </div>
     </header>
-    <a class="simab-secure-entry" href="wallet/index.html"><strong>🪙 کیف پول و رولر سروری ←</strong><small>موجودی این صفحه فعلاً محلی و آزمایشی است؛ پاداش و بازی قابل‌تأیید را در کیف پول سروری امتحان کن.</small></a>
+    <a class="simab-secure-entry" href="wallet/index.html"><strong>🪙 اعتبار مجازی سیماب</strong><small>سکه‌ها فقط برای سرگرمی داخل برنامه‌اند؛ برداشت نقدی وجود ندارد. کیف پول بازی ←</small></a>
 
 
     <!-- سربرگ ۱: خانه (پیش‌فرض) -->
@@ -325,23 +327,22 @@
     <h1>خوش اومدی<br><em>به سیماب!</em></h1>
     <p>جایی برای بازی، سرگرمی و رقابت‌های هیجان‌انگیز.</p>
     <button type="button" class="v3-gold-button" onclick="switchNavTab('games')">شروع بازی <span aria-hidden="true">←</span></button>
+    <nav class="v8-hero-focus" aria-label="محبوب‌ترین و آخرین بازی‌ها">
+      <a href="games/poker/index.html">🃏 پوکر تگزاس</a>
+      <a href="games/slot/index.html">🎰 رول</a>
+      <a href="games/backgammon/index.html">🎲 تخته‌نرد</a>
+    </nav>
   </div>
 </section>
-<div class="v4-pulse-banner"><span aria-hidden="true">✦</span><p><strong>به آرکید سیماب خوش اومدی!</strong><small>سه بازی آماده اجراست؛ برای انتخاب‌های بیشتر وارد بخش بازی‌ها شو.</small></p><button type="button" onclick="switchNavTab('games')">ببین ←</button></div>
+
 <div class="v3-section-header"><h2>🔥 بازی‌های محبوب</h2><button onclick="switchNavTab('games')" type="button">مشاهده همه ←</button></div>
 <div class="v3-featured-grid">
-  <a href="games/poker/index.html" class="v3-featured v3-blue"><img src="assets/v3/poker.webp" alt="" loading="lazy"><strong>پوکر تگزاس</strong><small>بازی با ربات</small></a>
-  <a href="games/slot/index.html" class="v3-featured v3-pink"><img src="assets/v3/slot.webp" alt="" loading="lazy"><strong>رول</strong><small>ماشین شانس</small></a>
-  <a href="games/backgammon/index.html" class="v3-featured v3-cyan"><img src="assets/v3/backgammon.webp" alt="" loading="lazy"><strong>تخته‌نرد</strong><small>بازی با ربات</small></a>
+  <a href="games/poker/index.html" class="v3-featured v3-blue" v8-card-enhanced"><img src="assets/v3/poker.webp" alt="" loading="lazy"><strong>پوکر تگزاس</strong><span class="v8-card-action">▶ شروع بازی</span><small>بازی با ربات</small></a>
+  <a href="games/slot/index.html" class="v3-featured v3-pink" v8-card-enhanced"><img src="assets/v3/slot.webp" alt="" loading="lazy"><strong>رول</strong><span class="v8-card-action">▶ شروع بازی</span><small>ماشین شانس</small></a>
+  <a href="games/backgammon/index.html" class="v3-featured v3-cyan" v8-card-enhanced"><img src="assets/v3/backgammon.webp" alt="" loading="lazy"><strong>تخته‌نرد</strong><span class="v8-card-action">▶ شروع بازی</span><small>بازی با ربات</small></a>
 </div>
-<section class="v4-recent" id="v4-recent" hidden><div class="v3-section-header"><h2>↶ آخرین بازی‌های من</h2><span class="v4-secondary-meta">فقط روی این دستگاه</span></div><div id="v4-recent-list"></div></section>
-<div class="v3-section-header"><h2>⚡ دسترسی سریع</h2></div>
-<div class="v3-shortcuts">
-  <a href="streak/index.html" class="v3-shortcut v3-gold"><span>🎁</span><strong>پاداش روزانه</strong></a>
-  <a href="friends/index.html" class="v3-shortcut v3-pink"><span>👥</span><strong>دعوت دوستان</strong></a>
-  <a href="games/wheel/index.html" class="v3-shortcut v3-cyan"><span>🎡</span><strong>گردونه</strong></a>
-  <a href="quests/index.html" class="v3-shortcut v3-blue"><span>🎯</span><strong>مأموریت‌ها</strong></a>
-</div>
+<section class="v4-recent" id="v4-recent" hidden aria-hidden="true"><div class="v3-section-header"><h2>↶ آخرین بازی‌های من</h2><span class="v4-secondary-meta">فقط روی این دستگاه</span></div><div id="v4-recent-list"></div></section>
+
       <div class="profile-card">
         <div class="v3-section-header v3-profile-heading"><h2>👑 پروفایل بازیکن</h2></div>
         <div class="profile-top">
