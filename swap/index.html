@@ -539,12 +539,12 @@
               localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
               // Do not write the shared legacy user_balance key.
             }
-            if (typeof cloudData.chips === 'number') {
+            if (typeof cloudData.chips === 'number' && Number.isFinite(cloudData.chips) && cloudData.chips >= 0 && cloudData.chips <= 1000000000000) {
               totalChips = cloudData.chips;
               localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
             }
             if (cloudData.inv) {
-              chipInventory = cloudData.inv;
+              chipInventory = SimabLegacy.sanitizeInventory(cloudData.inv);
               localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
             }
             localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
