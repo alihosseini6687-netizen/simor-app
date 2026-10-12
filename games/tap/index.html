@@ -290,6 +290,7 @@
     }
     .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
+  <script src="../../assets/js/simab-legacy-guard.js?v=1"></script>
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -367,7 +368,7 @@
 
     // همگام‌سازی سکه با لابی مادر
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+    let balance = SimabLegacy.readAmount(STORAGE_KEY_COINS, 50);
     function updateBalanceDisplay() {
       document.getElementById('user-balance').innerText = balance.toLocaleString();
     }
@@ -484,7 +485,7 @@
         if (won.val > 0) {
           balance = parseFloat((balance + won.val).toFixed(2));
           localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-          localStorage.setItem('user_balance', balance.toString());
+          // Do not write the shared legacy user_balance key.
           updateBalanceDisplay();
 
           if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
