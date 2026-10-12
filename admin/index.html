@@ -157,6 +157,7 @@
   <!-- بخش ۴: واریز به کاربران و لینک هدیه -->
   <div class="admin-card">
     <h3>💸 واریز سکه به کاربران یا ساخت لینک هدیه</h3>
+    <p style="font-size:12px;line-height:1.9;color:#f5cf62;margin-bottom:9px;">⚠️ این دو قابلیت تا راه‌اندازی اعتبارسنجی سمت سرور موقتاً غیرفعال‌اند. انتقال از طریق حافظه مرورگر معتبر نیست.</p>
     <input type="text" class="input-field" id="target-user-id" placeholder="شناسه عددی تلگرام کاربر (User ID)">
     <input type="number" class="input-field" id="target-coin-amount" placeholder="تعداد سکه واریزی...">
     <button class="btn-action" onclick="transferCoinsDirect()">واریز به شناسه کاربر</button>
@@ -407,42 +408,15 @@
 
     // واریز به کاربر و ساخت لینک اختصاصی هدیه
   function transferCoinsDirect() {
-    const targetId = document.getElementById('target-user-id').value.trim();
-    const amount = parseFloat(document.getElementById('target-coin-amount').value);
-    if (!targetId || isNaN(amount) || amount <= 0) {
-      showPopup('خطا', 'شناسه عددی کاربر و تعداد سکه را به درستی وارد کنید.', '⚠️');
-      return;
-    }
-    const targetKey = 'simor_coins_' + targetId;
-    let targetBal = parseFloat(localStorage.getItem(targetKey) || '50');
-    targetBal = parseFloat((targetBal + amount).toFixed(4));
-    localStorage.setItem(targetKey, targetBal.toString());
-
-    // ایجاد لینک اختصاصی برای کاربر در صورتی که روی دستگاه دیگری باشد
-    const giftCode = 'gift_to_' + targetId + '_' + Date.now() + '_' + amount;
-    const giftUrl = `https://t.me/SimorApp_bot?startapp=${giftCode}`;
-
-    showPopup('واریز انجام شد', `${amount.toLocaleString()} سکه ثبت شد.\nهمچنین در صورت نیاز لینک تحویل هدیه ساخته شد:\n${giftUrl}`, '💸');
-    document.getElementById('target-user-id').value = '';
-    document.getElementById('target-coin-amount').value = '';
+    // Do not claim to transfer to another account by writing to this browser.
+    // A trusted server must own the ledger and authorize admin transfers.
+    showPopup('موقتاً غیرفعال', 'انتقال بین کاربران نیازمند ثبت و تأیید در سرور امن است. هیچ سکه‌ای جابه‌جا نشده است.', '🔒');
   }
 
   // ساخت لینک هدیه تلگرامی با کپی خودکار و ارسال در چت
   function generateGiftLink() {
-    const amount = parseFloat(document.getElementById('target-coin-amount').value) || 100;
-    const giftCode = 'gift_' + Math.floor(100000 + Math.random() * 900000) + '_' + amount;
-    const giftUrl = `https://t.me/SimorApp_bot?startapp=${giftCode}`;
-    const msg = `🎁 شما یک هدیه ${amount.toLocaleString()} سکه‌ای در سیماب دریافت کردید! برای دریافت روی لینک زیر بزنید:\n${giftUrl}`;
-
-    navigator.clipboard.writeText(msg).then(() => {
-      showPopup('لینک ساخته شد 📋', `پیام و لینک هدیه کپی شد! می‌توانید آن را در چت تلگرام برای کاربر ارسال کنید:\n\n${giftUrl}`, '🎁');
-    }).catch(() => {
-      showPopup('لینک ساخته شد', `لینک هدیه:\n${giftUrl}`, '🎁');
-    });
-
-    if (tg?.openTelegramLink) {
-      tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(giftUrl)}&text=${encodeURIComponent(msg)}`);
-    }
+    // Creating a self-authenticating gift URL client-side is never secure.
+    showPopup('موقتاً غیرفعال', 'لینک هدیه پس از راه‌اندازی صدور و مصرف یک‌باره کد در سرور فعال می‌شود. هیچ لینکی ساخته نشده است.', '🔒');
   }
 
   // ارسال ساده و مستقیم به کانال @SimorApp
@@ -470,12 +444,20 @@
     const reward = parseInt(document.getElementById('task-reward').value, 10);
     const timer = parseInt(document.getElementById('task-timer').value, 10) || 20;
 
-    if (!title || !url || isNaN(reward)) {
-      showPopup('خطا', 'تمام فیلدها را پر کنید.', '⚠️');
+    let checkedUrl;
+    try {
+      checkedUrl = new URL(url);
+    } catch(e) {
+      showPopup('خطا', 'لینک ماموریت باید یک نشانی معتبر با https باشد.', '⚠️');
+      return;
+    }
+    if (!title || title.length > 100 || checkedUrl.protocol !== 'https:' ||
+        !Number.isSafeInteger(reward) || reward <= 0 || reward > 10000) {
+      showPopup('خطا', 'عنوان (حداکثر ۱۰۰ حرف)، لینک امن https و پاداش ۱ تا ۱۰۰۰۰ لازم است.', '⚠️');
       return;
     }
 
-    const newTask = { id: 'quest_' + Date.now(), title, url, reward, timer };
+    const newTask = { id: 'quest_' + Date.now(), title, url: checkedUrl.href, reward, timer };
 
     // ذخیره همزمان در هر دو کلید تسک‌ها تا در تمام صفحات نمایش یابد
     let tasks1 = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
@@ -500,18 +482,30 @@
         container.innerHTML = '<div style="color: var(--text-muted); font-size: 11px;">هنوز تسک سفارشی اضافه نشده است.</div>';
         return;
       }
-      container.innerHTML = tasks.map((t, idx) => `
-        <div class="custom-task-item">
-          <span>${t.title} (+${t.reward} S | تایمر: ${t.timer}s)</span>
-          <button class="btn-del" onclick="deleteTask(${idx})">✕</button>
-        </div>
-      `).join('');
+      container.replaceChildren();
+      tasks.forEach((t, idx) => {
+        const row = document.createElement('div');
+        row.className = 'custom-task-item';
+        const title = document.createElement('span');
+        title.textContent = `${String(t.title)} (+${Number(t.reward)} S | تایمر: ${Number(t.timer)}s)`;
+        const remove = document.createElement('button');
+        remove.className = 'btn-del';
+        remove.type = 'button';
+        remove.textContent = '✕';
+        remove.addEventListener('click', () => deleteTask(idx));
+        row.append(title, remove);
+        container.appendChild(row);
+      });
     }
 
     function deleteTask(index) {
       let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
-      tasks.splice(index, 1);
+      const removed = tasks.splice(index, 1)[0];
       localStorage.setItem('simab_custom_quests', JSON.stringify(tasks));
+      if (removed) {
+        let secondary = JSON.parse(localStorage.getItem('simor_custom_tasks') || '[]');
+        localStorage.setItem('simor_custom_tasks', JSON.stringify(secondary.filter(t => t.id !== removed.id)));
+      }
       renderTasks();
     }
 
