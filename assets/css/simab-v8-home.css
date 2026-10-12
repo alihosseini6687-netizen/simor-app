@@ -1,0 +1,23 @@
+/* SIMAB V8 home: fewer duplicates, hero contains game chips, all elements scroll naturally */
+body{background-image:radial-gradient(ellipse at 5% 5%,#6a188d62,transparent 49%),radial-gradient(ellipse at 90% 55%,#204fc43f,transparent 49%),linear-gradient(180deg,#150822 0%,#08071b 80%)!important}
+.app-wrapper{padding-bottom:calc(106px + env(safe-area-inset-bottom,0px))!important;overflow:visible!important}
+.v3-hero{min-height:clamp(274px,68vw,349px)!important;border:1.5px solid #e8b66f!important;background:radial-gradient(circle at 32% 43%,#4a1e99,#0e092f)!important;box-shadow:0 0 23px #b65bff72,inset 0 0 17px #5117a269!important}
+.v3-hero-art{object-fit:cover!important;object-position:25% center;filter:saturate(1.27) contrast(1.04)}
+.v3-hero-content{position:relative;z-index:2;width:100%;max-width:100%!important;min-width:0;padding:8px!important}
+.v3-hero-content h1{font-size:clamp(24px,7.5vw,39px)!important;line-height:1.24!important;text-shadow:0 4px 13px #09041c,0 0 19px #efac448f}
+.v3-hero-content p{max-width:64%;font-size:clamp(10px,2.9vw,12px);text-shadow:0 3px 5px #080313}
+.v3-hero-content .v3-gold-button{min-height:44px;border-radius:13px;box-shadow:0 7px 20px #d29140a0}
+.v8-hero-focus{width:100%;margin-top:12px;gap:5px!important}
+.v8-hero-focus a{flex:1 1 30%;padding:6px 4px!important;text-align:center;min-width:0;white-space:nowrap;text-shadow:0 0 8px #000}
+#v4-recent[hidden]{display:none!important}
+.v3-featured-grid{gap:10px!important}
+.v3-featured.v8-card-enhanced{border-radius:17px!important}
+.v3-featured.v8-card-enhanced:nth-child(1){border-color:#ffd369!important;box-shadow:0 0 18px #e9aa534c}
+.v3-featured.v8-card-enhanced:nth-child(2){border-color:#ec67ed!important;box-shadow:0 0 18px #d632ee60}
+.v3-featured.v8-card-enhanced:nth-child(3){border-color:#53daff!important;box-shadow:0 0 18px #0bbffa62}
+.v3-featured.v8-card-enhanced:nth-child(2) .v8-card-action{background:linear-gradient(125deg,#f8a9ff,#df4bea)}
+.v3-featured.v8-card-enhanced:nth-child(3) .v8-card-action{background:linear-gradient(125deg,#b4f8ff,#29b5ff)}
+.profile-card{border-color:#ac77d174!important}
+.simab-secure-entry{padding:9px 11px!important}
+.simab-secure-entry small{font-size:10px!important}
+@media(max-width:360px){.v3-hero{min-height:258px!important}.v3-hero-content h1{font-size:24px!important}.v3-featured.v8-card-enhanced{height:155px!important}.v3-featured.v8-card-enhanced strong{font-size:10px!important}}
