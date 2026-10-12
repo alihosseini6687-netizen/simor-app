@@ -273,6 +273,8 @@
     }
     .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
+  <!-- UI styles are isolated from wallet/auth/game logic. -->
+  <link rel="stylesheet" href="assets/css/simab-home-v2.css?v=1">
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -285,14 +287,36 @@
         <span id="user-balance-txt">50</span>
       </div>
       <div class="header-start">
-        <div class="brand-title">SIMAB</div>
+        <div class="brand-title">SIMAB<span class="brand-caption">GAMING CLUB</span></div>
         <button class="btn-gear" onclick="openAboutModal()" title="درباره ما">⭐</button>
       </div>
     </header>
 
     <!-- سربرگ ۱: خانه (پیش‌فرض) -->
     <div id="tab-home-content">
+      <section class="hero-panel" aria-label="شروع بازی در سیماب">
+        <span class="hero-kicker">✦ SIMAB GAMING CLUB</span>
+        <h1 class="hero-title">وقتشه <strong>بازی کنی!</strong></h1>
+        <p class="hero-description">دنیایی از بازی و سرگرمی، همین‌جا توی سیماب. بازی دلخواهت رو انتخاب کن و لذت ببر!</p>
+        <div class="hero-actions">
+          <button type="button" class="hero-play-btn" onclick="switchNavTab('games')">شروع بازی <span class="play-arrow" aria-hidden="true">←</span></button>
+          <a href="streak/index.html" class="hero-secondary-action">🎁 هدیه روزانه</a>
+        </div>
+        <p class="hero-hint">✧ بازی‌های فعلی در دسترس هستند</p>
+      </section>
+
+      <div class="section-heading">
+        <h2 class="section-heading-title">بازی‌های محبوب</h2>
+        <button type="button" class="section-heading-more" onclick="switchNavTab('games')">مشاهده همه ←</button>
+      </div>
+      <div class="featured-games" aria-label="بازی‌های قابل اجرا">
+        <a href="games/poker/index.html" class="featured-game"><span class="featured-art" aria-hidden="true">🃏</span><span class="featured-name">پوکر تگزاس</span><span class="featured-tag">ورق و استراتژی</span></a>
+        <a href="games/slot/index.html" class="featured-game"><span class="featured-art" aria-hidden="true">🎰</span><span class="featured-name">رول</span><span class="featured-tag">ماشین شانس</span></a>
+        <a href="games/backgammon/index.html" class="featured-game"><span class="featured-art" aria-hidden="true">🎲</span><span class="featured-name">تخته‌نرد</span><span class="featured-tag">بازی با ربات</span></a>
+      </div>
+
       <div class="profile-card">
+        <div class="profile-eyebrow">✧ پروفایل بازیکن</div>
         <div class="profile-top">
           <div class="user-avatar" id="avatar-container">👤</div>
           <div>
@@ -318,6 +342,7 @@
         </div>
       </div>
 
+      <div class="section-heading"><h2 class="section-heading-title">دسترسی سریع</h2></div>
       <!-- ۳ مربع میانی -->
       <div class="three-grid">
         <a href="friends/index.html" class="grid-box">
@@ -325,12 +350,11 @@
           <span class="label">رفرال</span>
           <span class="sub">دعوت دوستان</span>
         </a>
-        <div class="grid-box" onclick="alertComingSoon('این بخش')">
-          <span class="badge-soon-mini">به‌زودی</span>
-          <span class="icon">⏳</span>
-          <span class="label">به‌‌زودی</span>
-          <span class="sub">در آپدیت بعد</span>
-        </div>
+        <a href="quests/index.html" class="grid-box">
+          <span class="icon">🎯</span>
+          <span class="label">ماموریت‌ها</span>
+          <span class="sub">چالش‌های روزانه</span>
+        </a>
         <a href="ai/index.html" class="grid-box">
           <span class="icon">🎙️️</span>
           <span class="label">دستیار صوتی</span>
