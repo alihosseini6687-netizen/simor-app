@@ -74,6 +74,7 @@ function paint(s){
   const now=Date.now();
   const minerReady=ready&&now>=ready.getTime();
   $("miner-btn").textContent=!ready?"⚡ روشن کردن ماینر":minerReady?"⛏ دریافت ۴ سکه":"⏳ زمان برداشت هنوز نرسیده";
+  $("miner-btn").dataset.secureAction = ready ? "miner_claim" : "miner_start";
   $("miner-btn").disabled=!!ready&&!minerReady;
   $("miner-info").textContent=!ready?"ماینر باید یک بار روشن شود؛ پس از ۸ ساعت برداشت فعال می‌شود.":
     minerReady?"برداشت آماده است. پس از برداشت، دوره ۸ ساعته بعدی خودکار شروع می‌شود.":
@@ -128,7 +129,7 @@ async function mutate(walletAction){
   if(waiting&&(waiting.walletAction!==walletAction||waiting.amount!==amount)){
     show("درخواست قبلی در انتظار تعیین تکلیف است. ابتدا دکمه «بازیابی درخواست» را بزن.",true);return;
   }
-  if(!crypto?.randomUUID){show("این مرورگر امکان ساخت شناسه امن درخواست ندارد.",true);return;}
+  if(!globalThis.crypto?.randomUUID){show("این مرورگر امکان ساخت شناسه امن درخواست ندارد.",true);return;}
   const request=waiting||{walletAction,amount,requestId:crypto.randomUUID()};
   storePending(request);
   await execute(request);
