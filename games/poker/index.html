@@ -1138,40 +1138,29 @@
     }
 
     function evaluateWinner() {
-      const activeBots = getActiveBots().filter(b => !b.folded);
-      let contenders = [];
-
-      if (!pHero.folded) {
-        const u7 = [...pHero.cards, ...communityCards];
-        const hRes = eval7(u7);
-        contenders.push({ player: pHero, hand: hRes, isHero: true });
+      const players=[pHero,...getActiveBots()];
+      const live=players.filter(p=>!p.folded);
+      if(!live.length){endHand('همه فولد کردند.',false);return;}
+      const hands=new Map(live.map(p=>[p.id,eval7([...p.cards,...communityCards])]));
+      const tiers=[...new Set(players.map(p=>p.bet).filter(v=>v>0))].sort((a,b)=>a-b);
+      let prev=0,heroPrize=0,wonPots=0;
+      for(const tier of tiers){
+        const contributed=players.filter(p=>p.bet>=tier);
+        const sidePot=(tier-prev)*contributed.length;
+        const eligible=live.filter(p=>p.bet>=tier).sort((a,b)=>a.id.localeCompare(b.id));
+        prev=tier;
+        if(!eligible.length||!sidePot)continue;
+        const winners=eligible.filter(p=>!eligible.some(q=>compareHands(hands.get(q.id),hands.get(p.id))>0));
+        const share=Math.floor(sidePot/winners.length),remainder=sidePot%winners.length;
+        winners.forEach((p,i)=>{
+          if(p.id==='hero'){heroPrize+=share+(i<remainder?1:0);wonPots++;}
+        });
       }
-
-      activeBots.forEach(bot => {
-        const b7 = [...bot.cards, ...communityCards];
-        const bRes = eval7(b7);
-        contenders.push({ player: bot, hand: bRes, isHero: false });
-      });
-
-      if (contenders.length === 0) {
-        endHand('تمام بازیکنان فولد کردند.', false);
-        return;
-      }
-
-      contenders.sort((a, b) => compareHands(b.hand, a.hand));
-      const winner = contenders.slice(0, 1)[0];
-
-      if (winner.isHero) {
-        addChipsToInventory(pot);
-        endHand(`🎉 تبریک! شما با دست برتر «${winner.hand.name}» برنده کل پات به ارزش ${pot.toLocaleString()} ژتون شدید!`, true);
-      } else {
-        if (pHero.folded) {
-          endHand(`🤖 ${winner.player.name} با دست «${winner.hand.name}» برنده پات ${pot.toLocaleString()} ژتون شد.`, false);
-        } else {
-          const heroScore = contenders.find(c => c.isHero);
-          endHand(`🤖 ${winner.player.name} با دست «${winner.hand.name}» برنده شد.\nدست شما: «${heroScore.hand.name}»`, false);
-        }
-      }
+      if(heroPrize>0)addChipsToInventory(heroPrize);
+      SimabSound.play(heroPrize>0?'win':'fold');
+      endHand(heroPrize>0?
+        '🏆 از '+wonPots+' پات برنده شدی: '+heroPrize.toLocaleString('fa-IR')+' ژتون تمرینی.':
+        'دست تمام شد. برد و باخت فقط با ژتون آزمایشی ثبت می‌شود.',heroPrize>0);
     }
 
     function endHand(msg, won) {
