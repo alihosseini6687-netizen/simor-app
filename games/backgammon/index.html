@@ -1507,6 +1507,7 @@
     }
 
     function applyMove(color, from, to, distUsed) {
+      SimabSound.play('chip');
       if (color === 'white') {
         if (from === 'bar') barWhite--;
         else {
@@ -1673,6 +1674,7 @@
       }
 
       // اعمال حرکت
+      SimabSound.play('chip');
       board[chosenMove.from].count--;
       if (board[chosenMove.from].count === 0) board[chosenMove.from].color = null;
 
@@ -1693,6 +1695,7 @@
     }
 
     function declareGameWinner(winner) {
+      SimabSound.play(winner==='white'?'win':'fold');
       stopTurnTimer();
       const isGammon = (winner === 'white') ? (offBlack === 0) : (offWhite === 0);
       const mult = (isGammon ? 2 : 1) * doublingMultiplier;
