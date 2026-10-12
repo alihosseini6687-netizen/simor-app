@@ -86,7 +86,7 @@ button:focus-visible, a:focus-visible, .grid-box:focus-visible, .action-btn:focu
 .section-heading { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 2px 10px; }
 .section-heading-title { font-size:16px; color:#f5efff; font-weight:900; }
 .section-heading-title::before { content:""; display:inline-block; vertical-align:middle; height:17px; width:4px; border-radius:5px; background:#f5c66a; margin-left:8px; }
-.section-heading-more { border:0; background:none; color:#ffda82; font:700 11px inherit; cursor:pointer; padding:7px 0; }
+.section-heading-more { border:0; background:none; color:#ffda82; font-weight:700; font-size:11px; font-family:inherit; cursor:pointer; padding:7px 0; }
 .featured-games { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-bottom:20px; }
 .featured-game {
   min-width:0; min-height:128px; border-radius:18px; padding:14px 8px 12px;
