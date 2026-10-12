@@ -50,7 +50,7 @@ BEGIN
   p:=public.simab_secure_wallet_action('10000001','slot',2,pg_catalog.gen_random_uuid());
   generated_reels:=p->'result'->'reels';
   IF jsonb_array_length(generated_reels)<>3 THEN RAISE EXCEPTION 'RNG missing: %',p; END IF;
-  IF (p->'result'->>'payout')::integer NOT IN (0,4,16) THEN
+  IF (p->'result'->>'payout')::integer NOT IN (0,4,10) THEN
     RAISE EXCEPTION 'invalid slot payout: %',p; END IF;
   -- Ensure a second separate spin cannot be spammed within the same 2-second window.
   PERFORM public.simab_secure_wallet_action('10000001','exchange_to_chips',1,pg_catalog.gen_random_uuid());
