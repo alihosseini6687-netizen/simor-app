@@ -223,6 +223,7 @@
     }
     .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
+  <script src="../assets/js/simab-legacy-guard.js?v=1"></script>
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -419,7 +420,7 @@
         }
       }
     } catch(e) {}
-    let uid = "702007470";
+    let uid = "guest"; // No impersonated owner when Telegram WebApp is unavailable.
     try {
       if (tg?.initDataUnsafe?.user?.id) {
         uid = tg.initDataUnsafe.user.id.toString();
@@ -442,11 +443,11 @@
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
     const isCloudSupported = !!(tg?.isVersionAtLeast && tg.isVersionAtLeast('6.9') && tg?.CloudStorage);
 
-    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
-    let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
+    let balance = SimabLegacy.readAmount(STORAGE_KEY_COINS, 50);
+    let totalChips = SimabLegacy.readAmount(STORAGE_KEY_CHIPS, 0);
     let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
     try {
-      const savedInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
+      const savedInv = SimabLegacy.readInventory(STORAGE_KEY_CHIPS_INV);
       if (savedInv) chipInventory = savedInv;
     } catch(e) {}
 
@@ -487,9 +488,10 @@
     // تابع ذخیره همزمان سکه، ژتون‌ها و تایم‌استمپ در حافظه محلی و کلود تلگرام
     function saveAllDataGlobal(newBal = null) {
       if (newBal !== null) {
-        balance = parseFloat(Number(newBal).toFixed(4));
+        balance = SimabLegacy.safeAmount(Number(newBal), balance);
+        balance = Number(balance.toFixed(4));
         localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-        localStorage.setItem('user_balance', balance.toString());
+        // Do not write the shared legacy user_balance key.
       }
       totalChips = calcTotalChips();
       localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
@@ -532,17 +534,17 @@
           const cloudData = JSON.parse(cloudRaw);
           const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
           if (cloudData.updated_at && cloudData.updated_at >= localTime) {
-            if (typeof cloudData.coins === 'number') {
+            if (typeof cloudData.coins === 'number' && Number.isFinite(cloudData.coins) && cloudData.coins >= 0 && cloudData.coins <= 1000000000000) {
               balance = cloudData.coins;
               localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-              localStorage.setItem('user_balance', balance.toString());
+              // Do not write the shared legacy user_balance key.
             }
-            if (typeof cloudData.chips === 'number') {
+            if (typeof cloudData.chips === 'number' && Number.isFinite(cloudData.chips) && cloudData.chips >= 0 && cloudData.chips <= 1000000000000) {
               totalChips = cloudData.chips;
               localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
             }
             if (cloudData.inv) {
-              chipInventory = cloudData.inv;
+              chipInventory = SimabLegacy.sanitizeInventory(cloudData.inv);
               localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipInventory));
             }
             localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());

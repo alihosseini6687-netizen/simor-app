@@ -617,6 +617,7 @@
   <link rel="stylesheet" href="../../assets/css/simab-game-shell-v5.css?v=5">
   <link rel="stylesheet" href="../../assets/css/simab-slot-v5.css?v=5">
   <link rel="stylesheet" href="../../assets/css/simab-game-v6.css?v=6">
+  <script src="../../assets/js/simab-legacy-guard.js?v=1"></script>
 </head>
 <body>
   <!-- نوار بالای صفحه -->
@@ -783,7 +784,7 @@
         }
       }
     } catch(e) {}
-    let uid = "702007470";
+    let uid = "guest"; // Never default to the owner account outside Telegram.
     try {
       if (tg?.initDataUnsafe?.user?.id) {
         uid = tg.initDataUnsafe.user.id.toString();
@@ -831,9 +832,9 @@
     }
     // لود استاندارد ژتون‌ها بدون تداخل با سکه‌های اصلی (user_balance)
     function loadChips() {
-      totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
+      totalChips = SimabLegacy.readAmount(STORAGE_KEY_CHIPS, 0);
       try {
-        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
+        const saved = SimabLegacy.readInventory(STORAGE_KEY_CHIPS_INV);
         if (saved) chipsInv = saved;
       } catch(e) {}
       if (totalChips > 0 && calcTotal(chipsInv) !== totalChips) {

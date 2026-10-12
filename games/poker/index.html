@@ -264,6 +264,7 @@
   <link rel="stylesheet" href="../../assets/css/simab-game-shell-v5.css?v=5">
   <link rel="stylesheet" href="../../assets/css/simab-poker-v5.css?v=5">
   <link rel="stylesheet" href="../../assets/css/simab-game-v6.css?v=6">
+  <script src="../../assets/js/simab-legacy-guard.js?v=1"></script>
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -501,7 +502,7 @@
       }
     } catch(e) {}
 
-    let uid = "702007470";
+    let uid = "guest"; // Never default to the owner account outside Telegram.
     try {
       if (tg?.initDataUnsafe?.user?.id) {
         uid = tg.initDataUnsafe.user.id.toString();
@@ -517,10 +518,10 @@
     // ================= اتصال ۱۰۰٪ به صندوق ژتون‌ها =================
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
-    let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
+    let totalChips = SimabLegacy.readAmount(STORAGE_KEY_CHIPS, 0);
     let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
     try {
-      const savedInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
+      const savedInv = SimabLegacy.readInventory(STORAGE_KEY_CHIPS_INV);
       if (savedInv) chipInventory = savedInv;
     } catch(e) {}
     function standardBreakdown(amount) {

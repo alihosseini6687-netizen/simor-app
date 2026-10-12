@@ -154,6 +154,7 @@
       cursor: pointer; box-shadow: 0 0 15px rgba(212,175,55,0.4);
     }
   </style>
+  <script src="../../assets/js/simab-legacy-guard.js?v=1"></script>
 </head>
 <body>
   <!-- نوار بالای صفحه -->
@@ -218,7 +219,7 @@
     <input type="text" class="card-input" id="input-msg" value="تولدت مبارک رفیق، همیشه برنده باشی! 🌸" oninput="updateCardText()">
     <label class="input-label">نام شما (فرستنده):</label>
     <input type="text" class="card-input" id="input-from" value="علی" oninput="updateCardText()">
-    <button class="btn-buy-card" id="btn-buy" onclick="purchaseCard()">💳 خرید و صدور کارت (۱۵۰ سکه)</button>
+    <button class="btn-buy-card" id="btn-buy" onclick="purchaseCard()">💳 صدور کارت آزمایشی (۱۵۰ سکه)</button>
   </div>
 
   <!-- باکس ذخیره در گالری بعد از خرید -->
@@ -254,13 +255,14 @@
 
     function goBack() { window.location.href = '../../index.html'; }
 
+    const CARD_DEMO_STORAGE_KEY = 'simab_cards_demo_' + String(tg?.initDataUnsafe?.user?.id || 'guest');
     let balance = 1000;
-    try { balance = parseInt(localStorage.getItem('user_balance') || '1000'); } catch(e) {}
+    try { balance = SimabLegacy.readAmount(CARD_DEMO_STORAGE_KEY, 1000); } catch(e) {}
     function saveBalance() {
-      try { localStorage.setItem('user_balance', balance.toString()); } catch(e) {}
-      document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S';
+      try { localStorage.setItem(CARD_DEMO_STORAGE_KEY, balance.toString()); } catch(e) {}
+      document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S (آزمایشی)';
     }
-    document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S';
+    document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S (آزمایشی)';
 
     let currentPrice = 150;
     let currentTheme = 'theme-gold';
@@ -279,7 +281,7 @@
         luck: 'LUCKY EDITION'
       };
       document.getElementById('card-badge-txt').innerText = badges[themeName] || 'GIFT CARD';
-      document.getElementById('btn-buy').innerText = `💳 خرید و صدور کارت (${price} سکه)`;
+      document.getElementById('btn-buy').innerText = `💳 صدور کارت آزمایشی (${price} سکه)`;
     }
 
     function updateCardText() {
@@ -302,7 +304,7 @@
       } catch(e) {}
       document.getElementById('btn-buy').style.display = 'none';
       document.getElementById('delivery-box').style.display = 'block';
-      alert('🎉 کارت شما با موفقیت صادر شد!');
+      alert('🎉 کارت آزمایشی شما صادر شد!');
     }
 
     // خروجی تصویر تمیز بدون به هم ریختگی

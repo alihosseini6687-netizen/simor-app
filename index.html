@@ -293,6 +293,7 @@
   <link rel="stylesheet" href="assets/css/simab-v3.css?v=3">
   <link rel="stylesheet" href="assets/css/simab-v4.css?v=4">
   <link rel="stylesheet" href="assets/css/simab-home-v6.css?v=6">
+  <script src="assets/js/simab-legacy-guard.js?v=1"></script>
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -590,9 +591,9 @@
     // مقداردهی اولیه: ۵۰ سکه برای کاربر جدید و حفظ ۲,۱۷۵,۰۰۰ برای مدیر
     let balance = 50;
     if (isRealAdmin) {
-      balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
+      balance = SimabLegacy.readAmount(STORAGE_KEY_COINS, 2175000);
     } else if (uid !== "guest") {
-      let saved = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '50');
+      let saved = SimabLegacy.readAmount(STORAGE_KEY_COINS, 50);
       // پاکسازی مقادیر میلیونی که قبلاً به اشتباه به اکانت دوم سرایت کرده بود
       if (saved >= 100000) {
         saved = 50;
@@ -615,7 +616,8 @@
     // ذخیره سراسری و زنده دارایی (همگام‌سازی بین گوشی، آیفون و تلگرام دسکتاپ)
     function saveUserDataGlobal(newCoins = null, newChips = null, newInv = null) {
       if (newCoins !== null) {
-        balance = parseFloat(Number(newCoins).toFixed(4));
+        balance = SimabLegacy.safeAmount(Number(newCoins), balance);
+        balance = Number(balance.toFixed(4));
         localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
         renderCoins();
       }
@@ -623,7 +625,7 @@
       const currentChips = parseInt(localStorage.getItem(STORAGE_KEY_CHIPS) || '0', 10);
       let currentInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
       try {
-        currentInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV)) || currentInv;
+        currentInv = SimabLegacy.readInventory(STORAGE_KEY_CHIPS_INV) || currentInv;
       } catch(e) {}
       
       const payload = {
@@ -666,16 +668,16 @@
           }
 
           if (cloudData.updated_at && cloudData.updated_at >= localTime) {
-            if (typeof cloudData.coins === 'number') {
+            if (typeof cloudData.coins === 'number' && Number.isFinite(cloudData.coins) && cloudData.coins >= 0 && cloudData.coins <= 1000000000000) {
               balance = cloudData.coins;
               localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
               renderCoins();
             }
-            if (typeof cloudData.chips === 'number') {
+            if (typeof cloudData.chips === 'number' && Number.isFinite(cloudData.chips) && cloudData.chips >= 0 && cloudData.chips <= 1000000000000) {
               localStorage.setItem(STORAGE_KEY_CHIPS, cloudData.chips.toString());
             }
             if (cloudData.inv) {
-              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(cloudData.inv));
+              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(SimabLegacy.sanitizeInventory(cloudData.inv)));
             }
             localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
           } else {
