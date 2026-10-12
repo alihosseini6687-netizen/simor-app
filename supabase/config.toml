@@ -1,0 +1,2 @@
+[functions.simab-telegram-auth]
+verify_jwt = false
