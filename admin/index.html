@@ -97,6 +97,7 @@
   </style>
   <link rel="stylesheet" href="../assets/css/simab-secondary-v6.css?v=6">
   <link rel="stylesheet" href="../assets/css/simab-admin-v6.css?v=6">
+  <script src="../assets/js/simab-legacy-guard.js?v=1"></script>
 </head>
 <body>
   <!-- هدر -->
@@ -112,11 +113,11 @@
     <a href="#v6-admin-games">🎮 تنظیم بازی‌ها</a>
     <a href="#v6-admin-tasks">🎯 مأموریت‌ها</a>
   </nav>
-  <div class="v6-admin-hint">🔒 <strong>مهم:</strong> این پنل هنوز فقط شناسه تلگرام را در مرورگر بررسی می‌کند؛ <strong>تأیید امنیتی واقعی سمت سرور فعال نشده است.</strong> عملیات غیرسروری را مبنای دارایی کاربران قرار نده.</div>
+  <div class="v6-admin-hint">🔐 <strong>امنیت سیماب:</strong> انتشار مأموریت و ارسال پیام کانال تنها پس از تأیید امضای تلگرام و مجوز مدیر در سرور انجام می‌شود. شارژ شخصی، ماینر و تنظیم بازی‌ها فعلاً محلی و آزمایشی هستند و سکه معتبر محسوب نمی‌شوند.</div>
   <!-- بخش ۱: شارژ خودتان -->
   <div id="v6-admin-wallet" class="v6-admin-target"></div>
   <div class="admin-card">
-    <h3>🪙 شارژ سریع حساب خودتان</h3>
+    <h3>🪙 شارژ آزمایشی محلی (غیرمعتبر برای پاداش سروری)</h3>
     <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">
       موجودی فعال حساب شما: <b id="current-bal" style="color: var(--gold); font-size: 14px;">50 S</b>
     </div>
@@ -191,7 +192,8 @@
   <!-- بخش ۶: ایجاد تسک جدید -->
   <div id="v6-admin-tasks" class="v6-admin-target"></div>
   <div class="admin-card">
-    <h3>➕ ایجاد ماموریت جدید برای صفحه تسک‌ها</h3>
+    <h3>➕ ایجاد مأموریت مرکزی</h3>
+    <button class="btn-tool cyan" type="button" style="width:100%;margin:8px 0" onclick="simabFillOfficialChannelQuest()">📢 آماده‌سازی مأموریت کانال رسمی @SimorApp (۱ سکه آزمایشی)</button>
     <input type="text" class="input-field" id="task-title" placeholder="عنوان ماموریت (مثلاً عضویت در چنل یوتیوب)">
     <input type="text" class="input-field" id="task-url" placeholder="لینک (https://...)">
     <div style="display:flex; gap:6px;">
@@ -312,16 +314,16 @@
           const cloudData = JSON.parse(cloudRaw);
           const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
           if (cloudData.updated_at && cloudData.updated_at >= localTime) {
-            if (typeof cloudData.coins === 'number') {
+            if (typeof cloudData.coins === 'number' && Number.isFinite(cloudData.coins) && cloudData.coins >= 0 && cloudData.coins <= 1000000000000) {
               balance = cloudData.coins;
               localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
               renderAdminBalance();
             }
-            if (typeof cloudData.chips === 'number') {
+            if (typeof cloudData.chips === 'number' && Number.isFinite(cloudData.chips) && cloudData.chips >= 0 && cloudData.chips <= 1000000000000) {
               localStorage.setItem(STORAGE_KEY_CHIPS, cloudData.chips.toString());
             }
             if (cloudData.inv) {
-              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(cloudData.inv));
+              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(SimabLegacy.sanitizeInventory(cloudData.inv)));
             }
             localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
           }
@@ -342,9 +344,12 @@
     }
 
     function addMyCoins(num) {
-      balance = parseFloat((balance + num).toFixed(4));
+      if (!Number.isFinite(num) || num <= 0 || num > 1000000) {
+        showPopup('خطا','مبلغ شارژ آزمایشی معتبر نیست.','⚠️'); return;
+      }
+      balance = SimabLegacy.safeAmount(Number((balance + num).toFixed(4)), balance);
       saveBalance();
-      showPopup('شارژ موفق', `مبلغ +${num.toLocaleString()} سکه با موفقیت به حساب اصلی شما اضافه شد.`, '🪙');
+      showPopup('شارژ موفق', `مبلغ +${num.toLocaleString()} سکه با موفقیت فقط به موجودی محلی همین دستگاه اضافه شد؛ سکه تأییدشده نیست.`, '🪙');
     }
 
     function chargeCustomMyCoins() {
@@ -469,6 +474,6 @@
     loadGamesStakesConfig();
     renderTasks();
   </script>
-  <script src="../assets/js/simab-central-quests.js?v=6" defer></script>
+  <script src="../assets/js/simab-central-quests.js?v=7" defer></script>
 </body>
 </html>
