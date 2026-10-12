@@ -18,10 +18,7 @@
       return safeAmount(raw, fallback);
     } catch (_) { return fallback; }
   }
-  function readInventory(key) {
-    let obj;
-    try { obj = JSON.parse(localStorage.getItem(key) || "null"); }
-    catch (_) { obj = null; }
+  function sanitizeInventory(obj) {
     const result = {};
     for (const name of DENOMS) {
       const n = obj && typeof obj === "object" ? Number(obj[name]) : 0;
@@ -29,10 +26,16 @@
     }
     return result;
   }
+  function readInventory(key) {
+    let obj;
+    try { obj = JSON.parse(localStorage.getItem(key) || "null"); }
+    catch (_) { obj = null; }
+    return sanitizeInventory(obj);
+  }
   // Data read from localStorage and CloudStorage is *untrusted*. This helper
   // prevents NaN/negative display bugs but DOES NOT prove an owned balance.
   window.SimabLegacy = Object.freeze({
-    safeAmount, readAmount, readInventory,
+    safeAmount, readAmount, readInventory, sanitizeInventory,
     isDemo: true
   });
 })();
