@@ -47,7 +47,7 @@ test('admin status and drafts are present; no secret is exposed', () => {
   assert.match(client,/botMatchesExpected/);
   assert.match(admin,/id="quest-server-status"/);
   assert.match(admin,/id="quest-drafts-list"/);
-  assert.match(edge,/botPublicName/);
+  assert.match(edge,/getBotIdentity/);
   assert.match(edge,/payload.action === "ping"/);
   assert.match(edge,/signature_mismatch/);
 });

@@ -7,6 +7,21 @@
   <meta name="theme-color" content="#0c0920">
   <meta name="description" content="سیماب — مجموعه بازی‌های سرگرمی و مأموریت‌های روزانه">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    // Preserve only Telegram's signed launch payload across same-tab page
+    // navigation. Never put it in URL, localStorage or logs.
+    (() => {
+      try {
+        const raw = window.Telegram?.WebApp?.initData || "";
+        const p = new URLSearchParams(raw);
+        const issued = Number(p.get("auth_date"));
+        const age = Math.floor(Date.now()/1000) - issued;
+        if (p.get("user") && p.get("hash") &&
+            Number.isSafeInteger(issued) && age >= -30 && age <= 3600)
+          sessionStorage.setItem("simab_signed_launch_init_data_v1", raw);
+      } catch (_) { /* signed data stays on Telegram WebApp object */ }
+    })();
+  </script>
   <style>
     :root {
       --bg: #0c0c14;

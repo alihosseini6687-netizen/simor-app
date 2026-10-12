@@ -43,26 +43,54 @@
     }
   }
 
+  // Across a traditional multi-page Mini App navigation, use the original
+  // signed launch data if present. Server validates all candidates; cached data
+  // never grants privileges by itself and cannot outlive the 1h auth TTL.
+  function signedInitDataCandidates() {
+    const direct = window.Telegram?.WebApp?.initData || "";
+    let fromLaunch = "";
+    try { fromLaunch = sessionStorage.getItem("simab_signed_launch_init_data_v1") || ""; }
+    catch (_) { /* storage optional */ }
+    const fresh = raw => {
+      try {
+        const q = new URLSearchParams(raw);
+        const when = Number(q.get("auth_date"));
+        const age = Math.floor(Date.now()/1000) - when;
+        return Boolean(q.get("user") && q.get("hash") && Number.isSafeInteger(when) &&
+          age >= -30 && age <= 3600);
+      } catch (_) { return false; }
+    };
+    const unique = [...new Set([fromLaunch, direct])].filter(fresh);
+    if (!unique.length && direct) unique.push(direct);
+    return unique;
+  }
   async function doAdmin(action, extra) {
-    const initData = window.Telegram?.WebApp?.initData || "";
-    if (!initData) throw new Error("برای انتشار باید نسخه را با حساب مدیر در تلگرام باز کنی.");
-    const r = await fetch(endpoint, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      cache: "no-store",
-      body: JSON.stringify({ initData, action, ...extra }),
-    });
-    const j = await r.json().catch(() => ({}));
+    const candidates = signedInitDataCandidates();
+    if (!candidates.length) throw new Error("اطلاعات امضاشده تلگرام در این صفحه موجود نیست. سیماب را با دکمه ربات اصلی باز کن.");
+    let r, j, used;
+    for (let i = 0; i < candidates.length; i++) {
+      used = candidates[i];
+      r = await fetch(endpoint, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({ initData: used, action, ...extra }),
+      });
+      j = await r.json().catch(() => ({}));
+      // At most once, retry another Telegram-signed navigation payload.
+      // Never retry an authorization-denied 403 or an expired 401.
+      if (r.ok || r.status !== 401 || j.reason !== "signature_mismatch") break;
+    }
     if (!r.ok) throw new Error(
       r.status === 401 ? (
-        j.reason === "expired" ? "اطلاعات ورود تلگرام بیش از یک ساعت عمر دارد؛ مینی‌اپ را کامل ببند و از ربات باز کن." :
-        j.reason === "signature_mismatch" ? "امضای ورود پذیرفته نشد؛ هویت ربات ثبت‌شده در Supabase را بررسی کن (توکن را ارسال نکن)." :
-        j.reason === "clock_mismatch" ? "زمان گوشی یا زمان ورود تلگرام هماهنگ نیست." :
-        j.reason === "missing_fields" ? "اطلاعات ورود تلگرام ناقص است؛ مینی‌اپ را از دکمه ربات باز کن." :
-        describeTelegram401(initData)
+        j.reason === "expired" ? "امضای ورود تلگرام بیش از یک ساعت قدیمی است. مینی‌اپ را مجدداً از ربات باز کن." :
+        j.reason === "clock_mismatch" ? "زمان ورود تلگرام نامعتبر است؛ ساعت گوشی را بررسی کن." :
+        j.reason === "signature_mismatch" ? "امضای ورود با روش‌های رسمی تأیید نشد؛ باید منبع باز شدن مینی‌اپ بررسی شود." :
+        j.reason === "missing_fields" ? "اطلاعات امضاشده تلگرام ناقص است؛ از دکمه مینی‌اپ ربات باز کن." :
+        describeTelegram401(used)
       ) :
-      r.status === 403 ? "این حساب از سمت سرور مجوز مدیریت ندارد." :
-      "ثبت سروری انجام نشد (HTTP " + r.status + ")."
+      r.status === 403 ? "شناسه این حساب در فهرست مدیران سرور وجود ندارد." :
+      "درخواست سروری ناموفق بود (HTTP " + r.status + ")."
     );
     return j;
   }
