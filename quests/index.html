@@ -281,12 +281,12 @@
         <div class="quest-info">
           <div class="quest-icon-box">📢</div>
           <div>
-            <div class="quest-title">عضویت در کانال رسمی تلگرام</div>
+            <div class="quest-title">باز کردن صفحه رسمی تلگرام</div>
             <div class="quest-reward">+۲۰ سکه 🪙</div>
           </div>
         </div>
         <button class="btn-quest-action" id="btn-quest-tg" onclick="handleQuest('tg')">
-          عضویت ➔
+          باز کردن لینک ➔
         </button>
       </div>
 
@@ -295,12 +295,12 @@
         <div class="quest-info">
           <div class="quest-icon-box">📸</div>
           <div>
-            <div class="quest-title">دنبال کردن پیج اینستاگرام</div>
+            <div class="quest-title">مشاهده پیج اینستاگرام</div>
             <div class="quest-reward">+۲۰ سکه 🪙</div>
           </div>
         </div>
         <button class="btn-quest-action" id="btn-quest-insta" onclick="handleQuest('insta')">
-          دنبال کردن ➔
+          باز کردن لینک ➔
         </button>
       </div>
     </div>
@@ -377,32 +377,12 @@
       }
     };
 
-    const STORAGE_KEY_CLAIMED = 'simab_quests_claimed_' + uid;
-    let claimedQuests = JSON.parse(localStorage.getItem(STORAGE_KEY_CLAIMED) || '[]');
-    let activeTimers = {};
-
-    function updateProgressUI() {
-      const total = Object.keys(QUESTS).length;
-      const done = claimedQuests.length;
-      document.getElementById('progress-text').innerText = `${done} از ${total} انجام شده`;
-      const pct = Math.min(100, (done / total) * 100);
-      document.getElementById('progress-bar').style.width = `${pct}%`;
-    }
-
+    // A locally saved completion flag is never proof of a verified mission.
     function initQuestsState() {
-      Object.keys(QUESTS).forEach(qKey => {
-        const isClaimed = claimedQuests.includes(qKey);
-        const btn = document.getElementById(`btn-quest-${qKey}`);
-        const card = document.getElementById(`card-quest-${qKey}`);
-
-        if (isClaimed) {
-          card.classList.add('completed');
-          btn.className = 'btn-quest-action done';
-          btn.innerText = 'انجام شد ✓';
-          btn.disabled = true;
-        }
-      });
-      updateProgressUI();
+      const progress = document.getElementById('progress-text');
+      const bar = document.getElementById('progress-bar');
+      if (progress) progress.textContent = 'در انتظار تأیید سروری';
+      if (bar) bar.style.width = '0%';
     }
 
     function handleQuest(qKey) {
@@ -420,6 +400,6 @@
 
     initQuestsState();
   </script>
-  <script src="../assets/js/simab-central-quests.js?v=3" defer></script>
+  <script src="../assets/js/simab-central-quests.js?v=4" defer></script>
 </body>
 </html>
