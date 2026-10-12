@@ -11,9 +11,9 @@ jobs:
         shell: bash
         run: |
           set +e
-          URL='https://pwjlyryrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests'
+          URL='https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests'
           echo "=== DNS ==="
-          getent hosts pwjlyryrgbaprfnrieq.supabase.co || true
+          getent hosts pwjlyryrrgbaprfnrieq.supabase.co || true
           echo "=== GET ==="
           curl --silent --show-error --max-time 15 -D /tmp/h1 -o /tmp/b1 -w 'HTTP=%{http_code} DNS_TIME=%{time_namelookup} URL=%{url_effective}\n' "$URL"
           grep -iE '^(HTTP/|access-control-|content-type:)' /tmp/h1 || true
