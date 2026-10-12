@@ -4,7 +4,7 @@
  */
 (() => {
   "use strict";
-  const endpoint = "https://pwjlyryrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests";
+  const endpoint = "https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests";
   const isAdmin = Boolean(document.getElementById("tasks-list"));
   const isQuests = Boolean(document.getElementById("quests-container"));
   if (!isAdmin && !isQuests) return;
