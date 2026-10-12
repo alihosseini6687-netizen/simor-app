@@ -979,78 +979,82 @@
       setTimeout(runBotTurnsSequence, 750);
     }
 
+    let pokerBotsRunning=false;
     async function runBotTurnsSequence() {
-      const activeBots = getActiveBots();
-      for (let bot of activeBots) {
-        if (bot.folded) continue;
-        const avatar = document.getElementById(`avatar-${bot.id}`);
-        const actEl = document.getElementById(`act-${bot.id}`);
-        if (avatar) avatar.classList.add('active-turn');
-        actEl.innerText = 'تفکر...';
-        actEl.style.color = '#00f2fe';
-        await new Promise(r => setTimeout(r, 600));
-
-        let act = 'check';
-        const rand = Math.random();
-        if (difficulty === 'easy') {
-          if (rand < 0.2) act = 'fold';
-          else if (rand < 0.8) act = 'call';
-          else act = 'check';
-        } else if (difficulty === 'medium') {
-          if (rand < 0.1) act = 'fold';
-          else if (rand < 0.75) act = 'call';
-          else act = 'raise';
-        } else {
-          if (rand < 0.05) act = 'fold';
-          else if (rand < 0.6) act = 'call';
-          else act = 'raise';
+      if(pokerBotsRunning||stage>=4)return;
+      pokerBotsRunning=true;disableAllButtons();
+      const bots=getActiveBots();
+      try{
+        for(const bot of bots){
+          if(bot.folded||bot.isAllIn)continue;
+          const act=document.getElementById('act-'+bot.id);
+          const avatar=document.getElementById('avatar-'+bot.id);
+          if(avatar)avatar.classList.add('active-turn');
+          act.textContent='در حال فکر...';
+          await new Promise(r=>setTimeout(r,360+Math.floor(Math.random()*350)));
+          const toCall=Math.max(0,currentHighestBet-bot.roundBet);
+          let strength=SimabPokerAI.holeStrength(bot.cards);
+          if(stage>0){
+            const shown=communityCards.slice(0,stage===1?3:stage===2?4:5);
+            strength=Math.max(strength,Math.min(.97,evalAvailable([...bot.cards,...shown]).rank/10));
+          }
+          const d=SimabPokerAI.choose({id:bot.id,difficulty,stage,strength,toCall,stack:bot.stack,pot,rand:Math.random()});
+          if(d.type==='fold'){
+            bot.folded=true;act.textContent='فولد ✕';act.style.color='#ff7080';
+            SimabSound.play('fold');
+          }else if(d.type==='raise'&&bot.stack>toCall){
+            const paid=Math.min(bot.stack,toCall+d.amount);
+            bot.stack-=paid;bot.bet+=paid;bot.roundBet+=paid;pot+=paid;
+            currentHighestBet=Math.max(currentHighestBet,bot.roundBet);
+            act.textContent=bot.stack===0?'آل‌این '+paid:'ریز +'+(paid-toCall);
+            act.style.color='#ffdc85';SimabSound.play('raise');
+          }else if(toCall>0){
+            const paid=Math.min(bot.stack,toCall);
+            bot.stack-=paid;bot.bet+=paid;bot.roundBet+=paid;pot+=paid;
+            act.textContent=bot.stack===0?'آل‌این '+paid:'کال '+paid;
+            act.style.color='#79ffd7';SimabSound.play('chip');
+          }else{
+            act.textContent='چک ✓';act.style.color='#80eaff';
+          }
+          if(bot.stack===0)bot.isAllIn=true;
+          if(avatar)avatar.classList.remove('active-turn');
+          updateTableUI();
         }
-
-        if (act === 'fold') {
-          bot.folded = true;
-          actEl.innerText = 'فولد ✕';
-          actEl.style.color = '#ff3b30';
-        } else if (act === 'call') {
-          const toCall = Math.max(0, currentHighestBet - bot.bet);
-          pot += toCall;
-          bot.bet += toCall;
-          actEl.innerText = (toCall === 0) ? 'چک ✓' : `کال (${toCall} ژتون)`;
-          actEl.style.color = (toCall === 0) ? '#5ac8fa' : '#34c759';
-        } else if (act === 'raise') {
-          const raiseAmt = (difficulty === 'hard') ? 5 : 2;
-          const toCall = Math.max(0, currentHighestBet - bot.bet);
-          pot += (toCall + raiseAmt);
-          bot.bet += (toCall + raiseAmt);
-          currentHighestBet = bot.bet;
-          actEl.innerText = `افزایش (+${raiseAmt} ژتون)`;
-          actEl.style.color = '#ffd700';
-        }
-        if (avatar) avatar.classList.remove('active-turn');
-        updateTableUI();
+      }finally{pokerBotsRunning=false;}
+      if(!pHero.folded&&!pHero.isAllIn&&pHero.roundBet<currentHighestBet){
+        document.getElementById('status-text').textContent='ربات ریز کرده؛ پاسخ با شماست';
+        setButtonsState();return;
       }
-
       stage++;
-      updateTableUI();
-
-      // رو شدن خودکار ورق‌ها در صورت فولد یا آل-این بازیکن
-      if (stage === 1) {
-        document.getElementById('status-text').innerText = 'مرحله Flop (۳ کارت زمین رو شد)';
-        if (!pHero.folded && !pHero.isAllIn) setButtonsState();
-        else setTimeout(runBotTurnsSequence, 1100);
-      } else if (stage === 2) {
-        document.getElementById('status-text').innerText = 'مرحله Turn (کارت چهارم رو شد)';
-        if (!pHero.folded && !pHero.isAllIn) setButtonsState();
-        else setTimeout(runBotTurnsSequence, 1100);
-      } else if (stage === 3) {
-        document.getElementById('status-text').innerText = 'مرحله River (کارت پنجم رو شد)';
-        if (!pHero.folded && !pHero.isAllIn) setButtonsState();
-        else setTimeout(runBotTurnsSequence, 1100);
-      } else {
-        stage = 4;
+      if(stage<=3){
+        const titles=['','Flop • سه کارت','Turn • چهار کارت','River • پنج کارت'];
+        document.getElementById('status-text').textContent=titles[stage];
+        currentHighestBet=0;pHero.roundBet=0;
+        bots.forEach(bot=>{bot.roundBet=0;});
         updateTableUI();
-        document.getElementById('status-text').innerText = 'مرحله Showdown: بررسی دست‌ها و برنده...';
-        setTimeout(evaluateWinner, 1000);
+        if(!pHero.folded&&!pHero.isAllIn)setButtonsState();
+        else setTimeout(runBotTurnsSequence,700);
+      }else{
+        stage=4;updateTableUI();
+        document.getElementById('status-text').textContent='نمایش دست و تسویه پات‌های مجازی';
+        setTimeout(evaluateWinner,550);
       }
+    }
+
+    function evalAvailable(cards){
+      let best=null;
+      const n=cards.length;
+      for(let a=0;a<n;a++){
+        const selected=n===5?cards:n===6?cards.filter((_,i)=>i!==a):null;
+        if(selected&&selected.length===5){
+          const r=eval5(selected);if(!best||compareHands(r,best)>0)best=r;
+        }
+        if(n===7)for(let b=a+1;b<n;b++){
+          const r=eval5(cards.filter((_,i)=>i!==a&&i!==b));
+          if(!best||compareHands(r,best)>0)best=r;
+        }
+      }
+      return best;
     }
 
     function eval5(c) {
