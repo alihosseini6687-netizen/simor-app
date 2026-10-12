@@ -19,6 +19,11 @@ jobs:
           grep -iE '^(HTTP/|access-control-|content-type:)' /tmp/h1 || true
           head -c 300 /tmp/b1 || true
           echo
+          echo "=== BOT IDENTITY HEALTH ==="
+          curl --silent --show-error --max-time 18 -D /tmp/health-headers -o /tmp/health-body -w 'HEALTH_HTTP=%{http_code}\\n' "$URL?health=1"
+          grep -iE '^(HTTP/|access-control-|content-type:)' /tmp/health-headers || true
+          head -c 650 /tmp/health-body || true
+          echo
           echo "=== OPTIONS preflight ==="
           curl --silent --show-error --max-time 15 -D /tmp/h2 -o /tmp/b2 -w 'HTTP=%{http_code}\n' -X OPTIONS "$URL" -H 'Origin: https://alihosseini6687-netizen.github.io' -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: content-type'
           grep -iE '^(HTTP/|access-control-|content-type:)' /tmp/h2 || true
