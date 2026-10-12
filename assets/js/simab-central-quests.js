@@ -164,8 +164,18 @@
       const rewardLabel = document.querySelector("#card-quest-" + key + " .quest-reward");
       const button = document.getElementById("btn-quest-" + key);
       if (rewardLabel) rewardLabel.textContent = "پاداش پس از تأیید سرور";
-      if (button && !button.disabled) button.textContent = "باز کردن لینک ←";
+      if (button) {
+        button.disabled = false;
+        button.className = "btn-quest-action";
+        button.textContent = "باز کردن لینک ←";
+      }
+      const card = document.getElementById("card-quest-" + key);
+      if (card) card.classList.remove("completed");
     }
+    const progress = document.getElementById("progress-text");
+    if (progress) progress.textContent = "تأیید مأموریت‌ها پس از راه‌اندازی سرور";
+    const bar = document.getElementById("progress-bar");
+    if (bar) bar.style.width = "0%";
     const parent = document.getElementById("quests-container");
     const heading = el("h3", "", "📢 مأموریت‌های منتشرشده");
     heading.style.cssText = "font-size:15px;color:#f5cf62;padding:12px 4px 4px";
