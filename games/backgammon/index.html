@@ -677,6 +677,9 @@
   <script src="../../assets/js/simab-legacy-guard.js?v=1"></script>
 
 <link rel="stylesheet" href="../../assets/css/simab-secure-entry-v7.css?v=7">
+<link rel="stylesheet" href="../../assets/css/simab-v8-core.css?v=8">
+<link rel="stylesheet" href="../../assets/css/simab-backgammon-v8.css?v=8">
+<script src="../../assets/js/simab-game-sound-v8.js?v=8"></script>
 </head>
 <body>
 
@@ -685,12 +688,12 @@
   <!-- نوار بالای صفحه اصلی -->
   <div class="top-bar">
     <button class="btn-back" onclick="handleBackAction()">🔙 بازگشت</button>
-    <div class="top-title">🎲 تخته نرد شاهانه</div>
+    <div class="top-title">♛ تخته‌نرد سیماب</div><button class="v8-audio-toggle" type="button" aria-pressed="false" onclick="SimabSound.toggle(this)">🔇 صدا خاموش</button>
     <div class="chips-badge" onclick="window.location.href='../../swap/index.html'" title="ورود به صرافی">
       🎰 <span id="user-chips-bal">۰</span> ژتون
     </div>
   </div>
-  <a class="simab-secure-entry" href="../../wallet/index.html"><strong>🔐 کیف پول سروری ←</strong><small>تخته‌نرد فعلی آزمایشی است و برای تسویه معتبر به موتور کامل سمت سرور نیاز دارد.</small></a>
+  <a class="simab-secure-entry" href="../../wallet/index.html"><strong>🎲 تخته‌نرد مجازی سیماب</strong><small>تمام شرط‌ها و جایزه‌های این میز آزمایشی‌اند؛ برداشت نقدی وجود ندارد. کیف بازی ←</small></a>
 
 
   <!-- ================= ۱. لابی ورودی و تنظیمات ================= -->
@@ -849,6 +852,8 @@
 
     <!-- کنترل‌ها -->
     <div class="game-actions-card">
+      <p class="v8-bg-help">🎲 حرکت قانونی را انتخاب کن؛ برای خارج‌کردن مهره، نخست مهره را لمس کن و سپس «خروج مهره» را بزن.</p>
+      <button id="v8-bear-off" type="button" class="v8-bear-off" onclick="bearOffSelected()" disabled>🏁 خارج‌کردن مهره انتخاب‌شده</button>
       <div class="utility-btns-row">
         <button class="btn-util" onclick="toggleTauntMenu()">🗣️ کری‌خوانی</button>
         <button class="btn-util" style="color:var(--cyan);" onclick="offerDoubleCube()">⚡ دابل شرط (x2)</button>
@@ -1192,6 +1197,7 @@
     let remainingMoves = [];
     let selectedPoint = null;
     let currentTurn = 'white';
+    let matchTurnVersion=0;
     let turnTimerInterval = null;
     let turnTimeLeft = 30;
 
@@ -1302,6 +1308,9 @@
 
     // ================= ۵. نوبت و پرتاب تاس =================
     function setupTurnUI() {
+      matchTurnVersion++;
+      currentDice=[];remainingMoves=[];
+      const outBtn=document.getElementById("v8-bear-off");if(outBtn)outBtn.disabled=true;
       resetTurnTimer();
       clearHighlights();
       selectedPoint = null;
@@ -1347,13 +1356,16 @@
     }
 
     function rollPlayerDice() {
-      if (currentTurn !== 'white') return;
+      if (currentTurn !== 'white' || currentDice.length>0) return;
       document.getElementById('btn-roll-dice').disabled = true;
 
       const diceDock = document.getElementById('dice-container-box');
       diceDock.querySelectorAll('.dice-face').forEach(d => d.classList.add('rolling'));
 
+      const turnToken=matchTurnVersion;
       setTimeout(() => {
+        if(currentTurn!=="white"||turnToken!==matchTurnVersion)return;
+        SimabSound.play("dice");
         const v1 = Math.floor(Math.random() * 6) + 1;
         const v2 = Math.floor(Math.random() * 6) + 1;
         currentDice = (v1 === v2) ? [v1, v1, v1, v1] : [v1, v2];
@@ -1374,6 +1386,7 @@
       if (currentTurn !== 'white' || barWhite === 0 || remainingMoves.length === 0) return;
       selectedPoint = 'bar';
       highlightTargetsFrom('bar');
+      document.getElementById("v8-bear-off").disabled=true;
     }
 
     function onPointClick(idx) {
@@ -1405,14 +1418,20 @@
       if (board[idx].color === 'white' && board[idx].count > 0) {
         selectedPoint = idx;
         highlightTargetsFrom(idx);
+        document.getElementById("v8-bear-off").disabled=!(canBearOff("white")&&remainingMoves.some(step=>canLandOn("white",idx-step,step,idx)&&idx-step<0));
       } else {
         selectedPoint = null;
         clearHighlights();
+        document.getElementById("v8-bear-off").disabled=true;
       }
     }
 
     // بررسی قانونی بودن حرکت و خروج طبق استانداردهای رسمی WBF
     function canLandOn(color, dest, step, from) {
+      if(!Number.isInteger(step)||step<1||step>6)return false;
+      if(from!=="bar" && (!Number.isInteger(from)||from<0||from>=24||board[from].color!==color||board[from].count<=0))return false;
+      if(color==="white"&&barWhite>0&&from!=="bar")return false;
+      if(color==="black"&&barBlack>0&&from!=="bar")return false;
       if (color === 'white') {
         if (dest < 0) {
           // خروج مهره (Bear off)
@@ -1481,6 +1500,7 @@
     }
 
     function clearHighlights() {
+      const btn=document.getElementById("v8-bear-off");if(btn)btn.disabled=true;
       document.querySelectorAll('.point-col').forEach(c => {
         c.classList.remove('highlight-selected', 'highlight-target');
       });
@@ -1518,6 +1538,17 @@
       }
     }
 
+    function bearOffSelected(){
+      if(currentTurn!=='white'||!Number.isInteger(selectedPoint)||!canBearOff('white'))return;
+      const from=selectedPoint;
+      const die=remainingMoves.find(step=>from-step<0&&canLandOn('white',from-step,step,from));
+      if(!die){showToast('خروج با این تاس مجاز نیست.');return;}
+      applyMove('white',from,from-die,die);
+      SimabSound.play('chip');selectedPoint=null;clearHighlights();renderCheckers();
+      if(offWhite>=15)return;
+      if(!remainingMoves.length||!hasAnyValidMove('white'))setTimeout(autoPassTurn,550);
+    }
+
     function hasAnyValidMove(color) {
       if (remainingMoves.length === 0) return false;
       if (color === 'white') {
@@ -1543,6 +1574,9 @@
 
     // ================= ۶. هوش مصنوعی ربات (آسان، متوسط، حرفه‌ای) =================
     async function executeBotTurnSequence() {
+      if(currentTurn!=="black")return;
+      const turnToken=matchTurnVersion;
+      SimabSound.play("dice");
       const b1 = Math.floor(Math.random() * 6) + 1;
       const b2 = Math.floor(Math.random() * 6) + 1;
       const bDice = (b1 === b2) ? [b1, b1, b1, b1] : [b1, b2];
@@ -1552,10 +1586,11 @@
       document.getElementById('board-guide-msg').innerText = `حریف تاس ریخت: [${b1}] و [${b2}]`;
 
       await new Promise(r => setTimeout(r, 650));
+      if(currentTurn!=="black"||turnToken!==matchTurnVersion)return;
 
       // اجرای نوبتی و با تأخیر هر حرکت ربات
       for (let step of bDice) {
-        if (offBlack >= 15) break;
+        if (offBlack >= 15||currentTurn!=="black"||turnToken!==matchTurnVersion) break;
 
         const moved = botPerformStrategicMove(step, selectedDifficulty);
         if (moved) {
@@ -1567,6 +1602,7 @@
         }
       }
 
+      if(currentTurn!=="black"||turnToken!==matchTurnVersion)return;
       if (offBlack >= 15) {
         declareGameWinner('black');
         return;
@@ -1713,9 +1749,7 @@
         showToast('سقف دابل (x4) پر شده است!');
         return;
       }
-      doublingMultiplier *= 2;
-      document.getElementById('cube-val-txt').innerText = `x${doublingMultiplier}`;
-      showToast(isFreePractice ? 'تمرین: ضریب نمایشی تغییر کرد، بدون ژتون.' : `شرط بازی دوبرابر شد! (ضریب x${doublingMultiplier}) ⚡`);
+      showToast("دابل تا تکمیل قبول یا رد توسط حریف غیرفعال است؛ اعتبار بازی تغییر نمی‌کند.");
     }
 
     function surrenderMatch() {
