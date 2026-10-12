@@ -1,0 +1,22 @@
+/* V8 wallet / all balances purely virtual; backend values unchanged */
+body{background-image:radial-gradient(ellipse at 3% 0%,#6f1daf69,transparent 60%),radial-gradient(ellipse at 95% 51%,#174eab42,transparent 54%),linear-gradient(180deg,#160726,#09091b 78%)!important}
+main{max-width:530px;padding-bottom:90px}
+header{border-color:#f0b955;box-shadow:0 0 21px #ad3eef7b;background:linear-gradient(125deg,#2b1454,#111028)}
+h1{font-size:clamp(23px,6vw,31px);background:linear-gradient(95deg,#fff6cf,#ffd675,#eb9b37);background-clip:text;-webkit-text-fill-color:transparent}
+.intro{font-size:12px;line-height:2;color:#eee0f4}
+.v8-wallet-hero{border-radius:21px;min-height:133px;padding:18px 14px;background:linear-gradient(105deg,#2b114ccc,#160d35c5),url("../v3/rewards.webp") left center/auto 100% no-repeat;border:1px solid #e6b95d9c;box-shadow:0 0 25px #b34ff04c;position:relative;overflow:hidden}
+.v8-wallet-hero h1{margin:0 0 8px;text-align:right;max-width:88%}
+.v8-wallet-hero p{color:#f8e1b6;font-size:11px;line-height:1.9;max-width:77%;margin:0}
+.v8-virtual-label{padding:12px;border:1px solid #eed08377;background:linear-gradient(115deg,#37214d,#131632);border-radius:13px;margin:12px 0;font-size:12px;line-height:1.85;color:#ffdea1}
+.wallet-grid{gap:11px}
+.balance{border-color:#e4b45d!important;background:linear-gradient(120deg,#51206a,#281339 48%,#0d1d37)!important;box-shadow:inset 0 1px #ffe3a853,0 0 23px #bc4fff46}
+.balance:nth-child(2){border-color:#6addff!important;background:linear-gradient(115deg,#282272,#111a49)!important}
+.balance b{font-size:clamp(18px,5.5vw,28px);color:#ffe58e;text-shadow:0 0 11px #ffd6726d}
+.balance:nth-child(2) b{color:#82efff}
+.panel{background:linear-gradient(130deg,#301845f5,#100e2af5)!important;border:1px solid #9c65c2!important;box-shadow:0 8px 27px #000a,0 0 18px #b653ec37}
+h2{color:#ffe39c;font-size:17px}
+button{font-size:12px;font-weight:900;border-radius:13px!important;min-height:49px}
+button:not(:disabled){box-shadow:0 5px 15px #efa43f38}
+.reels{font-size:clamp(35px,9vw,52px);padding:20px;background:radial-gradient(ellipse,#322062,#09091e);border:2px solid #ddac64;color:#ffeeae;box-shadow:inset 0 0 18px #971ee780,0 0 20px #b347f04d}
+.v8-wallet-footer{font-size:11px;line-height:1.95;text-align:center;padding:12px;border:1px solid #7464b0;border-radius:14px;background:#1e153d}
+@media(max-width:360px){.v8-wallet-hero{min-height:119px}.v8-wallet-hero p{font-size:10px}.panel{padding:13px 10px!important}}

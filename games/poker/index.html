@@ -267,6 +267,10 @@
   <script src="../../assets/js/simab-legacy-guard.js?v=1"></script>
 
 <link rel="stylesheet" href="../../assets/css/simab-secure-entry-v7.css?v=7">
+<link rel="stylesheet" href="../../assets/css/simab-v8-core.css?v=8">
+<link rel="stylesheet" href="../../assets/css/simab-poker-v8.css?v=8">
+<script src="../../assets/js/simab-poker-ai-v8.js?v=8"></script>
+<script src="../../assets/js/simab-game-sound-v8.js?v=8"></script>
 </head>
 <body>
 
@@ -278,12 +282,13 @@
     <div class="top-actions">
       <button class="btn-top-util" onclick="openBreakChipsModal()">🔨 خرد کردن</button>
       <button class="btn-private-room" onclick="openPrivateRoomModal()">👥 اتاق</button>
+      <button type="button" class="v8-audio-toggle" onclick="SimabSound.toggle(this)" aria-pressed="false">🔇 صدا خاموش</button>
     </div>
     <div style="color: var(--cyan); font-weight: 900; font-size: 13.5px;" onclick="window.location.href='../../swap/index.html'" title="ورود به صرافی">
       🎰 <span id="user-chips-display">0</span> ژتون
     </div>
   </div>
-  <a class="simab-secure-entry" href="../../wallet/index.html"><strong>🔐 کیف پول سروری ←</strong><small>پوکر فعلی تمرینی و محلی است؛ برد و باخت این میز به کیف پول معتبر سرور اضافه نمی‌شود.</small></a>
+  <a class="simab-secure-entry" href="../../wallet/index.html"><strong>🎮 پوکر تمرینی سیماب</strong><small>ژتون‌ها مجازی و فقط برای بازی هستند؛ برداشت نقدی وجود ندارد. کیف بازی ←</small></a>
 
 
   <!-- نوار تنظیمات میز -->
@@ -306,6 +311,7 @@
     </div>
   </div>
 
+  <div class="v8-poker-round"><span>🃏 تگزاس هولدم • میز تمرینی</span><span>🤖 شخصیت‌های متفاوت ربات</span></div>
   <!-- میز عمودی با چیدمان بدون تداخل و فونت‌های بزرگ -->
   <div class="poker-table-vertical">
     <div class="dealer-avatar">
@@ -401,6 +407,7 @@
     </div>
   </div>
 
+  <p class="v8-poker-help">🎯 ربات‌ها بر اساس قدرت دست و اندازه پات تصمیم می‌گیرند. اعتبار این میز آزمایشی است و به کیف سروری افزوده نمی‌شود.</p>
   <!-- پنل کنترل -->
   <div class="control-panel">
     <div class="timer-bar-wrap" id="timer-bar-wrap">
@@ -705,12 +712,12 @@
     let communityCards = [];
 
     // اضافه شدن وضعیت isAllIn برای قفل کردن دکمه‌ها پس از آل-این
-    let pHero = { id: 'hero', name: 'شما', bet: 0, folded: false, isAllIn: false, cards: [] };
-    let pBot1 = { id: 'bot1', name: 'مسعود', bet: 0, folded: false, cards: [] };
-    let pBot2 = { id: 'bot2', name: 'سارا', bet: 0, folded: false, cards: [] };
-    let pBot3 = { id: 'bot3', name: 'آریا', bet: 0, folded: false, cards: [] };
-    let pBot4 = { id: 'bot4', name: 'نیما', bet: 0, folded: false, cards: [] };
-    let pBot5 = { id: 'bot5', name: 'رضا', bet: 0, folded: false, cards: [] };
+    let pHero = { id: 'hero', name: 'شما', bet: 0, roundBet: 0, folded: false, isAllIn: false, cards: [] };
+    let pBot1 = { id: 'bot1', name: 'مسعود', bet: 0, roundBet: 0, stack: SimabPokerAI.profiles.bot1.opening, folded: false, isAllIn: false, cards: [] };
+    let pBot2 = { id: 'bot2', name: 'سارا', bet: 0, roundBet: 0, stack: SimabPokerAI.profiles.bot2.opening, folded: false, isAllIn: false, cards: [] };
+    let pBot3 = { id: 'bot3', name: 'آریا', bet: 0, roundBet: 0, stack: SimabPokerAI.profiles.bot3.opening, folded: false, isAllIn: false, cards: [] };
+    let pBot4 = { id: 'bot4', name: 'نیما', bet: 0, roundBet: 0, stack: SimabPokerAI.profiles.bot4.opening, folded: false, isAllIn: false, cards: [] };
+    let pBot5 = { id: 'bot5', name: 'رضا', bet: 0, roundBet: 0, stack: SimabPokerAI.profiles.bot5.opening, folded: false, isAllIn: false, cards: [] };
 
     let turnTimerInterval = null;
     let turnTimeLeft = 15;
@@ -732,7 +739,7 @@
           clearInterval(turnTimerInterval);
           wrap.style.display = 'none';
           document.getElementById('hero-avatar').classList.remove('active-turn');
-          const toCall = currentHighestBet - pHero.bet;
+          const toCall = currentHighestBet - pHero.roundBet;
           if (toCall <= 0) userAction('check');
           else userAction('fold');
         }
@@ -797,7 +804,7 @@
         return;
       }
 
-      const toCall = currentHighestBet - pHero.bet;
+      const toCall = currentHighestBet - pHero.roundBet;
       document.getElementById('btn-fold').disabled = false;
       if (toCall <= 0) {
         document.getElementById('btn-check').disabled = false;
@@ -880,6 +887,7 @@
     }
 
     function startNewHand() {
+      SimabSound.play('deal');
       if (totalChips < 2) {
         showToast('ژتون شما کافی نیست! لطفاً از صرافی ژتون تهیه کنید.');
         setTimeout(() => { window.location.href = '../../swap/index.html'; }, 1500);
@@ -889,12 +897,12 @@
       stage = 0;
       currentHighestBet = 2;
       selectedRaiseAmt = 4;
-      pHero = { id: 'hero', name: 'شما', bet: 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
-      pBot1 = { id: 'bot1', name: 'مسعود', bet: 1, folded: false, cards: [deck.pop(), deck.pop()] };
-      pBot2 = { id: 'bot2', name: 'سارا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
-      pBot3 = { id: 'bot3', name: 'آریا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
-      pBot4 = { id: 'bot4', name: 'نیما', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
-      pBot5 = { id: 'bot5', name: 'رضا', bet: 2, folded: false, cards: [deck.pop(), deck.pop()] };
+      pHero = { id: 'hero', name: 'شما', bet: 2, roundBet: 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
+      pBot1 = { id: 'bot1', name: 'مسعود', bet: 1, roundBet: 1, stack: SimabPokerAI.profiles.bot1.opening - 1, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
+      pBot2 = { id: 'bot2', name: 'سارا', bet: 2, roundBet: 2, stack: SimabPokerAI.profiles.bot2.opening - 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
+      pBot3 = { id: 'bot3', name: 'آریا', bet: 2, roundBet: 2, stack: SimabPokerAI.profiles.bot3.opening - 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
+      pBot4 = { id: 'bot4', name: 'نیما', bet: 2, roundBet: 2, stack: SimabPokerAI.profiles.bot4.opening - 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
+      pBot5 = { id: 'bot5', name: 'رضا', bet: 2, roundBet: 2, stack: SimabPokerAI.profiles.bot5.opening - 2, folded: false, isAllIn: false, cards: [deck.pop(), deck.pop()] };
       communityCards = [deck.pop(), deck.pop(), deck.pop(), deck.pop(), deck.pop()];
 
       deductChipsFromInventory(2);
@@ -918,6 +926,7 @@
     function userAction(action) {
       disableAllButtons();
       if (action === 'fold') {
+        SimabSound.play('fold');
         pHero.folded = true;
         document.getElementById('act-user').innerText = 'فولد ✕';
         document.getElementById('act-user').style.color = '#ff3b30';
@@ -929,11 +938,13 @@
         document.getElementById('act-user').innerText = 'چک ✓';
         document.getElementById('act-user').style.color = '#5ac8fa';
       } else if (action === 'call') {
-        const toCall = currentHighestBet - pHero.bet;
+        SimabSound.play('chip');
+        const toCall = currentHighestBet - pHero.roundBet;
         const actualCall = Math.min(totalChips, toCall);
         deductChipsFromInventory(actualCall);
         pot += actualCall;
         pHero.bet += actualCall;
+        pHero.roundBet += actualCall;
         if (totalChips === 0) {
           pHero.isAllIn = true;
           document.getElementById('act-user').innerText = 'آل-این (All-in) 👑';
@@ -943,14 +954,16 @@
           document.getElementById('act-user').style.color = '#34c759';
         }
       } else if (action === 'raise') {
-        const toCall = Math.max(0, currentHighestBet - pHero.bet);
+        SimabSound.play('raise');
+        const toCall = Math.max(0, currentHighestBet - pHero.roundBet);
         let actualRaise = selectedRaiseAmt;
         if (totalChips < toCall + actualRaise) actualRaise = Math.max(1, totalChips - toCall);
         const totalCost = Math.min(totalChips, toCall + actualRaise);
         deductChipsFromInventory(totalCost);
         pot += totalCost;
         pHero.bet += totalCost;
-        currentHighestBet = pHero.bet;
+        pHero.roundBet += totalCost;
+        currentHighestBet = pHero.roundBet;
         if (totalChips === 0) {
           pHero.isAllIn = true;
           document.getElementById('act-user').innerText = `All-in (+${totalCost} ژتون) 👑`;
@@ -966,78 +979,82 @@
       setTimeout(runBotTurnsSequence, 750);
     }
 
+    let pokerBotsRunning=false;
     async function runBotTurnsSequence() {
-      const activeBots = getActiveBots();
-      for (let bot of activeBots) {
-        if (bot.folded) continue;
-        const avatar = document.getElementById(`avatar-${bot.id}`);
-        const actEl = document.getElementById(`act-${bot.id}`);
-        if (avatar) avatar.classList.add('active-turn');
-        actEl.innerText = 'تفکر...';
-        actEl.style.color = '#00f2fe';
-        await new Promise(r => setTimeout(r, 600));
-
-        let act = 'check';
-        const rand = Math.random();
-        if (difficulty === 'easy') {
-          if (rand < 0.2) act = 'fold';
-          else if (rand < 0.8) act = 'call';
-          else act = 'check';
-        } else if (difficulty === 'medium') {
-          if (rand < 0.1) act = 'fold';
-          else if (rand < 0.75) act = 'call';
-          else act = 'raise';
-        } else {
-          if (rand < 0.05) act = 'fold';
-          else if (rand < 0.6) act = 'call';
-          else act = 'raise';
+      if(pokerBotsRunning||stage>=4)return;
+      pokerBotsRunning=true;disableAllButtons();
+      const bots=getActiveBots();
+      try{
+        for(const bot of bots){
+          if(bot.folded||bot.isAllIn)continue;
+          const act=document.getElementById('act-'+bot.id);
+          const avatar=document.getElementById('avatar-'+bot.id);
+          if(avatar)avatar.classList.add('active-turn');
+          act.textContent='در حال فکر...';
+          await new Promise(r=>setTimeout(r,360+Math.floor(Math.random()*350)));
+          const toCall=Math.max(0,currentHighestBet-bot.roundBet);
+          let strength=SimabPokerAI.holeStrength(bot.cards);
+          if(stage>0){
+            const shown=communityCards.slice(0,stage===1?3:stage===2?4:5);
+            strength=Math.max(strength,Math.min(.97,evalAvailable([...bot.cards,...shown]).rank/10));
+          }
+          const d=SimabPokerAI.choose({id:bot.id,difficulty,stage,strength,toCall,stack:bot.stack,pot,rand:Math.random()});
+          if(d.type==='fold'){
+            bot.folded=true;act.textContent='فولد ✕';act.style.color='#ff7080';
+            SimabSound.play('fold');
+          }else if(d.type==='raise'&&bot.stack>toCall){
+            const paid=Math.min(bot.stack,toCall+d.amount);
+            bot.stack-=paid;bot.bet+=paid;bot.roundBet+=paid;pot+=paid;
+            currentHighestBet=Math.max(currentHighestBet,bot.roundBet);
+            act.textContent=bot.stack===0?'آل‌این '+paid:'ریز +'+(paid-toCall);
+            act.style.color='#ffdc85';SimabSound.play('raise');
+          }else if(toCall>0){
+            const paid=Math.min(bot.stack,toCall);
+            bot.stack-=paid;bot.bet+=paid;bot.roundBet+=paid;pot+=paid;
+            act.textContent=bot.stack===0?'آل‌این '+paid:'کال '+paid;
+            act.style.color='#79ffd7';SimabSound.play('chip');
+          }else{
+            act.textContent='چک ✓';act.style.color='#80eaff';
+          }
+          if(bot.stack===0)bot.isAllIn=true;
+          if(avatar)avatar.classList.remove('active-turn');
+          updateTableUI();
         }
-
-        if (act === 'fold') {
-          bot.folded = true;
-          actEl.innerText = 'فولد ✕';
-          actEl.style.color = '#ff3b30';
-        } else if (act === 'call') {
-          const toCall = Math.max(0, currentHighestBet - bot.bet);
-          pot += toCall;
-          bot.bet += toCall;
-          actEl.innerText = (toCall === 0) ? 'چک ✓' : `کال (${toCall} ژتون)`;
-          actEl.style.color = (toCall === 0) ? '#5ac8fa' : '#34c759';
-        } else if (act === 'raise') {
-          const raiseAmt = (difficulty === 'hard') ? 5 : 2;
-          const toCall = Math.max(0, currentHighestBet - bot.bet);
-          pot += (toCall + raiseAmt);
-          bot.bet += (toCall + raiseAmt);
-          currentHighestBet = bot.bet;
-          actEl.innerText = `افزایش (+${raiseAmt} ژتون)`;
-          actEl.style.color = '#ffd700';
-        }
-        if (avatar) avatar.classList.remove('active-turn');
-        updateTableUI();
+      }finally{pokerBotsRunning=false;}
+      if(!pHero.folded&&!pHero.isAllIn&&pHero.roundBet<currentHighestBet){
+        document.getElementById('status-text').textContent='ربات ریز کرده؛ پاسخ با شماست';
+        setButtonsState();return;
       }
-
       stage++;
-      updateTableUI();
-
-      // رو شدن خودکار ورق‌ها در صورت فولد یا آل-این بازیکن
-      if (stage === 1) {
-        document.getElementById('status-text').innerText = 'مرحله Flop (۳ کارت زمین رو شد)';
-        if (!pHero.folded && !pHero.isAllIn) setButtonsState();
-        else setTimeout(runBotTurnsSequence, 1100);
-      } else if (stage === 2) {
-        document.getElementById('status-text').innerText = 'مرحله Turn (کارت چهارم رو شد)';
-        if (!pHero.folded && !pHero.isAllIn) setButtonsState();
-        else setTimeout(runBotTurnsSequence, 1100);
-      } else if (stage === 3) {
-        document.getElementById('status-text').innerText = 'مرحله River (کارت پنجم رو شد)';
-        if (!pHero.folded && !pHero.isAllIn) setButtonsState();
-        else setTimeout(runBotTurnsSequence, 1100);
-      } else {
-        stage = 4;
+      if(stage<=3){
+        const titles=['','Flop • سه کارت','Turn • چهار کارت','River • پنج کارت'];
+        document.getElementById('status-text').textContent=titles[stage];
+        currentHighestBet=0;pHero.roundBet=0;
+        bots.forEach(bot=>{bot.roundBet=0;});
         updateTableUI();
-        document.getElementById('status-text').innerText = 'مرحله Showdown: بررسی دست‌ها و برنده...';
-        setTimeout(evaluateWinner, 1000);
+        if(!pHero.folded&&!pHero.isAllIn)setButtonsState();
+        else setTimeout(runBotTurnsSequence,700);
+      }else{
+        stage=4;updateTableUI();
+        document.getElementById('status-text').textContent='نمایش دست و تسویه پات‌های مجازی';
+        setTimeout(evaluateWinner,550);
       }
+    }
+
+    function evalAvailable(cards){
+      let best=null;
+      const n=cards.length;
+      for(let a=0;a<n;a++){
+        const selected=n===5?cards:n===6?cards.filter((_,i)=>i!==a):null;
+        if(selected&&selected.length===5){
+          const r=eval5(selected);if(!best||compareHands(r,best)>0)best=r;
+        }
+        if(n===7)for(let b=a+1;b<n;b++){
+          const r=eval5(cards.filter((_,i)=>i!==a&&i!==b));
+          if(!best||compareHands(r,best)>0)best=r;
+        }
+      }
+      return best;
     }
 
     function eval5(c) {
@@ -1121,40 +1138,29 @@
     }
 
     function evaluateWinner() {
-      const activeBots = getActiveBots().filter(b => !b.folded);
-      let contenders = [];
-
-      if (!pHero.folded) {
-        const u7 = [...pHero.cards, ...communityCards];
-        const hRes = eval7(u7);
-        contenders.push({ player: pHero, hand: hRes, isHero: true });
+      const players=[pHero,...getActiveBots()];
+      const live=players.filter(p=>!p.folded);
+      if(!live.length){endHand('همه فولد کردند.',false);return;}
+      const hands=new Map(live.map(p=>[p.id,eval7([...p.cards,...communityCards])]));
+      const tiers=[...new Set(players.map(p=>p.bet).filter(v=>v>0))].sort((a,b)=>a-b);
+      let prev=0,heroPrize=0,wonPots=0;
+      for(const tier of tiers){
+        const contributed=players.filter(p=>p.bet>=tier);
+        const sidePot=(tier-prev)*contributed.length;
+        const eligible=live.filter(p=>p.bet>=tier).sort((a,b)=>a.id.localeCompare(b.id));
+        prev=tier;
+        if(!eligible.length||!sidePot)continue;
+        const winners=eligible.filter(p=>!eligible.some(q=>compareHands(hands.get(q.id),hands.get(p.id))>0));
+        const share=Math.floor(sidePot/winners.length),remainder=sidePot%winners.length;
+        winners.forEach((p,i)=>{
+          if(p.id==='hero'){heroPrize+=share+(i<remainder?1:0);wonPots++;}
+        });
       }
-
-      activeBots.forEach(bot => {
-        const b7 = [...bot.cards, ...communityCards];
-        const bRes = eval7(b7);
-        contenders.push({ player: bot, hand: bRes, isHero: false });
-      });
-
-      if (contenders.length === 0) {
-        endHand('تمام بازیکنان فولد کردند.', false);
-        return;
-      }
-
-      contenders.sort((a, b) => compareHands(b.hand, a.hand));
-      const winner = contenders.slice(0, 1)[0];
-
-      if (winner.isHero) {
-        addChipsToInventory(pot);
-        endHand(`🎉 تبریک! شما با دست برتر «${winner.hand.name}» برنده کل پات به ارزش ${pot.toLocaleString()} ژتون شدید!`, true);
-      } else {
-        if (pHero.folded) {
-          endHand(`🤖 ${winner.player.name} با دست «${winner.hand.name}» برنده پات ${pot.toLocaleString()} ژتون شد.`, false);
-        } else {
-          const heroScore = contenders.find(c => c.isHero);
-          endHand(`🤖 ${winner.player.name} با دست «${winner.hand.name}» برنده شد.\nدست شما: «${heroScore.hand.name}»`, false);
-        }
-      }
+      if(heroPrize>0)addChipsToInventory(heroPrize);
+      SimabSound.play(heroPrize>0?'win':'fold');
+      endHand(heroPrize>0?
+        '🏆 از '+wonPots+' پات برنده شدی: '+heroPrize.toLocaleString('fa-IR')+' ژتون تمرینی.':
+        'دست تمام شد. برد و باخت فقط با ژتون آزمایشی ثبت می‌شود.',heroPrize>0);
     }
 
     function endHand(msg, won) {

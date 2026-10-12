@@ -1,0 +1,33 @@
+/* SIMAB V8 — approved gold / neon design, real playable DOM, safe mobile scroll.
+ All V8 overrides are intentionally scoped to V8 pages and added last. */
+:root{--v8-gold:#ffdd82;--v8-pink:#fb48df;--v8-blue:#38d9ff;--v8-bg:#0a0619}
+html{height:auto!important;min-height:100%!important;overflow-y:auto!important;overflow-x:clip!important;scroll-behavior:auto!important}
+body{position:relative!important;height:auto!important;min-height:100dvh!important;overflow-y:visible!important;overflow-x:clip!important;touch-action:pan-y pinch-zoom!important;-webkit-overflow-scrolling:touch}
+body:not(:has(.modal-overlay.open)) {overscroll-behavior-y:auto!important}
+body::before,body::after{pointer-events:none!important}
+#tab-home-content,#tab-games-content,#tab-tasks-content,.app-wrapper,.lobby-screen{height:auto!important;max-height:none!important}
+#tab-home-content,#tab-games-content,#tab-tasks-content{overflow:visible!important}
+.simab-secure-entry{max-width:100%;min-width:0;margin:10px auto!important}
+button,a,[role="button"]{touch-action:manipulation}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #ffdd82;outline-offset:3px}
+button:disabled{opacity:.56}
+img{max-width:100%;height:auto}
+input,select,textarea{max-width:100%;font-size:max(16px,1em)}
+.v8-chip-info{border:1px solid #f9c35c70;border-radius:15px;padding:11px 13px;margin:10px auto 14px;line-height:1.9;font-size:11px;background:linear-gradient(105deg,#391e4e,#1b1237);color:#ffe7b2;max-width:100%}
+.v8-chip-info strong{color:#fff}
+.v8-audio-toggle{display:inline-flex;align-items:center;justify-content:center;gap:5px;border-radius:11px;background:linear-gradient(115deg,#332052,#1a1536);color:var(--v8-gold);border:1px solid #cb90eb9c;min-height:39px;padding:8px;font:800 12px inherit;cursor:pointer}
+.v8-hero-focus{position:relative;display:flex;gap:5px;align-items:center;flex-wrap:wrap;z-index:3;margin-top:12px}
+.v8-hero-focus a{color:#ffe3a5;background:#1a0d32e8;border:1px solid #e2a84d8f;text-decoration:none;font-size:10px;padding:6px 9px;border-radius:40px}
+.v8-inline-links{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 12px;max-width:100%}
+.v8-inline-links a{flex:1 1 30%;min-width:0;color:#fff3d2;border:1px solid #ac6bdb99;border-radius:12px;padding:10px 7px;background:#26133fea;text-align:center;text-decoration:none;font-weight:800;font-size:clamp(10px,2.9vw,12px)}
+.v8-card-action{position:absolute;inset:auto 7px 7px;border-radius:9px;color:#1d1231;background:linear-gradient(115deg,#fff1b0,#ffb737);padding:7px 3px;text-align:center;font-size:10px;font-weight:900;z-index:3}
+.v3-featured.v8-card-enhanced{height:clamp(155px,49vw,224px);border-width:1.5px;box-shadow:0 0 25px #994af644,0 10px 26px #0008}
+.v3-featured.v8-card-enhanced strong{margin-bottom:38px;font-size:clamp(11px,3vw,15px);text-align:center}
+.v3-featured.v8-card-enhanced small{display:none}
+.v3-featured.v8-card-enhanced::before{inset:26% 0 0;background:linear-gradient(transparent,#0b0929cc 65%,#0a051e)}
+.v8-game-banner{background:linear-gradient(125deg,#321650a6,#120e33d9);border:1px solid #f0c16a66;border-radius:17px;padding:12px;margin:10px 0 13px;text-align:center;box-shadow:0 0 14px #bd3dff28}
+.v8-game-banner h2{font-size:18px;color:var(--v8-gold);margin:0}
+.v8-game-banner p{font-size:11px;line-height:1.85;margin:5px 0 0;color:#ddcbe7}
+.v8-hidden-quick-access{display:none!important}
+@media(max-width:360px){.v8-hero-focus a{font-size:9px;padding:6px}.v8-inline-links a{font-size:9px}.v8-card-action{font-size:9px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}

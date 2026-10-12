@@ -69,15 +69,17 @@
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation:none!important}}
 
   </style>
+<link rel="stylesheet" href="../assets/css/simab-v8-core.css?v=8">
+<link rel="stylesheet" href="../assets/css/simab-wallet-v8.css?v=8">
 </head>
 <body>
 <main>
   <header><strong>⭐ SIMAB</strong><a href="../index.html">بازگشت به خانه ←</a></header>
-  <h1>🏆 کیف پول سروری سیماب</h1>
-  <p class="intro">نسخه آزمایشی اعتبار تأییدشده؛ تراکنش‌ها در Supabase ثبت می‌شوند، نه در حافظه مرورگر.</p>
+  <section class="v8-wallet-hero"><h1>🏆 کیف بازی سیماب</h1><p>همه سکه‌ها و ژتون‌ها اعتبار مجازی داخل بازی هستند و تراکنش‌ها در سرور سیماب ثبت می‌شوند.</p></section>
+  <p class="v8-virtual-label">🔒 هیچ سکه یا ژتونی پول واقعی نیست؛ برداشت نقدی، انتقال به بانک یا تبدیل به تومان وجود ندارد. جوایز فقط داخل بازی استفاده می‌شوند.</p>
   <section class="wallet-grid" aria-label="موجودی‌های تأییدشده">
-    <div class="balance"><small>🪙 سکه سروری</small><b id="secure-coins">—</b></div>
-    <div class="balance"><small>🎟 ژتون سروری</small><b id="secure-chips">—</b></div>
+    <div class="balance"><small>🪙 سکه بازی • ثبت‌شده</small><b id="secure-coins">—</b></div>
+    <div class="balance"><small>🎟 ژتون بازی • ثبت‌شده</small><b id="secure-chips">—</b></div>
   </section>
   <p class="hint">روز سرور (UTC): <span id="secure-server-date">—</span> | زنجیره روزانه: <b id="secure-streak">—</b></p>
   <div id="wallet-message" role="status" aria-live="polite">در حال اتصال به کیف پول سروری...</div>
@@ -86,7 +88,7 @@
     <button type="button" id="wallet-retry" class="outline">🔁 بازیابی درخواست نامشخص</button>
   </div>
   <section class="panel">
-    <h2>🎁 فعالیت‌های روزانه تأییدشده</h2>
+    <h2>🎁 جایزه‌های روزانه بازی</h2>
     <div class="actions">
       <button id="daily-btn" data-secure-action="daily" type="button" disabled>🎁 دریافت روزانه</button>
       <button id="wheel-btn" data-secure-action="wheel" type="button" disabled>🎡 گردونه رایگان</button>
@@ -97,8 +99,8 @@
     <p class="hint" id="miner-info">پس از اتصال، وضعیت ماینر نمایش داده می‌شود.</p>
   </section>
   <section class="panel">
-    <h2>🔁 تبدیل اتمیک سکه و ژتون</h2>
-    <label for="exchange-amount">مقدار (۱ تا ۱۰۰۰، نرخ آزمایشی ۱:۱)</label>
+    <h2>🔁 تبدیل سکه و ژتون در بازی</h2>
+    <label for="exchange-amount">مقدار مجازی (۱ تا ۱۰۰۰؛ هر ۱ سکه = ۱ ژتون در نسخه فعلی)</label>
     <input id="exchange-amount" inputmode="numeric" type="number" min="1" max="1000" value="5">
     <div class="actions">
       <button type="button" data-secure-action="exchange_to_chips" disabled>🪙 تبدیل به ژتون</button>
@@ -107,7 +109,7 @@
     <p class="hint">برخلاف صرافی قدیمی، این تبدیل در یک تراکنش واحد دیتابیس انجام می‌شود.</p>
   </section>
   <section class="panel">
-    <h2>🎰 رولر آزمایشی با نتیجه سروری</h2>
+    <h2>🎰 رول شانس با نتیجه ثبت‌شده در سرور</h2>
     <div class="reels" id="slot-reels">❔ ❔ ❔</div>
     <label for="slot-stake">شرط با ژتون سروری (۱ تا ۵۰)</label>
     <input id="slot-stake" type="number" inputmode="numeric" value="1" min="1" max="50">
@@ -115,11 +117,12 @@
     <p class="hint">سه نماد یکسان: ۵ برابر شرط؛ دو نماد یکسان: ۲ برابر؛ سایر موارد بدون جایزه. کسر شرط و پرداخت برد همزمان انجام می‌شوند.</p>
   </section>
   <section class="panel">
-    <h2>📜 تاریخچه تراکنش‌های سروری</h2>
+    <h2>📜 تاریخچه تغییرات سکه و ژتون</h2>
     <div id="wallet-events">در حال دریافت تاریخچه...</div>
   </section>
-  <section class="warning" style="margin-top:16px">🔐 موجودی ذخیره‌شده قدیمی بازی‌ها به این کیف پول منتقل نشده و قابل‌اعتماد نیست. پوکر و تخته‌نرد قدیمی تا ساخت موتور کامل سمت سرور، بازی آزمایشی‌اند و به این موجودی دسترسی ندارند. برای دریافت جایزه عضویت به بخش مأموریت‌ها برو.</section>
-  <footer>SIMAB GAMING CLUB • SECURE WALLET BETA</footer>
+  <section class="warning" style="margin-top:16px">🔐 سکه و ژتون‌های قدیمی دستگاه جدا از این اعتبار سروری هستند. پوکر و تخته‌نرد فعلاً تمرینی‌اند و سکه این صفحه را تغییر نمی‌دهند. همه پاداش‌ها مجازی و فقط در بازی مصرف می‌شوند.</section>
+  <p class="v8-wallet-footer">🎲 برای بازی‌های پوکر، رول و تخته‌نرد از <a href="../index.html" style="color:#ffdc8a">خانه سیماب</a> وارد شو. رول این صفحه با ژتون ثبت‌شده روی سرور اجرا می‌شود؛ رول قدیمی مستقل و تمرینی است.</p>
+  <footer>SIMAB GAMING CLUB • IN-GAME CREDITS</footer>
 </main>
 <script src="../assets/js/simab-secure-wallet.js?v=1" defer></script>
 </body>

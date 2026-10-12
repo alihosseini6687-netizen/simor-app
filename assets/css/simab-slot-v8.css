@@ -1,0 +1,14 @@
+/* V8 ROLL — premium playable cabinet; the three reels stay live DOM elements */
+body{background-image:radial-gradient(ellipse at 50% 11%,#922bae66,transparent 58%),radial-gradient(ellipse at 95% 47%,#1d67b344,transparent 55%),linear-gradient(180deg,#160a29,#07071a 76%)!important}
+.top-bar,.win-display-box,.slot-machine-frame,.chips-inventory-card,.bet-bar,.payout-card{width:100%;max-width:510px;margin-left:auto!important;margin-right:auto!important}
+.slot-machine-frame{margin-top:18px!important;margin-bottom:17px!important;border:7px solid #a85e2d!important;outline:2px solid #ffdc84!important;border-radius:27px!important;background:radial-gradient(ellipse at 50% 13%,#833dd5,#321454 52%,#0c1031 99%)!important;box-shadow:inset 0 0 0 3px #ffeab179,0 0 36px #f743e07d,0 20px 32px #000b!important;overflow:hidden;isolation:isolate}
+.slot-machine-frame::before{content:"♛    S I M A B   R O L L    ♛";position:absolute;inset:4px 4px auto;color:#ffe4a1;letter-spacing:1px;text-shadow:0 0 12px #ffc765dd;z-index:3;font-size:11px;pointer-events:none}
+.reels-container{padding:8px!important;gap:7px!important;background:linear-gradient(95deg,#1b103b,#512376,#1b103b)!important;border-radius:17px!important}
+.reel-window{background:radial-gradient(circle at 50% 30%,#301463,#100b27)!important;border:2px solid #fbe3a0!important;border-radius:13px!important;box-shadow:0 0 20px #da50f4a3,inset 0 0 14px #000!important}
+.roof-decor{margin:8px 0 13px!important;background:linear-gradient(100deg,#fff0bb,#f1b53c);color:#2b153b!important;font-weight:900!important;border-radius:14px!important;box-shadow:0 0 15px #ffcf67a0!important}
+.win-display-box{padding:14px!important;box-shadow:0 0 19px #c73efb48!important}
+.chips-inventory-card,.bet-bar,.payout-card{border:1.5px solid #edc07478!important;box-shadow:0 0 20px #b14cf53a!important}
+.btn-spin-main{background:linear-gradient(105deg,#fff3b9 0%,#ffdc77 43%,#f0a337 100%)!important;border-radius:18px!important;box-shadow:0 6px 22px #ffc75773,0 0 16px #db44f66e!important;min-height:60px!important;font-weight:950!important}
+.btn-sound-toggle{border:1px solid #c98bfe!important;background:#342052!important;box-shadow:0 0 12px #b154ff7d}
+.v8-roll-virtual-note{max-width:510px;margin:12px auto;color:#ffe3a9;border:1px solid #e8aa5c75;border-radius:14px;padding:10px;background:#27133ecc;line-height:1.9;font-size:11px;text-align:center}
+@media(max-width:370px){.top-bar{flex-wrap:wrap!important;gap:7px}.header-center-title{flex:1 1 100%;order:-1}.slot-machine-frame{border-width:5px!important}.reels-container{gap:3px!important;padding:5px!important}.roof-decor{font-size:11px!important}}
