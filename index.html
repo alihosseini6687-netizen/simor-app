@@ -673,11 +673,11 @@
               localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
               renderCoins();
             }
-            if (typeof cloudData.chips === 'number') {
+            if (typeof cloudData.chips === 'number' && Number.isFinite(cloudData.chips) && cloudData.chips >= 0 && cloudData.chips <= 1000000000000) {
               localStorage.setItem(STORAGE_KEY_CHIPS, cloudData.chips.toString());
             }
             if (cloudData.inv) {
-              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(cloudData.inv));
+              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(SimabLegacy.sanitizeInventory(cloudData.inv)));
             }
             localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
           } else {
