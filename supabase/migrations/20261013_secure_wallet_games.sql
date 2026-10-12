@@ -162,7 +162,7 @@ BEGIN
     v_a:=pg_catalog.get_byte(pg_catalog.uuid_send(pg_catalog.gen_random_uuid()),0)%6;
     v_b:=pg_catalog.get_byte(pg_catalog.uuid_send(pg_catalog.gen_random_uuid()),0)%6;
     v_c:=pg_catalog.get_byte(pg_catalog.uuid_send(pg_catalog.gen_random_uuid()),0)%6;
-    v_reward:=CASE WHEN v_a=v_b AND v_b=v_c THEN p_amount*8
+    v_reward:=CASE WHEN v_a=v_b AND v_b=v_c THEN p_amount*5
                    WHEN v_a=v_b OR v_a=v_c OR v_b=v_c THEN p_amount*2
                    ELSE 0 END;
     v_chips:=v_reward-p_amount;v_key:='slot:'||p_request_id::text;v_done:=true;
