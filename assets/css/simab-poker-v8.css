@@ -1,0 +1,27 @@
+/* V8 TEXAS HOLD'EM — playable table redesigned with rich neon rim and responsive UX */
+body{background-image:radial-gradient(ellipse at 50% 13%,#5a238c65,transparent 60%),linear-gradient(180deg,#1d0a30,#060817 68%)!important}
+.top-bar,.room-settings-bar,.control-panel{max-width:520px;width:100%;margin-inline:auto}
+.top-bar{flex-wrap:wrap;justify-content:center!important;gap:6px}
+.v8-audio-toggle{box-shadow:0 0 10px #7c54ff77;font-size:11px!important}
+.room-settings-bar{margin-top:10px;margin-bottom:16px!important;line-height:2}
+.room-settings-bar>div{flex:1 1 40%;min-width:135px}
+.poker-table-vertical{width:min(96%,426px)!important;max-width:426px!important;height:clamp(460px,122vw,528px)!important;margin:14px auto 17px!important;border:9px solid #2a1848!important;outline:3px solid #f5bf55!important;border-radius:46% / 36%!important;background:radial-gradient(ellipse at 53% 44%,#10665a,#064743 57%,#052b35 100%)!important;box-shadow:inset 0 0 0 3px #edbb6766,inset 0 0 42px #021b19,0 0 0 5px #8144dd66,0 0 35px #b333ff81,0 22px 50px #000b!important}
+.poker-table-vertical::before{content:"♛  SIMAB • TEXAS HOLD’EM  ♛"!important;top:61%!important;letter-spacing:1.2px;color:#e4cb9361!important;opacity:.52;font-size:12px}
+.poker-table-vertical::after{inset:12px!important;border:1px solid #f1cc8d7a!important;border-radius:44% / 36%!important}
+.bot-avatar,.hero-avatar{border:2px solid #ffd779!important;background:radial-gradient(circle at 30% 23%,#64338e,#210e3e)!important;color:#fbe19b!important;box-shadow:0 0 15px #9c53ea6e!important}
+.bot-pod,.hero-pod{border:1px solid #d9b16a!important;background:linear-gradient(135deg,#101325f5,#1e1236f7)!important;box-shadow:0 6px 13px #0009,0 0 11px #9b62ff42!important}
+.bot-status,.hero-status{background:#110b24df;border:1px solid #8a60c2b5;border-radius:13px!important;padding:3px 6px!important;color:#b8f5ff}
+.seat .bot-name,.hero-name{font-weight:900}
+.community-cards-row{filter:drop-shadow(0 4px 8px #030819)}
+.table-center-zone{padding:4px}
+.pot-pill{background:linear-gradient(120deg,#12112c,#301345)!important;border:1px solid #e1aa5b!important;border-radius:18px!important;color:#ffdc84!important;box-shadow:0 0 18px #d5a04062}
+.control-panel{padding:14px 10px 16px!important;border-radius:19px!important;border:1px solid #d7ac73!important;box-shadow:0 0 26px #a83fff3b,0 10px 24px #0008!important}
+.action-btn-row{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+.action-btn-row button{width:100%;font-size:clamp(11px,3vw,13px)!important;white-space:normal;min-width:0;min-height:46px}
+.raise-bar{flex-wrap:wrap;gap:7px}
+.raise-input{min-width:55px;max-width:115px;flex:1}
+.chip-quick{min-height:42px}
+.v8-poker-round{margin:0 auto 6px;max-width:520px;display:flex;justify-content:space-between;gap:8px;color:#e6cafa;font-size:11px}
+.v8-poker-round span{border:1px solid #a371d96d;background:#23123b;border-radius:9px;padding:6px}
+.v8-poker-help{margin:8px auto 13px;color:#fbe0a3;font-size:11px;line-height:1.75;max-width:480px}
+@media(max-width:360px){.poker-table-vertical{height:465px!important}.control-panel{padding:10px 6px!important}.seat-p1{left:0}.seat-p5{right:0}.seat-p2{left:0}.seat-p4{right:0}.bot-name{font-size:9px}}
