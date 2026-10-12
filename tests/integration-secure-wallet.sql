@@ -52,6 +52,14 @@ BEGIN
   IF jsonb_array_length(generated_reels)<>3 THEN RAISE EXCEPTION 'RNG missing: %',p; END IF;
   IF (p->'result'->>'payout')::integer NOT IN (0,4,16) THEN
     RAISE EXCEPTION 'invalid slot payout: %',p; END IF;
+  -- Ensure a second separate spin cannot be spammed within the same 2-second window.
+  PERFORM public.simab_secure_wallet_action('10000001','exchange_to_chips',1,pg_catalog.gen_random_uuid());
+  BEGIN
+    PERFORM public.simab_secure_wallet_action('10000001','slot',1,pg_catalog.gen_random_uuid());
+    RAISE EXCEPTION 'slot_cooldown missing';
+  EXCEPTION WHEN SQLSTATE '22023' THEN
+    IF SQLERRM<>'slot_cooldown' THEN RAISE; END IF;
+  END;
   SELECT coins,chips INTO c,ch FROM public.simab_secure_wallets WHERE telegram_subject='10000001';
   IF c<0 OR ch<0 THEN RAISE EXCEPTION 'negative wallet after slot'; END IF;
 
@@ -60,6 +68,9 @@ BEGIN
     VALUES('10000002',6) ON CONFLICT DO NOTHING;
   p:=public.simab_secure_wallet_action('10000002','state',0,NULL);
   IF p->>'coins'<>'6' OR p->>'chips'<>'0' THEN RAISE EXCEPTION 'verified migration failed: %',p; END IF;
+  IF (SELECT count(*) FROM public.simab_secure_wallet_events e WHERE
+      e.telegram_subject='10000002' AND e.action='opening_verified_quests')<>1 THEN
+    RAISE EXCEPTION 'missing opening ledger credit'; END IF;
   p:=public.simab_secure_wallet_action('10000003','state',0,NULL);
   IF p->>'coins'<>'0' THEN RAISE EXCEPTION 'unverified user credited: %',p; END IF;
 
