@@ -1,0 +1,31 @@
+/* Poker: neon VIP felt table */
+:root {--v5-header-art:url('../v3/poker.webp');--felt-grad:radial-gradient(ellipse at 48% 42%,#195d56 0%,#073b36 52%,#052b32 84%,#061825 100%);--rail:#16132b;--rail-border:#f6ca6b;--purple-gradient:linear-gradient(115deg,#6326ef,#c13ce6);}
+.room-settings-bar{
+ background:linear-gradient(115deg,rgba(27,20,53,.96),rgba(13,16,40,.90))!important;
+ border:1px solid rgba(160,109,255,.3);border-radius:13px!important; padding:8px!important;
+ gap:8px; flex-wrap:wrap;
+}
+.select-pill { min-height:34px;color:#ffe6ac!important;background:#171733!important;border:1px solid rgba(255,220,124,.49)!important;border-radius:9px!important; }
+.btn-top-util,.btn-private-room {min-height:35px;border-radius:11px!important;}
+.btn-private-room { background:linear-gradient(120deg,#713aea,#ba41c7)!important;box-shadow:0 0 14px rgba(162,72,242,.25)!important; }
+.poker-table-vertical{
+ border-color:#211c38!important;
+ outline:2px solid #f2c46f!important;
+ background:radial-gradient(ellipse at 50% 36%,#155a54,#073335 74%,#07222f)!important;
+ box-shadow:inset 0 0 0 2px rgba(255,220,135,.50),inset 0 0 42px rgba(0,0,0,.62),0 0 0 5px rgba(108,46,179,.28),0 17px 30px rgba(0,0,0,.4),0 0 28px rgba(105,58,234,.28)!important;
+}
+.poker-table-vertical::before{
+ content:"✦  SIMAB VIP TABLE  ✦"; position:absolute;left:50%;top:45%;transform:translate(-50%,-50%);
+ color:rgba(250,209,130,.15);font-size:12px;font-weight:900;letter-spacing:1.5px;white-space:nowrap;pointer-events:none;
+}
+.dealer-img-box{box-shadow:0 0 17px rgba(255,213,129,.28)!important;}
+.bot-pod,.hero-pod{ border-radius:12px!important;}
+.control-panel{
+ background:linear-gradient(150deg,rgba(35,24,65,.97),rgba(13,14,35,.97))!important;
+ border:1px solid rgba(224,185,118,.38)!important;border-radius:19px!important;
+ box-shadow:0 10px 30px rgba(0,0,0,.28),0 0 15px rgba(153,54,215,.10)!important;
+}
+.poker-btn,.chip-quick{border-radius:11px!important;min-height:38px;}
+.btn-raise{ background:var(--gold-gradient)!important;color:#1f1230!important;box-shadow:0 6px 18px rgba(243,169,64,.18)!important;}
+.raise-input{ min-height:39px; border-radius:11px!important; background:#13152d!important;color:#fff!important; }
+@media(max-width:355px){.poker-table-vertical{width:98%;}.top-actions{gap:3px;}.btn-top-util,.btn-private-room{font-size:10px!important;padding:6px!important;}}

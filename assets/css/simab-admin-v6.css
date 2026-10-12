@@ -1,0 +1,19 @@
+/* SIMAB V6: manager dashboard UI; no permissions changed */
+body{display:block!important;max-width:520px!important;margin:0 auto!important;padding:10px 11px 36px!important;}
+.header-bar{justify-content:space-between;}
+.v6-admin-hero{position:relative;isolation:isolate;overflow:hidden;padding:27px 17px;min-height:180px;border-radius:21px;border:1px solid #e9b96b99;margin:13px 0;
+ background:linear-gradient(90deg,#1e143b88,#161129ec 65%),url('../v3/tournament.webp') left center/auto 130% no-repeat,#1a1234;box-shadow:0 12px 32px #0009,0 0 17px #cf4dfb3b;}
+.v6-admin-kicker{display:inline-block;direction:ltr;border:1px solid #edca7888;color:#ffd680;font-weight:800;font-size:10px;border-radius:99px;padding:5px 11px;background:#1b102dac}
+.v6-admin-hero h1{font-size:24px;color:#fff0be;margin:10px 0 5px;text-shadow:0 0 13px #f8b65170}
+.v6-admin-hero p{font-size:11px;line-height:1.9;color:#d5c6e7;max-width:67%}
+.v6-admin-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0 13px}
+.v6-admin-links a{display:flex;align-items:center;justify-content:center;text-align:center;min-height:48px;padding:9px;border-radius:14px;background:linear-gradient(135deg,#422365,#181633);border:1px solid #b37ce47c;color:#fff2cb;font-size:12px;font-weight:900;text-decoration:none;}
+.v6-admin-hint{border:1px solid #e4ad595e;background:#2f1a35d4;border-radius:14px;padding:12px 13px;color:#dcd0e9;line-height:1.8;font-size:11px;margin-bottom:13px}
+.v6-admin-hint strong{color:#ffe0a5}
+.admin-card{padding:15px!important;border-color:#bc80f06b!important}
+.admin-card h3{font-size:14px!important;line-height:1.6!important;}
+.btn-tool,.btn-charge{min-height:42px!important;border-radius:11px!important;border-color:#b77bdb66!important;background:#251938!important;}
+.input-field{border:1px solid #a37dd65e!important;border-radius:12px!important;min-height:42px!important;}
+.btn-action{background:var(--gold-gradient)!important;color:#27152b!important;}
+.v6-admin-target{scroll-margin-top:15px;}
+@media(max-width:350px){.v6-admin-links a{font-size:10.5px}.v6-admin-hero p{max-width:83%}}

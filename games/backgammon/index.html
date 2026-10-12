@@ -670,6 +670,10 @@
     }
     .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
+  <!-- SIMAB V5 UI-only layer: game rules and wallet scripts unchanged. -->
+  <link rel="stylesheet" href="../../assets/css/simab-game-shell-v5.css?v=5">
+  <link rel="stylesheet" href="../../assets/css/simab-backgammon-v5.css?v=5">
+  <link rel="stylesheet" href="../../assets/css/simab-backgammon-v6.css?v=6">
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -735,6 +739,11 @@
         🎲 نشستن سر میز و شروع بازی
       </button>
 
+      <div class="v6-practice-callout">
+        <div><strong>🎲 دیدن تخته و تمرین رایگان</strong><small>بدون نیاز به ژتون، بدون کسر موجودی و بدون جایزه؛ روبه‌روی ربات بازی کن.</small></div>
+        <button type="button" id="btn-free-practice" class="v6-practice-btn" onclick="startFreePractice()">شروع تمرین ←</button>
+      </div>
+
       <!-- کارت انتظار برای یار دعوتی -->
       <div class="waiting-room-card" id="waiting-room-card">
         <h4 style="color:var(--gold); font-size:14px; margin-bottom:4px;">
@@ -750,8 +759,8 @@
           <button class="btn-start-game" style="padding:10px; font-size:13px;" onclick="shareTelegramInvite()">🚀 ارسال به دوست در تلگرام</button>
           <button class="btn-util" style="background:#25163a;" onclick="copyInviteLink()">📋 کپی</button>
         </div>
-        <button class="btn-start-game" style="background:var(--card-inner); border:1px solid var(--border); color:var(--cyan); padding:10px; font-size:12.5px;" onclick="enterTableDirectly('یار آنلاین (شبیه‌سازی)')">
-          ⚡ ورود مستقیم و شروع دست
+        <button class="btn-start-game" style="background:var(--card-inner); border:1px solid var(--border); color:var(--cyan); padding:10px; font-size:12.5px;" onclick="startFreePractice()">
+          🎲 تمرین رایگان با ربات (بدون حریف آنلاین)
         </button>
       </div>
     </div>
@@ -1103,16 +1112,32 @@
       btn.classList.add('active');
     }
 
+    // Training mode is isolated from chips. Never credit a win in practice.
+    let isFreePractice = false;
+    function startFreePractice() {
+      isFreePractice = true;
+      selectedMode = 'bot';
+      currentOpponentName = 'ربات تمرینی سیماب 🤖';
+      document.getElementById('txt-opp-name').textContent = currentOpponentName;
+      document.getElementById('lobby-screen').style.display = 'none';
+      document.getElementById('game-screen').style.display = 'flex';
+      document.body.classList.add('v6-practice-active');
+      startMatch();
+      showToast('حالت تمرینی: ژتونی کسر یا واریز نمی‌شود.');
+    }
+
     function onStartBtnClick() {
+      isFreePractice = false;
       if (selectedMode === 'bot') {
         enterTableDirectly(currentOpponentName);
       }
     }
 
     function enterTableDirectly(oppName) {
+      isFreePractice = false;
+      document.body.classList.remove('v6-practice-active');
       if (totalChips < selectedStake) {
         showToast(`ژتون ناکافی! برای این میز به ${selectedStake.toLocaleString('fa-IR')} ژتون نیاز دارید.`);
-        setTimeout(() => { window.location.href = '../../swap/index.html'; }, 1500);
         return;
       }
       deductChips(selectedStake);
@@ -1140,6 +1165,8 @@
 
     function backToLobby() {
       stopTurnTimer();
+      isFreePractice = false;
+      document.body.classList.remove('v6-practice-active');
       document.getElementById('result-modal').classList.remove('open');
       document.getElementById('game-screen').style.display = 'none';
       document.getElementById('lobby-screen').style.display = 'flex';
@@ -1178,8 +1205,8 @@
       barWhite = 0; barBlack = 0;
       offWhite = 0; offBlack = 0;
       doublingMultiplier = 1;
-      pot = selectedStake * 2;
-      document.getElementById('pot-amount-val').innerText = pot.toLocaleString('fa-IR');
+      pot = isFreePractice ? 0 : selectedStake * 2;
+      document.getElementById('pot-amount-val').innerText = isFreePractice ? 'تمرینی • ۰' : pot.toLocaleString('fa-IR');
       document.getElementById('cube-val-txt').innerText = 'x1';
 
       renderBoardDOM();
@@ -1629,6 +1656,10 @@
       const mult = (isGammon ? 2 : 1) * doublingMultiplier;
       const winPayout = pot * mult;
 
+      if (isFreePractice) {
+        showResultModal(winner === 'white' ? '🎉 تمرین موفق!' : '🎲 پایان تمرین', 'این دست تمرینی بود؛ هیچ ژتونی کم یا زیاد نشد.', '🎲');
+        return;
+      }
       if (winner === 'white') {
         addChips(winPayout);
         showResultModal('🏆 پیروزی شاهانه!', `تبریک! شما برنده شدید ${isGammon ? '(مارس ۲ برابر!)' : ''} و مبلغ ${winPayout.toLocaleString('fa-IR')} ژتون به صندوق شما واریز شد!`, '🎉');
@@ -1678,7 +1709,7 @@
       }
       doublingMultiplier *= 2;
       document.getElementById('cube-val-txt').innerText = `x${doublingMultiplier}`;
-      showToast(`شرط بازی دوبرابر شد! (ضریب x${doublingMultiplier}) ⚡`);
+      showToast(isFreePractice ? 'تمرین: ضریب نمایشی تغییر کرد، بدون ژتون.' : `شرط بازی دوبرابر شد! (ضریب x${doublingMultiplier}) ⚡`);
     }
 
     function surrenderMatch() {

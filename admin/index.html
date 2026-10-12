@@ -95,6 +95,8 @@
       border-radius: 16px; width: 100%; max-width: 320px; padding: 18px; text-align: center;
     }
   </style>
+  <link rel="stylesheet" href="../assets/css/simab-secondary-v6.css?v=6">
+  <link rel="stylesheet" href="../assets/css/simab-admin-v6.css?v=6">
 </head>
 <body>
   <!-- هدر -->
@@ -103,7 +105,16 @@
     <div class="admin-title">👑 پنل مدیریت ارشد سیماب</div>
   </div>
 
+  <section class="v6-admin-hero"><span class="v6-admin-kicker">♛ SIMAB • MANAGER</span><h1>مرکز فرمان سیماب</h1><p>دسترسی سریع به ابزارهای موجود و بخش‌های بازی. تغییرات حساب و ژتون هنوز محلی است و نیاز به انتقال امن به سرور دارد.</p></section>
+  <nav class="v6-admin-links" aria-label="رفتن به بخش‌های مدیریتی">
+    <a href="#v6-admin-wallet">🪙 کیف پول آزمایشی</a>
+    <a href="#v6-admin-tools">🛠 ابزارهای تست</a>
+    <a href="#v6-admin-games">🎮 تنظیم بازی‌ها</a>
+    <a href="#v6-admin-tasks">🎯 مأموریت‌ها</a>
+  </nav>
+  <div class="v6-admin-hint">🔒 <strong>مهم:</strong> این پنل هنوز فقط شناسه تلگرام را در مرورگر بررسی می‌کند؛ <strong>تأیید امنیتی واقعی سمت سرور فعال نشده است.</strong> عملیات غیرسروری را مبنای دارایی کاربران قرار نده.</div>
   <!-- بخش ۱: شارژ خودتان -->
+  <div id="v6-admin-wallet" class="v6-admin-target"></div>
   <div class="admin-card">
     <h3>🪙 شارژ سریع حساب خودتان</h3>
     <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">
@@ -127,6 +138,7 @@
   </div>
 
   <!-- بخش ۲: ابزارهای تست -->
+  <div id="v6-admin-tools" class="v6-admin-target"></div>
   <div class="admin-card">
     <h3>⚙️ جعبه ابزار و تست ماینر، گردونه و پاداش روزانه</h3>
     <div class="tools-grid">
@@ -138,6 +150,7 @@
   </div>
 
   <!-- بخش ۳: تنظیم حداقل ژتون بازی‌ها (کارت جدید درخواستی شما) -->
+  <div id="v6-admin-games" class="v6-admin-target"></div>
   <div class="admin-card">
     <h3>🎰 تنظیم حداقل ژتون ورودی بازی‌ها سر میز</h3>
     <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
@@ -176,6 +189,7 @@
   </div>
 
   <!-- بخش ۶: ایجاد تسک جدید -->
+  <div id="v6-admin-tasks" class="v6-admin-target"></div>
   <div class="admin-card">
     <h3>➕ ایجاد ماموریت جدید برای صفحه تسک‌ها</h3>
     <input type="text" class="input-field" id="task-title" placeholder="عنوان ماموریت (مثلاً عضویت در چنل یوتیوب)">

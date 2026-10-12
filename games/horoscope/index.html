@@ -331,6 +331,8 @@
     }
     .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
+  <style>body{ --v6-art:url("../../assets/v3/mines.webp"); }</style>
+  <link rel="stylesheet" href="../../assets/css/simab-secondary-v6.css?v=6">
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -344,7 +346,10 @@
         <span id="user-balance">50</span>
       </div>
     </header>
+  <div class="v6-page-banner" aria-label="معرفی بخش"><span class="v6-eyebrow">✦ SIMAB ARCADE</span><h1>ماینر سیماب</h1><p>ماینر را فعال کن و روند استخراج مجازی را ببین.</p></div>
 
+
+    <div class="v6-section-tip"><strong>● وضعیت ماینر</strong> — موجودی و استخراج فقط پس از فعال‌سازی محاسبه می‌شوند.</div>
     <!-- کارت وضعیت ماینر فعال -->
     <div class="active-rig-card">
       <div class="rig-tier-badge" id="rig-badge">هیچ دستگاهی فعال نیست</div>
@@ -471,6 +476,7 @@
         </div>
       </div>
     </div>
+    <div class="v6-hint-card"><strong>یادآوری:</strong> ⚙️ اگر ماینر خاموش است، ابتدا باید یکی از سطح‌های موجود را فعال کنی.</div>
   </div>
 
   <script>

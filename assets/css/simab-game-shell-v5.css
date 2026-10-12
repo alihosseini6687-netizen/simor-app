@@ -1,0 +1,77 @@
+/* SIMAB V5 / common game-shell. Presentation only. */
+:root {
+ --gold:#ffda7c; --gold-gradient:linear-gradient(130deg,#fff0ae 3%,#f6c45f 50%,#d78b2b 100%);
+ --cyan:#69e8ff; --purple:#b990ff;
+ --border:rgba(255,211,118,.30); --card-bg:rgba(16,13,38,.90);
+ --card-inner:rgba(30,22,56,.82); --text-muted:#b9b3cc;
+}
+html{ background:#080a1e; scroll-behavior:smooth; }
+body {
+ color:#fff8ec; min-height:100dvh;
+ background-color:#080919!important;
+ background-image:
+   radial-gradient(ellipse 90% 30% at 12% 3%,rgba(126,54,232,.32),transparent 82%),
+   radial-gradient(ellipse 74% 26% at 100% 32%,rgba(12,134,255,.19),transparent 76%),
+   radial-gradient(ellipse 80% 30% at 4% 76%,rgba(219,51,195,.12),transparent 84%),
+   linear-gradient(180deg,#0b0920 0%,#090819 65%,#080b1b 100%)!important;
+ overflow-x:hidden!important; overscroll-behavior-y:contain;
+ padding-bottom:max(28px,env(safe-area-inset-bottom,0px))!important;
+}
+body::before {
+ content:""; position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.20;
+ background-image:radial-gradient(rgba(250,226,162,.50) .6px,transparent .7px);
+ background-size:29px 29px;
+ mask-image:linear-gradient(180deg,#000 0%,transparent 76%);
+}
+body>* {position:relative;}
+button, a, select,[onclick]{-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible,[role="button"]:focus-visible {
+ outline:2px solid #fddd83;outline-offset:3px;
+}
+.top-bar{
+ position:relative;isolation:isolate;overflow:hidden;
+ background:linear-gradient(112deg,rgba(37,24,69,.97),rgba(14,15,43,.97))!important;
+ border:1px solid rgba(255,210,118,.39)!important;
+ border-radius:19px!important;
+ box-shadow:0 12px 30px rgba(1,0,15,.33),inset 0 1px 0 rgba(255,255,255,.12),0 0 20px rgba(122,67,226,.08)!important;
+ min-height:58px;gap:7px;padding:9px 11px!important;
+}
+.top-bar::before{
+ content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:linear-gradient(90deg,rgba(16,13,37,.88) 16%,transparent 100%),var(--v5-header-art) right center /auto 170% no-repeat;
+ opacity:.28;
+}
+.btn-back {
+ flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;
+ min-height:39px!important; border-radius:12px!important; padding:8px 11px!important;
+ background:linear-gradient(140deg,rgba(255,210,121,.15),rgba(89,50,151,.27))!important;
+ border:1px solid rgba(255,213,115,.48)!important;
+ color:#ffe0a2!important; box-shadow:inset 0 1px rgba(255,255,255,.09);
+}
+.top-title,.header-center-title{font-weight:900!important;letter-spacing:-.25px; color:#ffdc8a!important;text-shadow:0 0 14px rgba(249,189,89,.25);}
+.header-balance-badge,.chips-badge,#user-chips-display{
+ font-variant-numeric:tabular-nums;
+}
+.header-balance-badge,.chips-badge {
+ border-radius:14px!important; background:rgba(15,12,34,.72)!important;
+ border:1px solid rgba(255,213,116,.36)!important;
+ box-shadow:0 0 15px rgba(244,181,69,.08), inset 0 1px rgba(255,255,255,.08);
+ padding:9px 11px!important;
+}
+.modal-box,.alert-modal-box{
+ background:linear-gradient(150deg,#282044,#100f2a)!important;
+ border:1px solid rgba(255,215,121,.63)!important;
+ box-shadow:0 16px 60px rgba(0,0,0,.65),0 0 24px rgba(144,75,241,.27)!important;
+ border-radius:23px!important;
+}
+.toast-msg { background:var(--gold-gradient)!important;box-shadow:0 9px 25px rgba(226,148,39,.22)!important; }
+button:disabled{opacity:.48;cursor:not-allowed;filter:saturate(.72)}
+@media (max-width:370px){
+ .top-bar{gap:5px;padding:7px!important;}
+ .btn-back{padding:7px 8px!important;font-size:11px!important;}
+ .top-title,.header-center-title{font-size:12px!important;}
+ .header-balance-badge,.chips-badge{font-size:11px!important;padding:6px!important;}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
+}

@@ -2,8 +2,10 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SIMAB | صفحه اصلی</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>SIMAB | Gaming Club</title>
+  <meta name="theme-color" content="#0c0920">
+  <meta name="description" content="سیماب — مجموعه بازی‌های سرگرمی و مأموریت‌های روزانه">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -273,6 +275,9 @@
     }
     .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
+  <link rel="stylesheet" href="assets/css/simab-v3.css?v=3">
+  <link rel="stylesheet" href="assets/css/simab-v4.css?v=4">
+  <link rel="stylesheet" href="assets/css/simab-home-v6.css?v=6">
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -285,14 +290,39 @@
         <span id="user-balance-txt">50</span>
       </div>
       <div class="header-start">
-        <div class="brand-title">SIMAB</div>
-        <button class="btn-gear" onclick="openAboutModal()" title="درباره ما">⭐</button>
+        <div class="brand-title">SIMAB<span class="brand-caption">GAMING CLUB</span></div>
+        <button class="btn-gear" onclick="openAboutModal()" title="درباره سیماب">⭐</button>
       </div>
     </header>
 
     <!-- سربرگ ۱: خانه (پیش‌فرض) -->
     <div id="tab-home-content">
+<section class="v3-hero" aria-label="به سیماب خوش آمدید">
+  <img class="v3-hero-art" src="assets/v3/hero.webp" alt="" decoding="async" fetchpriority="high">
+  <div class="v3-hero-content">
+    <span class="v3-eyebrow">✦ SIMAB GAMING CLUB</span>
+    <h1>خوش اومدی<br><em>به سیماب!</em></h1>
+    <p>جایی برای بازی، سرگرمی و رقابت‌های هیجان‌انگیز.</p>
+    <button type="button" class="v3-gold-button" onclick="switchNavTab('games')">شروع بازی <span aria-hidden="true">←</span></button>
+  </div>
+</section>
+<div class="v4-pulse-banner"><span aria-hidden="true">✦</span><p><strong>به آرکید سیماب خوش اومدی!</strong><small>سه بازی آماده اجراست؛ برای انتخاب‌های بیشتر وارد بخش بازی‌ها شو.</small></p><button type="button" onclick="switchNavTab('games')">ببین ←</button></div>
+<div class="v3-section-header"><h2>🔥 بازی‌های محبوب</h2><button onclick="switchNavTab('games')" type="button">مشاهده همه ←</button></div>
+<div class="v3-featured-grid">
+  <a href="games/poker/index.html" class="v3-featured v3-blue"><img src="assets/v3/poker.webp" alt="" loading="lazy"><strong>پوکر تگزاس</strong><small>بازی با ربات</small></a>
+  <a href="games/slot/index.html" class="v3-featured v3-pink"><img src="assets/v3/slot.webp" alt="" loading="lazy"><strong>رول</strong><small>ماشین شانس</small></a>
+  <a href="games/backgammon/index.html" class="v3-featured v3-cyan"><img src="assets/v3/backgammon.webp" alt="" loading="lazy"><strong>تخته‌نرد</strong><small>بازی با ربات</small></a>
+</div>
+<section class="v4-recent" id="v4-recent" hidden><div class="v3-section-header"><h2>↶ آخرین بازی‌های من</h2><span class="v4-secondary-meta">فقط روی این دستگاه</span></div><div id="v4-recent-list"></div></section>
+<div class="v3-section-header"><h2>⚡ دسترسی سریع</h2></div>
+<div class="v3-shortcuts">
+  <a href="streak/index.html" class="v3-shortcut v3-gold"><span>🎁</span><strong>پاداش روزانه</strong></a>
+  <a href="friends/index.html" class="v3-shortcut v3-pink"><span>👥</span><strong>دعوت دوستان</strong></a>
+  <a href="games/wheel/index.html" class="v3-shortcut v3-cyan"><span>🎡</span><strong>گردونه</strong></a>
+  <a href="quests/index.html" class="v3-shortcut v3-blue"><span>🎯</span><strong>مأموریت‌ها</strong></a>
+</div>
       <div class="profile-card">
+        <div class="v3-section-header v3-profile-heading"><h2>👑 پروفایل بازیکن</h2></div>
         <div class="profile-top">
           <div class="user-avatar" id="avatar-container">👤</div>
           <div>
@@ -318,26 +348,8 @@
         </div>
       </div>
 
-      <!-- ۳ مربع میانی -->
-      <div class="three-grid">
-        <a href="friends/index.html" class="grid-box">
-          <span class="icon">👥</span>
-          <span class="label">رفرال</span>
-          <span class="sub">دعوت دوستان</span>
-        </a>
-        <div class="grid-box" onclick="alertComingSoon('این بخش')">
-          <span class="badge-soon-mini">به‌زودی</span>
-          <span class="icon">⏳</span>
-          <span class="label">به‌‌زودی</span>
-          <span class="sub">در آپدیت بعد</span>
-        </div>
-        <a href="ai/index.html" class="grid-box">
-          <span class="icon">🎙️️</span>
-          <span class="label">دستیار صوتی</span>
-          <span class="sub">هوش مصنوعی</span>
-        </a>
-      </div>
-
+      <div class="v4-section-header"><h2>خدمات و راهنما</h2><span>همیشه در دسترس</span></div>
+      <a class="v4-assistant" href="ai/index.html"><span class="v4-assistant-icon" aria-hidden="true">✦</span><div><strong>دستیار هوشمند سیماب</strong><small>راهنما و گفت‌وگو</small></div><span class="v4-chevron" aria-hidden="true">←</span></a>
       <!-- دکمه‌های کپسولی -->
       <div class="action-bars">
         <div class="action-btn" onclick="openSupport()">
@@ -351,6 +363,8 @@
           <div class="arrow">◀</div>
         </div>
         <!-- دکمه ورود به پنل مدیریت با نام ادمین -->
+        <!-- Show an explanatory badge in web previews; do not bypass admin authorization. -->
+        <div id="v6-admin-guest-note" class="v6-admin-guest-note" hidden>🔒 پنل مدیریت فقط داخل تلگرام و برای حساب مدیر قابل مشاهده است.</div>
         <a href="admin/index.html" class="action-btn admin-bar" id="btn-admin-bar" style="display:none;">
           <div class="btn-icon">👑</div>
           <div class="btn-txt">ورود به پنل مدیریت (ادمین)</div>
@@ -361,18 +375,35 @@
 
     <!-- سربرگ ۲: بازی‌ها -->
     <div id="tab-games-content" style="display:none;">
-      <div class="games-banner-box">
-        <div class="games-banner-overlay">
-          <span class="banner-badge">🎮 SIMAB GAMING</span>
-          <div class="banner-title">مسابقات و رقابت‌های آنلاین</div>
-          <div class="banner-sub">بازی کنید، ژتون ببرید و با دیگران رقابت کنید</div>
-        </div>
+      <section class="v3-page-hero v3-games-hero">
+        <img src="assets/v3/hero.webp" alt="" loading="lazy">
+        <span class="v3-eyebrow">🎮 GAME ZONE</span>
+        <h1>همه <em>بازی‌ها</em></h1>
+        <p>بازی مورد علاقه‌ات را انتخاب کن و وارد دنیای سیماب شو!</p>
+      </section>
+      <label class="v4-game-search"><span aria-hidden="true">⌕</span><input type="search" id="v4-game-search" placeholder="جست‌وجوی بازی..." autocomplete="off" aria-label="جست‌وجوی بازی‌ها"><kbd>⌕</kbd></label>
+      <div class="v3-categories" id="v3-game-filters" role="group" aria-label="دسته‌بندی بازی‌ها">
+        <button class="selected" type="button" data-filter="all" aria-pressed="true">🔥 همه</button>
+        <button type="button" data-filter="cards" aria-pressed="false">🃏 کارتی</button>
+        <button type="button" data-filter="chance" aria-pressed="false">🎰 شانسی</button>
+        <button type="button" data-filter="classic" aria-pressed="false">🎲 کلاسیک</button>
+        <button type="button" data-filter="future" aria-pressed="false">✨ آینده</button>
+        <button type="button" data-filter="favorites" aria-pressed="false">★ علاقه‌مندی‌ها</button>
       </div>
+      <div class="v3-section-header"><h2>✦ بازی‌های سیماب</h2><span class="v3-minor" id="v4-games-count" aria-live="polite">بازی‌های موجود</span></div>
       <div class="games-grid-2col" id="games-container"></div>
+      <div class="v4-empty-state" id="v4-games-empty" hidden><span>⌕</span><strong>بازی‌ای پیدا نشد</strong><p>نام دیگری را امتحان کن یا فیلترها را تغییر بده.</p><button type="button" id="v4-reset-filters">نمایش همه بازی‌ها</button></div>
     </div>
 
     <!-- سربرگ ۳: تسک‌ها (طراحی کاملاً خلوت و سبک طبق نقاشی شما) -->
     <div id="tab-tasks-content" style="display:none;">
+      <section class="v3-page-hero v3-rewards-hero">
+        <img src="assets/v3/rewards.webp" alt="" loading="lazy">
+        <span class="v3-eyebrow">🎁 REWARDS ZONE</span>
+        <h1>مأموریت‌ها <em>و جوایز</em></h1>
+        <p>چالش‌های روزانه، هدیه ورود و بازی‌های سرگرم‌کننده.</p>
+      </section>
+      <div class="v3-section-header"><h2>💰 کیف پول فعلی</h2><span class="v3-minor">موجودی محلی فعلی</span></div>
       <!-- کارت موجودی بالا و دکمه تبدیل -->
       <div class="task-balance-card">
         <div class="task-balance-info">
@@ -387,6 +418,7 @@
         </a>
       </div>
 
+      <div class="v3-section-header"><h2>⚡ فعالیت‌های روزانه</h2></div>
       <!-- سطر اول: ۴ دکمه مستقل به ایندکس‌های خود -->
       <div class="task-nav-grid-4">
         <a href="streak/index.html" class="task-btn-link">
@@ -407,21 +439,24 @@
         </a>
       </div>
 
-      <!-- سطر دوم: ۲ مستطیل کناری طبق نقاشی شما -->
-      <div class="task-dual-rect-grid">
-        <a href="#" onclick="alertComingSoon('آفر روزانه'); return false;" class="dual-rect-card offer-card">
-          <span class="rect-icon">🔥</span>
-          <span class="rect-title">آفر روزانه</span>
-          <span class="rect-sub">بسته‌های تخفیف ویژه</span>
-        </a>
-        <a href="#" onclick="alertComingSoon('خرید سکه'); return false;" class="dual-rect-card shop-card">
-          <span class="rect-icon">🪙</span>
-          <span class="rect-title">خرید سکه</span>
-          <span class="rect-sub">شارژ فوری حساب</span>
-        </a>
-      </div>
+      <div class="v4-economy-note"><span aria-hidden="true">🔐</span><div><strong>پاداش‌ها فعلاً مجازی‌اند</strong><p>انتقال امن موجودی و فروشگاه پس از تکمیل زیرساخت فعال می‌شوند.</p></div></div>
       <!-- زیر این بخش کاملاً خالی و بدون شلوغی است -->
     </div>
+
+    <section id="tab-news-content" style="display:none;">
+      <section class="v3-page-hero v3-news-hero">
+        <img src="assets/v3/news.webp" alt="" loading="lazy">
+        <span class="v3-eyebrow">🏆 SIMAB EVENTS</span>
+        <h1>اخبار <em>و رویدادها</em></h1>
+        <p>برای خبرهای جدید، رویدادها و مسابقات آینده همراه سیماب باش.</p>
+      </section>
+      <div class="v3-section-header"><h2>📢 تازه‌ترین خبرها</h2></div>
+      <div class="v3-news-card"><span class="v3-news-mark">🎮</span><div><strong>بازی‌های فعلی سیماب فعال‌اند</strong><p>پوکر، رول و تخته‌نرد را می‌توانی امتحان کنی. بازی چندنفره واقعی در دست توسعه است.</p></div><span class="v3-soon-pill">اطلاعیه</span></div>
+      <div class="v4-section-header"><h2>وضعیت توسعه</h2><span>شفاف و به‌روز</span></div>
+      <div class="v4-status-board"><div><span class="v4-status-dot ready"></span><strong>بازی‌های تک‌نفره</strong><small>قابل استفاده</small></div><div><span class="v4-status-dot progress"></span><strong>مسابقات آنلاین</strong><small>در حال توسعه</small></div><div><span class="v4-status-dot progress"></span><strong>اپ اندروید و آیفون</strong><small>در مسیر توسعه</small></div></div>
+      <div class="v3-section-header"><h2>🏅 رویدادها و رقابت‌ها</h2></div>
+      <div class="v3-event-card"><img src="assets/v3/tournament.webp" alt="" loading="lazy"><div><strong>مسابقات سیماب</strong><p>پس از راه‌اندازی سیستم رقابت آنلاین و رتبه‌بندی فعال می‌شود.</p><span>در حال توسعه</span></div></div>
+    </section>
 
     <!-- نوار ناوبری پایین -->
     <nav class="bottom-nav">
@@ -434,8 +469,12 @@
         <span class="tab-title">بازی‌ها</span>
       </button>
       <button class="nav-btn-box" id="tab-btn-tasks" onclick="switchNavTab('tasks')">
-        <span class="tab-icon">📋</span>
+        <span class="tab-icon">🎯</span>
         <span class="tab-title">تسک‌ها</span>
+      </button>
+      <button class="nav-btn-box" id="tab-btn-news" onclick="switchNavTab('news')">
+        <span class="tab-icon">📢</span>
+        <span class="tab-title">اخبار</span>
       </button>
     </nav>
   </div>
@@ -519,6 +558,8 @@
     } catch(e) {}
 
     // ۳. قفل کامل دکمه ادمین: فقط در صورت لاگین واقعی در تلگرام با آیدی 702007470
+    const adminGuestNote = document.getElementById('v6-admin-guest-note');
+    if (adminGuestNote) adminGuestNote.hidden = (uid !== 'guest');
     const adminBtn = document.getElementById('btn-admin-bar');
     if (adminBtn) {
       adminBtn.style.display = isRealAdmin ? 'flex' : 'none';
@@ -681,9 +722,9 @@
 
     // فهرست بازی‌ها طبق نام‌گذاری دقیق درخواستی شما
     const gamesDatabase = [
-      { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, title: 'پوکر تگزاس', sub: 'هولدم آنلاین' },
+      { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, title: 'پوکر تگزاس', sub: 'بازی با ربات' },
       { id: 2, icon: '🎰', url: 'games/slot/index.html', active: true, title: 'رول', sub: 'ماشین شانس' },
-      { id: 3, icon: '🎲', url: 'games/backgammon/index.html', active: true, title: 'تخته نرد', sub: 'مسابقات آنلاین' },
+      { id: 3, icon: '🎲', url: 'games/backgammon/index.html', active: true, title: 'تخته نرد', sub: 'بازی با ربات' },
       { id: 4, icon: '🎴', url: 'games/hokm/index.html', active: false, title: 'ورق (حکم)', sub: 'مسابقه پاسور ۴ نفره' },
       { id: 5, icon: '♠️', url: 'games/blackjack/index.html', active: false, title: 'ورق (۲۱)', sub: 'بلک‌جک کارتی' },
       { id: 6, icon: '🃏', url: 'games/haft-khabis/index.html', active: false, title: '۷ خبیث', sub: 'بازی دورهمی' },
@@ -793,5 +834,6 @@
     }
     setTimeout(processStartParams, 600);
   </script>
+  <script defer src="assets/js/simab-v4.js?v=4"></script>
 </body>
 </html>
