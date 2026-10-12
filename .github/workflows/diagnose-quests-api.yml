@@ -1,0 +1,26 @@
+name: Diagnose SIMAB public missions API
+on:
+  push:
+    branches: [fix/mission-api-connectivity-20261012]
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test public GET and CORS preflight
+        shell: bash
+        run: |
+          set +e
+          URL='https://pwjlyryrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests'
+          echo "=== DNS ==="
+          getent hosts pwjlyryrgbaprfnrieq.supabase.co || true
+          echo "=== GET ==="
+          curl --silent --show-error --max-time 15 -D /tmp/h1 -o /tmp/b1 -w 'HTTP=%{http_code} DNS_TIME=%{time_namelookup} URL=%{url_effective}\n' "$URL"
+          grep -iE '^(HTTP/|access-control-|content-type:)' /tmp/h1 || true
+          head -c 300 /tmp/b1 || true
+          echo
+          echo "=== OPTIONS preflight ==="
+          curl --silent --show-error --max-time 15 -D /tmp/h2 -o /tmp/b2 -w 'HTTP=%{http_code}\n' -X OPTIONS "$URL" -H 'Origin: https://alihosseini6687-netizen.github.io' -H 'Access-Control-Request-Method: POST' -H 'Access-Control-Request-Headers: content-type'
+          grep -iE '^(HTTP/|access-control-|content-type:)' /tmp/h2 || true
+          head -c 150 /tmp/b2 || true
+          echo
