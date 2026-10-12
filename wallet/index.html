@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#130923">
+  <title>SIMAB | کیف پول و بازی سروری</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{color-scheme:dark;--gold:#ffdc80;--bg:#0d071b;--card:#231337;--border:#7951a5;--blue:#69f1ff}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Tahoma,"Segoe UI",system-ui,sans-serif;color:#fff;background:radial-gradient(circle at 45% -10%,#4a137e 0%,#150c2d 47%,#0a0615 85%);min-height:100vh;padding:14px 12px 65px}
+    main{max-width:620px;margin:auto}
+    header{border:1px solid #b89062;box-shadow:0 0 24px #8c37ef55;border-radius:18px;padding:14px;background:#1d1031bd;display:flex;align-items:center;justify-content:space-between}
+    header strong{letter-spacing:2px;font-size:20px;color:var(--gold)}
+    header a{color:var(--gold);text-decoration:none;font-weight:bold}
+    h1{font-size:26px;text-align:center;margin:22px 0 7px;color:var(--gold);text-shadow:0 0 16px #ffb83c88}
+    .intro{color:#d8c8ea;text-align:center;font-size:12px;line-height:2;margin:0 auto 20px}
+    .wallet-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .balance{border:1px solid #e1a437;border-radius:18px;padding:19px 10px;text-align:center;background:linear-gradient(140deg,#40235c,#231335 55%,#0c1328);box-shadow:inset 0 1px #ffffff18,0 0 20px #ffbd3f22}
+    .balance b{display:block;color:var(--gold);font-size:25px;margin-top:9px;font-variant-numeric:tabular-nums}
+    .balance small{font-size:11px;color:#e7d4fa}
+    .panel{padding:17px 14px;margin-top:15px;background:linear-gradient(150deg,#27153fcf,#130b2ded);border:1px solid #6f438b;border-radius:18px;box-shadow:0 9px 28px #0008}
+    h2{font-size:16px;color:var(--gold);margin:0 0 12px}
+    p,small{line-height:1.9}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    button{font:inherit;font-weight:800;font-size:12px;color:#281426;background:linear-gradient(120deg,#fff0ad,#ffce72,#ec9e37);border:0;border-radius:13px;padding:14px 11px;min-height:47px;cursor:pointer;box-shadow:0 4px 13px #ffbc4a33}
+    button:disabled{opacity:.43;cursor:not-allowed;box-shadow:none}
+    .outline{color:var(--gold);background:#302044;border:1px solid #946eae}
+    .hint{font-size:12px;color:#cbbbdd;margin:8px 0}
+    .separator{height:1px;background:#684078;margin:17px 0}
+    label{font-size:13px;display:block;margin-bottom:7px}
+    input{border:1px solid #9168af;background:#150d2a;border-radius:12px;color:#fff;font:inherit;padding:12px;width:100%;margin:0 0 10px}
+    .reels{color:var(--gold);font-size:35px;text-align:center;letter-spacing:4px;background:#0d071b;border:1px solid #6f438b;padding:16px 0;border-radius:16px;margin:12px 0}
+    #wallet-message{min-height:60px;color:var(--gold);font-size:13px;line-height:1.9;padding:13px;border:1px solid #805dc0;border-radius:15px;background:#1c1238}
+    .wallet-event{display:grid;grid-template-columns:1fr auto;gap:3px 10px;border-bottom:1px solid #513763;padding:11px 0;font-size:12px}
+    .wallet-event span{color:var(--gold);text-align:left}
+    .wallet-event small{color:#b4a9c9;font-size:10px;grid-column:span 2}
+    .warning{border:1px solid #bf8755;background:#352018;padding:13px;border-radius:14px;font-size:12px;line-height:1.9;color:#ffddb2}
+    footer{text-align:center;font-size:11px;color:#aaa;margin:20px 0}
+    @media(max-width:340px){.actions{grid-template-columns:1fr}h1{font-size:23px}.balance b{font-size:21px}}
+  </style>
+</head>
+<body>
+<main>
+  <header><strong>⭐ SIMAB</strong><a href="../index.html">بازگشت به خانه ←</a></header>
+  <h1>🏆 کیف پول سروری سیماب</h1>
+  <p class="intro">نسخه آزمایشی اعتبار تأییدشده؛ تراکنش‌ها در Supabase ثبت می‌شوند، نه در حافظه مرورگر.</p>
+  <section class="wallet-grid" aria-label="موجودی‌های تأییدشده">
+    <div class="balance"><small>🪙 سکه سروری</small><b id="secure-coins">—</b></div>
+    <div class="balance"><small>🎟 ژتون سروری</small><b id="secure-chips">—</b></div>
+  </section>
+  <p class="hint">روز سرور (UTC): <span id="secure-server-date">—</span> | زنجیره روزانه: <b id="secure-streak">—</b></p>
+  <div id="wallet-message" role="status" aria-live="polite">در حال اتصال به کیف پول سروری...</div>
+  <div class="actions" style="margin-top:10px">
+    <button type="button" id="wallet-refresh" class="outline">🔄 بروزرسانی موجودی</button>
+    <button type="button" id="wallet-retry" class="outline">🔁 بازیابی درخواست نامشخص</button>
+  </div>
+  <section class="panel">
+    <h2>🎁 فعالیت‌های روزانه تأییدشده</h2>
+    <div class="actions">
+      <button id="daily-btn" data-secure-action="daily" type="button" disabled>🎁 دریافت روزانه</button>
+      <button id="wheel-btn" data-secure-action="wheel" type="button" disabled>🎡 گردونه رایگان</button>
+    </div>
+    <p class="hint">هرکدام حداکثر یک بار در روز UTC؛ نتیجه گردونه فقط توسط سرور تولید می‌شود.</p>
+    <div class="separator"></div>
+    <button id="miner-btn" data-secure-action="miner_start" type="button" disabled style="width:100%">⚡ شروع ماینر</button>
+    <p class="hint" id="miner-info">پس از اتصال، وضعیت ماینر نمایش داده می‌شود.</p>
+  </section>
+  <section class="panel">
+    <h2>🔁 تبدیل اتمیک سکه و ژتون</h2>
+    <label for="exchange-amount">مقدار (۱ تا ۱۰۰۰، نرخ آزمایشی ۱:۱)</label>
+    <input id="exchange-amount" inputmode="numeric" type="number" min="1" max="1000" value="5">
+    <div class="actions">
+      <button type="button" data-secure-action="exchange_to_chips" disabled>🪙 تبدیل به ژتون</button>
+      <button type="button" data-secure-action="exchange_to_coins" disabled>🎟 بازگشت به سکه</button>
+    </div>
+    <p class="hint">برخلاف صرافی قدیمی، این تبدیل در یک تراکنش واحد دیتابیس انجام می‌شود.</p>
+  </section>
+  <section class="panel">
+    <h2>🎰 رولر آزمایشی با نتیجه سروری</h2>
+    <div class="reels" id="slot-reels">❔ ❔ ❔</div>
+    <label for="slot-stake">شرط با ژتون سروری (۱ تا ۵۰)</label>
+    <input id="slot-stake" type="number" inputmode="numeric" value="1" min="1" max="50">
+    <button type="button" data-secure-action="slot" disabled style="width:100%">🎰 چرخش امن روی سرور</button>
+    <p class="hint">سه نماد یکسان: ۸ برابر شرط؛ دو نماد یکسان: ۲ برابر؛ سایر موارد بدون جایزه. کسر شرط و پرداخت برد همزمان انجام می‌شوند.</p>
+  </section>
+  <section class="panel">
+    <h2>📜 تاریخچه تراکنش‌های سروری</h2>
+    <div id="wallet-events">در حال دریافت تاریخچه...</div>
+  </section>
+  <section class="warning" style="margin-top:16px">🔐 موجودی ذخیره‌شده قدیمی بازی‌ها به این کیف پول منتقل نشده و قابل‌اعتماد نیست. پوکر و تخته‌نرد قدیمی تا ساخت موتور کامل سمت سرور، بازی آزمایشی‌اند و به این موجودی دسترسی ندارند. برای دریافت جایزه عضویت به بخش مأموریت‌ها برو.</section>
+  <footer>SIMAB GAMING CLUB • SECURE WALLET BETA</footer>
+</main>
+<script src="../assets/js/simab-secure-wallet.js?v=1" defer></script>
+</body>
+</html>
