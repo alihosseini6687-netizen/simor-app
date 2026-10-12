@@ -201,7 +201,7 @@
         <option value="20" selected>تایمر ۲۰s</option>
       </select>
     </div>
-    <button class="btn-action" onclick="saveCustomTask()">ثبت و انتشار تسک</button>
+    <button class="btn-action" onclick="saveCustomTask()">ثبت و انتشار مرکزی</button>
     <h4 style="color: var(--text-muted); font-size: 11px; margin-top: 12px; margin-bottom: 4px;">تسک‌های سفارشی فعال:</h4>
     <div id="tasks-list"></div>
   </div>
@@ -402,7 +402,7 @@
         haft_khabis: { minChips: parseInt(document.getElementById('cfg-haft_khabis').value, 10) || 10 }
       };
       localStorage.setItem('simab_game_stakes_config', JSON.stringify(cfg));
-      showPopup('ذخیره شد', 'حداقل ژتون ورودی بازی‌ها با موفقیت ذخیره و در صرافی اعمال گردید.', '🎰');
+      showPopup('ذخیره آزمایشی', 'این تنظیم فقط روی همین دستگاه ذخیره شد و هنوز تنظیم عمومی سرور نیست.', '🎰');
     }
 
     function loadGamesStakesConfig() {
@@ -448,83 +448,22 @@
     } else {
       window.open(url, '_blank');
     }
-    showPopup('در حال ارسال 📢', 'متن کپی شد و صفحه ارسال به کانال باز گردید.', '🚀');
+    showPopup('اشتراک‌گذاری دستی 📢', 'متن کپی شد و پنجره اشتراک‌گذاری باز گردید؛ ربات چیزی مستقیماً ارسال نکرد.', 'ℹ️');
   }
 
-  // ایجاد ماموریت جدید و اتصال همزمان به صفحات تسک‌ها و ماموریت‌ها
+  // Safely fail closed if the central API client script cannot load.
   function saveCustomTask() {
-    const title = document.getElementById('task-title').value.trim();
-    const url = document.getElementById('task-url').value.trim();
-    const reward = parseInt(document.getElementById('task-reward').value, 10);
-    const timer = parseInt(document.getElementById('task-timer').value, 10) || 20;
-
-    let checkedUrl;
-    try {
-      checkedUrl = new URL(url);
-    } catch(e) {
-      showPopup('خطا', 'لینک ماموریت باید یک نشانی معتبر با https باشد.', '⚠️');
-      return;
-    }
-    if (!title || title.length > 100 || checkedUrl.protocol !== 'https:' ||
-        !Number.isSafeInteger(reward) || reward <= 0 || reward > 10000) {
-      showPopup('خطا', 'عنوان (حداکثر ۱۰۰ حرف)، لینک امن https و پاداش ۱ تا ۱۰۰۰۰ لازم است.', '⚠️');
-      return;
-    }
-
-    const newTask = { id: 'quest_' + Date.now(), title, url: checkedUrl.href, reward, timer };
-
-    // ذخیره همزمان در هر دو کلید تسک‌ها تا در تمام صفحات نمایش یابد
-    let tasks1 = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
-    tasks1.push(newTask);
-    localStorage.setItem('simab_custom_quests', JSON.stringify(tasks1));
-
-    let tasks2 = JSON.parse(localStorage.getItem('simor_custom_tasks') || '[]');
-    tasks2.push(newTask);
-    localStorage.setItem('simor_custom_tasks', JSON.stringify(tasks2));
-
-    renderTasks();
-    showPopup('ثبت شد', `ماموریت "${title}" با پاداش ${reward} سکه با موفقیت اضافه شد و در صفحه تسک‌ها قرار گرفت.`, '➕');
-    document.getElementById('task-title').value = '';
-    document.getElementById('task-url').value = '';
-    document.getElementById('task-reward').value = '';
+    showPopup('سرور در دسترس نیست', 'انتشار مرکزی مأموریت‌ها به اتصال سرور نیاز دارد. چیزی ثبت نشد.', '🔒');
   }
-
-    function renderTasks() {
-      let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
-      const container = document.getElementById('tasks-list');
-      if (tasks.length === 0) {
-        container.innerHTML = '<div style="color: var(--text-muted); font-size: 11px;">هنوز تسک سفارشی اضافه نشده است.</div>';
-        return;
-      }
-      container.replaceChildren();
-      tasks.forEach((t, idx) => {
-        const row = document.createElement('div');
-        row.className = 'custom-task-item';
-        const title = document.createElement('span');
-        title.textContent = `${String(t.title)} (+${Number(t.reward)} S | تایمر: ${Number(t.timer)}s)`;
-        const remove = document.createElement('button');
-        remove.className = 'btn-del';
-        remove.type = 'button';
-        remove.textContent = '✕';
-        remove.addEventListener('click', () => deleteTask(idx));
-        row.append(title, remove);
-        container.appendChild(row);
-      });
-    }
-
-    function deleteTask(index) {
-      let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
-      const removed = tasks.splice(index, 1)[0];
-      localStorage.setItem('simab_custom_quests', JSON.stringify(tasks));
-      if (removed) {
-        let secondary = JSON.parse(localStorage.getItem('simor_custom_tasks') || '[]');
-        localStorage.setItem('simor_custom_tasks', JSON.stringify(secondary.filter(t => t.id !== removed.id)));
-      }
-      renderTasks();
-    }
+  function renderTasks() {
+    const box = document.getElementById('tasks-list');
+    if (box) box.textContent = 'در انتظار اتصال سیستم مأموریت‌های مرکزی...';
+  }
+  function deleteTask() { showPopup('نیاز به سرور', 'حذف مأموریت‌های مرکزی فقط از طریق سرور انجام می‌شود.', '🔒'); }
 
     loadGamesStakesConfig();
     renderTasks();
   </script>
+  <script src="../assets/js/simab-central-quests.js?v=1" defer></script>
 </body>
 </html>

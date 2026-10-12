@@ -1,0 +1,25 @@
+name: SIMAB central missions checks
+on:
+  push:
+    branches:
+      - feature/central-missions-admin-phase1-20261012
+  pull_request:
+    paths:
+      - "admin/index.html"
+      - "quests/index.html"
+      - "assets/js/simab-central-quests.js"
+      - "supabase/**"
+      - "tests/central-quests-contract.test.mjs"
+  workflow_dispatch:
+jobs:
+  safety-checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --check assets/js/simab-central-quests.js
+      - run: node --test tests/central-quests-contract.test.mjs
