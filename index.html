@@ -3,607 +3,300 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SIMAB | صفحه اصلی</title>
+  <title>SIMAB | پنل مدیریت ارشد</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
-      --bg: #0c0c14;
-      --card-bg: rgba(20, 20, 32, 0.94);
-      --card-inner: rgba(28, 28, 44, 0.88);
+      --bg: #0a0612;
+      --card-bg: rgba(20, 14, 30, 0.95);
+      --card-inner: rgba(30, 22, 45, 0.85);
       --gold: #f5cf62;
-      --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
-      --cyan-neon: #00f2fe;
-      --purple-neon: #9d4edd;
-      --green: #00f5d4;
+      --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
+      --purple: #8b3dff;
+      --purple-gradient: linear-gradient(135deg, #7928ca, #ff0080);
       --text: #ffffff;
-      --text-muted: #a5a5bc;
-      --border: rgba(212, 175, 55, 0.25);
+      --text-muted: #9d8eb5;
+      --border: rgba(212, 175, 55, 0.28);
+      --red: #ff3b30;
+      --green: #34c759;
+      --blue: #00f2fe;
     }
-    * { 
-      box-sizing: border-box; 
-      margin: 0; 
-      padding: 0; 
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-      user-select: none; 
-      -webkit-tap-highlight-color: transparent; 
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
+    body {
+      background: radial-gradient(circle at 50% 10%, #1e1035 0%, #07030d 100%);
+      color: var(--text); min-height: 100vh; padding: 12px; padding-bottom: 40px;
     }
-    html, body {
-      width: 100%;
-      min-height: 100vh;
-      background: radial-gradient(circle at 50% 10%, #1e1338 0%, #0c0c14 70%);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      text-align: start;
-      overflow-x: hidden;
-      font-size: 14px;
-    }
-    .app-wrapper {
-      width: 100%;
-      max-width: 100%;
-      min-height: 100vh;
-      padding: 8px 8px 90px 8px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-    @media (min-width: 500px) {
-      .app-wrapper {
-        max-width: 440px;
-        box-shadow: 0 0 35px rgba(0,0,0,0.9);
-        border-left: 1px solid rgba(255,255,255,0.05);
-        border-right: 1px solid rgba(255,255,255,0.05);
-      }
-    }
-    /* هدر */
-    .top-header {
+    .header-bar {
       display: flex; justify-content: space-between; align-items: center;
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 16px; padding: 10px 14px; margin-bottom: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      border-radius: 14px; padding: 10px 14px; margin-bottom: 14px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
     }
-    .header-start { display: flex; align-items: center; gap: 8px; }
-    .btn-gear {
-      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: var(--gold);
-      width: 36px; height: 36px; border-radius: 10px; font-size: 18px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    .btn-back {
+      background: #251a36; color: var(--gold); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 12px;
     }
-    .brand-title {
-      font-size: 21px; font-weight: 900; letter-spacing: 1.5px;
-      background: var(--gold-gradient);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    .admin-title {
+      color: var(--gold); font-weight: 900; font-size: 15px; display: flex; align-items: center; gap: 6px;
     }
-    .coin-badge {
-      background: rgba(212, 175, 55, 0.15); border: 1px solid var(--border);
-      padding: 6px 14px; border-radius: 20px; font-size: 14.5px; font-weight: 900; color: var(--gold);
-      display: flex; align-items: center; gap: 6px; cursor: pointer;
-    }
-    .coin-badge-s {
-      width: 22px; height: 22px; border-radius: 50%;
-      background: var(--gold-gradient); color: #221400;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 900;
-    }
-
-    /* پروفایل درشت */
-    .profile-card {
+    .admin-card {
       background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 18px; padding: 16px; margin-bottom: 12px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      border-radius: 16px; padding: 14px; margin-bottom: 14px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5); text-align: right;
     }
-    .profile-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-    .user-avatar {
-      width: 54px; height: 54px; border-radius: 50%;
-      border: 2px solid var(--gold);
-      background: radial-gradient(circle, #3d2366 0%, #1c1130 100%);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px; overflow: hidden; flex-shrink: 0;
+    .admin-card h3 {
+      color: var(--gold); font-size: 14px; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px; font-weight: 900;
     }
-    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .user-name { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 3px; }
-    .user-username { font-size: 13px; color: var(--text-muted); direction: ltr; text-align: right; }
-    
-    .ids-container {
+    .input-field {
+      width: 100%; padding: 10px 12px; background: var(--card-inner);
+      border: 1px solid var(--border); border-radius: 8px;
+      color: white; font-size: 12.5px; margin-bottom: 8px; outline: none;
+    }
+    .input-field:focus { border-color: var(--gold); }
+    .btn-action {
+      width: 100%; background: var(--gold-gradient); color: #150900;
+      border: none; padding: 11px; border-radius: 10px; font-weight: 900;
+      font-size: 13.5px; cursor: pointer; transition: 0.15s;
+    }
+    .btn-action:active { transform: scale(0.97); }
+    .charge-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px;
+    }
+    .btn-charge {
+      background: var(--card-inner); border: 1px solid var(--border);
+      color: var(--gold); padding: 8px 2px; border-radius: 8px; font-weight: 900;
+      font-size: 11px; cursor: pointer;
+    }
+    .btn-charge:active { transform: scale(0.95); background: var(--gold-gradient); color: black; }
+    .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; }
+    .btn-tool {
+      background: var(--card-inner); border: 1px solid var(--border);
+      color: white; padding: 9px 6px; border-radius: 8px; font-weight: 800;
+      font-size: 11px; cursor: pointer; text-align: center;
+    }
+    .btn-tool.cyan { border-color: var(--blue); color: var(--blue); }
+    .btn-tool.green { border-color: var(--green); color: var(--green); }
+    .btn-tool.purple { border-color: #a370f7; color: #a370f7; }
+    .btn-tool.red { border-color: var(--red); color: var(--red); }
+    .custom-task-item {
+      display: flex; justify-content: space-between; align-items: center;
       background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 10px;
+      border-radius: 8px; padding: 8px 12px; margin-top: 6px; font-size: 12px;
     }
-    .id-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
-    .id-label { color: var(--text-muted); font-size: 12.5px; font-weight: bold; }
-    .id-value { font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px; font-family: monospace; font-size: 14px; direction: ltr; }
-    .id-game-val { color: var(--gold); }
-    .btn-copy {
-      background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: var(--gold);
-      padding: 3px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;
-    }
-
-    /* ۳ مربع میانی درشت */
-    .three-grid { display: flex; gap: 8px; margin-bottom: 12px; }
-    .grid-box {
-      flex: 1; aspect-ratio: 1; background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 6px; cursor: pointer; text-decoration: none; color: inherit; position: relative;
-    }
-    .grid-box span.icon { font-size: 26px; }
-    .grid-box span.label { font-size: 14px; font-weight: 900; color: var(--gold); }
-    .grid-box span.sub { font-size: 11.5px; color: var(--text-muted); }
-    .badge-soon-mini {
-      position: absolute; top: 6px; right: 6px;
-      background: rgba(255, 59, 48, 0.25); border: 1px solid #ff3b30; color: #ff7b72;
-      font-size: 9.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px;
-    }
-
-    /* دکمه‌های کپسولی درشت */
-    .action-bars { display: flex; flex-direction: column; gap: 10px; }
-    .action-btn {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 12px 14px; display: flex; align-items: center;
-      gap: 12px; cursor: pointer; color: inherit; text-decoration: none;
-    }
-    .action-btn .btn-icon {
-      font-size: 20px; width: 36px; height: 36px; border-radius: 10px;
-      background: var(--card-inner); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .action-btn .btn-txt { font-size: 14.5px; font-weight: 900; flex: 1; text-align: start; }
-    .action-btn .arrow { font-size: 13px; color: var(--text-muted); }
-    .action-btn.admin-bar { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); }
-    .action-btn.admin-bar .btn-txt { color: var(--gold); }
-
-    /* سربرگ بازی‌ها درشت */
-    .games-banner-box {
-      width: 100%; height: 115px; border-radius: 16px;
-      position: relative; overflow: hidden; border: 1px solid var(--border);
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #2c1254 0%, #150a29 55%, #0d0617 100%);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .games-banner-overlay { text-align: center; padding: 10px; width: 100%; }
-    .banner-badge {
-      display: inline-block; background: rgba(212, 175, 55, 0.2); border: 1px solid var(--gold);
-      color: var(--gold); font-size: 10.5px; font-weight: 900; padding: 2px 10px; border-radius: 10px; margin-bottom: 4px;
-    }
-    .banner-title { font-size: 17px; font-weight: 900; color: #fff; margin-bottom: 3px; }
-    .banner-sub { font-size: 12px; color: var(--cyan-neon); font-weight: bold; }
-    .games-grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding-bottom: 12px; }
-    .game-card {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column;
-      justify-content: space-between; min-height: 90px;
-      cursor: pointer; text-decoration: none; color: inherit; transition: 0.15s;
-    }
-    .game-card:active { transform: scale(0.97); }
-    .game-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .game-card-icon {
-      width: 34px; height: 34px; border-radius: 8px;
-      background: var(--card-inner); display: flex; align-items: center; justify-content: center;
-      font-size: 20px; border: 1px solid rgba(255,255,255,0.08);
-    }
-    .game-badge { font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 6px; }
-    .badge-soon { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #d1d1db; }
-    .badge-live { background: rgba(0, 245, 212, 0.18); border: 1px solid var(--green); color: var(--green); }
-    .game-card-title { font-size: 14px; font-weight: 900; color: #ffffff; margin-bottom: 3px; }
-    .game-card-sub { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
-
-    /* سربرگ تسک‌ها درشت */
-    .task-balance-card {
-      background: linear-gradient(135deg, rgba(30, 20, 50, 0.9), rgba(15, 15, 25, 0.98));
-      border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px;
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
-    }
-    .task-balance-info { display: flex; align-items: center; gap: 12px; }
-    .task-coin-circle {
-      width: 48px; height: 48px; border-radius: 50%; background: var(--gold-gradient);
-      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; color: #352100;
-    }
-    .task-balance-text { display: flex; flex-direction: column; }
-    .task-balance-label { font-size: 12px; color: var(--text-muted); font-weight: bold; }
-    .task-balance-val { font-size: 26px; font-weight: 900; color: #fff; }
-    .btn-task-swap {
-      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: var(--gold);
-      padding: 8px 14px; border-radius: 12px; font-size: 13px; font-weight: 900; cursor: pointer; text-decoration: none;
-    }
-
-    /* سطر اول: ۴ دکمه مستقل */
-    .task-nav-grid-4 {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-      margin-bottom: 14px;
-    }
-    .task-btn-link {
-      background: var(--card-bg); border: 1px solid var(--border);
-      border-radius: 14px; padding: 12px 4px; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 6px; text-decoration: none;
-      color: inherit; transition: 0.15s;
-    }
-    .task-btn-link:active { transform: scale(0.96); border-color: var(--gold); }
-    .task-btn-link span.t-icon { font-size: 25px; }
-    .task-btn-link span.t-title { font-size: 13px; font-weight: 900; color: #fff; }
-
-    /* سطر دوم: دو مستطیل افقی */
-    .task-dual-rect-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
-    }
-    .dual-rect-card {
-      background: linear-gradient(135deg, rgba(28, 20, 48, 0.9), var(--card-bg));
-      border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 6px; text-decoration: none; color: inherit; min-height: 100px; text-align: center;
-      transition: 0.15s; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-    }
-    .dual-rect-card:active { transform: scale(0.97); border-color: var(--gold); }
-    .dual-rect-card.offer-card { border-color: rgba(255, 149, 0, 0.45); }
-    .dual-rect-card.shop-card { border-color: rgba(0, 245, 212, 0.45); }
-    .dual-rect-card .rect-icon { font-size: 28px; }
-    .dual-rect-card .rect-title { font-size: 15.5px; font-weight: 900; color: #fff; }
-    .dual-rect-card .rect-sub { font-size: 12px; color: var(--text-muted); }
-
-    /* نوار پایین دلباز */
-    .bottom-nav {
-      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 100%; height: 68px; background: #0e0e16;
-      border-top: 1px solid var(--border); display: flex; justify-content: space-around;
-      align-items: center; z-index: 99999;
-    }
-    @media (min-width: 500px) { .bottom-nav { max-width: 440px; } }
-    .nav-btn-box {
-      flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 3px; color: var(--text-muted); cursor: pointer; background: transparent; border: none; outline: none;
-    }
-    .nav-btn-box.active { color: var(--gold); }
-    .nav-btn-box .tab-icon { font-size: 24px; pointer-events: none; }
-    .nav-btn-box .tab-title { font-size: 12.5px; font-weight: 900; pointer-events: none; }
-
-    /* مودال */
+    .btn-del { background: none; border: none; color: var(--red); font-size: 15px; cursor: pointer; }
     .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
-      display: none; align-items: center; justify-content: center; z-index: 100000; padding: 16px;
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      z-index: 1000; align-items: center; justify-content: center; padding: 16px;
     }
+    .modal-overlay.open { display: flex; }
     .modal-box {
-      background: var(--card-bg); border: 1px solid var(--gold);
-      border-radius: 20px; padding: 22px; width: 100%; max-width: 340px; text-align: center;
+      background: var(--card-bg); border: 1.5px solid var(--gold);
+      border-radius: 16px; width: 100%; max-width: 320px; padding: 18px; text-align: center;
     }
-    .modal-title { font-size: 17px; font-weight: 900; color: var(--gold); margin-bottom: 10px; }
-    .modal-content { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
-    .btn-modal-close {
-      width: 100%; background: var(--gold-gradient); color: #150f00; border: none; padding: 12px;
-      border-radius: 12px; font-weight: 900; font-size: 14px; cursor: pointer;
-    }
-    .toast-msg {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
-      background: var(--gold-gradient); color: #1a1200; padding: 10px 22px; border-radius: 25px;
-      font-size: 13.5px; font-weight: 900; z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
-    }
-    .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
 </head>
 <body>
-  <div class="toast-msg" id="toast-msg">انجام شد!</div>
-  
-  <div class="app-wrapper">
-    <!-- هدر بالای صفحه -->
-    <header class="top-header">
-      <div class="coin-badge" onclick="switchNavTab('tasks')">
-        <div class="coin-badge-s">S</div>
-        <span id="user-balance-txt">50</span>
-      </div>
-      <div class="header-start">
-        <div class="brand-title">SIMAB</div>
-        <button class="btn-gear" onclick="openAboutModal()" title="درباره ما">⭐</button>
-      </div>
-    </header>
-
-    <!-- سربرگ ۱: خانه (پیش‌فرض) -->
-    <div id="tab-home-content">
-      <div class="profile-card">
-        <div class="profile-top">
-          <div class="user-avatar" id="avatar-container">👤</div>
-          <div>
-            <div class="user-name" id="user-name-txt">کاربر سیماب</div>
-            <div class="user-username" id="user-tg-username">@User</div>
-          </div>
-        </div>
-        <div class="ids-container">
-          <div class="id-row">
-            <span class="id-label">شناسه تلگرام:</span>
-            <span class="id-value">
-              <span id="user-num-id">00000000</span>
-              <button class="btn-copy" onclick="copyText('user-num-id')">کپی</button>
-            </span>
-          </div>
-          <div class="id-row">
-            <span class="id-label">شناسه بازی:</span>
-            <span class="id-value id-game-val">
-              <span id="user-game-id">S0000000</span>
-              <button class="btn-copy" onclick="copyText('user-game-id')">کپی</button>
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ۳ مربع میانی -->
-      <div class="three-grid">
-        <a href="friends/index.html" class="grid-box">
-          <span class="icon">👥</span>
-          <span class="label">رفرال</span>
-          <span class="sub">دعوت دوستان</span>
-        </a>
-        <div class="grid-box" onclick="alertComingSoon('این بخش')">
-          <span class="badge-soon-mini">به‌زودی</span>
-          <span class="icon">⏳</span>
-          <span class="label">به‌‌زودی</span>
-          <span class="sub">در آپدیت بعد</span>
-        </div>
-        <a href="ai/index.html" class="grid-box">
-          <span class="icon">🎙️️</span>
-          <span class="label">دستیار صوتی</span>
-          <span class="sub">هوش مصنوعی</span>
-        </a>
-      </div>
-
-      <!-- دکمه‌های کپسولی -->
-      <div class="action-bars">
-        <div class="action-btn" onclick="openSupport()">
-          <div class="btn-icon">📞</div>
-          <div class="btn-txt">پشتیبانی تلگرام</div>
-          <div class="arrow">◀</div>
-        </div>
-        <div class="action-btn" onclick="openAboutModal()">
-          <div class="btn-icon">⭐</div>
-          <div class="btn-txt">درباره ما و اهداف</div>
-          <div class="arrow">◀</div>
-        </div>
-        <!-- دکمه ورود به پنل مدیریت با نام ادمین -->
-        <a href="admin/index.html" class="action-btn admin-bar" id="btn-admin-bar" style="display:none;">
-          <div class="btn-icon">👑</div>
-          <div class="btn-txt">ورود به پنل مدیریت (ادمین)</div>
-          <div class="arrow" style="color:var(--gold);">◀</div>
-        </a>
-      </div>
-    </div>
-
-    <!-- سربرگ ۲: بازی‌ها -->
-    <div id="tab-games-content" style="display:none;">
-      <div class="games-banner-box">
-        <div class="games-banner-overlay">
-          <span class="banner-badge">🎮 SIMAB GAMING</span>
-          <div class="banner-title">مسابقات و رقابت‌های آنلاین</div>
-          <div class="banner-sub">بازی کنید، ژتون ببرید و با دیگران رقابت کنید</div>
-        </div>
-      </div>
-      <div class="games-grid-2col" id="games-container"></div>
-    </div>
-
-    <!-- سربرگ ۳: تسک‌ها (طراحی کاملاً خلوت و سبک طبق نقاشی شما) -->
-    <div id="tab-tasks-content" style="display:none;">
-      <!-- کارت موجودی بالا و دکمه تبدیل -->
-      <div class="task-balance-card">
-        <div class="task-balance-info">
-          <div class="task-coin-circle">S</div>
-          <div class="task-balance-text">
-            <span class="task-balance-label">موجودی سکه سیماب</span>
-            <span class="task-balance-val" id="tasks-balance-num">50</span>
-          </div>
-        </div>
-        <a href="swap/index.html" class="btn-task-swap">
-          <span>تبدیل 🔄</span>
-        </a>
-      </div>
-
-      <!-- سطر اول: ۴ دکمه مستقل به ایندکس‌های خود -->
-      <div class="task-nav-grid-4">
-        <a href="streak/index.html" class="task-btn-link">
-          <span class="t-icon">🎁</span>
-          <span class="t-title">روزانه</span>
-        </a>
-        <a href="./games/wheel/index.html" class="task-btn-link">
-          <span class="t-icon">🎡</span>
-          <span class="t-title">گردونه</span>
-        </a>
-        <a href="games/horoscope/index.html" class="task-btn-link">
-          <span class="t-icon">⚡</span>
-          <span class="t-title">ماینر</span>
-        </a>
-        <a href="quests/index.html" class="task-btn-link">
-          <span class="t-icon">📋</span>
-          <span class="t-title">ماموریت‌ها</span>
-        </a>
-      </div>
-
-      <!-- سطر دوم: ۲ مستطیل کناری طبق نقاشی شما -->
-      <div class="task-dual-rect-grid">
-        <a href="offers/index.html" class="dual-rect-card offer-card">
-          <span class="rect-icon">🔥</span>
-          <span class="rect-title">آفر روزانه</span>
-          <span class="rect-sub">بسته‌های تخفیف ویژه</span>
-        </a>
-        <a href="shop/index.html" class="dual-rect-card shop-card">
-          <span class="rect-icon">🪙</span>
-          <span class="rect-title">خرید سکه</span>
-          <span class="rect-sub">شارژ فوری حساب</span>
-        </a>
-      </div>
-      <!-- زیر این بخش کاملاً خالی و بدون شلوغی است -->
-    </div>
-
-    <!-- نوار ناوبری پایین -->
-    <nav class="bottom-nav">
-      <button class="nav-btn-box active" id="tab-btn-home" onclick="switchNavTab('home')">
-        <span class="tab-icon">🏠</span>
-        <span class="tab-title">خانه</span>
-      </button>
-      <button class="nav-btn-box" id="tab-btn-games" onclick="switchNavTab('games')">
-        <span class="tab-icon">🎮</span>
-        <span class="tab-title">بازی‌ها</span>
-      </button>
-      <button class="nav-btn-box" id="tab-btn-tasks" onclick="switchNavTab('tasks')">
-        <span class="tab-icon">📋</span>
-        <span class="tab-title">تسک‌ها</span>
-      </button>
-    </nav>
+  <!-- هدر -->
+  <div class="header-bar">
+    <button class="btn-back" onclick="goBack()">🔙 بازگشت به لابی</button>
+    <div class="admin-title">👑 پنل مدیریت ارشد سیماب</div>
   </div>
 
-  <!-- مودال درباره ما -->
-  <div class="modal-overlay" id="modal-about">
+  <!-- بخش ۱: شارژ خودتان -->
+  <div class="admin-card">
+    <h3>🪙 شارژ سریع حساب خودتان</h3>
+    <div style="font-size: 11.5px; color: var(--text-muted); margin-bottom: 8px;">
+      موجودی فعال حساب شما: <b id="current-bal" style="color: var(--gold); font-size: 14px;">50 S</b>
+    </div>
+    <div class="charge-grid">
+      <button class="btn-charge" onclick="addMyCoins(100)">+۱۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(500)">+۵۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(1000)">+۱,۰۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(5000)">+۵,۰۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(10000)">+۱۰,۰۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(50000)">+۵۰,۰۰۰</button>
+      <button class="btn-charge" onclick="addMyCoins(100000)">+۱۰۰,۰۰۰</button>
+      <button class="btn-charge" style="border-color:var(--blue); color:var(--blue);" onclick="addMyCoins(500000)">VIP 👑</button>
+    </div>
+    <div style="display: flex; gap: 6px; margin-top: 4px;">
+      <input type="number" class="input-field" id="custom-my-coin" placeholder="مبلغ دلخواه برای شارژ خودتان..." style="margin-bottom:0;">
+      <button class="btn-action" style="width: 100px; padding: 8px;" onclick="chargeCustomMyCoins()">افزایش</button>
+    </div>
+    <button class="btn-tool red" style="width: 100%; margin-top: 6px;" onclick="resetMyCoins()">تنظیم موجودی روی ۵۰ (حالت پیش‌فرض)</button>
+  </div>
+
+  <!-- بخش ۲: ابزارهای تست -->
+  <div class="admin-card">
+    <h3>⚙️ جعبه ابزار و تست ماینر، گردونه و پاداش روزانه</h3>
+    <div class="tools-grid">
+      <button class="btn-tool cyan" onclick="adminMaxMiner()">⚡ ماینر سطح ۴ + مخزن فول</button>
+      <button class="btn-tool purple" onclick="resetWheelTimer()">🎡 ریست چرخش گردونه</button>
+      <button class="btn-tool green" onclick="advanceStreakDay()">🎁 پرش به روز بعد (روزانه)</button>
+      <button class="btn-tool red" onclick="resetStreak()">🔄 صفر کردن روزانه</button>
+    </div>
+  </div>
+
+  <!-- بخش ۳: تنظیم حداقل ژتون بازی‌ها (کارت جدید درخواستی شما) -->
+  <div class="admin-card">
+    <h3>🎰 تنظیم حداقل ژتون ورودی بازی‌ها سر میز</h3>
+    <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+      مبالغ زیر به عنوان حداقل ژتون ورودی در صفحه صرافی (Swap) برای کاربران نمایش داده می‌شود:
+    </div>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px; font-size:11px;">
+      <div>پوکر تگزاس: <input type="number" class="input-field" id="cfg-poker" value="40"></div>
+      <div>رولر شانس: <input type="number" class="input-field" id="cfg-slot" value="10"></div>
+      <div>تخته نرد: <input type="number" class="input-field" id="cfg-backgammon" value="25"></div>
+      <div>ورق حکم: <input type="number" class="input-field" id="cfg-hokm" value="25"></div>
+      <div>ورق (۲۱): <input type="number" class="input-field" id="cfg-blackjack" value="20"></div>
+      <div>۷ خبیث: <input type="number" class="input-field" id="cfg-haft_khabis" value="10"></div>
+    </div>
+    <button class="btn-action" style="margin-top:6px;" onclick="saveGamesStakesConfig()">ذخیره تنظیمات ژتون‌ها 💾</button>
+  </div>
+
+  <!-- بخش ۴: واریز به کاربران و لینک هدیه -->
+  <div class="admin-card">
+    <h3>💸 واریز سکه به کاربران یا ساخت لینک هدیه</h3>
+    <p style="font-size:12px;line-height:1.9;color:#f5cf62;margin-bottom:9px;">⚠️ این دو قابلیت تا راه‌اندازی اعتبارسنجی سمت سرور موقتاً غیرفعال‌اند. انتقال از طریق حافظه مرورگر معتبر نیست.</p>
+    <input type="text" class="input-field" id="target-user-id" placeholder="شناسه عددی تلگرام کاربر (User ID)">
+    <input type="number" class="input-field" id="target-coin-amount" placeholder="تعداد سکه واریزی...">
+    <button class="btn-action" onclick="transferCoinsDirect()">واریز به شناسه کاربر</button>
+    <div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px;">
+      <button class="btn-tool purple" style="width: 100%;" onclick="generateGiftLink()">🎁 ساخت لینک هدیه تلگرامی (ارسال در چت)</button>
+    </div>
+  </div>
+
+  <!-- بخش ۵: ارسال پیام به کانال (ساده و بدون نیاز به توکن) -->
+  <div class="admin-card">
+    <h3>📢 ارسال پیام به کانال تلگرام (@SimorApp)</h3>
+    <textarea class="input-field" id="broadcast-text" rows="3" placeholder="متن اطلاعیه یا پیام خود را برای انتشار در کانال بنویسید..."></textarea>
+    <button class="btn-action" style="background: var(--gold-gradient); color: #170d00;" onclick="shareToTelegram()">
+      🚀 ارسال مستقیم پیام به کانال تلگرام
+    </button>
+  </div>
+
+  <!-- بخش ۶: ایجاد تسک جدید -->
+  <div class="admin-card">
+    <h3>➕ ایجاد ماموریت جدید برای صفحه تسک‌ها</h3>
+    <input type="text" class="input-field" id="task-title" placeholder="عنوان ماموریت (مثلاً عضویت در چنل یوتیوب)">
+    <input type="text" class="input-field" id="task-url" placeholder="لینک (https://...)">
+    <div style="display:flex; gap:6px;">
+      <input type="number" class="input-field" id="task-reward" placeholder="پاداش سکه (مثلاً 20)">
+      <select class="input-field" id="task-timer" style="width: 120px;">
+        <option value="10">تایمر ۱۰s</option>
+        <option value="20" selected>تایمر ۲۰s</option>
+      </select>
+    </div>
+    <button class="btn-action" onclick="saveCustomTask()">ثبت و انتشار تسک</button>
+    <h4 style="color: var(--text-muted); font-size: 11px; margin-top: 12px; margin-bottom: 4px;">تسک‌های سفارشی فعال:</h4>
+    <div id="tasks-list"></div>
+  </div>
+
+  <!-- پاپ‌آپ پیام -->
+  <div class="modal-overlay" id="popup-modal">
     <div class="modal-box">
-      <div class="modal-title">⭐ درباره سیماب (SIMAB)</div>
-      <div class="modal-content">پلتفرم گیمینگ و سرگرمی تعاملی سیماب با هدف ارائه بازی‌های آنلاین و سیستم پاداش طراحی شده است.</div>
-      <button class="btn-modal-close" onclick="closeModals()">متوجه شدم</button>
+      <div style="font-size: 38px; margin-bottom: 6px;" id="pop-icon">✅</div>
+      <h3 id="pop-title" style="color: var(--gold); margin-bottom: 6px;">موفق</h3>
+      <p id="pop-msg" style="font-size: 12.5px; line-height: 1.6; margin-bottom: 14px;">عملیات با موفقیت انجام شد.</p>
+      <button class="btn-action" onclick="closePopup()">متوجه شدم</button>
     </div>
   </div>
 
   <script>
     const tg = window.Telegram?.WebApp;
-    try {
-      if (tg) {
-        tg.ready();
-        tg.expand();
-        // ۱. بستن فلش بازگشت و فعال‌سازی علامت ضربدر (✕) خروج تلگرام
-        if (tg.BackButton) {
-          tg.BackButton.hide();
-        }
-      }
-    } catch(e) {}
-
-    // مشخصات اختصاصی و انحصاری مدیر ارشد
     const ADMIN_ID = "702007470";
-    const ADMIN_GAME_ID = "S5895861";
-
-    let realUserId = null;
     let uid = "guest";
     let isRealAdmin = false;
 
     try {
-      if (tg?.initDataUnsafe?.user) {
-        const u = tg.initDataUnsafe.user;
-        realUserId = u.id;
-        uid = u.id.toString();
-        
-        document.getElementById('user-name-txt').innerText = u.first_name || 'کاربر سیماب';
-        document.getElementById('user-tg-username').innerText = u.username ? '@' + u.username : '';
-        document.getElementById('user-num-id').innerText = u.id;
-
-        // ۲. ثابت شدن شناسه بازی ادمین روی S5895861
+      if (tg?.initDataUnsafe?.user?.id) {
+        uid = tg.initDataUnsafe.user.id.toString();
         if (uid === ADMIN_ID) {
           isRealAdmin = true;
-          localStorage.setItem('simab_game_id_' + uid, ADMIN_GAME_ID);
-          localStorage.setItem('simab_game_id', ADMIN_GAME_ID);
-          document.getElementById('user-game-id').innerText = ADMIN_GAME_ID;
-        } else {
-          // شناسه بازی اختصاصی و مجزا برای سایر کاربران
-          let savedGameId = localStorage.getItem('simab_game_id_' + uid);
-          if (!savedGameId || savedGameId === ADMIN_GAME_ID || savedGameId === 'S0000000') {
-            savedGameId = 'S' + Math.floor(1000000 + Math.random() * 9000000);
-            localStorage.setItem('simab_game_id_' + uid, savedGameId);
-            localStorage.setItem('simab_game_id', savedGameId);
-          }
-          document.getElementById('user-game-id').innerText = savedGameId;
         }
-
-        if (u.photo_url) {
-          document.getElementById('avatar-container').innerHTML = `<img src="${u.photo_url}" alt="Avatar">`;
-        }
-      } else {
-        // ورود خارج از تلگرام (کروم یا مرورگر دسکتاپ): حالت مهمان و بسته بودن کامل دسترسی‌ها
-        document.getElementById('user-name-txt').innerText = 'کاربر مهمان';
-        document.getElementById('user-num-id').innerText = 'خارج از تلگرام';
-        document.getElementById('user-game-id').innerText = 'S0000000';
       }
     } catch(e) {}
 
-    // ۳. قفل کامل دکمه ادمین: فقط در صورت لاگین واقعی در تلگرام با آیدی 702007470
-    const adminBtn = document.getElementById('btn-admin-bar');
-    if (adminBtn) {
-      adminBtn.style.display = isRealAdmin ? 'flex' : 'none';
+    // قفل امنیتی قطعی: اگر خارج از تلگرام (کروم) یا با اکانتی غیر از شما باز شود، فوراً اخراج می‌شود
+    if (!isRealAdmin) {
+      alert('دسترسی غیرمجاز! این بخش مختص مدیریت است.');
+      window.location.href = '../index.html';
     }
 
-    // ================= ۴. سیستم دارایی و همگام‌سازی ابری تلگرام (CloudStorage) =================
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        // در داخل پنل ادمین فلش برگشت فعال باشد تا به لابی مادر برگردید
+        if (tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(goBack);
+        }
+      }
+    } catch(e) {}
+
+    function goBack() {
+      try { localStorage.setItem('simab_active_tab', 'home'); } catch(e) {}
+      if (window.history.length > 1) window.history.back();
+      else window.location.href = '../index.html';
+    }
+
+    // ================= سیستم همگام‌سازی ابری پنل ادمین (هماهنگ ۱۰۰٪ با لابی مادر بدون کلید مشترک) =================
     const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
     const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
     const isCloudSupported = !!(tg && tg.CloudStorage);
 
-    // مقداردهی اولیه: ۵۰ سکه برای کاربر جدید و حفظ ۲,۱۷۵,۰۰۰ برای مدیر
-    let balance = 50;
-    if (isRealAdmin) {
-      balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
-    } else if (uid !== "guest") {
-      let saved = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '50');
-      // پاکسازی مقادیر میلیونی که قبلاً به اشتباه به اکانت دوم سرایت کرده بود
-      if (saved >= 100000) {
-        saved = 50;
-        localStorage.setItem(STORAGE_KEY_COINS, '50');
-      }
-      balance = saved;
-    } else {
-      balance = 50;
+    // بارگذاری موجودی واقعی ادمین (حفظ ۲,۱۷۵,۰۰۰)
+    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
+
+    function renderAdminBalance() {
+      const el = document.getElementById('current-bal');
+      if (el) el.innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 }) + ' S';
     }
 
-    function renderCoins() {
-      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
-      const bHeader = document.getElementById('user-balance-txt');
-      if (bHeader) bHeader.innerText = displayVal;
-      const bTasks = document.getElementById('tasks-balance-num');
-      if (bTasks) bTasks.innerText = displayVal;
-    }
-    renderCoins();
+    // ذخیره آنی موجودی در حافظه اختصاصی و کلود تلگرام (حذف کامل user_balance جهت جلوگیری از سرایت به سایرین)
+    function saveBalance() {
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      renderAdminBalance();
 
-    // ذخیره سراسری و زنده دارایی (همگام‌سازی بین گوشی، آیفون و تلگرام دسکتاپ)
-    function saveUserDataGlobal(newCoins = null, newChips = null, newInv = null) {
-      if (newCoins !== null) {
-        balance = parseFloat(Number(newCoins).toFixed(4));
-        localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-        renderCoins();
-      }
-      const currentCoins = balance;
       const currentChips = parseInt(localStorage.getItem(STORAGE_KEY_CHIPS) || '0', 10);
       let currentInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
       try {
         currentInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV)) || currentInv;
       } catch(e) {}
-      
+
       const payload = {
-        coins: currentCoins,
-        chips: newChips !== null ? newChips : currentChips,
-        inv: newInv !== null ? newInv : currentInv,
+        coins: balance,
+        chips: currentChips,
+        inv: currentInv,
         updated_at: Date.now()
       };
-      
+
       localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
-      
-      if (isCloudSupported && uid !== "guest") {
+
+      if (isCloudSupported) {
         tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload), (err) => {
-          if (err) console.warn('خطا در ذخیره ابری تلگرام:', err);
+          if (err) console.warn('خطا در ذخیره ابری ادمین:', err);
         });
       }
     }
+    renderAdminBalance();
 
-    function saveCoinsGlobal(newBal) {
-      saveUserDataGlobal(newBal);
-    }
-
-    // خواندن خودکار موجودی از ابری تلگرام در ابتدای ورود روی هر دستگاهی (اندروید، آیفون، کامپیوتر)
+    // همگام‌سازی ابری هنگام باز شدن پنل مدیریت
     function syncWithTelegramCloud() {
-      if (!isCloudSupported || uid === "guest") return;
+      if (!isCloudSupported) return;
       tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
-        if (err || !cloudRaw) {
-          // اگر بار اول است، ۵۰ سکه در کلود ثبت شود تا در سایر دستگاه‌ها هم در دسترس باشد
-          if (!err && !cloudRaw) saveUserDataGlobal();
-          return;
-        }
+        if (err || !cloudRaw) return;
         try {
           const cloudData = JSON.parse(cloudRaw);
           const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
-          
-          // جلوگیری از سرایت ارقام میلیونی به کاربران عادی
-          if (!isRealAdmin && cloudData.coins >= 100000) {
-            saveUserDataGlobal(50, 0, { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 });
-            return;
-          }
-
           if (cloudData.updated_at && cloudData.updated_at >= localTime) {
             if (typeof cloudData.coins === 'number') {
               balance = cloudData.coins;
               localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-              renderCoins();
+              renderAdminBalance();
             }
             if (typeof cloudData.chips === 'number') {
               localStorage.setItem(STORAGE_KEY_CHIPS, cloudData.chips.toString());
@@ -612,182 +305,212 @@
               localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(cloudData.inv));
             }
             localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
-          } else {
-            saveUserDataGlobal();
           }
         } catch(e) {
-          console.error('خطا در همگام‌سازی ابری:', e);
+          console.error('خطا در لود ابری ادمین:', e);
         }
       });
     }
     syncWithTelegramCloud();
-    function triggerHaptic(type = 'light') {
+    function showPopup(title, msg, icon = '✅') {
+      document.getElementById('pop-icon').innerText = icon;
+      document.getElementById('pop-title').innerText = title;
+      document.getElementById('pop-msg').innerText = msg;
+      document.getElementById('popup-modal').classList.add('open');
+    }
+    function closePopup() {
+      document.getElementById('popup-modal').classList.remove('open');
+    }
+
+    function addMyCoins(num) {
+      balance = parseFloat((balance + num).toFixed(4));
+      saveBalance();
+      showPopup('شارژ موفق', `مبلغ +${num.toLocaleString()} سکه با موفقیت به حساب اصلی شما اضافه شد.`, '🪙');
+    }
+
+    function chargeCustomMyCoins() {
+      const amt = parseFloat(document.getElementById('custom-my-coin').value);
+      if (isNaN(amt) || amt <= 0) {
+        showPopup('خطا', 'لطفاً مبلغ معتبری وارد کنید.', '⚠️');
+        return;
+      }
+      addMyCoins(amt);
+      document.getElementById('custom-my-coin').value = '';
+    }
+
+    function resetMyCoins() {
+      balance = 50;
+      saveBalance();
+      showPopup('بازنشانی', 'موجودی شما روی ۵۰ سکه تنظیم شد.', '⚙️');
+    }
+
+    function adminMaxMiner() {
+      localStorage.setItem('simab_miner_tier_' + uid, '4');
+      localStorage.setItem('simab_miner_tank_' + uid, '8000');
+      localStorage.setItem('simab_miner_cycle_start_' + uid, Date.now().toString());
+      showPopup('ماینر ارتقا یافت', 'ماینر به سطح ۴ با مخزن ۸۰۰۰ ارتقا پیدا کرد!', '⚡');
+    }
+
+    function resetWheelTimer() {
+      const now = new Date();
+      const cycleKey = `simab_wheel_free_${now.getFullYear()}_${now.getMonth()+1}_${now.getDate()}_${uid}`;
+      localStorage.removeItem(cycleKey);
+      showPopup('ریست گردونه', 'چرخش رایگان امروز مجدداً فعال شد!', '🎡');
+    }
+
+    function advanceStreakDay() {
+    let cur = parseInt(localStorage.getItem('simab_streak_day_' + uid) || '0', 10);
+    cur = (cur % 7) + 1;
+
+    // محاسبه تاریخ دیروز تا سیستم روزانه متوجه شود کاربر امروز آمده و نوبت روز بعدی است
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const yStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+
+    localStorage.setItem('simab_streak_day_' + uid, (cur - 1).toString());
+    localStorage.setItem('simab_streak_last_date_' + uid, yStr);
+    showPopup('پاداش روزانه', `پاداش روزانه با موفقیت به روز ${cur} منتقل شد و آماده دریافت است.`, '🎁');
+  }
+
+  function resetStreak() {
+    localStorage.setItem('simab_streak_day_' + uid, '0');
+    localStorage.removeItem('simab_streak_last_date_' + uid);
+    showPopup('پاداش روزانه', 'روزهای پاداش روزانه با موفقیت صفر شد.', '🔄');
+  }
+
+    // ذخیره تنظیمات ژتون‌ها برای صرافی
+    function saveGamesStakesConfig() {
+      const cfg = {
+        poker: { minChips: parseInt(document.getElementById('cfg-poker').value, 10) || 40 },
+        slot: { minChips: parseInt(document.getElementById('cfg-slot').value, 10) || 10 },
+        backgammon: { minChips: parseInt(document.getElementById('cfg-backgammon').value, 10) || 25 },
+        hokm: { minChips: parseInt(document.getElementById('cfg-hokm').value, 10) || 25 },
+        blackjack: { minChips: parseInt(document.getElementById('cfg-blackjack').value, 10) || 20 },
+        haft_khabis: { minChips: parseInt(document.getElementById('cfg-haft_khabis').value, 10) || 10 }
+      };
+      localStorage.setItem('simab_game_stakes_config', JSON.stringify(cfg));
+      showPopup('ذخیره شد', 'حداقل ژتون ورودی بازی‌ها با موفقیت ذخیره و در صرافی اعمال گردید.', '🎰');
+    }
+
+    function loadGamesStakesConfig() {
       try {
-        if (tg?.HapticFeedback) {
-          if (type === 'success' || type === 'error' || type === 'warning') {
-            tg.HapticFeedback.notificationOccurred(type);
-          } else {
-            tg.HapticFeedback.impactOccurred(type);
-          }
+        const saved = localStorage.getItem('simab_game_stakes_config');
+        if (saved) {
+          const cfg = JSON.parse(saved);
+          if (cfg.poker?.minChips) document.getElementById('cfg-poker').value = cfg.poker.minChips;
+          if (cfg.slot?.minChips) document.getElementById('cfg-slot').value = cfg.slot.minChips;
+          if (cfg.backgammon?.minChips) document.getElementById('cfg-backgammon').value = cfg.backgammon.minChips;
+          if (cfg.hokm?.minChips) document.getElementById('cfg-hokm').value = cfg.hokm.minChips;
+          if (cfg.blackjack?.minChips) document.getElementById('cfg-blackjack').value = cfg.blackjack.minChips;
+          if (cfg.haft_khabis?.minChips) document.getElementById('cfg-haft_khabis').value = cfg.haft_khabis.minChips;
         }
       } catch(e) {}
     }
 
-    function showToast(msg) {
-      const t = document.getElementById('toast-msg');
-      t.innerText = msg;
-      t.classList.add('show');
-      setTimeout(() => { t.classList.remove('show'); }, 2000);
+    // واریز به کاربر و ساخت لینک اختصاصی هدیه
+  function transferCoinsDirect() {
+    // Do not claim to transfer to another account by writing to this browser.
+    // A trusted server must own the ledger and authorize admin transfers.
+    showPopup('موقتاً غیرفعال', 'انتقال بین کاربران نیازمند ثبت و تأیید در سرور امن است. هیچ سکه‌ای جابه‌جا نشده است.', '🔒');
+  }
+
+  // ساخت لینک هدیه تلگرامی با کپی خودکار و ارسال در چت
+  function generateGiftLink() {
+    // Creating a self-authenticating gift URL client-side is never secure.
+    showPopup('موقتاً غیرفعال', 'لینک هدیه پس از راه‌اندازی صدور و مصرف یک‌باره کد در سرور فعال می‌شود. هیچ لینکی ساخته نشده است.', '🔒');
+  }
+
+  // ارسال ساده و مستقیم به کانال @SimorApp
+  function shareToTelegram() {
+    const channel = "@SimorApp";
+    const text = document.getElementById('broadcast-text').value.trim();
+    if (!text) {
+      showPopup('خطا', 'لطفاً متن پیام را وارد کنید.', '⚠️');
+      return;
+    }
+    navigator.clipboard.writeText(text);
+    const url = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/SimorApp')}&text=${encodeURIComponent(text)}`;
+    if (tg?.openTelegramLink) {
+      tg.openTelegramLink(url);
+    } else {
+      window.open(url, '_blank');
+    }
+    showPopup('در حال ارسال 📢', 'متن کپی شد و صفحه ارسال به کانال باز گردید.', '🚀');
+  }
+
+  // ایجاد ماموریت جدید و اتصال همزمان به صفحات تسک‌ها و ماموریت‌ها
+  function saveCustomTask() {
+    const title = document.getElementById('task-title').value.trim();
+    const url = document.getElementById('task-url').value.trim();
+    const reward = parseInt(document.getElementById('task-reward').value, 10);
+    const timer = parseInt(document.getElementById('task-timer').value, 10) || 20;
+
+    let checkedUrl;
+    try {
+      checkedUrl = new URL(url);
+    } catch(e) {
+      showPopup('خطا', 'لینک ماموریت باید یک نشانی معتبر با https باشد.', '⚠️');
+      return;
+    }
+    if (!title || title.length > 100 || checkedUrl.protocol !== 'https:' ||
+        !Number.isSafeInteger(reward) || reward <= 0 || reward > 10000) {
+      showPopup('خطا', 'عنوان (حداکثر ۱۰۰ حرف)، لینک امن https و پاداش ۱ تا ۱۰۰۰۰ لازم است.', '⚠️');
+      return;
     }
 
-    function copyText(elementId) {
-      const text = document.getElementById(elementId).innerText;
-      navigator.clipboard.writeText(text).then(() => {
-        triggerHaptic('success');
-        showToast('کپی شد!');
+    const newTask = { id: 'quest_' + Date.now(), title, url: checkedUrl.href, reward, timer };
+
+    // ذخیره همزمان در هر دو کلید تسک‌ها تا در تمام صفحات نمایش یابد
+    let tasks1 = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
+    tasks1.push(newTask);
+    localStorage.setItem('simab_custom_quests', JSON.stringify(tasks1));
+
+    let tasks2 = JSON.parse(localStorage.getItem('simor_custom_tasks') || '[]');
+    tasks2.push(newTask);
+    localStorage.setItem('simor_custom_tasks', JSON.stringify(tasks2));
+
+    renderTasks();
+    showPopup('ثبت شد', `ماموریت "${title}" با پاداش ${reward} سکه با موفقیت اضافه شد و در صفحه تسک‌ها قرار گرفت.`, '➕');
+    document.getElementById('task-title').value = '';
+    document.getElementById('task-url').value = '';
+    document.getElementById('task-reward').value = '';
+  }
+
+    function renderTasks() {
+      let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
+      const container = document.getElementById('tasks-list');
+      if (tasks.length === 0) {
+        container.innerHTML = '<div style="color: var(--text-muted); font-size: 11px;">هنوز تسک سفارشی اضافه نشده است.</div>';
+        return;
+      }
+      container.replaceChildren();
+      tasks.forEach((t, idx) => {
+        const row = document.createElement('div');
+        row.className = 'custom-task-item';
+        const title = document.createElement('span');
+        title.textContent = `${String(t.title)} (+${Number(t.reward)} S | تایمر: ${Number(t.timer)}s)`;
+        const remove = document.createElement('button');
+        remove.className = 'btn-del';
+        remove.type = 'button';
+        remove.textContent = '✕';
+        remove.addEventListener('click', () => deleteTask(idx));
+        row.append(title, remove);
+        container.appendChild(row);
       });
     }
 
-    function alertComingSoon(name) {
-      triggerHaptic('warning');
-      showToast(`${name} به‌زودی فعال می‌شود!`);
-    }
-
-    function openSupport() {
-      triggerHaptic('medium');
-      const link = 'https://t.me/Alihosseiniv';
-      if (tg && tg.openTelegramLink) tg.openTelegramLink(link);
-      else window.open(link, '_blank');
-    }
-
-    function openAboutModal() {
-      triggerHaptic('light');
-      document.getElementById('modal-about').style.display = 'flex';
-    }
-
-    function closeModals() {
-      document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-    }
-
-    // فهرست بازی‌ها طبق نام‌گذاری دقیق درخواستی شما
-    const gamesDatabase = [
-      { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, title: 'پوکر تگزاس', sub: 'هولدم آنلاین' },
-      { id: 2, icon: '🎰', url: 'games/slot/index.html', active: true, title: 'رول', sub: 'ماشین شانس' },
-      { id: 3, icon: '🎲', url: 'games/backgammon/index.html', active: true, title: 'تخته نرد', sub: 'مسابقات آنلاین' },
-      { id: 4, icon: '🎴', url: 'games/hokm/index.html', active: false, title: 'ورق (حکم)', sub: 'مسابقه پاسور ۴ نفره' },
-      { id: 5, icon: '♠️', url: 'games/blackjack/index.html', active: false, title: 'ورق (۲۱)', sub: 'بلک‌جک کارتی' },
-      { id: 6, icon: '🃏', url: 'games/haft-khabis/index.html', active: false, title: '۷ خبیث', sub: 'بازی دورهمی' },
-      { id: 7, icon: '🎭', url: 'games/truth-or-dare/index.html', active: false, title: 'جرأت حقیقت', sub: 'چالش آنلاین' },
-      { id: 8, icon: '⚔️', url: 'games/three-to-three/index.html', active: false, title: '۳ به ۳', sub: 'رقابت سرعتی' },
-      { id: 9, icon: '🔢', url: 'games/dabalna/index.html', active: false, title: 'دبلنا', sub: 'بازی خانوادگی' },
-      { id: 10, icon: '🔴', url: 'games/mench/index.html', active: false, title: 'منچ آنلاین', sub: 'نبرد ۴ نفره' },
-      { id: 11, icon: '🐍', url: 'games/snakes-ladders/index.html', active: false, title: 'مار و پله', sub: 'تاس و هیجان' },
-      // بازی‌های بعدی بدون نام اختصاصی
-      { id: 12, icon: '⏳', url: '#', active: false, title: 'به‌زودی', sub: 'در آپدیت‌های آینده' },
-      { id: 13, icon: '⏳', url: '#', active: false, title: 'به‌زودی', sub: 'در آپدیت‌های آینده' },
-      { id: 14, icon: '⏳', url: '#', active: false, title: 'به‌زودی', sub: 'در آپدیت‌های آینده' }
-    ];
-
-    function renderGames() {
-      const box = document.getElementById('games-container');
-      if (!box) return;
-      box.innerHTML = '';
-      gamesDatabase.forEach(g => {
-        const item = document.createElement(g.active ? 'a' : 'div');
-        item.className = 'game-card';
-        if (g.active) {
-          item.href = g.url;
-        } else {
-          item.onclick = () => alertComingSoon(g.title);
-        }
-        item.innerHTML = `
-          <div class="game-card-top">
-            <div class="game-card-icon">${g.icon}</div>
-            <span class="game-badge ${g.active ? 'badge-live' : 'badge-soon'}">${g.active ? 'فعال' : 'به‌زودی'}</span>
-          </div>
-          <div>
-            <div class="game-card-title">${g.title}</div>
-            <div class="game-card-sub">${g.sub}</div>
-          </div>
-        `;
-        box.appendChild(item);
-      });
-    }
-
-    function switchNavTab(tab) {
-      triggerHaptic('light');
-      document.querySelectorAll('.nav-btn-box').forEach(t => t.classList.remove('active'));
-      document.getElementById('tab-home-content').style.display = 'none';
-      document.getElementById('tab-games-content').style.display = 'none';
-      document.getElementById('tab-tasks-content').style.display = 'none';
-
-      if (tab === 'home') {
-        document.getElementById('tab-btn-home').classList.add('active');
-        document.getElementById('tab-home-content').style.display = 'block';
-      } else if (tab === 'games') {
-        document.getElementById('tab-btn-games').classList.add('active');
-        document.getElementById('tab-games-content').style.display = 'block';
-      } else if (tab === 'tasks') {
-        document.getElementById('tab-btn-tasks').classList.add('active');
-        document.getElementById('tab-tasks-content').style.display = 'block';
+    function deleteTask(index) {
+      let tasks = JSON.parse(localStorage.getItem('simab_custom_quests') || '[]');
+      const removed = tasks.splice(index, 1)[0];
+      localStorage.setItem('simab_custom_quests', JSON.stringify(tasks));
+      if (removed) {
+        let secondary = JSON.parse(localStorage.getItem('simor_custom_tasks') || '[]');
+        localStorage.setItem('simor_custom_tasks', JSON.stringify(secondary.filter(t => t.id !== removed.id)));
       }
-      window.scrollTo(0, 0);
+      renderTasks();
     }
 
-    renderGames();
-
-    // ۱. بازگشت هوشمند به سربرگ قبلی (تسک‌ها یا بازی‌ها) به جای پرتاب اجباری به خانه
-    const savedActiveTab = localStorage.getItem('simab_active_tab') || 'home';
-    switchNavTab(savedActiveTab);
-
-    // ذخیره خودکار سربرگ فعال در هر بار کلیک کاربر روی منوی پایین
-    const origSwitchNavTab = switchNavTab;
-    switchNavTab = function(tab) {
-      try { localStorage.setItem('simab_active_tab', tab); } catch(e) {}
-      origSwitchNavTab(tab);
-    };
-
-    // ۲. پردازش و فعال‌سازی کدهای ورودی تلگرام (لینک‌های هدیه ادمین و کدهای رفرال دعوت دوستان)
-    function processStartParams() {
-      let startParam = tg?.initDataUnsafe?.start_param;
-      if (!startParam) {
-        const urlParams = new URLSearchParams(window.location.search);
-        startParam = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp') || urlParams.get('start');
-      }
-      if (!startParam) return;
-
-      // الف) دریافت و واریز خودکار هدیه تلگرامی ادمین
-      if (startParam.startsWith('gift_')) {
-        const parts = startParam.split('_');
-        const giftCode = startParam;
-        const giftAmount = parseFloat(parts[2]) || 100;
-        const claimKey = 'simab_gift_claimed_' + giftCode + '_' + uid;
-
-        if (!localStorage.getItem(claimKey)) {
-          localStorage.setItem(claimKey, 'true');
-          const newBalance = parseFloat((balance + giftAmount).toFixed(4));
-          saveCoinsGlobal(newBalance);
-          showToast(`🎁 تبریک! هدیه ${giftAmount.toLocaleString()} سکه‌ای دریافت شد!`);
-        }
-      }
-
-      // ب) ثبت خودکار دعوت دوستان (افزایش شمارنده رفرال معرف)
-      else if (startParam.startsWith('S') || startParam.startsWith('ref_')) {
-        const inviterCode = startParam;
-        const refKey = 'simab_joined_by_' + uid;
-
-        if (!localStorage.getItem(refKey)) {
-          localStorage.setItem(refKey, inviterCode);
-          // ثبت در شمارنده معرف جهت باز شدن جوایز رفرال
-          const inviterCountKey = 'simab_ref_count_' + inviterCode;
-          let currentInvites = parseInt(localStorage.getItem(inviterCountKey) || '0', 10);
-          localStorage.setItem(inviterCountKey, (currentInvites + 1).toString());
-
-          showToast(`👥 شما با دعوت کاربر ${inviterCode} به سیماب پیوستید! ✨`);
-        }
-      }
-    }
-    setTimeout(processStartParams, 600);
+    loadGamesStakesConfig();
+    renderTasks();
   </script>
 </body>
 </html>
