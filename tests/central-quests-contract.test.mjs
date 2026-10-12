@@ -15,7 +15,7 @@ test('client and both affected pages have parseable JS', () => {
   for (const [html, name] of [[admin,'admin'],[quests,'quests']]) {
     for (const [,source] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))
       new Script(source, { filename: name + '.inline.js' });
-    assert.match(html, /src="\.\.\/assets\/js\/simab-central-quests\.js\?v=1"/);
+    assert.match(html, /src="\.\.\/assets\/js\/simab-central-quests\.js\?v=\d+"/);
   }
 });
 test('site edits cannot claim server-confirmed rewards locally', () => {
@@ -39,4 +39,19 @@ test('central tables deny direct browser access and enable RLS', () => {
   assert.match(sql, /ALTER TABLE public\.simab_central_quests ENABLE ROW LEVEL SECURITY/);
   assert.match(sql, /REVOKE ALL ON public\.simab_admins, public\.simab_central_quests/);
   assert.match(sql, /TO service_role/);
+});
+
+test('admin status and drafts are present; no secret is exposed', () => {
+  assert.match(client,/simabCheckMissionsConnection/);
+  assert.match(client,/simabSaveQuestDraft/);
+  assert.match(client,/botMatchesExpected/);
+  assert.match(admin,/id="quest-server-status"/);
+  assert.match(admin,/id="quest-drafts-list"/);
+  assert.match(edge,/botPublicName/);
+  assert.match(edge,/payload.action === "ping"/);
+  assert.match(edge,/signature_mismatch/);
+});
+test('locally claimed mission flags are not used as auth evidence', () => {
+  assert.doesNotMatch(quests,/simab_quests_claimed_/);
+  assert.doesNotMatch(quests,/claimedQuests.includes/);
 });

@@ -9,8 +9,10 @@ import { createClient } from "npm:@supabase/supabase-js@2";
  * Never trust initDataUnsafe; never log bot token or raw initData.
  */
 class TelegramAuthError extends Error {
-  constructor(message = "Telegram authentication rejected") {
-    super(message);
+  code: string;
+  constructor(code = "invalid_payload") {
+    super("Telegram authentication rejected");
+    this.code = code;
     this.name = "TelegramAuthError";
   }
 }
@@ -34,21 +36,21 @@ async function verifyTelegramInitData(
   botToken: string,
   nowSeconds = Math.floor(Date.now() / 1000),
 ): Promise<{ telegramUserId: string; displayName: string }> {
-  if (typeof raw !== "string" || !raw || raw.length > 8192 || !botToken) throw new TelegramAuthError();
+  if (typeof raw !== "string" || !raw || raw.length > 8192 || !botToken) throw new TelegramAuthError("missing_fields");
   const params = new URLSearchParams(raw);
   const seen = new Set<string>();
   for (const [key] of params) {
-    if (seen.has(key)) throw new TelegramAuthError();
+    if (seen.has(key)) throw new TelegramAuthError("invalid_payload");
     seen.add(key);
   }
   const claimedHash = params.get("hash") ?? "";
   const dateText = params.get("auth_date") ?? "";
   const userText = params.get("user") ?? "";
-  if (!/^\d{10,12}$/.test(dateText) || !userText) throw new TelegramAuthError();
+  if (!/^\d{10,12}$/.test(dateText) || !userText || !claimedHash) throw new TelegramAuthError("missing_fields");
   const issuedAt = Number(dateText);
-  if (!Number.isSafeInteger(issuedAt) || issuedAt > nowSeconds + 30 || nowSeconds - issuedAt > allowedAgeSeconds) {
-    throw new TelegramAuthError();
-  }
+  if (!Number.isSafeInteger(issuedAt)) throw new TelegramAuthError("invalid_payload");
+  if (issuedAt > nowSeconds + 30) throw new TelegramAuthError("clock_mismatch");
+  if (nowSeconds - issuedAt > allowedAgeSeconds) throw new TelegramAuthError("expired");
   // Exclude Telegram's alternate Ed25519 signature from the HMAC message.
   const pairs = [...params.entries()]
     .filter(([k]) => k !== "hash" && k !== "signature")
@@ -56,12 +58,12 @@ async function verifyTelegramInitData(
     .sort();
   const secret = await hmac(enc.encode("WebAppData"), botToken);
   const expected = await hmac(secret, pairs.join("\n"));
-  if (!constantTimeMatch(expected, claimedHash)) throw new TelegramAuthError();
+  if (!constantTimeMatch(expected, claimedHash)) throw new TelegramAuthError("signature_mismatch");
   let user: Record<string, unknown>;
-  try { user = JSON.parse(userText); } catch { throw new TelegramAuthError(); }
-  if (!user || typeof user !== "object" || Array.isArray(user)) throw new TelegramAuthError();
+  try { user = JSON.parse(userText); } catch { throw new TelegramAuthError("invalid_payload"); }
+  if (!user || typeof user !== "object" || Array.isArray(user)) throw new TelegramAuthError("invalid_payload");
   const id = user.id;
-  if (typeof id !== "number" || !Number.isSafeInteger(id) || id <= 0) throw new TelegramAuthError();
+  if (typeof id !== "number" || !Number.isSafeInteger(id) || id <= 0) throw new TelegramAuthError("invalid_payload");
   const first = typeof user.first_name === "string" ? user.first_name : "";
   const last = typeof user.last_name === "string" ? user.last_name : "";
   const cleanName = (first + " " + last).replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, 80);
@@ -92,6 +94,21 @@ function serviceKey(): string | undefined {
   return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 }
 
+let botCache: { name: string; until: number } | null = null;
+async function botPublicName(token: string): Promise<string | null> {
+  if (botCache && botCache.until > Date.now()) return botCache.name;
+  try {
+    const response = await fetch("https://api.telegram.org/bot" + token + "/getMe", {
+      method: "GET", signal: AbortSignal.timeout(6000),
+    });
+    if (!response.ok) return null;
+    const j = await response.json();
+    const name = j?.ok && typeof j?.result?.username === "string" ? j.result.username : null;
+    if (name) botCache = { name, until: Date.now() + 300000 };
+    return name;
+  } catch { return null; }
+}
+
 const toPublic = (item: Record<string, unknown>) => ({
   id: item.id,
   title: item.title,
@@ -114,6 +131,15 @@ Deno.serve(async (request) => {
   if (!dbUrl || !key) return reply(503, { error: "not_configured" });
   const db = createClient(dbUrl, key, { auth: { persistSession: false, autoRefreshToken: false } });
 
+  if (request.method === "GET" && url.searchParams.get("health") === "1") {
+    const token = Deno.env.get("SIMAB_TELEGRAM_BOT_TOKEN");
+    if (!token) return reply(503, { error: "bot_not_configured" });
+    const botName = await botPublicName(token);
+    if (!botName) return reply(503, { error: "bot_identity_unavailable" });
+    return reply(200, { ok: true, botUsername: "@" + botName,
+      botMatchesExpected: botName.toLowerCase() === "simorapp_bot",
+      channelConfigured: Boolean(Deno.env.get("SIMAB_TELEGRAM_CHANNEL")), rewardsEnabled: false });
+  }
   if (request.method === "GET") {
     const { data, error } = await db.from("simab_central_quests")
       .select("id,title,url,reward_coins,timer_seconds,verification_mode")
@@ -140,13 +166,18 @@ Deno.serve(async (request) => {
   try {
     const verified = await verifyTelegramInitData(payload.initData as string, botToken);
     subject = verified.telegramUserId;
-  } catch { return reply(401, { error: "telegram_auth_failed" }); }
+  } catch (error) {
+    const reason = error instanceof TelegramAuthError ? error.code : "invalid_payload";
+    return reply(401, { error: "telegram_auth_failed", reason });
+  }
 
   // Never rely on a user-id supplied in JSON, localStorage, query string, or initDataUnsafe.
   const { data: admin, error: adminError } = await db.from("simab_admins")
     .select("telegram_subject").eq("telegram_subject", subject).maybeSingle();
   if (adminError) return reply(503, { error: "admin_lookup_unavailable" });
   if (!admin) return reply(403, { error: "admin_only" });
+
+  if (payload.action === "ping") return reply(200, { ok: true, adminVerified: true });
 
   if (payload.action === "broadcast") {
     const message = typeof payload.message === "string" ? payload.message.trim() : "";
@@ -186,8 +217,11 @@ Deno.serve(async (request) => {
       externalUrl.length > 500 || !Number.isSafeInteger(reward) || reward < 0 ||
       reward > 10000 || !Number.isSafeInteger(timer) || timer < 10 || timer > 120)
       return reply(400, { error: "invalid_task" });
-    const mode = t.verificationMode === "telegram_membership" ?
-      "telegram_membership" : "external_visit";
+    const mode = t.verificationMode === "telegram_membership" &&
+      parsed.hostname.toLowerCase() === "t.me" &&
+      /^\/[A-Za-z][A-Za-z0-9_]{4,}$/.test(parsed.pathname) &&
+      !parsed.pathname.toLowerCase().endsWith("bot")
+      ? "telegram_membership" : "external_visit";
     const { data, error } = await db.from("simab_central_quests")
       .insert({
         title, url: parsed.href, reward_coins: reward,
