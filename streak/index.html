@@ -281,6 +281,7 @@
   </style>
   <style>body{ --v6-art:url("../assets/v3/rewards.webp"); }</style>
   <link rel="stylesheet" href="../assets/css/simab-secondary-v6.css?v=6">
+  <script src="../assets/js/simab-legacy-guard.js?v=1"></script>
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -373,9 +374,9 @@
 
   let balance = 50;
   if (uid === "702007470") {
-    balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
+    balance = SimabLegacy.readAmount(STORAGE_KEY_COINS, 2175000);
   } else if (uid !== "guest") {
-    let saved = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '50');
+    let saved = SimabLegacy.readAmount(STORAGE_KEY_COINS, 50);
     if (saved >= 100000) saved = 50;
     balance = saved;
   }
@@ -409,7 +410,7 @@
         const cloudData = JSON.parse(cloudRaw);
         const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
         if (cloudData.updated_at && cloudData.updated_at >= localTime) {
-          if (typeof cloudData.coins === 'number') {
+          if (typeof cloudData.coins === 'number' && Number.isFinite(cloudData.coins) && cloudData.coins >= 0 && cloudData.coins <= 1000000000000) {
             if (uid !== "702007470" && cloudData.coins >= 100000) return;
             balance = cloudData.coins;
             localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
