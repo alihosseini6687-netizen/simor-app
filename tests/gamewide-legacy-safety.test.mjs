@@ -75,5 +75,6 @@ test('server reward ledger stays separate from unverified game chips',()=>{
  const sql=read('supabase/migrations/20261012_verified_quest_rewards.sql');
  const client=read('assets/js/simab-central-quests.js');
  assert.match(sql,/UNIQUE\(telegram_subject,quest_id\)/);
- assert.match(client,/spendableInGames:false|هنوز در بازی قابل خرج نیست/);
+ assert.match(client,/سکه‌های قدیمی مرورگر یکی نیستند|سکه‌های قدیمی بازی جدا هستند/);
+ assert.match(read('supabase/functions/simab-central-quests/index.ts'),/spendableInGames:false/);
 });

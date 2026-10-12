@@ -41,6 +41,6 @@ test('client never pretends local coins equal confirmed server rewards',()=>{
   assert.match(client,/verifiedCoins/);
   assert.match(client,/alreadyClaimed|claimedIds/);
   assert.match(client,/claim\.disabled=true/);
-  assert.match(client,/هنوز در بازی قابل خرج نیست/);
+  assert.match(client,/برای استفاده به کیف پول سروری برو/);
   assert.doesNotMatch(client,/localStorage\.setItem\([^\n]*verifiedCoins/);
 });
