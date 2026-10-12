@@ -224,17 +224,11 @@
     .toast-msg.show { transform: translateX(-50%) translateY(0); }
   </style>
   <script src="../assets/js/simab-legacy-guard.js?v=1"></script>
-<style>
-.simab-secure-entry{display:block;position:relative;z-index:3;direction:rtl;max-width:640px;
-margin:10px auto;padding:12px 15px;border:1px solid #cf9a41;border-radius:15px;
-background:linear-gradient(110deg,#221135,#32124a,#0f192a);color:#fff;text-decoration:none;
-box-shadow:0 0 19px #b456d044;font-family:Tahoma,system-ui,sans-serif;text-align:right}
-.simab-secure-entry strong{display:block;font-size:14px;color:#ffdc7c}
-.simab-secure-entry small{display:block;line-height:1.8;margin-top:5px;font-size:11px;color:#d7bfdf}
-</style>
+
+<link rel="stylesheet" href="../assets/css/simab-secure-entry-v7.css?v=7">
 </head>
 <body>
-<a class="simab-secure-entry" href="../wallet/index.html"><strong>🔁 تبدیل سکه و ژتون سروری ←</strong><small>موجودی و تبدیل‌های این صفحه محلی‌اند؛ صرافی سروری، انتقال اتمیک و ثبت تراکنش دارد.</small></a>
+
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
   <div class="app-wrapper">
     <!-- هدر با بازگشت هوشمند به سربرگ تسک‌ها -->
@@ -243,16 +237,18 @@ box-shadow:0 0 19px #b456d044;font-family:Tahoma,system-ui,sans-serif;text-align
       <div class="header-title">صرافی و تبدیل ژتون بازی‌ها</div>
       <div style="width: 36px;"></div>
     </header>
+    <a class="simab-secure-entry" href="../wallet/index.html"><strong>🔁 تبدیل سکه و ژتون سروری ←</strong><small>موجودی و تبدیل‌های این صفحه محلی‌اند؛ صرافی سروری، انتقال اتمیک و ثبت تراکنش دارد.</small></a>
+
     <!-- کیف پول دوگانه -->
     <div class="dual-wallet-card">
       <div class="wallet-box coins-box">
         <span class="w-icon">🪙</span>
-        <span class="w-lbl">سکه اصلی سیماب</span>
+        <span class="w-lbl">سکه محلی (آزمایشی)</span>
         <span class="w-val" id="disp-coins">50</span>
       </div>
       <div class="wallet-box chips-box">
         <span class="w-icon">🎰</span>
-        <span class="w-lbl">صندوق ژتون بازی‌ها</span>
+        <span class="w-lbl">ژتون بازی‌های آزمایشی</span>
         <span class="w-val" id="disp-chips">0</span>
       </div>
     </div>

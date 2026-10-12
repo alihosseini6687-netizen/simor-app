@@ -1,0 +1,75 @@
+/* SIMAB V7 — one compact, accessible secure-wallet link INSIDE the page flow.
+ * Unlike the prior version it must never be a direct child of flex body.
+ */
+.simab-secure-entry{
+  box-sizing:border-box!important;
+  position:relative;
+  isolation:isolate;
+  display:flex!important;
+  align-items:center;
+  justify-content:space-between;
+  flex-direction:row;
+  flex-wrap:wrap;
+  gap:4px 13px;
+  width:100%!important;
+  max-width:100%!important;
+  flex:0 0 auto;
+  min-width:0;
+  margin:0 0 13px!important;
+  padding:11px 13px!important;
+  direction:rtl;
+  text-align:right;
+  text-decoration:none!important;
+  line-height:1.6;
+  border:1px solid rgba(255,213,115,.58)!important;
+  border-radius:15px!important;
+  background:
+    radial-gradient(ellipse at 95% 30%,rgba(165,66,235,.25),transparent 58%),
+    linear-gradient(120deg,rgba(34,16,65,.97),rgba(17,13,40,.98))!important;
+  box-shadow:0 6px 17px rgba(0,0,0,.22),inset 0 1px rgba(255,241,191,.07)!important;
+  font-family:Tahoma,"Segoe UI",system-ui,sans-serif;
+  color:#fff!important;
+  transition:background .18s ease,border-color .18s ease;
+}
+.simab-secure-entry::before{
+  content:"🔐";
+  flex:0 0 auto;
+  width:30px;
+  height:30px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,209,117,.4);
+  border-radius:10px;
+  background:rgba(255,193,73,.09);
+  font-size:16px;
+}
+.simab-secure-entry strong{
+  display:block!important;
+  flex:1 1 145px;
+  min-width:0;
+  color:#ffe0a0!important;
+  font-size:clamp(12px,3.25vw,14px)!important;
+  font-weight:900;
+  overflow-wrap:anywhere;
+}
+.simab-secure-entry small{
+  display:block!important;
+  flex:1 0 100%;
+  min-width:0;
+  color:#c9b9d8!important;
+  font-size:clamp(10px,2.65vw,11.5px)!important;
+  line-height:1.65;
+  overflow-wrap:anywhere;
+}
+.simab-secure-entry:is(:hover,:focus-visible){
+  border-color:#ffe09b!important;
+  background:linear-gradient(120deg,#402267,#181338)!important;
+}
+.simab-secure-entry:focus-visible{outline:2px solid #ffd67b;outline-offset:3px}
+@media(max-width:360px){
+  .simab-secure-entry{padding:10px!important;margin-bottom:10px!important;gap:3px 9px}
+  .simab-secure-entry::before{width:27px;height:27px}
+}
+@media(prefers-reduced-motion:reduce){
+  .simab-secure-entry{transition:none}
+}
