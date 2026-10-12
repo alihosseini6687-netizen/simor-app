@@ -1,7 +1,7 @@
 /* SIMAB central-quests API. One file for Supabase Dashboard deployment.
    NEVER include Telegram bot token or a service key in the browser/repository.
    The POST endpoint ALWAYS validates Telegram-signed initData and server-side admin ID.
-   This endpoint NEVER grants a reward or edits a wallet. */
+   Reward claims update only a separate verified ledger after Telegram channel check. */
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 /**
@@ -213,7 +213,20 @@ Deno.serve(async (request) => {
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) return reply(503, { error: "catalog_unavailable" });
-    return reply(200, { quests: (data ?? []).map(toPublic), rewardsEnabled: false });
+    const channel = Deno.env.get("SIMAB_TELEGRAM_CHANNEL") || "";
+    const rewardsEnabled = /^@[A-Za-z0-9_]{5,}$/.test(channel);
+    const quests = (data ?? []).map(q => {
+      let eligible = false;
+      try {
+        const link = new URL(q.url);
+        eligible = rewardsEnabled && q.verification_mode === "telegram_membership" &&
+          q.reward_coins > 0 && link.hostname.toLowerCase() === "t.me" &&
+          link.pathname.replace(/^\//,"").toLowerCase() === channel.slice(1).toLowerCase() &&
+          !link.search && !link.hash;
+      } catch { /* invalid URL is never payable */ }
+      return { ...toPublic(q), rewardAvailable: eligible };
+    });
+    return reply(200, { quests, rewardsEnabled });
   }
 
   if (request.method !== "POST") return reply(405, { error: "method_not_allowed" });
@@ -248,6 +261,62 @@ Deno.serve(async (request) => {
   } catch (error) {
     const reason = error instanceof TelegramAuthError ? error.code : "invalid_payload";
     return reply(401, { error: "telegram_auth_failed", reason });
+  }
+
+  // User rewards use VERIFIED Telegram identity; never trust browser balance.
+  // These actions happen BEFORE the admin authorization block.
+  if (payload.action === "my_rewards") {
+    const [b,c] = await Promise.all([
+      db.from("simab_verified_quest_balances").select("coins")
+        .eq("telegram_subject", subject).maybeSingle(),
+      db.from("simab_verified_quest_claims").select("quest_id,created_at,reward_coins")
+        .eq("telegram_subject", subject).order("created_at",{ascending:false}).limit(50),
+    ]);
+    if (b.error || c.error) return reply(503,{error:"verified_ledger_unavailable"});
+    return reply(200,{verifiedCoins:Number(b.data?.coins||0),
+      claimedQuestIds:(c.data||[]).map(x=>x.quest_id),spendableInGames:false});
+  }
+  if (payload.action === "claim") {
+    const id=typeof payload.questId==="string"?payload.questId:"";
+    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(id))
+      return reply(400,{error:"invalid_quest_id"});
+    const channel=Deno.env.get("SIMAB_TELEGRAM_CHANNEL")||"";
+    if (!/^@[A-Za-z0-9_]{5,}$/.test(channel))
+      return reply(503,{error:"membership_channel_not_configured"});
+    const {data:q,error:lookupError}=await db.from("simab_central_quests")
+      .select("id,url,reward_coins,verification_mode,is_published").eq("id",id).maybeSingle();
+    if (lookupError) return reply(503,{error:"quest_lookup_unavailable"});
+    if (!q || !q.is_published || q.verification_mode!=="telegram_membership" || q.reward_coins<1)
+      return reply(409,{error:"quest_not_rewardable"});
+    try {
+      const link=new URL(q.url);
+      if (link.protocol!=="https:" || link.hostname.toLowerCase()!=="t.me" ||
+        link.pathname.replace(/^\//,"").toLowerCase()!==channel.slice(1).toLowerCase() ||
+        link.search || link.hash) return reply(409,{error:"channel_mismatch"});
+    } catch {return reply(409,{error:"channel_mismatch"});}
+    const userId=Number(subject);
+    if (!Number.isSafeInteger(userId)||userId<=0) return reply(401,{error:"invalid_telegram_subject"});
+    let member:{status?:string;is_member?:boolean};
+    try {
+      const response=await fetch("https://api.telegram.org/bot"+botToken+"/getChatMember",{
+        method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify({chat_id:channel,user_id:userId}),signal:AbortSignal.timeout(8500),
+      });
+      const result=await response.json();
+      if (!response.ok||!result.ok||!result.result) return reply(503,{error:"membership_check_unavailable"});
+      member=result.result;
+    } catch {return reply(503,{error:"membership_check_unavailable"});}
+    const membership=["creator","administrator","member"].includes(member.status||"") ||
+      (member.status==="restricted"&&member.is_member===true);
+    if (!membership) return reply(403,{error:"channel_membership_required"});
+    const {data,error}=await db.rpc("simab_credit_verified_quest",{
+      p_telegram_subject:subject,p_quest_id:id,
+    });
+    if (error||!Array.isArray(data)||data.length!==1)
+      return reply(503,{error:"reward_ledger_unavailable"});
+    return reply(200,{granted:data[0].granted===true,alreadyClaimed:data[0].granted!==true,
+      rewardCoins:data[0].reward_coins,verifiedCoins:Number(data[0].verified_coins),
+      spendableInGames:false});
   }
 
   // Never rely on a user-id supplied in JSON, localStorage, query string, or initDataUnsafe.
