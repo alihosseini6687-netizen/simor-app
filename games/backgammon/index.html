@@ -674,6 +674,7 @@
   <link rel="stylesheet" href="../../assets/css/simab-game-shell-v5.css?v=5">
   <link rel="stylesheet" href="../../assets/css/simab-backgammon-v5.css?v=5">
   <link rel="stylesheet" href="../../assets/css/simab-backgammon-v6.css?v=6">
+  <script src="../../assets/js/simab-legacy-guard.js?v=1"></script>
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -882,7 +883,7 @@
       }
     } catch(e) {}
 
-    let uid = "702007470";
+    let uid = "guest"; // Never default to the owner account outside Telegram.
     try {
       if (tg?.initDataUnsafe?.user?.id) uid = tg.initDataUnsafe.user.id.toString();
     } catch(e) {}
@@ -904,10 +905,10 @@
     const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
     const isCloudSupported = !!(tg && tg.CloudStorage);
 
-    let totalChips = parseFloat(localStorage.getItem(STORAGE_KEY_CHIPS) || '0');
+    let totalChips = SimabLegacy.readAmount(STORAGE_KEY_CHIPS, 0);
     let chipInventory = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
     try {
-      const s = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV));
+      const s = SimabLegacy.readInventory(STORAGE_KEY_CHIPS_INV);
       if (s) chipInventory = s;
     } catch(e) {}
 
@@ -941,7 +942,7 @@
 
       let currentCoins = 50;
       try {
-        currentCoins = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+        currentCoins = SimabLegacy.readAmount(STORAGE_KEY_COINS, 50);
       } catch(e) {}
 
       const payload = {
