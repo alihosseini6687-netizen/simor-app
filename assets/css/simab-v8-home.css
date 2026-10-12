@@ -21,3 +21,7 @@ body{background-image:radial-gradient(ellipse at 5% 5%,#6a188d62,transparent 49%
 .simab-secure-entry{padding:9px 11px!important}
 .simab-secure-entry small{font-size:10px!important}
 @media(max-width:360px){.v3-hero{min-height:258px!important}.v3-hero-content h1{font-size:24px!important}.v3-featured.v8-card-enhanced{height:155px!important}.v3-featured.v8-card-enhanced strong{font-size:10px!important}}
+
+.v4-recent{display:none!important}
+.v8-hero-recent{position:relative;z-index:2;display:flex;align-items:center;gap:8px;margin-top:6px;flex-wrap:wrap;font-size:10px;color:#fff0c9}
+.v8-hero-recent a{color:#ffe19f;background:#25103dcf;border:1px solid #e5ac6c;border-radius:13px;padding:4px 9px;text-decoration:none;font-weight:900}
