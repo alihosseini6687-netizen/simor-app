@@ -50,11 +50,15 @@ async function api(action,extra={}){
     if(res.ok||res.status!==401||body.reason!=="signature_mismatch")break;
   }
   if(!res.ok){
-    if(res.status===401)throw Error("امضای تلگرام معتبر نیست یا منقضی شده؛ سیماب را از ربات دوباره باز کن.");
-    if(body.error==="insufficient_coins")throw Error("سکه تأییدشده کافی نیست.");
-    if(body.error==="insufficient_chips")throw Error("ژتون تأییدشده کافی نیست.");
-    if(body.error==="wallet_unavailable")throw Error("کیف پول سروری هنوز آماده نیست؛ SQL و انتشار تابع را بررسی کن.");
-    throw Error("سرور درخواست را نپذیرفت ("+(body.error||res.status)+"). هیچ اعتبار محلی جایگزین نشد.");
+    const definitive=[400,401,403,409,413].includes(res.status);
+    let message="";
+    if(res.status===401)message="امضای تلگرام معتبر نیست یا منقضی شده؛ سیماب را از ربات دوباره باز کن.";
+    else if(body.error==="insufficient_coins")message="سکه تأییدشده کافی نیست.";
+    else if(body.error==="insufficient_chips")message="ژتون تأییدشده کافی نیست.";
+    else if(body.error==="slot_cooldown")message="برای چرخش بعدی رولر، دست‌کم ۲ ثانیه صبر کن.";
+    else if(body.error==="wallet_unavailable")message="کیف پول سروری هنوز آماده نیست؛ SQL و انتشار تابع را بررسی کن.";
+    else message="سرور درخواست را نپذیرفت ("+(body.error||res.status)+"). هیچ اعتبار محلی جایگزین نشد.";
+    const error=new Error(message);error.definitive=definitive;throw error;
   }
   return body;
 }
@@ -153,8 +157,14 @@ async function execute(request){
     else show("عملیات سروری ثبت شد؛ تغییر سکه: "+fmt(s.rewardCoins)+"، تغییر ژتون: "+fmt(s.chipDelta));
     await history();
   }catch(error){
-    // Keep EXACT request id for safe retry if response was lost.
-    show(error.message+" برای اطمینان از عدم دوباره‌کاری، از «بازیابی درخواست» استفاده کن.",true);
+    // Explicit 4xx is a terminal rejection (no transaction); network/5xx can
+    // be ambiguous, so keep the SAME idempotency key for a later retry.
+    if(error.definitive){
+      clearPending();
+      show(error.message,true);
+    }else{
+      show(error.message+" برای اطمینان از عدم دوباره‌کاری، از «بازیابی درخواست» استفاده کن.",true);
+    }
   }finally{setBusy(false);}
 }
 function wire(){
