@@ -1,0 +1,8 @@
+/* Backgammon V6 practice CTA and clearer board entry */
+.v6-practice-callout{display:flex;align-items:center;justify-content:space-between;gap:10px;background:linear-gradient(120deg,#10313b,#1c1740);border:1px solid #56d9f59e;border-radius:15px;padding:12px;margin:12px 0;color:white}
+.v6-practice-callout strong{font-size:12px;color:#c7f9ff;display:block;line-height:1.6}
+.v6-practice-callout small{color:#bed3df;font-size:10px;line-height:1.8;display:block}
+.v6-practice-btn{background:linear-gradient(115deg,#a0f7ff,#3cc9e1)!important;border:none;color:#09243a!important;border-radius:12px;padding:10px;min-width:101px;min-height:48px;font-size:11px;font-weight:900;flex-shrink:0;box-shadow:0 5px 14px #27e0ff30}
+.v6-practice-active #game-screen::before{content:"🎓 حالت تمرینی رایگان • بدون تغییر موجودی";display:block;text-align:center;color:#c3f7ff;border:1px solid #58c8d775;border-radius:11px;padding:9px;background:#0b34417a;font-size:11px;font-weight:800;margin:8px 0}
+.v6-practice-active .pot-center-card{background:linear-gradient(130deg,#3fbbc7,#a8f7fb)!important;color:#06303c!important}
+@media(max-width:350px){.v6-practice-callout{flex-wrap:wrap}.v6-practice-btn{width:100%}}

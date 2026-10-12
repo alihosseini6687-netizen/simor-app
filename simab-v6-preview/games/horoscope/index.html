@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <!-- SIMAB V6 preview storage isolation; intentionally never touches production localStorage. -->
+  <script>
+  (() => {
+    'use strict';
+    window.__SIMAB_STAGING_PREVIEW__ = true;
+    if (typeof Storage === 'undefined') return;
+    const prefix = '__simab_v6_preview__:';
+    const proto = Storage.prototype;
+    const get = proto.getItem;
+    const set = proto.setItem;
+    const remove = proto.removeItem;
+    const key = proto.key;
+    const clear = proto.clear;
+    const isPreviewLocal = target => target === window.localStorage;
+    proto.getItem = function(k) { return get.call(this, isPreviewLocal(this) ? prefix + String(k) : k); };
+    proto.setItem = function(k,v) { return set.call(this, isPreviewLocal(this) ? prefix + String(k) : k, v); };
+    proto.removeItem = function(k) { return remove.call(this, isPreviewLocal(this) ? prefix + String(k) : k); };
+    // Never wipe storage of the original app; clearing preview only removes namespaced keys.
+    proto.clear = function() {
+      if (!isPreviewLocal(this)) return clear.call(this);
+      const toRemove = [];
+      for (let i=0; i<this.length; i++) {
+        const candidate = key.call(this, i);
+        if (candidate && candidate.startsWith(prefix)) toRemove.push(candidate);
+      }
+      for (const item of toRemove) remove.call(this, item);
+    };
+  })();
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SIMAB | ماینر ابری توکن</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0c0c14;
+      --card-bg: rgba(20, 20, 32, 0.94);
+      --card-inner: rgba(28, 28, 44, 0.88);
+      --gold: #f5cf62;
+      --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
+      --cyan: #00f2fe;
+      --purple: #9d4edd;
+      --green: #00f5d4;
+      --text: #ffffff;
+      --text-muted: #9595a8;
+      --border: rgba(212, 175, 55, 0.25);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 10%, #1e1338 0%, #0c0c14 70%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+    .app-wrapper {
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      padding: 10px 10px 40px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (min-width: 500px) {
+      .app-wrapper {
+        max-width: 440px;
+        box-shadow: 0 0 35px rgba(0,0,0,0.9);
+        border-left: 1px solid rgba(255,255,255,0.05);
+        border-right: 1px solid rgba(255,255,255,0.05);
+      }
+    }
+    /* هدر با دکمه بازگشت */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 10px 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .btn-back {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--gold);
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+    }
+    .coin-badge {
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .coin-badge-s {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--gold-gradient);
+      color: #221400;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
+    /* کارت وضعیت ماینر فعال */
+    .active-rig-card {
+      background: linear-gradient(135deg, rgba(35, 20, 60, 0.9) 0%, var(--card-bg) 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px 14px;
+      text-align: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      position: relative;
+    }
+    .rig-tier-badge {
+      display: inline-block;
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 11.5px;
+      font-weight: 900;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+    .rig-gear-icon {
+      font-size: 44px;
+      margin-bottom: 4px;
+      display: inline-block;
+      animation: rotateRig 8s linear infinite;
+    }
+    .rig-gear-icon.paused { animation-play-state: paused; opacity: 0.5; }
+    @keyframes rotateRig { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .rig-live-val {
+      font-size: 34px;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 2px;
+      letter-spacing: 0.5px;
+    }
+    .rig-rate-lbl {
+      font-size: 11.5px;
+      color: var(--cyan);
+      margin-bottom: 14px;
+    }
+
+    /* نوار پیشرفت دوره */
+    .progress-box {
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 10px;
+    }
+    .progress-row-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #1e1e2c;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+    .bar-fill-daily {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--cyan), var(--green));
+      border-radius: 6px;
+      transition: width 0.3s;
+    }
+    .bar-fill-tank {
+      height: 100%;
+      width: 100%;
+      background: var(--gold-gradient);
+      border-radius: 6px;
+      transition: width 0.3s;
+    }
+
+    /* پنل شارژ مجدد زیر مخزن */
+    .recharge-panel {
+      background: rgba(0, 245, 212, 0.05);
+      border: 1px dashed rgba(0, 245, 212, 0.35);
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      text-align: right;
+    }
+    .recharge-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .btn-recharge {
+      width: 100%;
+      background: rgba(0, 245, 212, 0.16);
+      border: 1px solid var(--green);
+      color: var(--green);
+      padding: 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .btn-recharge:active { transform: scale(0.97); }
+    .btn-recharge:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      border-color: var(--text-muted);
+      color: var(--text-muted);
+    }
+
+    /* دکمه برداشت */
+    .btn-claim {
+      width: 100%;
+      background: var(--gold-gradient);
+      color: #171000;
+      border: none;
+      padding: 13px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.4);
+      transition: 0.15s;
+      margin-top: 6px;
+      margin-bottom: 4px;
+    }
+    .btn-claim:active { transform: scale(0.97); }
+    .btn-claim:disabled {
+      background: rgba(255, 255, 255, 0.08) !important;
+      color: var(--text-muted) !important;
+      cursor: not-allowed;
+      box-shadow: none !important;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    /* شبکه ۴ تایی فروشگاه ماینرها (۲ سطر و ۲ ستون مربعی) */
+    .section-title {
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      margin-bottom: 6px;
+    }
+    .shop-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      width: 100%;
+    }
+    .shop-card-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      min-height: 180px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      transition: 0.2s;
+    }
+    .shop-card-box.active-owned {
+      border-color: var(--green);
+      background: rgba(0, 245, 212, 0.08);
+      box-shadow: 0 0 15px rgba(0, 245, 212, 0.2);
+    }
+    .card-icon {
+      font-size: 26px;
+      margin-bottom: 4px;
+    }
+    .card-title {
+      font-size: 12px;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .card-details {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+    .card-details b {
+      color: var(--gold);
+    }
+    .btn-buy-card {
+      width: 100%;
+      background: var(--gold-gradient);
+      color: #171000;
+      border: none;
+      padding: 8px 4px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+    .btn-buy-card:active { transform: scale(0.96); }
+    .btn-buy-card.active-badge {
+      background: rgba(0, 245, 212, 0.15);
+      border: 1px solid var(--green);
+      color: var(--green);
+      cursor: default;
+    }
+
+    .toast-msg {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient); color: #1a1200; padding: 8px 20px; border-radius: 25px;
+      font-size: 12.5px; font-weight: 900; box-shadow: 0 4px 20px rgba(212, 175, 55, 0.6);
+      z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
+  </style>
+  <style>body{ --v6-art:url("../../assets/v3/mines.webp"); }</style>
+  <link rel="stylesheet" href="../../assets/css/simab-secondary-v6.css?v=6">
+</head>
+<body>
+  <div class="toast-msg" id="toast-msg">انجام شد!</div>
+  <div class="app-wrapper">
+    <!-- هدر با بازگشت هوشمند به سربرگ تسک‌ها -->
+    <header class="top-header">
+      <a href="../../index.html" class="btn-back" id="btn-back-nav" title="بازگشت">➔</a>
+      <div class="header-title">ماینر ابری سیماب</div>
+      <div class="coin-badge">
+        <div class="coin-badge-s">S</div>
+        <span id="user-balance">50</span>
+      </div>
+    </header>
+  <div class="v6-page-banner" aria-label="معرفی بخش"><span class="v6-eyebrow">✦ SIMAB ARCADE</span><h1>ماینر سیماب</h1><p>ماینر را فعال کن و روند استخراج مجازی را ببین.</p></div>
+
+
+    <div class="v6-section-tip"><strong>● وضعیت ماینر</strong> — موجودی و استخراج فقط پس از فعال‌سازی محاسبه می‌شوند.</div>
+    <!-- کارت وضعیت ماینر فعال -->
+    <div class="active-rig-card">
+      <div class="rig-tier-badge" id="rig-badge">هیچ دستگاهی فعال نیست</div>
+      <div>
+        <span class="rig-gear-icon paused" id="rig-gear">⚙️</span>
+      </div>
+      <div class="rig-live-val" id="rig-mined-display">خاموش</div>
+      <div class="rig-rate-lbl" id="rig-rate-desc">یک ماینر از لیست زیر خریداری کنید</div>
+
+      <!-- نوار دوره ۲۴ ساعته -->
+      <div class="progress-box">
+        <div class="progress-row-info">
+          <span>دوره ۲۴ ساعته استخراج:</span>
+          <span id="cycle-timer-txt">--:--:--</span>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-fill-daily" id="daily-bar"></div>
+        </div>
+        <div class="progress-row-info" style="margin-bottom:0;">
+          <span>استخراج دوره فعلی:</span>
+          <span id="cycle-mined-txt">۰ S</span>
+        </div>
+        <div class="progress-row-info" style="margin-top:4px; font-size:10px;">
+          <span>زمان استارت دوره:</span>
+          <span id="start-time-txt">غیرفعال (منتظر خرید)</span>
+        </div>
+      </div>
+
+      <!-- نوار مخزن به همراه کلید شارژ مجدد و توضیحات -->
+      <div class="progress-box">
+        <div class="progress-row-info">
+          <span>ظرفیت باقی‌مانده مخزن:</span>
+          <span id="tank-val-txt">۰ / ۰ S</span>
+        </div>
+        <div class="bar-bg">
+          <div class="bar-fill-tank" id="tank-bar"></div>
+        </div>
+        
+        <!-- دکمه و توضیحات شارژ مجدد زیر مخزن -->
+        <div class="recharge-panel">
+          <div class="recharge-desc" id="recharge-desc-txt">
+            پس از خرید ماینر، هر زمان مخزن خالی شود می‌توانید آن را در اینجا شارژ کنید.
+          </div>
+          <button class="btn-recharge" id="btn-recharge-action" onclick="rechargeMinerTank()" disabled>
+            <span>شارژ مجدد مخزن 🔄</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- دکمه وضعیت اصلی / برداشت -->
+      <button class="btn-claim" id="btn-claim-action" onclick="handleMinerAction()" disabled>
+        <span>ابتدا ماینر بخرید 🔒</span>
+      </button>
+    </div>
+
+    <!-- فروشگاه ماینرها: ۴ ماینر در شبکه ۲ سطر و ۲ ستون -->
+    <div class="section-title">
+      <span>🛒</span>
+      <span>خرید و ارتقای سطوح ماینر:</span>
+    </div>
+    
+    <div class="shop-grid" id="shop-container">
+      <!-- ماینر ۱ -->
+      <div class="shop-card-box" id="card-tier-1">
+        <div>
+          <div class="card-icon">🥉</div>
+          <div class="card-title">ماینر سطح ۱ (مقدماتی)</div>
+          <div class="card-details">
+            روزانه: <b>30 S</b><br>
+            مخزن: <b>120 S</b><br>
+            شارژ: <b>40 🪙</b>
+          </div>
+        </div>
+        <div id="btn-wrap-1">
+          <button class="btn-buy-card" onclick="buyOrUpgradeMiner(1)">خرید (50 🪙)</button>
+        </div>
+      </div>
+
+      <!-- ماینر ۲ -->
+      <div class="shop-card-box" id="card-tier-2">
+        <div>
+          <div class="card-icon">🥈</div>
+          <div class="card-title">ماینر سطح ۲ (پیشرفته)</div>
+          <div class="card-details">
+            روزانه: <b>75 S</b><br>
+            مخزن: <b>240 S</b><br>
+            شارژ: <b>120 🪙</b>
+          </div>
+        </div>
+        <div id="btn-wrap-2">
+          <button class="btn-buy-card" onclick="buyOrUpgradeMiner(2)">خرید (150 🪙)</button>
+        </div>
+      </div>
+
+      <!-- ماینر ۳ -->
+      <div class="shop-card-box" id="card-tier-3">
+        <div>
+          <div class="card-icon">🥇</div>
+          <div class="card-title">ماینر سطح ۳ (توربو)</div>
+          <div class="card-details">
+            روزانه: <b>250 S</b><br>
+            مخزن: <b>1850 S</b><br>
+            شارژ: <b>400 🪙</b>
+          </div>
+        </div>
+        <div id="btn-wrap-3">
+          <button class="btn-buy-card" onclick="buyOrUpgradeMiner(3)">خرید (500 🪙)</button>
+        </div>
+      </div>
+
+      <!-- ماینر ۴ -->
+      <div class="shop-card-box" id="card-tier-4">
+        <div>
+          <div class="card-icon">💎</div>
+          <div class="card-title">ماینر سطح ۴ (اولترا)</div>
+          <div class="card-details">
+            روزانه: <b>500 S</b><br>
+            مخزن: <b>8000 S</b><br>
+            شارژ: <b>1800 🪙</b>
+          </div>
+        </div>
+        <div id="btn-wrap-4">
+          <button class="btn-buy-card" onclick="buyOrUpgradeMiner(4)">خرید (2000 🪙)</button>
+        </div>
+      </div>
+    </div>
+    <div class="v6-hint-card"><strong>یادآوری:</strong> ⚙️ اگر ماینر خاموش است، ابتدا باید یکی از سطح‌های موجود را فعال کنی.</div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(() => { goBackToMother(); });
+        }
+      }
+    } catch(e) {}
+
+    let uid = "guest";
+    try {
+      if (tg?.initDataUnsafe?.user?.id) {
+        uid = tg.initDataUnsafe.user.id.toString();
+      }
+    } catch(e) {}
+
+    function goBackToMother() {
+      try { localStorage.setItem('simab_active_tab', 'tasks'); } catch(e) {}
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = '../../index.html';
+      }
+    }
+    document.getElementById('btn-back-nav').onclick = (e) => {
+      e.preventDefault();
+      goBackToMother();
+    };
+
+    // اتصال مستقیم به دیتای ابری تلگرام و حذف کلید مشترک قدیمی
+    const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    const isCloudSupported = false; /* offline V6 preview: Telegram CloudStorage disabled */
+
+    let balance = 50;
+    if (uid === "702007470") {
+      balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
+    } else if (uid !== "guest") {
+      let saved = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '50');
+      if (saved >= 100000) saved = 50;
+      balance = saved;
+    }
+
+    function updateBalanceDisplay() {
+      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+      document.getElementById('user-balance').innerText = displayVal;
+
+      // ذخیره در حافظه محلی و حذف کلید مشترک قدیمی
+      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+      localStorage.removeItem('user_balance');
+
+      // ارسال آنی موجودی و ثبت تایم‌استمپ جدید تا لابی مادر کسر سکه ماینر را نادیده نگیرد
+      const payload = {
+        coins: balance,
+        chips: parseInt(localStorage.getItem('simab_chips_' + uid) || '0', 10),
+        inv: JSON.parse(localStorage.getItem('simab_chips_inv_' + uid) || '{"c1":0,"c5":0,"c25":0,"c100":0,"c500":0}'),
+        updated_at: Date.now()
+      };
+      localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
+      if (isCloudSupported && uid !== "guest") {
+        tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload));
+      }
+    }
+    updateBalanceDisplay();
+
+    // همگام‌سازی ابری در بدو ورود به ماینر
+    function syncWithTelegramCloud() {
+      if (!isCloudSupported || uid === "guest") return;
+      tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
+        if (err || !cloudRaw) return;
+        try {
+          const cloudData = JSON.parse(cloudRaw);
+          const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
+          if (cloudData.updated_at && cloudData.updated_at >= localTime) {
+            if (typeof cloudData.coins === 'number') {
+              if (uid !== "702007470" && cloudData.coins >= 100000) return;
+              balance = cloudData.coins;
+              localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+              document.getElementById('user-balance').innerText = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+            }
+          }
+        } catch(e) {}
+      });
+    }
+    syncWithTelegramCloud();
+
+    // تنظیمات ۴ ماینر
+    const MINER_TIERS = {
+      1: { name: 'ماینر سطح ۱ (مقدماتی)', cost: 50, daily: 30, tank: 120, recharge: 40 },
+      2: { name: 'ماینر سطح ۲ (پیشرفته)', cost: 150, daily: 75, tank: 240, recharge: 120 },
+      3: { name: 'ماینر سطح ۳ (توربو)', cost: 500, daily: 250, tank: 1850, recharge: 400 },
+      4: { name: 'ماینر سطح ۴ (اولترا)', cost: 2000, daily: 500, tank: 8000, recharge: 1800 }
+    };
+
+    const CYCLE_DURATION_MS = 24 * 60 * 60 * 1000;
+    const KEY_TIER = 'simab_miner_tier_' + uid;
+    const KEY_TANK = 'simab_miner_tank_' + uid;
+    const KEY_START = 'simab_miner_cycle_start_' + uid;
+
+    let currentTier = parseInt(localStorage.getItem(KEY_TIER) || '0', 10);
+    let tankRemaining = parseFloat(localStorage.getItem(KEY_TANK) || '0');
+    let cycleStart = parseInt(localStorage.getItem(KEY_START) || '0', 10);
+
+    function showToast(text) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = text;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    function formatTime(timestamp) {
+      if (!timestamp) return 'غیرفعال';
+      const d = new Date(timestamp);
+      return d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function updateMinerEngine() {
+      const gear = document.getElementById('rig-gear');
+      const badge = document.getElementById('rig-badge');
+      const minedTxt = document.getElementById('rig-mined-display');
+      const rateDesc = document.getElementById('rig-rate-desc');
+      const timerTxt = document.getElementById('cycle-timer-txt');
+      const cycleMinedTxt = document.getElementById('cycle-mined-txt');
+      const startTimeTxt = document.getElementById('start-time-txt');
+      const dailyBar = document.getElementById('daily-bar');
+      const tankTxt = document.getElementById('tank-val-txt');
+      const tankBar = document.getElementById('tank-bar');
+      const btnClaim = document.getElementById('btn-claim-action');
+      const btnRecharge = document.getElementById('btn-recharge-action');
+      const rechargeDesc = document.getElementById('recharge-desc-txt');
+
+      if (!badge) return;
+
+      if (currentTier === 0) {
+        badge.innerText = 'هیچ دستگاهی فعال نیست';
+        gear.classList.add('paused');
+        minedTxt.innerText = 'خاموش';
+        rateDesc.innerText = 'یک ماینر از لیست زیر خریداری کنید';
+        timerTxt.innerText = '--:--:--';
+        cycleMinedTxt.innerText = '۰ S';
+        startTimeTxt.innerText = 'غیرفعال (منتظر خرید)';
+        dailyBar.style.width = '0%';
+        tankTxt.innerText = '۰ / ۰ S';
+        tankBar.style.width = '0%';
+        btnClaim.disabled = true;
+        btnClaim.innerHTML = `<span>ابتدا ماینر بخرید 🔒</span>`;
+        btnRecharge.disabled = true;
+        rechargeDesc.innerText = 'پس از خرید ماینر، هر زمان مخزن خالی شود می‌توانید آن را در اینجا شارژ کنید.';
+        return;
+      }
+
+      const cfg = MINER_TIERS[currentTier];
+      badge.innerText = cfg.name;
+      rateDesc.innerText = `استخراج روزانه: ${cfg.daily} سکه | مخزن کل: ${cfg.tank} سکه`;
+      startTimeTxt.innerText = `ساعت شروع: ${formatTime(cycleStart)}`;
+
+      const tankPct = Math.max(0, Math.min(100, (tankRemaining / cfg.tank) * 100));
+      tankTxt.innerText = `${tankRemaining.toFixed(1)} / ${cfg.tank} S`;
+      tankBar.style.width = `${tankPct}%`;
+
+      btnRecharge.disabled = (tankRemaining >= cfg.tank);
+      rechargeDesc.innerText = `هزینه پر کردن مخزن: ${cfg.recharge} سکه (ظرفیت کل: ${cfg.tank} S)`;
+      btnRecharge.innerHTML = `<span>شارژ مجدد مخزن (${cfg.recharge} 🪙) 🔄</span>`;
+
+      if (tankRemaining <= 0) {
+        gear.classList.add('paused');
+        minedTxt.innerText = 'مخزن خالی!';
+        timerTxt.innerText = 'نیاز به شارژ مخزن';
+        dailyBar.style.width = '0%';
+        btnClaim.disabled = true;
+        btnClaim.innerHTML = `<span>مخزن خالی است ⚠️</span>`;
+        return;
+      }
+
+      const now = Date.now();
+      const elapsed = Math.max(0, now - cycleStart);
+      const isCycleFinished = (elapsed >= CYCLE_DURATION_MS);
+      const cyclePct = Math.min(100, (elapsed / CYCLE_DURATION_MS) * 100);
+      dailyBar.style.width = `${cyclePct}%`;
+
+      const cycleMined = Math.min(cfg.daily, Math.min(tankRemaining, (elapsed / CYCLE_DURATION_MS) * cfg.daily));
+      minedTxt.innerText = `${cycleMined.toFixed(5)} S`;
+      cycleMinedTxt.innerText = `${cycleMined.toFixed(4)} / ${cfg.daily} سکه`;
+
+      const remainingMs = Math.max(0, CYCLE_DURATION_MS - elapsed);
+      const hrs = Math.floor(remainingMs / (1000 * 60 * 60));
+      const mins = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((remainingMs % (1000 * 60)) / 1000);
+
+      if (isCycleFinished) {
+        gear.classList.add('paused');
+        timerTxt.innerText = 'دوره کامل شد (مخزن متوقف) ✅';
+      } else {
+        gear.classList.remove('paused');
+        timerTxt.innerText = `${String(hrs).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')} مانده`;
+      }
+
+      // شرط برداشت: حداقل ۰.۰۱ سکه
+      if (cycleMined >= 0.01) {
+        btnClaim.disabled = false;
+        btnClaim.innerHTML = `<span>برداشت ${cycleMined.toFixed(4)} سکه و استارت مجدد ✨</span>`;
+      } else {
+        btnClaim.disabled = true;
+        btnClaim.innerHTML = `<span>حداقل برداشت: ۰.۰۱ سکه (در حال استخراج... ⏳)</span>`;
+      }
+    }
+
+    function handleMinerAction() {
+    if (currentTier === 0) return;
+    const cfg = MINER_TIERS[currentTier];
+    const now = Date.now();
+    const elapsed = Math.max(0, now - cycleStart);
+    const cycleMined = Math.min(cfg.daily, Math.min(tankRemaining, (elapsed / CYCLE_DURATION_MS) * cfg.daily));
+    if (cycleMined < 0.01 || tankRemaining <= 0) return;
+    const claimAmount = cycleMined;
+    balance = parseFloat((balance + claimAmount).toFixed(4));
+    tankRemaining = parseFloat(Math.max(0, tankRemaining - claimAmount).toFixed(4));
+
+    cycleStart = Date.now();
+    localStorage.setItem(KEY_TANK, tankRemaining.toString());
+    localStorage.setItem(KEY_START, cycleStart.toString());
+    updateBalanceDisplay();
+    updateMinerEngine();
+    syncShopUI();
+    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    showToast(`+${claimAmount.toFixed(4)} سکه برداشت شد و دوره جدید استارت خورد! 🎉`);
+  }
+
+  function rechargeMinerTank() {
+    if (currentTier === 0) return;
+    const cfg = MINER_TIERS[currentTier];
+    if (balance < cfg.recharge) {
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+      showToast(`موجودی کافی نیست! به ${cfg.recharge} سکه نیاز دارید.`);
+      return;
+    }
+    balance = parseFloat((balance - cfg.recharge).toFixed(4));
+    tankRemaining = cfg.tank;
+    cycleStart = Date.now();
+    localStorage.setItem(KEY_TANK, tankRemaining.toString());
+    localStorage.setItem(KEY_START, cycleStart.toString());
+    updateBalanceDisplay();
+    updateMinerEngine();
+    syncShopUI();
+    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    showToast(`مخزن با موفقیت کامل شارژ شد! ⚡`);
+  }
+
+  function buyOrUpgradeMiner(tierNum) {
+    const target = MINER_TIERS[tierNum];
+    if (currentTier === tierNum) return;
+    if (balance < target.cost) {
+      if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
+      showToast(`موجودی کافی نیست! به ${target.cost} سکه نیاز دارید.`);
+      return;
+    }
+    balance = parseFloat((balance - target.cost).toFixed(4));
+    currentTier = tierNum;
+    tankRemaining = target.tank;
+    cycleStart = Date.now();
+    localStorage.setItem(KEY_TIER, currentTier.toString());
+    localStorage.setItem(KEY_TANK, tankRemaining.toString());
+    localStorage.setItem(KEY_START, cycleStart.toString());
+    updateBalanceDisplay();
+    updateMinerEngine();
+    syncShopUI();
+    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+    showToast(`${target.name} با موفقیت فعال شد! 🚀`);
+  }
+
+    function syncShopUI() {
+      const tiers = Object.keys(MINER_TIERS).map(Number);
+      tiers.forEach((t) => {
+        const card = document.getElementById('card-tier-' + t);
+        const btnWrap = document.getElementById('btn-wrap-' + t);
+        if (!card || !btnWrap) return;
+
+        const isCurrent = (currentTier === t);
+        if (isCurrent) {
+          card.classList.add('active-owned');
+          btnWrap.innerHTML = `<button class="btn-buy-card active-badge" disabled>فعال ✓</button>`;
+        } else {
+          card.classList.remove('active-owned');
+          if (currentTier === 0) {
+            btnWrap.innerHTML = `<button class="btn-buy-card" onclick="buyOrUpgradeMiner(${t})">خرید (${MINER_TIERS[t].cost} 🪙)</button>`;
+          } else if (t > currentTier) {
+            btnWrap.innerHTML = `<button class="btn-buy-card" onclick="buyOrUpgradeMiner(${t})">ارتقا (${MINER_TIERS[t].cost} 🪙)</button>`;
+          } else {
+            btnWrap.innerHTML = `<button class="btn-buy-card" style="opacity:0.4; cursor:default;" disabled>قبلی</button>`;
+          }
+        }
+      });
+    }
+
+    syncShopUI();
+    updateMinerEngine();
+    setInterval(updateMinerEngine, 500);
+  </script>
+</body>
+</html>

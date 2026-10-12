@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <!-- SIMAB V6 preview storage isolation; intentionally never touches production localStorage. -->
+  <script>
+  (() => {
+    'use strict';
+    window.__SIMAB_STAGING_PREVIEW__ = true;
+    if (typeof Storage === 'undefined') return;
+    const prefix = '__simab_v6_preview__:';
+    const proto = Storage.prototype;
+    const get = proto.getItem;
+    const set = proto.setItem;
+    const remove = proto.removeItem;
+    const key = proto.key;
+    const clear = proto.clear;
+    const isPreviewLocal = target => target === window.localStorage;
+    proto.getItem = function(k) { return get.call(this, isPreviewLocal(this) ? prefix + String(k) : k); };
+    proto.setItem = function(k,v) { return set.call(this, isPreviewLocal(this) ? prefix + String(k) : k, v); };
+    proto.removeItem = function(k) { return remove.call(this, isPreviewLocal(this) ? prefix + String(k) : k); };
+    // Never wipe storage of the original app; clearing preview only removes namespaced keys.
+    proto.clear = function() {
+      if (!isPreviewLocal(this)) return clear.call(this);
+      const toRemove = [];
+      for (let i=0; i<this.length; i++) {
+        const candidate = key.call(this, i);
+        if (candidate && candidate.startsWith(prefix)) toRemove.push(candidate);
+      }
+      for (const item of toRemove) remove.call(this, item);
+    };
+  })();
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>SIMAB | Gaming Club</title>
+  <meta name="theme-color" content="#0c0920">
+  <meta name="description" content="سیماب — مجموعه بازی‌های سرگرمی و مأموریت‌های روزانه">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #0c0c14;
+      --card-bg: rgba(20, 20, 32, 0.94);
+      --card-inner: rgba(28, 28, 44, 0.88);
+      --gold: #f5cf62;
+      --gold-gradient: linear-gradient(135deg, #d4af37 0%, #f9e8a2 50%, #aa7c11 100%);
+      --cyan-neon: #00f2fe;
+      --purple-neon: #9d4edd;
+      --green: #00f5d4;
+      --text: #ffffff;
+      --text-muted: #a5a5bc;
+      --border: rgba(212, 175, 55, 0.25);
+    }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+      user-select: none; 
+      -webkit-tap-highlight-color: transparent; 
+    }
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 10%, #1e1338 0%, #0c0c14 70%);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      text-align: start;
+      overflow-x: hidden;
+      font-size: 14px;
+    }
+    .app-wrapper {
+      width: 100%;
+      max-width: 100%;
+      min-height: 100vh;
+      padding: 8px 8px 90px 8px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    @media (min-width: 500px) {
+      .app-wrapper {
+        max-width: 440px;
+        box-shadow: 0 0 35px rgba(0,0,0,0.9);
+        border-left: 1px solid rgba(255,255,255,0.05);
+        border-right: 1px solid rgba(255,255,255,0.05);
+      }
+    }
+    /* هدر */
+    .top-header {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; padding: 10px 14px; margin-bottom: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .header-start { display: flex; align-items: center; gap: 8px; }
+    .btn-gear {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: var(--gold);
+      width: 36px; height: 36px; border-radius: 10px; font-size: 18px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .brand-title {
+      font-size: 21px; font-weight: 900; letter-spacing: 1.5px;
+      background: var(--gold-gradient);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .coin-badge {
+      background: rgba(212, 175, 55, 0.15); border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 20px; font-size: 14.5px; font-weight: 900; color: var(--gold);
+      display: flex; align-items: center; gap: 6px; cursor: pointer;
+    }
+    .coin-badge-s {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: var(--gold-gradient); color: #221400;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900;
+    }
+
+    /* پروفایل درشت */
+    .profile-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 18px; padding: 16px; margin-bottom: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .profile-top { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .user-avatar {
+      width: 54px; height: 54px; border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: radial-gradient(circle, #3d2366 0%, #1c1130 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px; overflow: hidden; flex-shrink: 0;
+    }
+    .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .user-name { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 3px; }
+    .user-username { font-size: 13px; color: var(--text-muted); direction: ltr; text-align: right; }
+    
+    .ids-container {
+      background: var(--card-inner); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .id-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+    .id-label { color: var(--text-muted); font-size: 12.5px; font-weight: bold; }
+    .id-value { font-weight: 900; color: #fff; display: flex; align-items: center; gap: 8px; font-family: monospace; font-size: 14px; direction: ltr; }
+    .id-game-val { color: var(--gold); }
+    .btn-copy {
+      background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: var(--gold);
+      padding: 3px 10px; border-radius: 8px; font-size: 11.5px; font-weight: 900; cursor: pointer;
+    }
+
+    /* ۳ مربع میانی درشت */
+    .three-grid { display: flex; gap: 8px; margin-bottom: 12px; }
+    .grid-box {
+      flex: 1; aspect-ratio: 1; background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; cursor: pointer; text-decoration: none; color: inherit; position: relative;
+    }
+    .grid-box span.icon { font-size: 26px; }
+    .grid-box span.label { font-size: 14px; font-weight: 900; color: var(--gold); }
+    .grid-box span.sub { font-size: 11.5px; color: var(--text-muted); }
+    .badge-soon-mini {
+      position: absolute; top: 6px; right: 6px;
+      background: rgba(255, 59, 48, 0.25); border: 1px solid #ff3b30; color: #ff7b72;
+      font-size: 9.5px; font-weight: 900; padding: 1px 6px; border-radius: 6px;
+    }
+
+    /* دکمه‌های کپسولی درشت */
+    .action-bars { display: flex; flex-direction: column; gap: 10px; }
+    .action-btn {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px 14px; display: flex; align-items: center;
+      gap: 12px; cursor: pointer; color: inherit; text-decoration: none;
+    }
+    .action-btn .btn-icon {
+      font-size: 20px; width: 36px; height: 36px; border-radius: 10px;
+      background: var(--card-inner); display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .action-btn .btn-txt { font-size: 14.5px; font-weight: 900; flex: 1; text-align: start; }
+    .action-btn .arrow { font-size: 13px; color: var(--text-muted); }
+    .action-btn.admin-bar { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); }
+    .action-btn.admin-bar .btn-txt { color: var(--gold); }
+
+    /* سربرگ بازی‌ها درشت */
+    .games-banner-box {
+      width: 100%; height: 115px; border-radius: 16px;
+      position: relative; overflow: hidden; border: 1px solid var(--border);
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #2c1254 0%, #150a29 55%, #0d0617 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .games-banner-overlay { text-align: center; padding: 10px; width: 100%; }
+    .banner-badge {
+      display: inline-block; background: rgba(212, 175, 55, 0.2); border: 1px solid var(--gold);
+      color: var(--gold); font-size: 10.5px; font-weight: 900; padding: 2px 10px; border-radius: 10px; margin-bottom: 4px;
+    }
+    .banner-title { font-size: 17px; font-weight: 900; color: #fff; margin-bottom: 3px; }
+    .banner-sub { font-size: 12px; color: var(--cyan-neon); font-weight: bold; }
+    .games-grid-2col { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding-bottom: 12px; }
+    .game-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column;
+      justify-content: space-between; min-height: 90px;
+      cursor: pointer; text-decoration: none; color: inherit; transition: 0.15s;
+    }
+    .game-card:active { transform: scale(0.97); }
+    .game-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .game-card-icon {
+      width: 34px; height: 34px; border-radius: 8px;
+      background: var(--card-inner); display: flex; align-items: center; justify-content: center;
+      font-size: 20px; border: 1px solid rgba(255,255,255,0.08);
+    }
+    .game-badge { font-size: 10px; font-weight: 900; padding: 2px 8px; border-radius: 6px; }
+    .badge-soon { background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); color: #d1d1db; }
+    .badge-live { background: rgba(0, 245, 212, 0.18); border: 1px solid var(--green); color: var(--green); }
+    .game-card-title { font-size: 14px; font-weight: 900; color: #ffffff; margin-bottom: 3px; }
+    .game-card-sub { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
+
+    /* سربرگ تسک‌ها درشت */
+    .task-balance-card {
+      background: linear-gradient(135deg, rgba(30, 20, 50, 0.9), rgba(15, 15, 25, 0.98));
+      border: 1px solid var(--border); border-radius: 18px; padding: 14px 16px;
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+    }
+    .task-balance-info { display: flex; align-items: center; gap: 12px; }
+    .task-coin-circle {
+      width: 48px; height: 48px; border-radius: 50%; background: var(--gold-gradient);
+      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 24px; color: #352100;
+    }
+    .task-balance-text { display: flex; flex-direction: column; }
+    .task-balance-label { font-size: 12px; color: var(--text-muted); font-weight: bold; }
+    .task-balance-val { font-size: 26px; font-weight: 900; color: #fff; }
+    .btn-task-swap {
+      background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: var(--gold);
+      padding: 8px 14px; border-radius: 12px; font-size: 13px; font-weight: 900; cursor: pointer; text-decoration: none;
+    }
+
+    /* سطر اول: ۴ دکمه مستقل */
+    .task-nav-grid-4 {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+      margin-bottom: 14px;
+    }
+    .task-btn-link {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px 4px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 6px; text-decoration: none;
+      color: inherit; transition: 0.15s;
+    }
+    .task-btn-link:active { transform: scale(0.96); border-color: var(--gold); }
+    .task-btn-link span.t-icon { font-size: 25px; }
+    .task-btn-link span.t-title { font-size: 13px; font-weight: 900; color: #fff; }
+
+    /* سطر دوم: دو مستطیل افقی */
+    .task-dual-rect-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+    }
+    .dual-rect-card {
+      background: linear-gradient(135deg, rgba(28, 20, 48, 0.9), var(--card-bg));
+      border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 6px; text-decoration: none; color: inherit; min-height: 100px; text-align: center;
+      transition: 0.15s; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+    .dual-rect-card:active { transform: scale(0.97); border-color: var(--gold); }
+    .dual-rect-card.offer-card { border-color: rgba(255, 149, 0, 0.45); }
+    .dual-rect-card.shop-card { border-color: rgba(0, 245, 212, 0.45); }
+    .dual-rect-card .rect-icon { font-size: 28px; }
+    .dual-rect-card .rect-title { font-size: 15.5px; font-weight: 900; color: #fff; }
+    .dual-rect-card .rect-sub { font-size: 12px; color: var(--text-muted); }
+
+    /* نوار پایین دلباز */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 100%; height: 68px; background: #0e0e16;
+      border-top: 1px solid var(--border); display: flex; justify-content: space-around;
+      align-items: center; z-index: 99999;
+    }
+    @media (min-width: 500px) { .bottom-nav { max-width: 440px; } }
+    .nav-btn-box {
+      flex: 1; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; color: var(--text-muted); cursor: pointer; background: transparent; border: none; outline: none;
+    }
+    .nav-btn-box.active { color: var(--gold); }
+    .nav-btn-box .tab-icon { font-size: 24px; pointer-events: none; }
+    .nav-btn-box .tab-title { font-size: 12.5px; font-weight: 900; pointer-events: none; }
+
+    /* مودال */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; z-index: 100000; padding: 16px;
+    }
+    .modal-box {
+      background: var(--card-bg); border: 1px solid var(--gold);
+      border-radius: 20px; padding: 22px; width: 100%; max-width: 340px; text-align: center;
+    }
+    .modal-title { font-size: 17px; font-weight: 900; color: var(--gold); margin-bottom: 10px; }
+    .modal-content { font-size: 13.5px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+    .btn-modal-close {
+      width: 100%; background: var(--gold-gradient); color: #150f00; border: none; padding: 12px;
+      border-radius: 12px; font-weight: 900; font-size: 14px; cursor: pointer;
+    }
+    .toast-msg {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100px);
+      background: var(--gold-gradient); color: #1a1200; padding: 10px 22px; border-radius: 25px;
+      font-size: 13.5px; font-weight: 900; z-index: 100001; transition: transform 0.3s ease; pointer-events: none;
+    }
+    .toast-msg.show { transform: translateX(-50%) translateY(0); }
+  </style>
+  <link rel="stylesheet" href="assets/css/simab-v3.css?v=3">
+  <link rel="stylesheet" href="assets/css/simab-v4.css?v=4">
+  <link rel="stylesheet" href="assets/css/simab-home-v6.css?v=6">
+</head>
+<body>
+  <div class="toast-msg" id="toast-msg">انجام شد!</div>
+  
+  <div class="app-wrapper">
+    <!-- هدر بالای صفحه -->
+    <header class="top-header">
+      <div class="coin-badge" onclick="switchNavTab('tasks')">
+        <div class="coin-badge-s">S</div>
+        <span id="user-balance-txt">50</span>
+      </div>
+      <div class="header-start">
+        <div class="brand-title">SIMAB<span class="brand-caption">GAMING CLUB</span></div>
+        <button class="btn-gear" onclick="openAboutModal()" title="درباره سیماب">⭐</button>
+      </div>
+    </header>
+
+    <!-- سربرگ ۱: خانه (پیش‌فرض) -->
+    <div id="tab-home-content">
+<section class="v3-hero" aria-label="به سیماب خوش آمدید">
+  <img class="v3-hero-art" src="assets/v3/hero.webp" alt="" decoding="async" fetchpriority="high">
+  <div class="v3-hero-content">
+    <span class="v3-eyebrow">✦ SIMAB GAMING CLUB</span>
+    <h1>خوش اومدی<br><em>به سیماب!</em></h1>
+    <p>جایی برای بازی، سرگرمی و رقابت‌های هیجان‌انگیز.</p>
+    <button type="button" class="v3-gold-button" onclick="switchNavTab('games')">شروع بازی <span aria-hidden="true">←</span></button>
+  </div>
+</section>
+<div class="v4-pulse-banner"><span aria-hidden="true">✦</span><p><strong>به آرکید سیماب خوش اومدی!</strong><small>سه بازی آماده اجراست؛ برای انتخاب‌های بیشتر وارد بخش بازی‌ها شو.</small></p><button type="button" onclick="switchNavTab('games')">ببین ←</button></div>
+<div class="v3-section-header"><h2>🔥 بازی‌های محبوب</h2><button onclick="switchNavTab('games')" type="button">مشاهده همه ←</button></div>
+<div class="v3-featured-grid">
+  <a href="games/poker/index.html" class="v3-featured v3-blue"><img src="assets/v3/poker.webp" alt="" loading="lazy"><strong>پوکر تگزاس</strong><small>بازی با ربات</small></a>
+  <a href="games/slot/index.html" class="v3-featured v3-pink"><img src="assets/v3/slot.webp" alt="" loading="lazy"><strong>رول</strong><small>ماشین شانس</small></a>
+  <a href="games/backgammon/index.html" class="v3-featured v3-cyan"><img src="assets/v3/backgammon.webp" alt="" loading="lazy"><strong>تخته‌نرد</strong><small>بازی با ربات</small></a>
+</div>
+<section class="v4-recent" id="v4-recent" hidden><div class="v3-section-header"><h2>↶ آخرین بازی‌های من</h2><span class="v4-secondary-meta">فقط روی این دستگاه</span></div><div id="v4-recent-list"></div></section>
+<div class="v3-section-header"><h2>⚡ دسترسی سریع</h2></div>
+<div class="v3-shortcuts">
+  <a href="streak/index.html" class="v3-shortcut v3-gold"><span>🎁</span><strong>پاداش روزانه</strong></a>
+  <a href="friends/index.html" class="v3-shortcut v3-pink"><span>👥</span><strong>دعوت دوستان</strong></a>
+  <a href="games/wheel/index.html" class="v3-shortcut v3-cyan"><span>🎡</span><strong>گردونه</strong></a>
+  <a href="quests/index.html" class="v3-shortcut v3-blue"><span>🎯</span><strong>مأموریت‌ها</strong></a>
+</div>
+      <div class="profile-card">
+        <div class="v3-section-header v3-profile-heading"><h2>👑 پروفایل بازیکن</h2></div>
+        <div class="profile-top">
+          <div class="user-avatar" id="avatar-container">👤</div>
+          <div>
+            <div class="user-name" id="user-name-txt">کاربر سیماب</div>
+            <div class="user-username" id="user-tg-username">@User</div>
+          </div>
+        </div>
+        <div class="ids-container">
+          <div class="id-row">
+            <span class="id-label">شناسه تلگرام:</span>
+            <span class="id-value">
+              <span id="user-num-id">00000000</span>
+              <button class="btn-copy" onclick="copyText('user-num-id')">کپی</button>
+            </span>
+          </div>
+          <div class="id-row">
+            <span class="id-label">شناسه بازی:</span>
+            <span class="id-value id-game-val">
+              <span id="user-game-id">S0000000</span>
+              <button class="btn-copy" onclick="copyText('user-game-id')">کپی</button>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="v4-section-header"><h2>خدمات و راهنما</h2><span>همیشه در دسترس</span></div>
+      <a class="v4-assistant" href="ai/index.html"><span class="v4-assistant-icon" aria-hidden="true">✦</span><div><strong>دستیار هوشمند سیماب</strong><small>راهنما و گفت‌وگو</small></div><span class="v4-chevron" aria-hidden="true">←</span></a>
+      <!-- دکمه‌های کپسولی -->
+      <div class="action-bars">
+        <div class="action-btn" onclick="openSupport()">
+          <div class="btn-icon">📞</div>
+          <div class="btn-txt">پشتیبانی تلگرام</div>
+          <div class="arrow">◀</div>
+        </div>
+        <div class="action-btn" onclick="openAboutModal()">
+          <div class="btn-icon">⭐</div>
+          <div class="btn-txt">درباره ما و اهداف</div>
+          <div class="arrow">◀</div>
+        </div>
+        <!-- دکمه ورود به پنل مدیریت با نام ادمین -->
+        <!-- Show an explanatory badge in web previews; do not bypass admin authorization. -->
+        <div id="v6-admin-guest-note" class="v6-admin-guest-note" hidden>🔒 پنل مدیریت فقط داخل تلگرام و برای حساب مدیر قابل مشاهده است.</div>
+        <a href="admin/index.html" class="action-btn admin-bar" id="btn-admin-bar" style="display:none;">
+          <div class="btn-icon">👑</div>
+          <div class="btn-txt">ورود به پنل مدیریت (ادمین)</div>
+          <div class="arrow" style="color:var(--gold);">◀</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- سربرگ ۲: بازی‌ها -->
+    <div id="tab-games-content" style="display:none;">
+      <section class="v3-page-hero v3-games-hero">
+        <img src="assets/v3/hero.webp" alt="" loading="lazy">
+        <span class="v3-eyebrow">🎮 GAME ZONE</span>
+        <h1>همه <em>بازی‌ها</em></h1>
+        <p>بازی مورد علاقه‌ات را انتخاب کن و وارد دنیای سیماب شو!</p>
+      </section>
+      <label class="v4-game-search"><span aria-hidden="true">⌕</span><input type="search" id="v4-game-search" placeholder="جست‌وجوی بازی..." autocomplete="off" aria-label="جست‌وجوی بازی‌ها"><kbd>⌕</kbd></label>
+      <div class="v3-categories" id="v3-game-filters" role="group" aria-label="دسته‌بندی بازی‌ها">
+        <button class="selected" type="button" data-filter="all" aria-pressed="true">🔥 همه</button>
+        <button type="button" data-filter="cards" aria-pressed="false">🃏 کارتی</button>
+        <button type="button" data-filter="chance" aria-pressed="false">🎰 شانسی</button>
+        <button type="button" data-filter="classic" aria-pressed="false">🎲 کلاسیک</button>
+        <button type="button" data-filter="future" aria-pressed="false">✨ آینده</button>
+        <button type="button" data-filter="favorites" aria-pressed="false">★ علاقه‌مندی‌ها</button>
+      </div>
+      <div class="v3-section-header"><h2>✦ بازی‌های سیماب</h2><span class="v3-minor" id="v4-games-count" aria-live="polite">بازی‌های موجود</span></div>
+      <div class="games-grid-2col" id="games-container"></div>
+      <div class="v4-empty-state" id="v4-games-empty" hidden><span>⌕</span><strong>بازی‌ای پیدا نشد</strong><p>نام دیگری را امتحان کن یا فیلترها را تغییر بده.</p><button type="button" id="v4-reset-filters">نمایش همه بازی‌ها</button></div>
+    </div>
+
+    <!-- سربرگ ۳: تسک‌ها (طراحی کاملاً خلوت و سبک طبق نقاشی شما) -->
+    <div id="tab-tasks-content" style="display:none;">
+      <section class="v3-page-hero v3-rewards-hero">
+        <img src="assets/v3/rewards.webp" alt="" loading="lazy">
+        <span class="v3-eyebrow">🎁 REWARDS ZONE</span>
+        <h1>مأموریت‌ها <em>و جوایز</em></h1>
+        <p>چالش‌های روزانه، هدیه ورود و بازی‌های سرگرم‌کننده.</p>
+      </section>
+      <div class="v3-section-header"><h2>💰 کیف پول فعلی</h2><span class="v3-minor">موجودی محلی فعلی</span></div>
+      <!-- کارت موجودی بالا و دکمه تبدیل -->
+      <div class="task-balance-card">
+        <div class="task-balance-info">
+          <div class="task-coin-circle">S</div>
+          <div class="task-balance-text">
+            <span class="task-balance-label">موجودی سکه سیماب</span>
+            <span class="task-balance-val" id="tasks-balance-num">50</span>
+          </div>
+        </div>
+        <a href="swap/index.html" class="btn-task-swap">
+          <span>تبدیل 🔄</span>
+        </a>
+      </div>
+
+      <div class="v3-section-header"><h2>⚡ فعالیت‌های روزانه</h2></div>
+      <!-- سطر اول: ۴ دکمه مستقل به ایندکس‌های خود -->
+      <div class="task-nav-grid-4">
+        <a href="streak/index.html" class="task-btn-link">
+          <span class="t-icon">🎁</span>
+          <span class="t-title">روزانه</span>
+        </a>
+        <a href="./games/wheel/index.html" class="task-btn-link">
+          <span class="t-icon">🎡</span>
+          <span class="t-title">گردونه</span>
+        </a>
+        <a href="games/horoscope/index.html" class="task-btn-link">
+          <span class="t-icon">⚡</span>
+          <span class="t-title">ماینر</span>
+        </a>
+        <a href="quests/index.html" class="task-btn-link">
+          <span class="t-icon">📋</span>
+          <span class="t-title">ماموریت‌ها</span>
+        </a>
+      </div>
+
+      <div class="v4-economy-note"><span aria-hidden="true">🔐</span><div><strong>پاداش‌ها فعلاً مجازی‌اند</strong><p>انتقال امن موجودی و فروشگاه پس از تکمیل زیرساخت فعال می‌شوند.</p></div></div>
+      <!-- زیر این بخش کاملاً خالی و بدون شلوغی است -->
+    </div>
+
+    <section id="tab-news-content" style="display:none;">
+      <section class="v3-page-hero v3-news-hero">
+        <img src="assets/v3/news.webp" alt="" loading="lazy">
+        <span class="v3-eyebrow">🏆 SIMAB EVENTS</span>
+        <h1>اخبار <em>و رویدادها</em></h1>
+        <p>برای خبرهای جدید، رویدادها و مسابقات آینده همراه سیماب باش.</p>
+      </section>
+      <div class="v3-section-header"><h2>📢 تازه‌ترین خبرها</h2></div>
+      <div class="v3-news-card"><span class="v3-news-mark">🎮</span><div><strong>بازی‌های فعلی سیماب فعال‌اند</strong><p>پوکر، رول و تخته‌نرد را می‌توانی امتحان کنی. بازی چندنفره واقعی در دست توسعه است.</p></div><span class="v3-soon-pill">اطلاعیه</span></div>
+      <div class="v4-section-header"><h2>وضعیت توسعه</h2><span>شفاف و به‌روز</span></div>
+      <div class="v4-status-board"><div><span class="v4-status-dot ready"></span><strong>بازی‌های تک‌نفره</strong><small>قابل استفاده</small></div><div><span class="v4-status-dot progress"></span><strong>مسابقات آنلاین</strong><small>در حال توسعه</small></div><div><span class="v4-status-dot progress"></span><strong>اپ اندروید و آیفون</strong><small>در مسیر توسعه</small></div></div>
+      <div class="v3-section-header"><h2>🏅 رویدادها و رقابت‌ها</h2></div>
+      <div class="v3-event-card"><img src="assets/v3/tournament.webp" alt="" loading="lazy"><div><strong>مسابقات سیماب</strong><p>پس از راه‌اندازی سیستم رقابت آنلاین و رتبه‌بندی فعال می‌شود.</p><span>در حال توسعه</span></div></div>
+    </section>
+
+    <!-- نوار ناوبری پایین -->
+    <nav class="bottom-nav">
+      <button class="nav-btn-box active" id="tab-btn-home" onclick="switchNavTab('home')">
+        <span class="tab-icon">🏠</span>
+        <span class="tab-title">خانه</span>
+      </button>
+      <button class="nav-btn-box" id="tab-btn-games" onclick="switchNavTab('games')">
+        <span class="tab-icon">🎮</span>
+        <span class="tab-title">بازی‌ها</span>
+      </button>
+      <button class="nav-btn-box" id="tab-btn-tasks" onclick="switchNavTab('tasks')">
+        <span class="tab-icon">🎯</span>
+        <span class="tab-title">تسک‌ها</span>
+      </button>
+      <button class="nav-btn-box" id="tab-btn-news" onclick="switchNavTab('news')">
+        <span class="tab-icon">📢</span>
+        <span class="tab-title">اخبار</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- مودال درباره ما -->
+  <div class="modal-overlay" id="modal-about">
+    <div class="modal-box">
+      <div class="modal-title">⭐ درباره سیماب (SIMAB)</div>
+      <div class="modal-content">پلتفرم گیمینگ و سرگرمی تعاملی سیماب با هدف ارائه بازی‌های آنلاین و سیستم پاداش طراحی شده است.</div>
+      <button class="btn-modal-close" onclick="closeModals()">متوجه شدم</button>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        // ۱. بستن فلش بازگشت و فعال‌سازی علامت ضربدر (✕) خروج تلگرام
+        if (tg.BackButton) {
+          tg.BackButton.hide();
+        }
+      }
+    } catch(e) {}
+
+    // مشخصات اختصاصی و انحصاری مدیر ارشد
+    const ADMIN_ID = "702007470";
+    const ADMIN_GAME_ID = "S5895861";
+
+    let realUserId = null;
+    let uid = "guest";
+    let isRealAdmin = false;
+
+    try {
+      if (tg?.initDataUnsafe?.user) {
+        const u = tg.initDataUnsafe.user;
+        realUserId = u.id;
+        uid = u.id.toString();
+        
+        document.getElementById('user-name-txt').innerText = u.first_name || 'کاربر سیماب';
+        document.getElementById('user-tg-username').innerText = u.username ? '@' + u.username : '';
+        document.getElementById('user-num-id').innerText = u.id;
+
+        // ۲. ثابت شدن شناسه بازی ادمین روی S5895861
+        if (uid === ADMIN_ID) {
+          isRealAdmin = true;
+          localStorage.setItem('simab_game_id_' + uid, ADMIN_GAME_ID);
+          localStorage.setItem('simab_game_id', ADMIN_GAME_ID);
+          document.getElementById('user-game-id').innerText = ADMIN_GAME_ID;
+        } else {
+          // شناسه بازی اختصاصی و مجزا برای سایر کاربران
+          let savedGameId = localStorage.getItem('simab_game_id_' + uid);
+          if (!savedGameId || savedGameId === ADMIN_GAME_ID || savedGameId === 'S0000000') {
+            savedGameId = 'S' + Math.floor(1000000 + Math.random() * 9000000);
+            localStorage.setItem('simab_game_id_' + uid, savedGameId);
+            localStorage.setItem('simab_game_id', savedGameId);
+          }
+          document.getElementById('user-game-id').innerText = savedGameId;
+        }
+
+        // Avoid inserting Telegram-controlled text inside HTML markup.
+        if (u.photo_url) {
+          try {
+            const avatarUrl = new URL(u.photo_url);
+            if (avatarUrl.protocol === 'https:') {
+              const avatarImage = document.createElement('img');
+              avatarImage.src = avatarUrl.href;
+              avatarImage.alt = 'Avatar';
+              avatarImage.referrerPolicy = 'no-referrer';
+              document.getElementById('avatar-container').replaceChildren(avatarImage);
+            }
+          } catch (e) { /* Invalid photo URL; keep placeholder. */ }
+        }
+      } else {
+        // ورود خارج از تلگرام (کروم یا مرورگر دسکتاپ): حالت مهمان و بسته بودن کامل دسترسی‌ها
+        document.getElementById('user-name-txt').innerText = 'کاربر مهمان';
+        document.getElementById('user-num-id').innerText = 'خارج از تلگرام';
+        document.getElementById('user-game-id').innerText = 'S0000000';
+      }
+    } catch(e) {}
+
+    // ۳. قفل کامل دکمه ادمین: فقط در صورت لاگین واقعی در تلگرام با آیدی 702007470
+    const adminGuestNote = document.getElementById('v6-admin-guest-note');
+    if (adminGuestNote) adminGuestNote.hidden = (uid !== 'guest');
+    const adminBtn = document.getElementById('btn-admin-bar');
+    if (adminBtn) {
+      adminBtn.style.display = isRealAdmin ? 'flex' : 'none';
+    }
+
+    // ================= ۴. سیستم دارایی و همگام‌سازی ابری تلگرام (CloudStorage) =================
+    const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
+    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
+    const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
+    const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
+    const isCloudSupported = false; /* offline V6 preview: Telegram CloudStorage disabled */
+
+    // مقداردهی اولیه: ۵۰ سکه برای کاربر جدید و حفظ ۲,۱۷۵,۰۰۰ برای مدیر
+    let balance = 50;
+    if (isRealAdmin) {
+      balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '2175000');
+    } else if (uid !== "guest") {
+      let saved = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || '50');
+      // پاکسازی مقادیر میلیونی که قبلاً به اشتباه به اکانت دوم سرایت کرده بود
+      if (saved >= 100000) {
+        saved = 50;
+        localStorage.setItem(STORAGE_KEY_COINS, '50');
+      }
+      balance = saved;
+    } else {
+      balance = 50;
+    }
+
+    function renderCoins() {
+      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
+      const bHeader = document.getElementById('user-balance-txt');
+      if (bHeader) bHeader.innerText = displayVal;
+      const bTasks = document.getElementById('tasks-balance-num');
+      if (bTasks) bTasks.innerText = displayVal;
+    }
+    renderCoins();
+
+    // ذخیره سراسری و زنده دارایی (همگام‌سازی بین گوشی، آیفون و تلگرام دسکتاپ)
+    function saveUserDataGlobal(newCoins = null, newChips = null, newInv = null) {
+      if (newCoins !== null) {
+        balance = parseFloat(Number(newCoins).toFixed(4));
+        localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+        renderCoins();
+      }
+      const currentCoins = balance;
+      const currentChips = parseInt(localStorage.getItem(STORAGE_KEY_CHIPS) || '0', 10);
+      let currentInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
+      try {
+        currentInv = JSON.parse(localStorage.getItem(STORAGE_KEY_CHIPS_INV)) || currentInv;
+      } catch(e) {}
+      
+      const payload = {
+        coins: currentCoins,
+        chips: newChips !== null ? newChips : currentChips,
+        inv: newInv !== null ? newInv : currentInv,
+        updated_at: Date.now()
+      };
+      
+      localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
+      
+      if (isCloudSupported && uid !== "guest") {
+        tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload), (err) => {
+          if (err) console.warn('خطا در ذخیره ابری تلگرام:', err);
+        });
+      }
+    }
+
+    function saveCoinsGlobal(newBal) {
+      saveUserDataGlobal(newBal);
+    }
+
+    // خواندن خودکار موجودی از ابری تلگرام در ابتدای ورود روی هر دستگاهی (اندروید، آیفون، کامپیوتر)
+    function syncWithTelegramCloud() {
+      if (!isCloudSupported || uid === "guest") return;
+      tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
+        if (err || !cloudRaw) {
+          // اگر بار اول است، ۵۰ سکه در کلود ثبت شود تا در سایر دستگاه‌ها هم در دسترس باشد
+          if (!err && !cloudRaw) saveUserDataGlobal();
+          return;
+        }
+        try {
+          const cloudData = JSON.parse(cloudRaw);
+          const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
+          
+          // جلوگیری از سرایت ارقام میلیونی به کاربران عادی
+          if (!isRealAdmin && cloudData.coins >= 100000) {
+            saveUserDataGlobal(50, 0, { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 });
+            return;
+          }
+
+          if (cloudData.updated_at && cloudData.updated_at >= localTime) {
+            if (typeof cloudData.coins === 'number') {
+              balance = cloudData.coins;
+              localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
+              renderCoins();
+            }
+            if (typeof cloudData.chips === 'number') {
+              localStorage.setItem(STORAGE_KEY_CHIPS, cloudData.chips.toString());
+            }
+            if (cloudData.inv) {
+              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(cloudData.inv));
+            }
+            localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
+          } else {
+            saveUserDataGlobal();
+          }
+        } catch(e) {
+          console.error('خطا در همگام‌سازی ابری:', e);
+        }
+      });
+    }
+    syncWithTelegramCloud();
+    function triggerHaptic(type = 'light') {
+      try {
+        if (tg?.HapticFeedback) {
+          if (type === 'success' || type === 'error' || type === 'warning') {
+            tg.HapticFeedback.notificationOccurred(type);
+          } else {
+            tg.HapticFeedback.impactOccurred(type);
+          }
+        }
+      } catch(e) {}
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast-msg');
+      t.innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => { t.classList.remove('show'); }, 2000);
+    }
+
+    function copyText(elementId) {
+      const text = document.getElementById(elementId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        triggerHaptic('success');
+        showToast('کپی شد!');
+      });
+    }
+
+    function alertComingSoon(name) {
+      triggerHaptic('warning');
+      showToast(`${name} به‌زودی فعال می‌شود!`);
+    }
+
+    function openSupport() {
+      triggerHaptic('medium');
+      const link = 'https://t.me/Alihosseiniv';
+      if (tg && tg.openTelegramLink) tg.openTelegramLink(link);
+      else window.open(link, '_blank');
+    }
+
+    function openAboutModal() {
+      triggerHaptic('light');
+      document.getElementById('modal-about').style.display = 'flex';
+    }
+
+    function closeModals() {
+      document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+    }
+
+    // فهرست بازی‌ها طبق نام‌گذاری دقیق درخواستی شما
+    const gamesDatabase = [
+      { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, title: 'پوکر تگزاس', sub: 'بازی با ربات' },
+      { id: 2, icon: '🎰', url: 'games/slot/index.html', active: true, title: 'رول', sub: 'ماشین شانس' },
+      { id: 3, icon: '🎲', url: 'games/backgammon/index.html', active: true, title: 'تخته نرد', sub: 'بازی با ربات' },
+      { id: 4, icon: '🎴', url: 'games/hokm/index.html', active: false, title: 'ورق (حکم)', sub: 'مسابقه پاسور ۴ نفره' },
+      { id: 5, icon: '♠️', url: 'games/blackjack/index.html', active: false, title: 'ورق (۲۱)', sub: 'بلک‌جک کارتی' },
+      { id: 6, icon: '🃏', url: 'games/haft-khabis/index.html', active: false, title: '۷ خبیث', sub: 'بازی دورهمی' },
+      { id: 7, icon: '🎭', url: 'games/truth-or-dare/index.html', active: false, title: 'جرأت حقیقت', sub: 'چالش آنلاین' },
+      { id: 8, icon: '⚔️', url: 'games/three-to-three/index.html', active: false, title: '۳ به ۳', sub: 'رقابت سرعتی' },
+      { id: 9, icon: '🔢', url: 'games/dabalna/index.html', active: false, title: 'دبلنا', sub: 'بازی خانوادگی' },
+      { id: 10, icon: '🔴', url: 'games/mench/index.html', active: false, title: 'منچ آنلاین', sub: 'نبرد ۴ نفره' },
+      { id: 11, icon: '🐍', url: 'games/snakes-ladders/index.html', active: false, title: 'مار و پله', sub: 'تاس و هیجان' },
+      // بازی‌های بعدی بدون نام اختصاصی
+      { id: 12, icon: '⏳', url: '#', active: false, title: 'به‌زودی', sub: 'در آپدیت‌های آینده' },
+      { id: 13, icon: '⏳', url: '#', active: false, title: 'به‌زودی', sub: 'در آپدیت‌های آینده' },
+      { id: 14, icon: '⏳', url: '#', active: false, title: 'به‌زودی', sub: 'در آپدیت‌های آینده' }
+    ];
+
+    function renderGames() {
+      const box = document.getElementById('games-container');
+      if (!box) return;
+      box.innerHTML = '';
+      gamesDatabase.forEach(g => {
+        const item = document.createElement(g.active ? 'a' : 'div');
+        item.className = 'game-card';
+        if (g.active) {
+          item.href = g.url;
+        } else {
+          item.onclick = () => alertComingSoon(g.title);
+        }
+        item.innerHTML = `
+          <div class="game-card-top">
+            <div class="game-card-icon">${g.icon}</div>
+            <span class="game-badge ${g.active ? 'badge-live' : 'badge-soon'}">${g.active ? 'فعال' : 'به‌زودی'}</span>
+          </div>
+          <div>
+            <div class="game-card-title">${g.title}</div>
+            <div class="game-card-sub">${g.sub}</div>
+          </div>
+        `;
+        box.appendChild(item);
+      });
+    }
+
+    function switchNavTab(tab) {
+      triggerHaptic('light');
+      document.querySelectorAll('.nav-btn-box').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-home-content').style.display = 'none';
+      document.getElementById('tab-games-content').style.display = 'none';
+      document.getElementById('tab-tasks-content').style.display = 'none';
+
+      if (tab === 'home') {
+        document.getElementById('tab-btn-home').classList.add('active');
+        document.getElementById('tab-home-content').style.display = 'block';
+      } else if (tab === 'games') {
+        document.getElementById('tab-btn-games').classList.add('active');
+        document.getElementById('tab-games-content').style.display = 'block';
+      } else if (tab === 'tasks') {
+        document.getElementById('tab-btn-tasks').classList.add('active');
+        document.getElementById('tab-tasks-content').style.display = 'block';
+      }
+      window.scrollTo(0, 0);
+    }
+
+    renderGames();
+
+    // ۱. بازگشت هوشمند به سربرگ قبلی (تسک‌ها یا بازی‌ها) به جای پرتاب اجباری به خانه
+    const savedActiveTab = localStorage.getItem('simab_active_tab') || 'home';
+    switchNavTab(savedActiveTab);
+
+    // ذخیره خودکار سربرگ فعال در هر بار کلیک کاربر روی منوی پایین
+    const origSwitchNavTab = switchNavTab;
+    switchNavTab = function(tab) {
+      try { localStorage.setItem('simab_active_tab', tab); } catch(e) {}
+      origSwitchNavTab(tab);
+    };
+
+    // ۲. پردازش و فعال‌سازی کدهای ورودی تلگرام (لینک‌های هدیه ادمین و کدهای رفرال دعوت دوستان)
+    function processStartParams() {
+      let startParam = tg?.initDataUnsafe?.start_param;
+      if (!startParam) {
+        const urlParams = new URLSearchParams(window.location.search);
+        startParam = urlParams.get('tgWebAppStartParam') || urlParams.get('startapp') || urlParams.get('start');
+      }
+      if (!startParam) return;
+
+      // مرحله ۱: URL is an untrusted input. The old implementation credited
+      // coins from a user-editable gift_... or gift_to_... URL without a server.
+      // Never mint coins from a URL. Gifts will be re-enabled only after a
+      // server validates the signed-in user, issuer, expiry and single use.
+      if (startParam.startsWith('gift_')) {
+        showToast('🎁 دریافت هدیه تا فعال شدن سرور امن موقتاً غیرفعال است.');
+        return;
+      }
+
+      // ب) ثبت خودکار دعوت دوستان (افزایش شمارنده رفرال معرف)
+      else if (startParam.startsWith('S') || startParam.startsWith('ref_')) {
+        const inviterCode = startParam;
+        const refKey = 'simab_joined_by_' + uid;
+
+        if (!localStorage.getItem(refKey)) {
+          localStorage.setItem(refKey, inviterCode);
+          // ثبت در شمارنده معرف جهت باز شدن جوایز رفرال
+          const inviterCountKey = 'simab_ref_count_' + inviterCode;
+          let currentInvites = parseInt(localStorage.getItem(inviterCountKey) || '0', 10);
+          localStorage.setItem(inviterCountKey, (currentInvites + 1).toString());
+
+          showToast(`👥 شما با دعوت کاربر ${inviterCode} به سیماب پیوستید! ✨`);
+        }
+      }
+    }
+    setTimeout(processStartParams, 600);
+  </script>
+  <script defer src="assets/js/simab-v4.js?v=4"></script>
+</body>
+</html>

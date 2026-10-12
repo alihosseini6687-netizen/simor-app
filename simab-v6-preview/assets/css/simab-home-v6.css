@@ -1,0 +1,4 @@
+/* SIMAB V6 - make admin visibility expectations clear in web preview. */
+.v6-admin-guest-note{margin:2px 0 10px;padding:11px 13px;border:1px solid #9e75e35c;border-radius:13px;background:#21153db0;color:#e7c6ff;font-size:11px;line-height:1.8}
+.v6-admin-guest-note[hidden]{display:none!important}
+#btn-admin-bar{border-color:#f8ca71!important;background:linear-gradient(110deg,#512664,#25143b)!important;box-shadow:0 0 15px #daa33d2c!important}

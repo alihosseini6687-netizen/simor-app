@@ -1,0 +1,35 @@
+/* Backgammon: royal cyan-gold board */
+:root {--v5-header-art:url('../v3/backgammon.webp');--felt-gold:#e0b164;--felt-dark:#47204e;--wood-frame:#242045;--wood-inner:#141c38;--wood-dark:#100c27;--wood-border:#9872d5;}
+.lobby-screen{max-width:440px!important;gap:13px!important;}
+.lobby-card,
+.game-actions-card,.waiting-room-card{
+ background:linear-gradient(138deg,rgba(31,22,61,.97),rgba(14,17,43,.97))!important;
+ border:1px solid rgba(255,204,111,.37)!important;border-radius:19px!important;
+ box-shadow:0 9px 25px rgba(0,0,0,.19)!important;
+}
+.lobby-card-title {color:#ffdf94!important;font-size:15px!important;}
+.mode-box {
+ background:linear-gradient(135deg,#282249,#15162f)!important;
+ border:1px solid rgba(138,116,227,.43)!important;border-radius:15px!important;min-height:108px;
+}
+.mode-box.selected{
+ background:linear-gradient(145deg,rgba(127,66,202,.36),rgba(30,33,65,.92))!important;
+ border-color:rgba(255,219,125,.82)!important;
+ box-shadow:0 0 18px rgba(224,147,63,.16)!important;
+}
+.diff-btn,.stake-btn,.btn-util,.btn-taunt-item {border-radius:11px!important;min-height:39px;}
+.diff-btn.active,.stake-btn.selected {border-color:#ffdf8d!important;box-shadow:0 0 12px rgba(255,209,91,.20)!important;}
+.btn-start-game,.btn-roll-dice {
+ background:var(--gold-gradient)!important;color:#231324!important;
+ border-radius:14px!important;
+ box-shadow:0 8px 22px rgba(255,195,73,.21)!important;
+}
+.board-frame {
+ border-color:#c3a2f3!important;
+ background:linear-gradient(145deg,#37254c,#1c1836)!important;
+ box-shadow:0 0 0 2px rgba(255,211,113,.52),0 0 21px rgba(119,68,213,.27),0 15px 27px rgba(0,0,0,.3)!important;
+}
+.inner-board {border-color:rgba(255,221,153,.62)!important;}
+.player-status-strip{background:linear-gradient(120deg,rgba(42,27,75,.95),rgba(20,26,57,.94))!important;border-color:rgba(255,204,116,.31)!important;border-radius:13px!important;}
+.pot-center-card {border-radius:10px!important;}
+@media (max-width:355px){.lobby-card{padding:12px 9px!important;}.mode-box{padding:11px 7px!important;}}

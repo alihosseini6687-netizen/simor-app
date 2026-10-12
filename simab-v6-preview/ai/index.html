@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <!-- SIMAB V6 preview storage isolation; intentionally never touches production localStorage. -->
+  <script>
+  (() => {
+    'use strict';
+    window.__SIMAB_STAGING_PREVIEW__ = true;
+    if (typeof Storage === 'undefined') return;
+    const prefix = '__simab_v6_preview__:';
+    const proto = Storage.prototype;
+    const get = proto.getItem;
+    const set = proto.setItem;
+    const remove = proto.removeItem;
+    const key = proto.key;
+    const clear = proto.clear;
+    const isPreviewLocal = target => target === window.localStorage;
+    proto.getItem = function(k) { return get.call(this, isPreviewLocal(this) ? prefix + String(k) : k); };
+    proto.setItem = function(k,v) { return set.call(this, isPreviewLocal(this) ? prefix + String(k) : k, v); };
+    proto.removeItem = function(k) { return remove.call(this, isPreviewLocal(this) ? prefix + String(k) : k); };
+    // Never wipe storage of the original app; clearing preview only removes namespaced keys.
+    proto.clear = function() {
+      if (!isPreviewLocal(this)) return clear.call(this);
+      const toRemove = [];
+      for (let i=0; i<this.length; i++) {
+        const candidate = key.call(this, i);
+        if (candidate && candidate.startsWith(prefix)) toRemove.push(candidate);
+      }
+      for (const item of toRemove) remove.call(this, item);
+    };
+  })();
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SIMAB | دستیار صوتی جمینای</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root {
+      --bg: #07070c;
+      --card-bg: #12121c;
+      --card-inner: #191928;
+      --gold: #f5cf68;
+      --gold-gradient: linear-gradient(135deg, #d4af37, #f9e8a2, #aa7c11);
+      --purple-neon: #a855f7;
+      --blue-neon: #38bdf8;
+      --text: #ffffff;
+      --text-muted: #9494a6;
+      --border: rgba(212, 175, 55, 0.22);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; user-select: none; }
+    
+    body {
+      background-color: #030306;
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      text-align: right;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 35%, #180d2a 0%, #07070c 80%);
+      padding: 12px 14px 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-shadow: 0 0 35px rgba(0,0,0,0.9);
+    }
+
+    .top-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 8px 12px; margin-bottom: 12px;
+    }
+    .btn-back {
+      background: #20202e; color: var(--gold); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;
+    }
+    .header-title { font-size: 14px; font-weight: bold; color: var(--gold); display: flex; align-items: center; gap: 6px; }
+    .btn-key-setup {
+      background: #20202e; border: 1px solid var(--border); color: var(--gold);
+      padding: 4px 8px; border-radius: 8px; font-size: 12px; cursor: pointer;
+    }
+
+    .status-badge {
+      align-self: center; background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.35); color: #d8b4fe;
+      padding: 4px 14px; border-radius: 20px; font-size: 11.5px; font-weight: bold;
+      margin-bottom: 10px; display: flex; align-items: center; gap: 6px;
+    }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--purple-neon);
+      box-shadow: 0 0 8px var(--purple-neon); animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+
+    .orb-container {
+      width: 100%; height: 240px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; margin-bottom: 8px;
+    }
+    #orbCanvas { width: 240px; height: 240px; border-radius: 50%; }
+
+    .dialogue-box {
+      flex: 1; min-height: 120px; max-height: 170px;
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 14px; padding: 12px; margin-bottom: 12px;
+      display: flex; flex-direction: column; gap: 8px; overflow-y: auto; font-size: 12.5px; line-height: 1.5;
+    }
+    .user-bubble {
+      background: #251b38; color: #f3e8ff; padding: 8px 12px; border-radius: 10px 10px 0 10px;
+      align-self: flex-start; max-width: 85%; border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+    .ai-bubble {
+      background: var(--card-inner); color: #fff; padding: 8px 12px; border-radius: 10px 10px 10px 0;
+      align-self: flex-end; max-width: 90%; border: 1px solid rgba(212, 175, 55, 0.25);
+    }
+    .ai-bubble.error-bubble {
+      border-color: #ef4444; color: #fca5a5; background: #2a1215;
+    }
+
+    .mic-control-area {
+      display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 6px;
+    }
+    .btn-mic {
+      width: 66px; height: 66px; border-radius: 50%;
+      background: radial-gradient(circle, #c084fc, #7e22ce);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      color: #fff; font-size: 28px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 25px rgba(168, 85, 247, 0.6);
+      transition: all 0.2s;
+    }
+    .btn-mic.listening {
+      background: radial-gradient(circle, #f87171, #dc2626);
+      box-shadow: 0 0 35px rgba(239, 68, 68, 0.85);
+      animation: micPulse 1s infinite alternate;
+    }
+    @keyframes micPulse { from { transform: scale(1); } to { transform: scale(1.08); } }
+    .mic-hint { font-size: 11px; color: var(--text-muted); }
+
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: none; align-items: center; justify-content: center; z-index: 200; padding: 16px;
+    }
+    .modal-box {
+      background: var(--card-bg); border: 1px solid var(--gold);
+      border-radius: 16px; padding: 18px; width: 100%; max-width: 330px; text-align: center;
+    }
+    .modal-input {
+      width: 100%; padding: 10px; background: var(--card-inner); border: 1px solid var(--border);
+      border-radius: 8px; color: #fff; font-size: 12px; margin: 12px 0; outline: none; font-family: monospace;
+    }
+    .btn-save-key {
+      width: 100%; background: var(--gold-gradient); color: #000; border: none;
+      padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <div class="top-bar">
+      <button class="btn-back" onclick="goBack()">🔙 لابی</button>
+      <div class="header-title">🎙️ دستیار جمینای SIMAB</div>
+      <button class="btn-key-setup" onclick="openKeyModal()">🔑 کلید</button>
+    </div>
+
+    <div class="status-badge" id="ai-status">
+      <div class="pulse-dot" id="dot-indicator"></div>
+      <span id="status-text">آماده شنیدن صدا</span>
+    </div>
+
+    <div class="orb-container">
+      <canvas id="orbCanvas" width="500" height="500"></canvas>
+    </div>
+
+    <div class="dialogue-box" id="chatBox">
+      <div class="ai-bubble">
+        سلام! من متصل به جمینای هستم. دکمه میکروفون را لمس کنید و سوالتان را بپرسید 🌸
+      </div>
+    </div>
+
+    <div class="mic-control-area">
+      <button class="btn-mic" id="btnMic" onclick="toggleListening()">🎙️</button>
+      <div class="mic-hint" id="micHint">برای صحبت لمس کنید</div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="modal-key">
+    <div class="modal-box">
+      <div style="font-size:14px; font-weight:bold; color:var(--gold);">🔑 فعال‌سازی هوش مصنوعی Gemini</div>
+      <div style="font-size:11px; color:var(--text-muted); margin-top:6px; line-height:1.5;">
+        کلید API شما فقط روی گوشی خودتان ذخیره می‌شود:
+      </div>
+      <input type="text" class="modal-input" id="apiKeyInput" placeholder="کلید را اینجا پیست کنید">
+      <button class="btn-save-key" onclick="saveApiKey()">ذخیره و فعال‌سازی 🚀</button>
+    </div>
+  </div>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    try {
+      if (tg) {
+        tg.ready();
+        tg.expand();
+        if (tg.BackButton) {
+          tg.BackButton.show();
+          tg.BackButton.onClick(goBack);
+        }
+      }
+    } catch(e) {}
+
+    function goBack() { window.location.href = '../index.html'; }
+
+    let geminiKey = localStorage.getItem('simab_gemini_api_key');
+    if (!geminiKey) {
+      document.getElementById('modal-key').style.display = 'flex';
+    }
+
+    function openKeyModal() {
+      document.getElementById('apiKeyInput').value = geminiKey || '';
+      document.getElementById('modal-key').style.display = 'flex';
+    }
+
+    function saveApiKey() {
+      const val = document.getElementById('apiKeyInput').value.trim();
+      if (val.length < 10) {
+        alert('لطفاً یک کلید معتبر وارد کنید.');
+        return;
+      }
+      geminiKey = val;
+      localStorage.setItem('simab_gemini_api_key', val);
+      document.getElementById('modal-key').style.display = 'none';
+      alert('✅ کلید ذخیره شد!');
+    }
+
+    // انیمیشن کره نوری
+    const canvas = document.getElementById('orbCanvas');
+    const ctx = canvas.getContext('2d');
+    let orbMode = 'idle';
+    let angle = 0;
+
+    function drawOrb() {
+      ctx.clearRect(0, 0, 500, 500);
+      const cx = 250, cy = 250;
+      angle += (orbMode === 'listening' ? 0.04 : (orbMode === 'speaking' ? 0.03 : 0.015));
+
+      const glowGrad = ctx.createRadialGradient(cx, cy, 30, cx, cy, orbMode === 'listening' ? 180 : 140);
+      if (orbMode === 'listening') {
+        glowGrad.addColorStop(0, 'rgba(239, 68, 68, 0.4)');
+        glowGrad.addColorStop(0.5, 'rgba(168, 85, 247, 0.25)');
+        glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      } else if (orbMode === 'speaking') {
+        glowGrad.addColorStop(0, 'rgba(56, 189, 248, 0.5)');
+        glowGrad.addColorStop(0.6, 'rgba(168, 85, 247, 0.3)');
+        glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      } else {
+        glowGrad.addColorStop(0, 'rgba(168, 85, 247, 0.35)');
+        glowGrad.addColorStop(0.7, 'rgba(212, 175, 55, 0.15)');
+        glowGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      }
+      ctx.fillStyle = glowGrad;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 220, 0, Math.PI * 2);
+      ctx.fill();
+
+      for (let i = 0; i < 4; i++) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle * (i % 2 === 0 ? 1 : -1) + (i * Math.PI / 4));
+        ctx.beginPath();
+        const rx = 85 + (i * 12) + (orbMode === 'listening' ? Math.sin(angle * 4 + i) * 15 : 0);
+        const ry = 60 + (i * 8);
+        ctx.ellipse(0, 0, rx, ry, (i * Math.PI) / 6, 0, Math.PI * 2);
+        ctx.lineWidth = (i === 1 || i === 2) ? 3.5 : 2;
+        ctx.strokeStyle = (orbMode === 'listening') ? (i % 2 === 0 ? '#f87171' : '#f5cf68') : (orbMode === 'speaking' ? (i % 2 === 0 ? '#38bdf8' : '#c084fc') : (i % 2 === 0 ? '#c084fc' : '#f5cf68'));
+        ctx.shadowColor = ctx.strokeStyle;
+        ctx.shadowBlur = 12;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      ctx.beginPath();
+      const coreR = 38 + (orbMode === 'speaking' ? Math.sin(angle * 6) * 8 : (orbMode === 'listening' ? Math.sin(angle * 8) * 10 : Math.sin(angle * 2) * 3));
+      const coreGrad = ctx.createRadialGradient(cx, cy, 5, cx, cy, coreR);
+      coreGrad.addColorStop(0, '#ffffff');
+      coreGrad.addColorStop(0.4, orbMode === 'listening' ? '#ef4444' : '#a855f7');
+      coreGrad.addColorStop(1, orbMode === 'speaking' ? '#0284c7' : '#d4af37');
+      ctx.fillStyle = coreGrad;
+      ctx.arc(cx, cy, coreR, 0, Math.PI * 2);
+      ctx.fill();
+
+      requestAnimationFrame(drawOrb);
+    }
+    drawOrb();
+
+    // تشخیص گفتار
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    let isListening = false;
+
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'fa-IR';
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      recognition.onstart = function() {
+        isListening = true;
+        orbMode = 'listening';
+        document.getElementById('btnMic').classList.add('listening');
+        document.getElementById('status-text').innerText = 'در حال شنیدن...';
+        document.getElementById('micHint').innerText = 'صحبت کنید...';
+      };
+
+      recognition.onresult = function(event) {
+        const text = event.results[0][0].transcript;
+        addBubble(text, 'user');
+        sendToGemini(text);
+      };
+
+      recognition.onerror = function() { stopListeningState(); };
+      recognition.onend = function() { stopListeningState(); };
+    }
+
+    function toggleListening() {
+      if (!geminiKey) {
+        openKeyModal();
+        return;
+      }
+      if (!recognition) {
+        alert('میکروفون مرورگر فعال نیست.');
+        return;
+      }
+      if (isListening) {
+        recognition.stop();
+        stopListeningState();
+      } else {
+        recognition.start();
+      }
+    }
+
+    function stopListeningState() {
+      isListening = false;
+      if (orbMode === 'listening') orbMode = 'idle';
+      document.getElementById('btnMic').classList.remove('listening');
+      document.getElementById('status-text').innerText = 'آماده شنیدن صدا';
+      document.getElementById('micHint').innerText = 'برای صحبت لمس کنید';
+    }
+
+    function addBubble(text, sender, isError = false) {
+      const box = document.getElementById('chatBox');
+      const b = document.createElement('div');
+      b.className = (sender === 'user' ? 'user-bubble' : 'ai-bubble') + (isError ? ' error-bubble' : '');
+      b.innerText = text;
+      box.appendChild(b);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    // ارسال مستقیم به جمینای با شفاف‌سازی خطا
+    async function sendToGemini(userText) {
+      orbMode = 'speaking';
+      document.getElementById('status-text').innerText = 'در حال پردازش هوش مصنوعی...';
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`;
+      const payload = {
+        contents: [{
+          parts: [{
+            text: `تو دستیار صوتی هوشمند گیمینگ‌هاب SIMAB هستی. به صورت صمیمی، کوتاه، رسا و به زبان فارسی پاسخ بده: ${userText}`
+          }]
+        }]
+      };
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        // اگر گوگل پیام خطا فرستاد
+        if (data.error) {
+          const errDetail = data.error.message || data.error.status || 'خطای ناشناخته در کلید یا سرور گوگل';
+          addBubble(`⚠️ خطای گوگل: ${errDetail}`, 'ai', true);
+          orbMode = 'idle';
+          document.getElementById('status-text').innerText = 'خطا در ارتباط با گوگل';
+          return;
+        }
+
+        const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!aiText) {
+          addBubble('گوگل پاسخی برنگرداند.', 'ai', true);
+          orbMode = 'idle';
+          return;
+        }
+
+        addBubble(aiText, 'ai');
+        speakText(aiText);
+      } catch(err) {
+        addBubble(`⚠️ خطای اینترنت/فیلترشکن: ${err.message}`, 'ai', true);
+        orbMode = 'idle';
+        document.getElementById('status-text').innerText = 'خطا در اتصال شبکه';
+      }
+    }
+
+    function speakText(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'fa-IR';
+        utter.rate = 1.0;
+        utter.onend = function() {
+          orbMode = 'idle';
+          document.getElementById('status-text').innerText = 'آماده شنیدن صدا';
+        };
+        utter.onerror = function() {
+          orbMode = 'idle';
+          document.getElementById('status-text').innerText = 'آماده شنیدن صدا';
+        };
+        window.speechSynthesis.speak(utter);
+      } else {
+        setTimeout(() => {
+          orbMode = 'idle';
+          document.getElementById('status-text').innerText = 'آماده شنیدن صدا';
+        }, 3000);
+      }
+    }
+  </script>
+</body>
+</html>
