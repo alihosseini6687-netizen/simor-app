@@ -21,6 +21,28 @@
     if (!Array.isArray(json.quests)) throw new Error("invalid_catalog");
     return json.quests.filter(t => t && typeof t.id === "string" && typeof t.title === "string");
   }
+  // Only used to explain 401s. This decoded timestamp is never treated as identity,
+  // proof of authorization, or a reason to grant a reward.
+  function describeTelegram401(initData) {
+    try {
+      const fields = new URLSearchParams(initData);
+      const authDate = fields.get("auth_date");
+      if (!authDate || !/^\d{10,12}$/.test(authDate) || !fields.get("user") || !fields.get("hash")) {
+        return "اطلاعات ورود تلگرام ناقص است. مینی‌اپ را از دکمه ربات باز کن؛ در صورت تکرار، نحوه راه‌اندازی را بررسی می‌کنیم.";
+      }
+      const ageSeconds = Math.floor(Date.now() / 1000) - Number(authDate);
+      if (Number.isFinite(ageSeconds) && ageSeconds > 3600) {
+        return "اطلاعات ورود تلگرام قدیمی است (بیش از یک ساعت). نسخه مینی‌اپ را کامل ببند و از دکمه ربات دوباره اجرا کن.";
+      }
+      if (Number.isFinite(ageSeconds) && ageSeconds < -30) {
+        return "زمان ورود تلگرام در آینده ثبت شده است؛ ساعت گوشی و تنظیمات زمان را بررسی کن.";
+      }
+      return "اطلاعات ورود تلگرام تازه است ولی امضای آن پذیرفته نشد. باید تطابق توکن ذخیره‌شده در Supabase با رباتی که مینی‌اپ را باز کرده بررسی شود؛ توکن را ارسال نکن.";
+    } catch {
+      return "اعتبارسنجی ورود تلگرام انجام نشد؛ شناسه ربات و تنظیمات سرور باید بررسی شوند.";
+    }
+  }
+
   async function doAdmin(action, extra) {
     const initData = window.Telegram?.WebApp?.initData || "";
     if (!initData) throw new Error("برای انتشار باید نسخه را با حساب مدیر در تلگرام باز کنی.");
@@ -32,7 +54,7 @@
     });
     const j = await r.json().catch(() => ({}));
     if (!r.ok) throw new Error(
-      r.status === 401 ? "ورود تلگرام منقضی یا نامعتبر است؛ مینی‌اپ را ببند و دوباره باز کن." :
+      r.status === 401 ? describeTelegram401(initData) :
       r.status === 403 ? "این حساب از سمت سرور مجوز مدیریت ندارد." :
       "ثبت سروری انجام نشد (HTTP " + r.status + ")."
     );
