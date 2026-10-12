@@ -1,0 +1,20 @@
+/* V8 Backgammon: real interactive board with lacquered wood, gold pinstripe, neon panels */
+body{background-image:radial-gradient(ellipse at 45% 12%,#5d248874,transparent 56%),linear-gradient(180deg,#160925,#080718 82%)!important}
+.top-bar,.lobby-screen,.board-frame,.game-actions-card,.player-status-strip{max-width:490px;margin-inline:auto}
+.lobby-card,.game-actions-card{border:1.5px solid #dda85b!important;background:linear-gradient(135deg,#371943,#17122d)!important;box-shadow:0 0 23px #9d3aea48,0 12px 26px #050012aa!important}
+.mode-box.selected{box-shadow:0 0 22px #e7ad536b!important}
+.board-frame{border:8px solid #8c572f!important;outline:2px solid #f6ca6a!important;border-radius:19px!important;padding:9px 7px!important;background:linear-gradient(137deg,#452015,#b57336 18%,#43221c 44%,#b47639 83%,#28142a)!important;box-shadow:0 0 0 5px #4e2070b3,0 0 27px #eab54a69,inset 0 2px 6px #fff4be99,0 17px 28px #0009!important;isolation:isolate}
+.inner-board{background:repeating-linear-gradient(95deg,#27122c 0,#27122c 8px,#30182a 10px,#351d32 16px)!important;border:2px solid #ffe09c87!important;box-shadow:inset 0 0 23px #000b,inset 0 0 0 3px #bc6b3688!important}
+.board-half{min-height:clamp(155px,46vw,198px)!important;height:clamp(155px,46vw,198px)!important}
+.point-triangle{filter:drop-shadow(1px 0 1px #f7c679a0)}
+.checker{width:clamp(19px,6.2vw,27px)!important;height:clamp(19px,6.2vw,27px)!important;border-width:2px!important;box-shadow:0 3px 7px #000c,0 0 5px #ffe9b540!important}
+.checker.white{background:radial-gradient(circle at 30% 25%,#fffef7,#e5d2ad 55%,#936f45)!important;border-color:#f7d18e!important}
+.checker.black{background:radial-gradient(circle at 30% 25%,#83709e,#241b36 49%,#090912)!important;border-color:#f5bf67!important}
+.point-col.highlight-target{background:#13cbff3d!important;box-shadow:inset 0 0 18px #40e1ff9a!important}
+.player-status-strip{border-color:#ffcc7794!important}
+.game-actions-card{margin-bottom:24px}
+.btn-start-game,.btn-roll-dice,.v8-bear-off{min-height:50px;box-shadow:0 0 21px #dfa0365b!important;border-radius:15px!important}
+.v8-bear-off{padding:10px;background:linear-gradient(130deg,#e3c180,#be864d);color:#201329;border:0;font-weight:900;margin:6px auto;cursor:pointer;display:block}
+.v8-bear-off:disabled{opacity:.48}
+.v8-bg-help{font-size:12px;text-align:center;color:#ffdd92;line-height:1.8;padding:9px 12px}
+@media(max-width:360px){.board-frame{padding:5px 4px!important;border-width:6px!important}.inner-board{padding:3px!important}.board-quadrant{width:47%!important}.checker{width:19px!important;height:19px!important}.top-bar{flex-wrap:wrap}}
