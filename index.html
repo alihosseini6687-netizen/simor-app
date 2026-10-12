@@ -409,12 +409,12 @@
 
       <!-- سطر دوم: ۲ مستطیل کناری طبق نقاشی شما -->
       <div class="task-dual-rect-grid">
-        <a href="offers/index.html" class="dual-rect-card offer-card">
+        <a href="#" onclick="alertComingSoon('آفر روزانه'); return false;" class="dual-rect-card offer-card">
           <span class="rect-icon">🔥</span>
           <span class="rect-title">آفر روزانه</span>
           <span class="rect-sub">بسته‌های تخفیف ویژه</span>
         </a>
-        <a href="shop/index.html" class="dual-rect-card shop-card">
+        <a href="#" onclick="alertComingSoon('خرید سکه'); return false;" class="dual-rect-card shop-card">
           <span class="rect-icon">🪙</span>
           <span class="rect-title">خرید سکه</span>
           <span class="rect-sub">شارژ فوری حساب</span>
@@ -497,8 +497,18 @@
           document.getElementById('user-game-id').innerText = savedGameId;
         }
 
+        // Avoid inserting Telegram-controlled text inside HTML markup.
         if (u.photo_url) {
-          document.getElementById('avatar-container').innerHTML = `<img src="${u.photo_url}" alt="Avatar">`;
+          try {
+            const avatarUrl = new URL(u.photo_url);
+            if (avatarUrl.protocol === 'https:') {
+              const avatarImage = document.createElement('img');
+              avatarImage.src = avatarUrl.href;
+              avatarImage.alt = 'Avatar';
+              avatarImage.referrerPolicy = 'no-referrer';
+              document.getElementById('avatar-container').replaceChildren(avatarImage);
+            }
+          } catch (e) { /* Invalid photo URL; keep placeholder. */ }
         }
       } else {
         // ورود خارج از تلگرام (کروم یا مرورگر دسکتاپ): حالت مهمان و بسته بودن کامل دسترسی‌ها
@@ -756,19 +766,13 @@
       }
       if (!startParam) return;
 
-      // الف) دریافت و واریز خودکار هدیه تلگرامی ادمین
+      // مرحله ۱: URL is an untrusted input. The old implementation credited
+      // coins from a user-editable gift_... or gift_to_... URL without a server.
+      // Never mint coins from a URL. Gifts will be re-enabled only after a
+      // server validates the signed-in user, issuer, expiry and single use.
       if (startParam.startsWith('gift_')) {
-        const parts = startParam.split('_');
-        const giftCode = startParam;
-        const giftAmount = parseFloat(parts[2]) || 100;
-        const claimKey = 'simab_gift_claimed_' + giftCode + '_' + uid;
-
-        if (!localStorage.getItem(claimKey)) {
-          localStorage.setItem(claimKey, 'true');
-          const newBalance = parseFloat((balance + giftAmount).toFixed(4));
-          saveCoinsGlobal(newBalance);
-          showToast(`🎁 تبریک! هدیه ${giftAmount.toLocaleString()} سکه‌ای دریافت شد!`);
-        }
+        showToast('🎁 دریافت هدیه تا فعال شدن سرور امن موقتاً غیرفعال است.');
+        return;
       }
 
       // ب) ثبت خودکار دعوت دوستان (افزایش شمارنده رفرال معرف)
