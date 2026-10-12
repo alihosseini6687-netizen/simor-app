@@ -119,6 +119,23 @@
         if (save) save.disabled = false;
       }
     };
+    // The original button opened Telegram's share sheet; this sends from the BOT
+    // only when the verified owner explicitly presses the broadcast button.
+    window.shareToTelegram = async () => {
+      const message = document.getElementById("broadcast-text")?.value?.trim() || "";
+      if (!message || message.length > 1500) {
+        popup("متن نامعتبر", "پیام باید بین ۱ تا ۱۵۰۰ حرف باشد.", "⚠️");
+        return;
+      }
+      if (!window.confirm("پیام همین حالا از طرف ربات در کانال منتشر شود؟")) return;
+      try {
+        await doAdmin("broadcast", { message });
+        popup("ارسال شد", "ربات پیام را در کانال منتشر کرد.", "✅");
+      } catch (e) {
+        popup("ارسال ناموفق", String(e.message || e) +
+          " — بررسی کن ربات مدیر کانال باشد و تنظیم SIMAB_TELEGRAM_CHANNEL ثبت شده باشد.", "⚠️");
+      }
+    };
     // Old local-only delete and render handlers are intentionally replaced.
     window.renderTasks = renderAdmin;
     window.deleteTask = () => popup("تغییر لازم", "مأموریت‌ها از سرور مدیریت می‌شوند.", "🔒");
