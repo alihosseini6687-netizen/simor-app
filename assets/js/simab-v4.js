@@ -159,7 +159,15 @@
     const ids=jsonArray(RECENT_KEY).map(String).filter(id=>gameById.get(id)?.active).slice(0,3);
     if (!recentWrap||!recentList) return;
     recentList.replaceChildren();
-    recentWrap.hidden=ids.length===0;
+    recentWrap.hidden=true; // V8: no duplicate Recent section below hero.
+    const inHero=byId("v8-hero-recent");
+    if(inHero){
+      inHero.replaceChildren();
+      if(ids.length){
+        const title=document.createElement("span");title.textContent="↶ آخرین بازی من:";inHero.appendChild(title);
+        const g=gameById.get(ids[0]);const a=document.createElement("a");a.href=g.link;a.textContent=g.icon+" "+g.title+" ←";inHero.appendChild(a);
+      }
+    }
     ids.forEach(id=>{
       const game=gameById.get(id);
       const link=document.createElement('a');link.href=game.link;link.textContent=game.icon+' '+game.title+' ←';
