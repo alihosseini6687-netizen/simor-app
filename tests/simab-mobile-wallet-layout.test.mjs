@@ -28,7 +28,7 @@ test('wallet link is in page flow, never direct flex body child',()=>{
   }
   assert.equal((html.match(/class="simab-secure-entry"/g)||[]).length,1,
     'duplicate wallet card '+path);
- });
+ }
 });
 test('one shared responsive stylesheet powers all wallet links; URLs resolve',()=>{
  const css=read('assets/css/simab-secure-entry-v7.css');
