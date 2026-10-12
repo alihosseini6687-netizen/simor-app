@@ -313,7 +313,7 @@ Deno.serve(async (request) => {
     });
     if (error) {
       const known=new Set(["insufficient_coins","insufficient_chips","invalid_bet",
-        "invalid_amount","wallet_limit","invalid_subject","missing_request_id"]);
+        "invalid_amount","wallet_limit","invalid_subject","missing_request_id","slot_cooldown"]);
       const code=known.has(error.message)?error.message:"wallet_unavailable";
       return reply(known.has(error.message)?409:503,{error:code});
     }
