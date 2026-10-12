@@ -32,7 +32,7 @@ test('Telegram HMAC verification and database admin lookup precede writes', () =
   assert.match(edge, /constantTimeMatch/);
   assert.match(edge, /telegram_auth_failed/);
   assert.match(edge, /admin_only/);
-  assert.match(edge, /channel_not_configured/);
+  assert.match(edge, /channel_bot_not_admin/);
 });
 test('central tables deny direct browser access and enable RLS', () => {
   assert.match(sql, /ALTER TABLE public\.simab_admins ENABLE ROW LEVEL SECURITY/);

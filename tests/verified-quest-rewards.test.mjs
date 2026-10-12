@@ -14,7 +14,7 @@ test('TypeScript function and browser client parse',()=>{
     const html=read(p);
     for(const [,code] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))
       new Script(code);
-    assert.match(html,/simab-central-quests\.js\?v=6/);
+    assert.match(html,/simab-central-quests\.js\?v=7/);
   }
 });
 test('only verified Telegram channel can credit a reward',()=>{
@@ -22,7 +22,7 @@ test('only verified Telegram channel can credit a reward',()=>{
   assert.match(edge,/verifyTelegramEd25519/);
   assert.match(edge,/getChatMember/);
   assert.match(edge,/member\.status==="restricted"&&member\.is_member===true/);
-  assert.match(edge,/SIMAB_TELEGRAM_CHANNEL/);
+  assert.match(edge,/OFFICIAL_CHANNEL/);
   assert.match(edge,/q\.verification_mode!=="telegram_membership"/);
   assert.match(edge,/simab_credit_verified_quest/);
   assert.match(edge,/membership_check_unavailable/);

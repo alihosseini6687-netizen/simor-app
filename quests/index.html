@@ -238,6 +238,7 @@
   </style>
   <style>body{ --v6-art:url("../assets/v3/rewards.webp"); }</style>
   <link rel="stylesheet" href="../assets/css/simab-secondary-v6.css?v=6">
+  <script src="../assets/js/simab-legacy-guard.js?v=1"></script>
 </head>
 <body>
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -281,8 +282,8 @@
         <div class="quest-info">
           <div class="quest-icon-box">📢</div>
           <div>
-            <div class="quest-title">باز کردن صفحه رسمی تلگرام</div>
-            <div class="quest-reward">+۲۰ سکه 🪙</div>
+            <div class="quest-title">کانال رسمی سیماب</div>
+            <div class="quest-reward">پاداش فقط با تأیید عضویت سرور</div>
           </div>
         </div>
         <button class="btn-quest-action" id="btn-quest-tg" onclick="handleQuest('tg')">
@@ -296,7 +297,7 @@
           <div class="quest-icon-box">📸</div>
           <div>
             <div class="quest-title">مشاهده پیج اینستاگرام</div>
-            <div class="quest-reward">+۲۰ سکه 🪙</div>
+            <div class="quest-reward">بدون پاداش سکه</div>
           </div>
         </div>
         <button class="btn-quest-action" id="btn-quest-insta" onclick="handleQuest('insta')">
@@ -342,7 +343,7 @@
 
     // موجودی هماهنگ با کل مینی‌اپ
     const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    let balance = parseFloat(localStorage.getItem(STORAGE_KEY_COINS) || localStorage.getItem('user_balance') || '50');
+    let balance = SimabLegacy.readAmount(STORAGE_KEY_COINS, 50);
 
     function updateBalanceDisplay() {
       const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
@@ -364,7 +365,7 @@
         name: 'کانال تلگرام',
         reward: 20,
         timerSec: 10, // ۱۰ ثانیه طبق درخواست شما
-        url: 'https://t.me/SimorApp_bot', // لینک کانال شما
+        url: 'https://t.me/SimorApp', // Official channel (not the bot)
         isTgLink: true
       },
       insta: {
@@ -400,6 +401,6 @@
 
     initQuestsState();
   </script>
-  <script src="../assets/js/simab-central-quests.js?v=6" defer></script>
+  <script src="../assets/js/simab-central-quests.js?v=7" defer></script>
 </body>
 </html>

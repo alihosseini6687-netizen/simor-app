@@ -5,6 +5,15 @@
 (() => {
   "use strict";
   const endpoint = "https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests";
+  const officialChannelUrl = "https://t.me/SimorApp";
+  const isOfficialChannelUrl = raw => {
+    try {
+      const link = new URL(raw);
+      return link.protocol === "https:" && link.hostname.toLowerCase() === "t.me" &&
+        link.pathname.replace(/\/$/, "").toLowerCase() === "/simorapp" &&
+        !link.search && !link.hash && !link.username && !link.password && !link.port;
+    } catch { return false; }
+  };
   const isAdmin = Boolean(document.getElementById("tasks-list"));
   const isQuests = Boolean(document.getElementById("quests-container"));
   if (!isAdmin && !isQuests) return;
@@ -95,7 +104,9 @@
         ? "عضویت در کانال تأیید نشد؛ ابتدا در کانال عضو شو."
         : "دسترسی برای انجام این عملیات تأیید نشد.") :
       r.status === 409 ? "این مأموریت شرایط پرداخت سروری را ندارد." :
-      r.status === 503 ? "سرور تأیید عضویت یا دفتر جایزه در دسترس نیست؛ هیچ سکه‌ای پرداخت نشده است." :
+      r.status === 503 ? (j.error === "channel_bot_not_admin"
+        ? "ربات @SimorApp_bot هنوز مدیر کانال @SimorApp نیست یا مجوز بررسی اعضا را ندارد. هیچ جایزه‌ای ثبت نشد."
+        : "سرور تأیید عضویت یا دفتر جایزه در دسترس نیست؛ هیچ سکه‌ای پرداخت نشده است.") :
       "درخواست سروری ناموفق بود (HTTP " + r.status + ")."
     );
     return j;
@@ -215,13 +226,22 @@
         if(label) label.textContent="✅ ربات "+h.botUsername+" تأیید شد؛ در حال بررسی امضای مدیر...";
         try {
           await doAdmin("ping",{});
-          if(label) label.textContent="✅ سرور، امضای ورود و مجوز مدیریت تأیید شدند."+(h.channelConfigured?"":" ارسال کانال تا تنظیم کانال ربات غیرفعال است.");
+          if(label) label.textContent="✅ سرور، امضای ورود و مجوز مدیریت تأیید شدند. "+(h.channelBotIsAdmin ?
+            "✅ ربات مدیر کانال رسمی @SimorApp است؛ امکان بررسی عضویت فعال است." :
+            "⚠️ ربات هنوز مدیر کانال رسمی @SimorApp نیست؛ دریافت جایزه و ارسال کانال غیرفعال است.");
         } catch(e) {
           if(label) label.textContent="⚠️ اتصال برقرار است، اما اجازه مدیریت تأیید نشد: "+String(e.message||e);
         }
       } catch(e) {
         if(label) label.textContent="❌ "+String(e.message||e);
       }
+    };
+    window.simabFillOfficialChannelQuest = () => {
+      document.getElementById("task-title").value = "عضویت در کانال رسمی سیماب";
+      document.getElementById("task-url").value = officialChannelUrl;
+      document.getElementById("task-reward").value = "1";
+      document.getElementById("task-timer").value = "20";
+      popup("آماده انتشار", "مأموریت رسمی با پاداش آزمایشی ۱ سکه آماده شد. برای انتشار دکمه ثبت مرکزی را بزن.", "📢");
     };
     renderDrafts();
     window.simabCheckMissionsConnection();
@@ -245,7 +265,7 @@
         await doAdmin("create", {
           task: {
             title, url: url.href, rewardCoins: reward, timerSeconds: timer,
-            verificationMode: /^https:\/\/t\.me\//i.test(url.href) && !url.pathname.toLowerCase().endsWith("bot") ? "telegram_membership" : "external_visit",
+            verificationMode: isOfficialChannelUrl(url.href) ? "telegram_membership" : "external_visit",
           },
         });
         document.getElementById("task-title").value = "";
@@ -287,7 +307,7 @@
     // Keep links working; stop falsely asserting verification or minting local coins.
     window.handleQuest = (key) => {
       const urls = {
-        tg: "https://t.me/SimorApp_bot",
+        tg: officialChannelUrl,
         insta: "https://instagram.com/Alihosseiniv",
       };
       const target = urls[key];
@@ -297,7 +317,7 @@
           window.Telegram.WebApp.openTelegramLink(target);
         else window.open(target, "_blank", "noopener,noreferrer");
       } catch { /* opening is best-effort */ }
-      popup("", "لینک باز شد؛ تأیید عضویت و پرداخت پاداش هنوز در سرور فعال نیست.");
+      popup("", "لینک باز شد؛ فقط مأموریت مرکزی کانال، پس از تأیید عضویت واقعی توسط سرور، می‌تواند جایزه بدهد.");
     };
     window.claimQuestReward = () => popup("", "بدون تأیید سرور نمی‌توان پاداش مأموریت را پرداخت کرد.");
     for (const key of ["tg", "insta"]) {
@@ -345,8 +365,13 @@
     (async () => {
       try {
         const quests = await readPublished();
-        if (rewardsEnabled) await loadVerifiedWallet();
-        else verifiedValue.textContent="پرداخت سروری فعلاً غیرفعال است؛ هیچ جایزه‌ای قابل دریافت نیست.";
+        await loadVerifiedWallet();
+        if (!rewardsEnabled) verifiedNote.textContent =
+          "موجودی تأییدشده حفظ می‌شود؛ برای جایزه جدید، ربات باید مدیر @SimorApp باشد. سکه‌های قدیمی بازی جدا هستند.";
+        if (quests.some(q => isOfficialChannelUrl(q.url))) {
+          const staticChannelCard = document.getElementById("card-quest-tg");
+          if (staticChannelCard) staticChannelCard.hidden = true;
+        }
         area.replaceChildren();
         if (!quests.length) {
           area.append(el("p", "", "مأموریت مرکزی فعالی وجود ندارد."));
@@ -386,7 +411,7 @@
                 const outcome=await doAdmin("claim",{questId:q.id});
                 claim.textContent="✓ پاداش ثبت شد";
                 popup("ثبت سروری",outcome.granted ?
-                  q.rewardCoins+" سکه تأییدشده ثبت شد؛ هنوز در بازی قابل خرج نیست." :
+                  Number(outcome.rewardCoins)+" سکه تأییدشده ثبت شد؛ هنوز در بازی قابل خرج نیست." :
                   "این جایزه قبلاً یک بار ثبت شده است.","✅");
                 await loadVerifiedWallet();
               }catch(e){
