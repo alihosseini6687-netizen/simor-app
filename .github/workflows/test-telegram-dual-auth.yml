@@ -1,0 +1,23 @@
+name: SIMAB signed Telegram auth verification
+on:
+  push:
+    branches: [fix/telegram-auth-dual-signature-20261012]
+  pull_request:
+    paths:
+      - "supabase/functions/simab-central-quests/index.ts"
+      - "tests/telegram-dual-signature.test.mjs"
+      - "assets/js/simab-central-quests.js"
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: node --test tests/telegram-dual-signature.test.mjs
+      - run: node --check assets/js/simab-central-quests.js
+      - run: node --test tests/central-quests-contract.test.mjs
