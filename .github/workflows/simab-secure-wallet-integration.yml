@@ -4,6 +4,10 @@ on:
     paths:
       - 'supabase/**'
       - 'wallet/**'
+      - 'games/**'
+      - 'swap/**'
+      - 'assets/js/**'
+      - 'package*.json'
       - 'admin/**'
       - 'assets/js/simab-central-quests.js'
       - 'assets/js/simab-secure-wallet.js'
@@ -40,6 +44,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install pinned integration test dependency
+        run: npm ci
+      - name: Test actual signed HTTP API against transactional PostgreSQL
+        run: npm run test:server
       - name: Browser and Edge static syntax and behavior checks
         run: node --check assets/js/simab-secure-wallet.js && node --test tests/*.test.mjs
       - name: Install PostgreSQL client
@@ -57,5 +65,7 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261012_verified_quest_rewards.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261013_secure_wallet_games.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025074103_admin_wallet_credit.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025081053_unified_wallet_game_sessions.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-secure-wallet.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-admin-credit.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-unified-wallet.sql

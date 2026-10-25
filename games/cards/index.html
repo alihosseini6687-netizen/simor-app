@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>صدور کارت هدیه بانکی</title>
+  <title>کارت تصویری سیماب</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     :root {
@@ -154,7 +154,7 @@
       cursor: pointer; box-shadow: 0 0 15px rgba(212,175,55,0.4);
     }
   </style>
-  <script src="../../assets/js/simab-legacy-guard.js?v=1"></script>
+  <script src="../../assets/js/simab-wallet-client.js?v=10"></script>
 <link rel="stylesheet" href="../../assets/css/simab-v8-core.css?v=8">
 </head>
 <body>
@@ -163,7 +163,7 @@
     <button class="btn-back" onclick="goBack()">🔙 لابی</button>
     <div style="font-weight: bold; color: var(--gold);">💳 کارت هدیه بانکی</div>
     <div style="color: var(--gold); font-weight: bold;">
-      🪙 <span id="user-bal">1,000</span>
+      🪙 <span id="user-bal" data-coins>1,000</span>
     </div>
   </div>
 
@@ -171,19 +171,19 @@
   <div class="themes-row">
     <button class="theme-btn active" onclick="setTheme('gold', 150, this)">
       🏆 VIP طلایی
-      <span>۱۵۰ سکه</span>
+      <span>رایگان</span>
     </button>
     <button class="theme-btn" onclick="setTheme('birthday', 130, this)">
       🎂 جشن تولد
-      <span>۱۳۰ سکه</span>
+      <span>رایگان</span>
     </button>
     <button class="theme-btn" onclick="setTheme('friend', 100, this)">
       🤝 رفاقتی
-      <span>۱۰۰ سکه</span>
+      <span>رایگان</span>
     </button>
     <button class="theme-btn" onclick="setTheme('luck', 70, this)">
       🍀 زمردی
-      <span>۷۰ سکه</span>
+      <span>رایگان</span>
     </button>
   </div>
 
@@ -220,7 +220,7 @@
     <input type="text" class="card-input" id="input-msg" value="تولدت مبارک رفیق، همیشه برنده باشی! 🌸" oninput="updateCardText()">
     <label class="input-label">نام شما (فرستنده):</label>
     <input type="text" class="card-input" id="input-from" value="علی" oninput="updateCardText()">
-    <button class="btn-buy-card" id="btn-buy" onclick="purchaseCard()">💳 صدور کارت آزمایشی (۱۵۰ سکه)</button>
+    <button class="btn-buy-card" id="btn-buy" onclick="purchaseCard()">💳 ساخت کارت تصویری رایگان</button>
   </div>
 
   <!-- باکس ذخیره در گالری بعد از خرید -->
@@ -256,15 +256,6 @@
 
     function goBack() { window.location.href = '../../index.html'; }
 
-    const CARD_DEMO_STORAGE_KEY = 'simab_cards_demo_' + String(tg?.initDataUnsafe?.user?.id || 'guest');
-    let balance = 1000;
-    try { balance = SimabLegacy.readAmount(CARD_DEMO_STORAGE_KEY, 1000); } catch(e) {}
-    function saveBalance() {
-      try { localStorage.setItem(CARD_DEMO_STORAGE_KEY, balance.toString()); } catch(e) {}
-      document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S (آزمایشی)';
-    }
-    document.getElementById('user-bal').innerText = balance.toLocaleString() + ' S (آزمایشی)';
-
     let currentPrice = 150;
     let currentTheme = 'theme-gold';
 
@@ -282,7 +273,7 @@
         luck: 'LUCKY EDITION'
       };
       document.getElementById('card-badge-txt').innerText = badges[themeName] || 'GIFT CARD';
-      document.getElementById('btn-buy').innerText = `💳 صدور کارت آزمایشی (${price} سکه)`;
+      document.getElementById('btn-buy').innerText = `💳 ساخت کارت تصویری رایگان`;
     }
 
     function updateCardText() {
@@ -292,12 +283,6 @@
     }
 
     function purchaseCard() {
-      if (balance < currentPrice) {
-        alert(`موجودی شما کافی نیست! برای این کارت به ${currentPrice} سکه نیاز دارید.`);
-        return;
-      }
-      balance -= currentPrice;
-      saveBalance();
       try {
         if (tg?.isVersionAtLeast && tg.isVersionAtLeast('6.1') && tg?.HapticFeedback) {
           tg.HapticFeedback.notificationOccurred('success');
@@ -305,7 +290,7 @@
       } catch(e) {}
       document.getElementById('btn-buy').style.display = 'none';
       document.getElementById('delivery-box').style.display = 'block';
-      alert('🎉 کارت آزمایشی شما صادر شد!');
+      alert('🎉 کارت تصویری شما آماده شد!');
     }
 
     // خروجی تصویر تمیز بدون به هم ریختگی

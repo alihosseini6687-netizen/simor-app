@@ -293,7 +293,7 @@
   <link rel="stylesheet" href="assets/css/simab-v3.css?v=3">
   <link rel="stylesheet" href="assets/css/simab-v4.css?v=4">
   <link rel="stylesheet" href="assets/css/simab-home-v6.css?v=6">
-  <script src="assets/js/simab-legacy-guard.js?v=1"></script>
+  <script src="assets/js/simab-wallet-client.js?v=10"></script>
 
 <link rel="stylesheet" href="assets/css/simab-secure-entry-v7.css?v=7">
 <link rel="stylesheet" href="assets/css/simab-v8-core.css?v=8">
@@ -308,14 +308,14 @@
     <header class="top-header">
       <div class="coin-badge" onclick="switchNavTab('tasks')">
         <div class="coin-badge-s">S</div>
-        <span id="user-balance-txt">50</span>
+        <span id="user-balance-txt" data-coins>—</span>
       </div>
       <div class="header-start">
         <div class="brand-title">SIMAB<span class="brand-caption">GAMING CLUB</span></div>
         <button class="btn-gear" onclick="openAboutModal()" title="درباره سیماب">⭐</button>
       </div>
     </header>
-    <a class="simab-secure-entry" href="wallet/index.html"><strong>🪙 اعتبار مجازی سیماب</strong><small>سکه‌ها فقط برای سرگرمی داخل برنامه‌اند؛ برداشت نقدی وجود ندارد. کیف پول بازی ←</small></a>
+    <a class="simab-secure-entry" href="wallet/index.html"><strong>🪙 اعتبار مجازی سیماب</strong><small>موجودی مشترک تمام بازی‌ها؛ خرید ژتون و تاریخچه ←</small></a>
 
 
     <!-- سربرگ ۱: خانه (پیش‌فرض) -->
@@ -427,7 +427,7 @@
           <div class="task-coin-circle">S</div>
           <div class="task-balance-text">
             <span class="task-balance-label">موجودی سکه سیماب</span>
-            <span class="task-balance-val" id="tasks-balance-num">50</span>
+            <span class="task-balance-val" id="tasks-balance-num" data-coins>—</span>
           </div>
         </div>
         <a href="swap/index.html" class="btn-task-swap">
@@ -582,114 +582,11 @@
       adminBtn.style.display = isRealAdmin ? 'flex' : 'none';
     }
 
-    // ================= ۴. سیستم دارایی و همگام‌سازی ابری تلگرام (CloudStorage) =================
-    const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
-    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
-    const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
-    const isCloudSupported = !!(tg && tg.CloudStorage);
-
-    // مقداردهی اولیه: ۵۰ سکه برای کاربر جدید و حفظ ۲,۱۷۵,۰۰۰ برای مدیر
-    let balance = 50;
-    if (isRealAdmin) {
-      balance = SimabLegacy.readAmount(STORAGE_KEY_COINS, 2175000);
-    } else if (uid !== "guest") {
-      let saved = SimabLegacy.readAmount(STORAGE_KEY_COINS, 50);
-      // پاکسازی مقادیر میلیونی که قبلاً به اشتباه به اکانت دوم سرایت کرده بود
-      if (saved >= 100000) {
-        saved = 50;
-        localStorage.setItem(STORAGE_KEY_COINS, '50');
-      }
-      balance = saved;
-    } else {
-      balance = 50;
-    }
-
-    function renderCoins() {
-      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
-      const bHeader = document.getElementById('user-balance-txt');
-      if (bHeader) bHeader.innerText = displayVal;
-      const bTasks = document.getElementById('tasks-balance-num');
-      if (bTasks) bTasks.innerText = displayVal;
-    }
-    renderCoins();
-
-    // ذخیره سراسری و زنده دارایی (همگام‌سازی بین گوشی، آیفون و تلگرام دسکتاپ)
-    function saveUserDataGlobal(newCoins = null, newChips = null, newInv = null) {
-      if (newCoins !== null) {
-        balance = SimabLegacy.safeAmount(Number(newCoins), balance);
-        balance = Number(balance.toFixed(4));
-        localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-        renderCoins();
-      }
-      const currentCoins = balance;
-      const currentChips = parseInt(localStorage.getItem(STORAGE_KEY_CHIPS) || '0', 10);
-      let currentInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
-      try {
-        currentInv = SimabLegacy.readInventory(STORAGE_KEY_CHIPS_INV) || currentInv;
-      } catch(e) {}
-      
-      const payload = {
-        coins: currentCoins,
-        chips: newChips !== null ? newChips : currentChips,
-        inv: newInv !== null ? newInv : currentInv,
-        updated_at: Date.now()
-      };
-      
-      localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
-      
-      if (isCloudSupported && uid !== "guest") {
-        tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload), (err) => {
-          if (err) console.warn('خطا در ذخیره ابری تلگرام:', err);
-        });
-      }
-    }
-
-    function saveCoinsGlobal(newBal) {
-      saveUserDataGlobal(newBal);
-    }
-
-    // خواندن خودکار موجودی از ابری تلگرام در ابتدای ورود روی هر دستگاهی (اندروید، آیفون، کامپیوتر)
-    function syncWithTelegramCloud() {
-      if (!isCloudSupported || uid === "guest") return;
-      tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
-        if (err || !cloudRaw) {
-          // اگر بار اول است، ۵۰ سکه در کلود ثبت شود تا در سایر دستگاه‌ها هم در دسترس باشد
-          if (!err && !cloudRaw) saveUserDataGlobal();
-          return;
-        }
-        try {
-          const cloudData = JSON.parse(cloudRaw);
-          const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
-          
-          // جلوگیری از سرایت ارقام میلیونی به کاربران عادی
-          if (!isRealAdmin && cloudData.coins >= 100000) {
-            saveUserDataGlobal(50, 0, { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 });
-            return;
-          }
-
-          if (cloudData.updated_at && cloudData.updated_at >= localTime) {
-            if (typeof cloudData.coins === 'number' && Number.isFinite(cloudData.coins) && cloudData.coins >= 0 && cloudData.coins <= 1000000000000) {
-              balance = cloudData.coins;
-              localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-              renderCoins();
-            }
-            if (typeof cloudData.chips === 'number' && Number.isFinite(cloudData.chips) && cloudData.chips >= 0 && cloudData.chips <= 1000000000000) {
-              localStorage.setItem(STORAGE_KEY_CHIPS, cloudData.chips.toString());
-            }
-            if (cloudData.inv) {
-              localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(SimabLegacy.sanitizeInventory(cloudData.inv)));
-            }
-            localStorage.setItem('simab_last_sync_time', cloudData.updated_at.toString());
-          } else {
-            saveUserDataGlobal();
-          }
-        } catch(e) {
-          console.error('خطا در همگام‌سازی ابری:', e);
-        }
-      });
-    }
-    syncWithTelegramCloud();
+    // All active balances come from the shared authoritative wallet.
+    SimabWallet.subscribe(s=>{
+      document.getElementById('user-balance-txt').textContent=s.coins.toLocaleString('fa-IR');
+      document.getElementById('tasks-balance-num').textContent=s.coins.toLocaleString('fa-IR');
+    });
     function triggerHaptic(type = 'light') {
       try {
         if (tg?.HapticFeedback) {

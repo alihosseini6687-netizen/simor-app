@@ -12,12 +12,12 @@ const games=[
  'games/horoscope/index.html','games/cards/index.html',
  'streak/index.html','friends/index.html'
 ];
-test('all V6 game pages have valid inline JavaScript and shared guard loads',()=>{
+test('all active pages parse and use the shared server wallet',()=>{
  for(const p of games){
   const html=read(p);
   for(const [,script] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))
    new Script(script,{filename:p});
-  const src=html.match(/<script src="([^"]*simab-legacy-guard\.js\?v=1)"\s*><\/script>/);
+  const src=html.match(/<script src="([^"]*simab-wallet-client\.js\?v=10)"\s*><\/script>/);
   assert.ok(src,'missing guard in '+p);
   const file=resolve(root,dirname(p),src[1].split('?')[0]);
   assert.ok(existsSync(file),'broken script path in '+p);
@@ -25,7 +25,7 @@ test('all V6 game pages have valid inline JavaScript and shared guard loads',()=
 });
 test('pages cannot default to admin account outside Telegram',()=>{
  for(const path of ['games/poker/index.html','games/slot/index.html','games/backgammon/index.html','swap/index.html']){
-  assert.match(read(path),/let uid = "guest"/);
+  assert.doesNotMatch(read(path),/initDataUnsafe.*(?:p_subject|adminUserId)/);
   assert.doesNotMatch(read(path),/let uid = "702007470"/);
  }
 });
@@ -34,12 +34,10 @@ test('no shared user_balance wallet is read/written by independent pages',()=>{
   assert.doesNotMatch(read(path),/localStorage\.(?:getItem|setItem)\(\s*['"]user_balance['"]/);
  }
 });
-test('gift cards use separate demo-only credits',()=>{
+test('image gift cards cannot debit coins or issue redeemable credit',()=>{
  const html=read('games/cards/index.html');
- assert.match(html,/CARD_DEMO_STORAGE_KEY/);
- assert.match(html,/simab_cards_demo_/);
- assert.match(html,/S \(آزمایشی\)/);
- assert.match(html,/صدور کارت آزمایشی/);
+ assert.doesNotMatch(html,/balance\s*-=|saveBalance\(/);
+ assert.match(html,/ساخت کارت تصویری رایگان/);
 });
 test('helper prevents invalid, negative, Infinity and malformed inventory',()=>{
  const values=new Map();
@@ -75,6 +73,6 @@ test('server reward ledger stays separate from unverified game chips',()=>{
  const sql=read('supabase/migrations/20261012_verified_quest_rewards.sql');
  const client=read('assets/js/simab-central-quests.js');
  assert.match(sql,/UNIQUE\(telegram_subject,quest_id\)/);
- assert.match(client,/سکه‌های قدیمی مرورگر یکی نیستند|سکه‌های قدیمی بازی جدا هستند/);
- assert.match(read('supabase/functions/simab-central-quests/index.ts'),/spendableInGames:false/);
+ assert.match(client,/موجودی مشترک خانه/);
+ assert.match(read('supabase/functions/simab-central-quests/index.ts'),/spendableInGames:true/);
 });
