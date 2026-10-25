@@ -1,4 +1,4 @@
-import {startPoker,movePoker,publicPoker,startBG,moveBG,passBG,publicBG,spinSlot} from './games.ts';
+import {startPoker,movePoker,publicPoker,startBG,moveBG,passBG,publicBG,spinSlot,gameFrames} from './games.ts';
 import type {Poker,BG} from './games.ts';
 const uuid=(x:unknown)=>typeof x==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(x);
 const expose=(s:any)=>s.kind==='poker'?publicPoker(s):s.kind==='backgammon'?publicBG(s):s;
@@ -53,7 +53,7 @@ export async function gameAPI(db:any,subject:string,p:Record<string,any>){
   if(game==='poker'&&state.finished)credit=state.players[0].stack;
   if(game==='backgammon'&&state.finished&&state.winner===0)credit=state.stake*2;
   const r=await db.rpc('simab_game_commit',{p_subject:subject,p_game:game,p_request_id:p.requestId,p_operation_key:signature,p_id:id,p_expected_version:expected,
-    p_state:state,p_public:expose(state),p_debit:debit,p_credit:credit,p_finished:state.finished});
+    p_state:state,p_public:{...expose(state),timeline:gameFrames(state)},p_debit:debit,p_credit:credit,p_finished:state.finished});
   if(r.error)throw Error(r.error.message);if(!r.data?.wallet?.serverWallet)throw Error('game_unavailable');
   return{status:200,data:r.data};
  }catch(e){const code=(e as Error).message;const known=['invalid_turn','cannot_check','raise_not_reopened','invalid_raise','raise_too_small','invalid_move','invalid_request','invalid_buyin','invalid_bet','insufficient_chips','wallet_limit','active_game_exists','slot_cooldown','game_not_found','stale_game','game_finished','request_conflict'];

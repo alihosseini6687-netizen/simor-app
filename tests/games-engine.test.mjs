@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {startPoker,movePoker,publicPoker,evaluate,compare,settlePoker,startBG,moveBG,legalBG,passBG,spinSlot} from '../supabase/functions/simab-central-quests/games.ts';
+import {startPoker,movePoker,publicPoker,evaluate,compare,settlePoker,startBG,moveBG,legalBG,passBG,spinSlot,gameFrames} from '../supabase/functions/simab-central-quests/games.ts';
 const c=(rank,suit=0)=>(rank-2)+suit*13;
 test('holdem evaluator handles wheel straight, flush, full house and kicker tie',()=>{
  assert.equal(evaluate([c(14),c(2,1),c(3,2),c(4),c(5,1),c(9,2),c(10)])[0],4);
@@ -52,4 +52,18 @@ test('cumulative short all-ins reopen raising only once the full raise threshold
  const s=startPoker(100,6);s.finished=false;s.current=0;s.players[0].folded=false;s.players[0].acted=true;s.players[0].lastFaced=2;s.players[0].round=2;s.players[0].stack=98;s.minRaise=4;
  s.highest=5;assert.equal(publicPoker(s).canRaise,false);
  s.highest=6;assert.equal(publicPoker(s).canRaise,true);
+});
+
+
+test('no raise into a dry side pot; a lone funded player can call and reach showdown',()=>{
+ const p=(id,stack,round)=>({id,name:String(id),cards:[id*2,id*2+1],stack,bet:round,round,folded:false,acted:false,lastFaced:0,last:''});
+ const s={kind:'poker',players:[p(0,50,10),p(1,0,20)],deck:Array.from({length:30},(_,i)=>i+10),board:[],street:0,current:0,highest:20,minRaise:10,pending:[0],button:0,finished:false,result:'',winners:[],buyIn:60,log:[]};
+ assert.equal(publicPoker(s).canRaise,false);assert.throws(()=>movePoker(structuredClone(s),'raise',30),/invalid_raise/);
+ movePoker(s,'call',0);assert.ok(s.finished);assert.equal(s.board.length,5);assert.equal(s.players.reduce((a,p)=>a+p.stack,0),80);
+});
+test('animation snapshots expose only legal public information, never private deck or future cards',()=>{
+ for(let n=0;n<25;n++){const s=startPoker(100,6);let prior=0;for(const frame of gameFrames(s)){assert.equal(frame.deck,undefined);assert.ok(frame.board.length>=prior);prior=frame.board.length;for(const p of frame.players.slice(1))if(!frame.finished||p.folded)assert.deepEqual(p.cards,[]);}assert.ok(gameFrames(s).length>0);}
+});
+test('backgammon opening uses unequal dice, standard 15-checker setup and higher die starter',()=>{
+ let firsts=new Set();for(let n=0;n<40;n++){const s=startBG(20),f=gameFrames(s)[0];assert.ok(f);assert.equal(f.dice.length,2);assert.notEqual(f.dice[0],f.dice[1]);assert.equal(f.turn,f.dice[0]>f.dice[1]?0:1);firsts.add(f.turn);assert.deepEqual(f.points,[ -2,0,0,0,0,5,0,3,0,0,0,-5,5,0,0,0,-3,0,-5,0,0,0,0,2 ]);}assert.equal(firsts.size,2);
 });

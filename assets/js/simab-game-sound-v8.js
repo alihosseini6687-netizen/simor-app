@@ -1,8 +1,8 @@
-/* Small gesture-unlocked synthesised SFX. No downloads, muted by default,
+/* Small gesture-unlocked synthesised SFX. No downloads, enabled on user gesture,
  no autoplay, audio gracefully disabled when unsupported. */
 (function(root){
 "use strict";
-let enabled=false,ctx=null;
+let enabled=true,ctx=null;try{enabled=localStorage.getItem('simab_sound_enabled')!=='0';}catch{}
 function context(){
  if(!root.AudioContext&&!root.webkitAudioContext)return null;
  if(!ctx)ctx=new (root.AudioContext||root.webkitAudioContext)();
@@ -27,10 +27,11 @@ function play(kind="tap"){
   });
  }catch{}
 }
+function unlock(){try{const ac=context();if(ac?.state==='suspended')ac.resume().catch(()=>{});}catch{}}
 function toggle(button){
- enabled=!enabled;
+ enabled=!enabled;try{localStorage.setItem('simab_sound_enabled',enabled?'1':'0');}catch{}unlock();
  if(button){button.setAttribute("aria-pressed",String(enabled));button.textContent=enabled?"🔊 صدا روشن":"🔇 صدا خاموش";}
  if(enabled)play("tap");return enabled;
 }
-root.SimabSound=Object.freeze({play,toggle,isEnabled:()=>enabled});
+root.SimabSound=Object.freeze({play,toggle,unlock,isEnabled:()=>enabled});
 })(typeof window!=="undefined"?window:globalThis);

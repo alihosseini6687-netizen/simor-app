@@ -17,7 +17,7 @@ test('all active pages parse and use the shared server wallet',()=>{
   const html=read(p);
   for(const [,script] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))
    new Script(script,{filename:p});
-  const src=html.match(/<script src="([^"]*simab-wallet-client\.js\?v=11)"\s*><\/script>/);
+  const src=html.match(/<script src="([^"]*simab-wallet-client\.js\?v=12)"\s*><\/script>/);
   assert.ok(src,'missing guard in '+p);
   const file=resolve(root,dirname(p),src[1].split('?')[0]);
   assert.ok(existsSync(file),'broken script path in '+p);
