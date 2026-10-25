@@ -6,7 +6,7 @@
 const endpoint="https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests";
 const $=id=>document.getElementById(id);
 const fmt=n=>Number(n||0).toLocaleString("fa-IR");
-const names={daily:"پاداش روزانه",wheel:"گردونه روزانه",miner_start:"شروع ماینر",
+const names={admin_credit:"واریز مدیریت",daily:"پاداش روزانه",wheel:"گردونه روزانه",miner_start:"شروع ماینر",
   miner_claim:"برداشت ماینر",exchange_to_chips:"تبدیل سکه به ژتون",
   exchange_to_coins:"تبدیل ژتون به سکه",slot:"رولر امن",verified_quest:"مأموریت کانال"};
 const symbols=["🍒","💎","🔔","7️⃣","⭐","👑"];

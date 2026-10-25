@@ -115,7 +115,7 @@
     <a href="#v6-admin-games">🎮 تنظیم بازی‌ها</a>
     <a href="#v6-admin-tasks">🎯 مأموریت‌ها</a>
   </nav>
-  <div class="v6-admin-hint">🔐 <strong>امنیت سیماب:</strong> انتشار مأموریت و ارسال پیام کانال تنها پس از تأیید امضای تلگرام و مجوز مدیر در سرور انجام می‌شود. شارژ شخصی، ماینر و تنظیم بازی‌ها فعلاً محلی و آزمایشی هستند و سکه معتبر محسوب نمی‌شوند.</div>
+  <div class="v6-admin-hint">🔐 <strong>امنیت سیماب:</strong> انتشار مأموریت و ارسال پیام کانال تنها پس از تأیید امضای تلگرام و مجوز مدیر در سرور انجام می‌شود. واریز به آیدی کاربر در کیف پول سروری ثبت می‌شود. شارژ شخصی، ماینر و تنظیم بازی‌ها فعلاً محلی و آزمایشی هستند و سکه معتبر محسوب نمی‌شوند.</div>
   <!-- بخش ۱: شارژ خودتان -->
   <div id="v6-admin-wallet" class="v6-admin-target"></div>
   <div class="admin-card">
@@ -172,11 +172,14 @@
 
   <!-- بخش ۴: واریز به کاربران و لینک هدیه -->
   <div class="admin-card">
-    <h3>💸 واریز سکه به کاربران یا ساخت لینک هدیه</h3>
-    <p style="font-size:12px;line-height:1.9;color:#f5cf62;margin-bottom:9px;">⚠️ این دو قابلیت تا راه‌اندازی اعتبارسنجی سمت سرور موقتاً غیرفعال‌اند. انتقال از طریق حافظه مرورگر معتبر نیست.</p>
-    <input type="text" class="input-field" id="target-user-id" placeholder="شناسه عددی تلگرام کاربر (User ID)">
-    <input type="number" class="input-field" id="target-coin-amount" placeholder="تعداد سکه واریزی...">
-    <button class="btn-action" onclick="transferCoinsDirect()">واریز به شناسه کاربر</button>
+    <h3>💸 افزودن سکه به کیف پول سروری کاربران</h3>
+    <p style="font-size:12px;line-height:1.9;color:#f5cf62;margin-bottom:9px;">آیدی عددی تلگرام و تعداد سکه را وارد کن. مبلغ به موجودی سروری اضافه می‌شود و سابقه واریز ثبت خواهد شد. این اعتبار در بازی‌های قدیمی محلی نمایش داده نمی‌شود.</p>
+    <label for="target-user-id">آیدی عددی تلگرام گیرنده (نه نام کاربری)</label>
+    <input type="text" inputmode="numeric" dir="ltr" class="input-field" id="target-user-id" placeholder="مثلاً 123456789" autocomplete="off">
+    <label for="target-coin-amount">تعداد سکه برای افزودن</label>
+    <input type="text" inputmode="numeric" dir="ltr" class="input-field" id="target-coin-amount" placeholder="مثلاً 1000" autocomplete="off">
+    <button type="button" class="btn-action" id="admin-credit-submit" onclick="transferCoinsDirect()">افزودن سکه به کاربر</button>
+    <p id="admin-credit-status" role="status" aria-live="polite" style="font-size:13px;line-height:1.9;margin-top:8px"></p>
     <div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px;">
       <button class="btn-tool purple" style="width: 100%;" onclick="generateGiftLink()">🎁 ساخت لینک هدیه تلگرامی (ارسال در چت)</button>
     </div>
@@ -476,6 +479,6 @@
     loadGamesStakesConfig();
     renderTasks();
   </script>
-  <script src="../assets/js/simab-central-quests.js?v=7" defer></script>
+  <script src="../assets/js/simab-central-quests.js?v=20261025" defer></script>
 </body>
 </html>
