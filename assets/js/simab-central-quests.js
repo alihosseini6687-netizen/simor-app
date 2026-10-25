@@ -437,7 +437,7 @@
     verifiedCard.style.cssText = "display:block;margin:10px 0;padding:14px;border-color:#b58a37";
     const verifiedTitle=el("div","quest-title","🔐 سکه‌های تأییدشده در سرور");
     const verifiedValue=el("div","quest-reward","در حال بررسی...");
-    const verifiedNote=el("small","","سکه‌های تأییدشده فقط در کیف پول سروری، صرافی امن و رولر امن قابل استفاده‌اند؛ با سکه‌های قدیمی مرورگر یکی نیستند.");
+    const verifiedNote=el("small","","این همان موجودی مشترک خانه، صرافی، پوکر، رول و تخته‌نرد است.");
     verifiedNote.style.cssText="display:block;line-height:1.8;margin-top:8px;opacity:.85";
     verifiedCard.append(verifiedTitle,verifiedValue,verifiedNote);
     parent.after(verifiedCard);
@@ -462,7 +462,7 @@
         const quests = await readPublished();
         await loadVerifiedWallet();
         if (!rewardsEnabled) verifiedNote.textContent =
-          "موجودی تأییدشده حفظ می‌شود؛ برای جایزه جدید، ربات باید مدیر @SimorApp باشد. سکه‌های قدیمی بازی جدا هستند.";
+          "موجودی تأییدشده حفظ می‌شود؛ برای جایزه جدید، ربات باید مدیر @SimorApp باشد. اعتبار سروری در تمام میزهای جدید قابل استفاده است.";
         if (quests.some(q => isOfficialChannelUrl(q.url))) {
           const staticChannelCard = document.getElementById("card-quest-tg");
           if (staticChannelCard) staticChannelCard.hidden = true;

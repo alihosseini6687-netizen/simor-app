@@ -8,13 +8,13 @@ const edge=read('supabase/functions/simab-central-quests/index.ts');
 const sql=read('supabase/migrations/20261012_verified_quest_rewards.sql');
 const client=read('assets/js/simab-central-quests.js');
 test('TypeScript function and browser client parse',()=>{
-  new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/m,''));
+  new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/gm,''));
   new Script(client);
   for(const p of ['quests/index.html','admin/index.html']){
     const html=read(p);
     for(const [,code] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))
       new Script(code);
-    assert.match(html,/simab-central-quests\.js\?v=(?:7|20261025)/);
+    assert.match(html,/simab-central-quests\.js\?v=(?:7|20261025|10)/);
   }
 });
 test('only verified Telegram channel can credit a reward',()=>{

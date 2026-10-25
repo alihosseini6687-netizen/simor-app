@@ -238,7 +238,7 @@
   </style>
   <style>body{ --v6-art:url("../assets/v3/rewards.webp"); }</style>
   <link rel="stylesheet" href="../assets/css/simab-secondary-v6.css?v=6">
-  <script src="../assets/js/simab-legacy-guard.js?v=1"></script>
+  <script src="../assets/js/simab-wallet-client.js?v=10"></script>
 
 <link rel="stylesheet" href="../assets/css/simab-secure-entry-v7.css?v=7">
 <link rel="stylesheet" href="../assets/css/simab-v8-core.css?v=8">
@@ -254,7 +254,7 @@
       <div class="header-title">مأموریت‌های ویژه</div>
       <div class="coin-badge">
         <div class="coin-badge-s">S</div>
-        <span id="user-balance">50</span>
+        <span id="user-balance" data-coins>—</span>
       </div>
     </header>
     <a class="simab-secure-entry" href="../wallet/index.html"><strong>🏅 مشاهده سکه تأییدشده ←</strong><small>پاداش‌های عضوگیری تأییدشده در کیف پول سروری ثبت و نمایش داده می‌شوند.</small></a>
@@ -347,16 +347,6 @@
       goBackToMother();
     };
 
-    // موجودی هماهنگ با کل مینی‌اپ
-    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    let balance = SimabLegacy.readAmount(STORAGE_KEY_COINS, 50);
-
-    function updateBalanceDisplay() {
-      const displayVal = Number(balance).toLocaleString(undefined, { maximumFractionDigits: 3 });
-      document.getElementById('user-balance').innerText = displayVal;
-    }
-    updateBalanceDisplay();
-
     function showToast(text) {
       const t = document.getElementById('toast-msg');
       t.innerText = text;
@@ -407,6 +397,6 @@
 
     initQuestsState();
   </script>
-  <script src="../assets/js/simab-central-quests.js?v=7" defer></script>
+  <script src="../assets/js/simab-central-quests.js?v=10" defer></script>
 </body>
 </html>

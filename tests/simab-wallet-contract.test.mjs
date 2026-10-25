@@ -5,14 +5,14 @@ import {Script,runInNewContext} from 'node:vm';
 import {stripTypeScriptTypes} from 'node:module';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const edge=read('supabase/functions/simab-central-quests/index.ts');
-const ui=read('assets/js/simab-secure-wallet.js');
+const ui=read('assets/js/simab-wallet-client.js');
 const sql=read('supabase/migrations/20261013_secure_wallet_games.sql');
 
 test('all changed JS parses, Edge compiles after stripping Deno types',()=>{
   new Script(ui);
-  new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/m,''));
+  new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/gm,''));
   const html=read('wallet/index.html');
-  assert.match(html,/src="\.\.\/assets\/js\/simab-secure-wallet\.js\?v=1"/);
+  assert.match(html,/src="\.\.\/assets\/js\/simab-secure-wallet\.js\?v=10"/);
   for(const [,code] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(code);
 });
 test('Telegram auth and server-side wallet action never trust browser user or RNG',()=>{
@@ -44,23 +44,20 @@ test('new server wallet must not import, spend or mirror legacy CloudStorage bal
   assert.doesNotMatch(ui,/localStorage\.getItem\(\s*['"]simor_coins_/);
   assert.doesNotMatch(ui,/CloudStorage\.(?:getItem|setItem)/);
   assert.doesNotMatch(ui,/Math\.random/);
-  assert.match(ui,/simab_secure_wallet_pending_v1/);
+  assert.match(ui,/simab_financial_pending_v2/);
   assert.match(ui,/crypto\.randomUUID\(\)/);
   assert.match(sql,/simab_verified_quest_balances/);
-  for(const path of ['index.html','games/poker/index.html','games/backgammon/index.html',
-    'games/slot/index.html','games/wheel/index.html','games/tap/index.html',
-    'streak/index.html','swap/index.html','quests/index.html']){
-    const page=read(path);
-    assert.match(page,/simab-secure-entry/,path);
-    assert.match(page,/href="(?:\.\.\/){0,2}wallet\/index\.html"/,path);
+  for(const path of ['index.html','games/poker/index.html','games/backgammon/index.html','games/slot/index.html','games/wheel/index.html','games/tap/index.html','streak/index.html','swap/index.html','quests/index.html']){
+    assert.match(read(path),/simab-wallet-client\.js\?v=10/,path);
+    assert.doesNotMatch(read(path),/simor_coins_|simab_chips_/);
   }
 });
-test('miner is programmed to CLAIM (not restart) after starting',()=>{
-  assert.match(ui,/\$\("miner-btn"\)\.dataset\.secureAction = ready \? "miner_claim" : "miner_start"/);
+test('free miner claims after start; paid miner is separate and charged on server',()=>{
+ const controller=read('assets/js/simab-secure-wallet.js');
+ assert.match(controller,/running\?'miner_claim':'miner_start'/);
+ assert.match(read('supabase/migrations/20261025081053_unified_wallet_game_sessions.sql'),/coins=coins-cost/);
 });
-test('wallet controller does not silently create a second request id on retry',()=>{
-  assert.match(ui,/const waiting=getPending\(\)/);
-  assert.match(ui,/const request=waiting\|\|/);
-  assert.match(ui,/storePending\(request\)/);
-  assert.match(ui,/clearPending\(\);paint\(s\)/);
+test('wallet controller persists the full original request before sending and reuses it on recovery',()=>{
+ assert.match(ui,/localStorage.setItem\(pendingKey,JSON.stringify\(request\)\)/);
+ assert.match(ui,/api\(pending\)/);assert.match(ui,/if\(pending\)throw Error/);
 });

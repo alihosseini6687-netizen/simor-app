@@ -286,7 +286,7 @@
       transform: translateX(-50%) translateY(0);
     }
   </style>
-  <script src="../assets/js/simab-legacy-guard.js?v=1"></script>
+  <script src="../assets/js/simab-wallet-client.js?v=10"></script>
 <link rel="stylesheet" href="../assets/css/simab-v8-core.css?v=8">
 </head>
 <body>
@@ -297,7 +297,7 @@
       <div class="header-title">دعوت دوستان (رفرال)</div>
       <div class="coin-badge">
         <div class="coin-badge-s">S</div>
-        <span id="user-balance">50</span>
+        <span id="user-balance" data-coins>—</span>
       </div>
     </header>
 
@@ -367,58 +367,6 @@
     }
     document.getElementById('my-game-id').innerText = gameId;
 
-    // ۳. اتصال به ابری تلگرام و حذف کلید مشترک قدیمی
-    const CLOUD_KEY_PROFILE = 'simab_user_data_v1';
-    const STORAGE_KEY_COINS = 'simor_coins_' + uid;
-    const isCloudSupported = !!(tg && tg.CloudStorage);
-
-    let balance = 50;
-    if (uid === "702007470") {
-      balance = SimabLegacy.readAmount(STORAGE_KEY_COINS, 2175000);
-    } else if (uid !== "guest") {
-      let saved = SimabLegacy.readAmount(STORAGE_KEY_COINS, 50);
-      if (saved >= 100000) saved = 50;
-      balance = saved;
-    }
-
-    function updateBalanceDisplay() {
-      document.getElementById('user-balance').innerText = Number(balance).toLocaleString();
-      localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-      localStorage.removeItem('user_balance');
-
-      const payload = {
-        coins: balance,
-        chips: parseInt(localStorage.getItem('simab_chips_' + uid) || '0', 10),
-        inv: JSON.parse(localStorage.getItem('simab_chips_inv_' + uid) || '{"c1":0,"c5":0,"c25":0,"c100":0,"c500":0}'),
-        updated_at: Date.now()
-      };
-      localStorage.setItem('simab_last_sync_time', payload.updated_at.toString());
-      if (isCloudSupported && uid !== "guest") {
-        tg.CloudStorage.setItem(CLOUD_KEY_PROFILE, JSON.stringify(payload));
-      }
-    }
-    updateBalanceDisplay();
-
-    function syncWithTelegramCloud() {
-      if (!isCloudSupported || uid === "guest") return;
-      tg.CloudStorage.getItem(CLOUD_KEY_PROFILE, (err, cloudRaw) => {
-        if (err || !cloudRaw) return;
-        try {
-          const cloudData = JSON.parse(cloudRaw);
-          const localTime = parseInt(localStorage.getItem('simab_last_sync_time') || '0', 10);
-          if (cloudData.updated_at && cloudData.updated_at >= localTime) {
-            if (typeof cloudData.coins === 'number' && Number.isFinite(cloudData.coins) && cloudData.coins >= 0 && cloudData.coins <= 1000000000000) {
-              if (uid !== "702007470" && cloudData.coins >= 100000) return;
-              balance = cloudData.coins;
-              localStorage.setItem(STORAGE_KEY_COINS, balance.toString());
-              document.getElementById('user-balance').innerText = Number(balance).toLocaleString();
-            }
-          }
-        } catch(e) {}
-      });
-    }
-    syncWithTelegramCloud();
-
     // ۴. شمارنده هماهنگ دعوت‌ها بر اساس کد بازی و آیدی تلگرام
     let inviteCount = parseInt(localStorage.getItem('simab_ref_count_' + gameId) || localStorage.getItem('simab_ref_count_' + uid) || '0', 10);
     const referralMilestones = [
@@ -455,7 +403,7 @@
         if (isClaimed) {
           btnHtml = `<button class="btn-claim claimed" disabled>دریافت شد ✓</button>`;
         } else if (canClaim) {
-          btnHtml = `<button class="btn-claim" onclick="claimReward(${m.count}, ${m.reward})">دریافت هدیه ✨</button>`;
+          btnHtml = `<button class="btn-claim" disabled>در انتظار تأیید سروری</button>`;
         } else {
           btnHtml = `<button class="btn-claim" disabled>قفل (${inviteCount}/${m.count}) 🔒</button>`;
         }
@@ -471,20 +419,7 @@
       document.getElementById('total-earned-coins').innerText = totalEarned.toLocaleString();
     }
 
-    function claimReward(targetCount, rewardCoins) {
-    if (inviteCount < targetCount) return;
-    const claimKey = `simab_ref_claimed_${targetCount}_${uid}`;
-    localStorage.setItem(claimKey, 'true');
-
-    // افزایش سکه و ثبت خودکار در کلود بدون دستکاری user_balance
-    balance = parseFloat((balance + rewardCoins).toFixed(4));
-    updateBalanceDisplay();
-    renderTasks();
-
-    if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-    showToast(`پاداش ${rewardCoins.toLocaleString()} سکه با موفقیت دریافت شد! 🎉`);
-  }
-
+    function claimReward(){showToast('پرداخت پاداش دعوت فقط پس از تأیید سروری عضویت دعوت‌شده فعال می‌شود.');}
     function getRefLink() {
       return `https://t.me/SimorApp_bot/simab?startapp=${gameId}`;
     }

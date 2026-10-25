@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {stripTypeScriptTypes} from 'node:module';
 import {createHmac, webcrypto} from 'node:crypto';
-const code=stripTypeScriptTypes(readFileSync(new URL('../supabase/functions/simab-central-quests/index.ts',import.meta.url),'utf8').replace(/^import .*\n/m,''));
+const code=stripTypeScriptTypes(readFileSync(new URL('../supabase/functions/simab-central-quests/index.ts',import.meta.url),'utf8').replace(/^import .*\n/gm,''));
 const token='123456:test-only';
 function signed(id){
  const fields={auth_date:String(Math.floor(Date.now()/1000)),user:JSON.stringify({id})};
@@ -16,7 +16,7 @@ function server(admin){
  const db={from:()=>({select:()=>({eq:()=>({maybeSingle:async()=>({data:admin?{telegram_subject:'702007470'}:null,error:null})})})}),
   rpc:async(name,p)=>{calls.push({name,p});return {data:{serverWallet:true,targetUserId:p.p_target,amount:p.p_amount,coins:p.p_amount,requestId:p.p_request_id},error:null};}};
  const Deno={serve:f=>{handle=f;},env:{get:k=>({SUPABASE_URL:'https://example.invalid',SUPABASE_SERVICE_ROLE_KEY:'test-only',SIMAB_TELEGRAM_BOT_TOKEN:token})[k]}};
- new Function('Deno','createClient','crypto',code)(Deno,()=>db,webcrypto);
+ new Function('Deno','createClient','gameAPI','crypto',code)(Deno,()=>db,()=>{throw Error('unexpected game');},webcrypto);
  return {calls,request:body=>handle(new Request('https://example.invalid/functions/v1/simab-central-quests',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)}))};
 }
 const payload={action:'admin_credit',targetUserId:'123456',amount:50,requestId:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'};

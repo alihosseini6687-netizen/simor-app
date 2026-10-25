@@ -617,7 +617,7 @@
   <link rel="stylesheet" href="../../assets/css/simab-game-shell-v5.css?v=5">
   <link rel="stylesheet" href="../../assets/css/simab-slot-v5.css?v=5">
   <link rel="stylesheet" href="../../assets/css/simab-game-v6.css?v=6">
-  <script src="../../assets/js/simab-legacy-guard.js?v=1"></script>
+  <script src="../../assets/js/simab-wallet-client.js?v=10"></script>
 
 <link rel="stylesheet" href="../../assets/css/simab-secure-entry-v7.css?v=7">
 <link rel="stylesheet" href="../../assets/css/simab-v8-core.css?v=8">
@@ -634,11 +634,11 @@
     <div class="header-controls">
       <button class="btn-sound-toggle" id="btn-sound" onclick="toggleAudio()" title="قطع/وصل صدا">🔊</button>
       <div class="header-balance-badge" onclick="window.location.href='../../swap/index.html'" title="صندوق ژتون‌های شما (ورود به صرافی)">
-        🟣 <span id="header-chips-bal">۰</span>
+        🟣 <span id="header-chips-bal" data-chips>۰</span>
       </div>
     </div>
   </div>
-  <a class="simab-secure-entry" href="../../wallet/index.html"><strong>🎰 نسخه رول با ژتون سروری</strong><small>این دستگاه با ژتون محلی مجازی کار می‌کند؛ برای چرخش ثبت‌شده در سرور وارد کیف بازی شو ←</small></a>
+  <a class="simab-secure-entry" href="../../wallet/index.html"><strong>🎰 نسخه رول با ژتون سروری</strong><small>ژتون تمام بازی‌ها مشترک است؛ خرید و تاریخچه در کیف پول ←</small></a>
 
   <p class="v8-roll-virtual-note">✨ تمام ژتون‌ها و جوایز صرفاً مجازی و برای بازی در سیماب‌اند. برداشت نقدی یا تبدیل به پول وجود ندارد. صدای چرخش را می‌توانی از بالای صفحه خاموش کنی.</p>
   <!-- کادر وضعیت آخرین نتیجه و پاداش -->
@@ -763,8 +763,8 @@
         <span class="payout-reward" style="color: #94a3b8;">پوچ (x0)</span>
       </div>
       <div class="payout-item full-width bomb-item">
-        <span class="payout-name">💣 ۳ بمب انفجاری</span>
-        <span class="payout-reward" style="color: #ef4444;">-۱۰ ژتون (خسارت منفی!)</span>
+        <span class="payout-name">💣 ۳ بمب</span>
+        <span class="payout-reward" style="color: #ef4444;">پوچ؛ بدون کسر اضافه</span>
       </div>
     </div>
   </div>
@@ -808,118 +808,8 @@
     }
     // ================= ۲. اتصال مستقیم به صندوق ژتون‌های صرافی و پوکر =================
     // ================= ۲. اتصال مستقیم به صندوق ژتون‌های صرافی و پوکر =================
-    const STORAGE_KEY_CHIPS = 'simab_chips_' + uid;
-    const STORAGE_KEY_CHIPS_INV = 'simab_chips_inv_' + uid;
-    let totalChips = 0;
-    let chipsInv = { c1: 0, c5: 0, c25: 0, c100: 0, c500: 0 };
-    function calcTotal(inv) {
-      return (inv.c1 || 0) * 1 +
-             (inv.c5 || 0) * 5 +
-             (inv.c25 || 0) * 25 +
-             (inv.c100 || 0) * 100 +
-             (inv.c500 || 0) * 500;
-    }
-    function standardBreakdown(amount) {
-      let rem = Math.max(0, Math.floor(amount));
-      const c1 = (rem >= 20) ? 20 : rem; rem -= c1 * 1;
-      const c5 = (rem >= 80) ? 16 : Math.floor(rem / 5); rem -= c5 * 5;
-      const c25 = (rem >= 400) ? 16 : Math.floor(rem / 25); rem -= c25 * 25;
-      const c100 = (rem >= 2000) ? 20 : Math.floor(rem / 100); rem -= c100 * 100;
-      const c500 = Math.floor(rem / 500); rem -= c500 * 500;
-      let extra100 = Math.floor(rem / 100); rem %= 100;
-      let extra25 = Math.floor(rem / 25); rem %= 25;
-      let extra5 = Math.floor(rem / 5); rem %= 5;
-      let extra1 = rem;
-      return {
-        c1: c1 + extra1,
-        c5: c5 + extra5,
-        c25: c25 + extra25,
-        c100: c100 + extra100,
-        c500: c500
-      };
-    }
-    // لود استاندارد ژتون‌ها بدون تداخل با سکه‌های اصلی (user_balance)
-    function loadChips() {
-      totalChips = SimabLegacy.readAmount(STORAGE_KEY_CHIPS, 0);
-      try {
-        const saved = SimabLegacy.readInventory(STORAGE_KEY_CHIPS_INV);
-        if (saved) chipsInv = saved;
-      } catch(e) {}
-      if (totalChips > 0 && calcTotal(chipsInv) !== totalChips) {
-        chipsInv = standardBreakdown(totalChips);
-        localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipsInv));
-      }
-      renderChipsUI();
-    }
-    // ذخیره فقط روی ژتون‌ها (بدون دستکاری سکه‌های اصلی)
-    function saveChips() {
-      totalChips = calcTotal(chipsInv);
-      localStorage.setItem(STORAGE_KEY_CHIPS, totalChips.toString());
-      localStorage.setItem(STORAGE_KEY_CHIPS_INV, JSON.stringify(chipsInv));
-      renderChipsUI();
-    }
-
-    // کسر ژتون از موجودی (با خرد کردن ژتون بزرگ‌تر در صورت لزوم)
-    function deductChips(inv, amount) {
-      let total = calcTotal(inv);
-      if (total < amount) return false;
-      
-      let rem = amount;
-      const denoms = [
-        { k: 'c500', v: 500 },
-        { k: 'c100', v: 100 },
-        { k: 'c25', v: 25 },
-        { k: 'c5', v: 5 },
-        { k: 'c1', v: 1 }
-      ];
-      for (let d of denoms) {
-        if (rem <= 0) break;
-        let take = Math.min(inv[d.k] || 0, Math.floor(rem / d.v));
-        inv[d.k] -= take;
-        rem -= take * d.v;
-      }
-      if (rem > 0) {
-        let candidates = [
-          { k: 'c5', v: 5 },
-          { k: 'c25', v: 25 },
-          { k: 'c100', v: 100 },
-          { k: 'c500', v: 500 }
-        ];
-        for (let d of candidates) {
-          if (d.v > rem && (inv[d.k] || 0) > 0) {
-            inv[d.k] -= 1;
-            let change = d.v - rem;
-            let c100 = Math.floor(change / 100); change %= 100;
-            let c25 = Math.floor(change / 25); change %= 25;
-            let c5 = Math.floor(change / 5); change %= 5;
-            let c1 = change;
-            inv.c100 = (inv.c100 || 0) + c100;
-            inv.c25 = (inv.c25 || 0) + c25;
-            inv.c5 = (inv.c5 || 0) + c5;
-            inv.c1 = (inv.c1 || 0) + c1;
-            rem = 0;
-            break;
-          }
-        }
-      }
-      return rem === 0;
-    }
-
-    // افزودن ژتون بابت برد
-    function addChips(inv, amount) {
-      let rem = Math.max(0, Math.floor(amount));
-      const c500 = Math.floor(rem / 500); rem %= 500;
-      const c100 = Math.floor(rem / 100); rem %= 100;
-      const c25 = Math.floor(rem / 25); rem %= 25;
-      const c5 = Math.floor(rem / 5); rem %= 5;
-      const c1 = rem;
-      inv.c500 = (inv.c500 || 0) + c500;
-      inv.c100 = (inv.c100 || 0) + c100;
-      inv.c25 = (inv.c25 || 0) + c25;
-      inv.c5 = (inv.c5 || 0) + c5;
-      inv.c1 = (inv.c1 || 0) + c1;
-    }
-
+    let totalChips=0, chipsInv={c1:0,c5:0,c25:0,c100:0,c500:0};
+    function chipBreakdown(value){const result={};let rest=value;for(const n of [500,100,25,5,1]){result['c'+n]=Math.floor(rest/n);rest%=n;}return result;}
     function renderChipsUI() {
       document.getElementById('header-chips-bal').innerText = totalChips.toLocaleString('fa-IR');
       document.getElementById('tray-total-lbl').innerText = `مجموع: ${totalChips.toLocaleString('fa-IR')} ژتون`;
@@ -1089,49 +979,25 @@
     populateStrip(document.getElementById('strip-3'), symbols[1]); // الماس
 
     // ================= ۶. چرخش رول‌ها و پردازش شرط ژتونی =================
-    function spinSlot() {
-      initAudio();
-      const cost = baseCost * multiplier;
-      if (totalChips < cost) {
-        showAlertModal('⚠️ موجودی ژتون ناکافی', `برای این شرط به ${cost.toLocaleString('fa-IR')} ژتون نیاز دارید ولی موجودی شما ${totalChips.toLocaleString('fa-IR')} است. لطفاً از صرافی ژتون تهیه کنید.`, `${cost.toLocaleString('fa-IR')} ژتون`, true, true);
-        if (autoSpinActive) toggleAutoSpin();
-        return;
-      }
-      if (isSpinning) return;
-      isSpinning = true;
-      document.getElementById('btn-spin').disabled = true;
-
-      // کسر واقعی ژتون‌ها از موجودی با حفظ توزیع
-      deductChips(chipsInv, cost);
-      saveChips();
+    async function spinSlot() {
+      if(isSpinning)return;
+      initAudio();isSpinning=true;document.getElementById('btn-spin').disabled=true;
       try {
-        if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('medium');
-      } catch(e) {}
-
-      const s1 = getRandomSymbol();
-      const s2 = getRandomSymbol();
-      const s3 = getRandomSymbol();
-
-      // حالت تعلیق جک‌پات
-      const isSuspense = (s1.id === s2.id && (s1.id === 'chest' || s1.id === 'diamond' || s1.id === 'seven'));
-      const r3Box = document.getElementById('reel-box-3');
-      if (isSuspense) {
-        setTimeout(() => r3Box.classList.add('suspense-glow'), 1200);
-      }
-
-      animateReel('strip-1', s1, 1000);
-      animateReel('strip-2', s2, 1450);
-      animateReel('strip-3', s3, isSuspense ? 2600 : 1900, () => {
-        isSpinning = false;
-        r3Box.classList.remove('suspense-glow');
-        document.getElementById('btn-spin').disabled = false;
-        checkWin(s1, s2, s3, cost);
-        if (autoSpinActive) {
-          setTimeout(spinSlot, 900);
-        }
-      });
+        const r=await SimabWallet.mutate('game',{game:'slot',op:'start',amount:baseCost*multiplier,multiplier});
+        const reels=r.state.reels.map(i=>symbols[i]);
+        animateReel('strip-1',reels[0],850);animateReel('strip-2',reels[1],1200);
+        animateReel('strip-3',reels[2],1550,()=>{
+          displayServerSpin(r);isSpinning=false;document.getElementById('btn-spin').disabled=false;
+          if(autoSpinActive)setTimeout(spinSlot,1100);
+        });
+      }catch(e){isSpinning=false;if(autoSpinActive)toggleAutoSpin();document.getElementById('btn-spin').disabled=false;document.getElementById('win-status-lbl').textContent=e.message;}
     }
-
+    function displayServerSpin(r){
+      if(r?.state?.kind!=='slot')return;
+      const result=r.state;result.reels.forEach((value,i)=>{const strip=document.getElementById('strip-'+(i+1));populateStrip(strip,symbols[value]);strip.style.transition='none';strip.style.transform='translateY(0px)';});document.getElementById('win-status-lbl').textContent=(r.duplicate?'نتیجه قبلاً ثبت شده بود':'نتیجه ثبت‌شده در سرور')+' • شرط '+result.bet.toLocaleString('fa-IR');
+      document.getElementById('win-display').textContent='جایزه: '+result.payout.toLocaleString('fa-IR')+' ژتون • خالص: '+(result.payout-result.bet).toLocaleString('fa-IR');
+      if(result.payout>0)playWinSound();
+    }
     // انیمیشن توقف فنری
     function animateReel(stripId, targetSymbol, duration, onComplete) {
       const strip = document.getElementById(stripId);
@@ -1153,65 +1019,6 @@
         strip.style.transform = 'translateY(0px)';
         if (onComplete) onComplete();
       }, duration + 60);
-    }
-
-    // بررسی برد و پرداخت جوایز به ژتون
-    function checkWin(s1, s2, s3, cost) {
-      const winDisplay = document.getElementById('win-display');
-      const winLbl = document.getElementById('win-status-lbl');
-      winDisplay.className = 'win-amount';
-      winLbl.innerText = 'نتیجه چرخش:';
-
-      // ۱. شرط منفی: ۳ بمب انفجاری
-      if (s1.id === 'bomb' && s2.id === 'bomb' && s3.id === 'bomb') {
-        const penalty = 10 * multiplier;
-        deductChips(chipsInv, Math.min(totalChips, penalty));
-        saveChips();
-        winDisplay.classList.add('negative');
-        winDisplay.innerText = `-${penalty.toLocaleString('fa-IR')} ژتون`;
-        playBombSound();
-        try {
-          if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
-        } catch(e) {}
-        showAlertModal('💥 انفجار بمب!', `۳ بمب خطر روی رول‌ها نشست و ${penalty.toLocaleString('fa-IR')} ژتون خسارت دیدید!`, `-${penalty.toLocaleString('fa-IR')} ژتون`, true);
-        return;
-      }
-
-      // ۲. شرط ۳ نماد یکسان
-      if (s1.id === s2.id && s2.id === s3.id) {
-        if (s1.mult > 0) {
-          const winAmount = (s1.id === 'energy') ? (20 * multiplier) : (cost * s1.mult);
-          addChips(chipsInv, winAmount);
-          saveChips();
-          playWinSound();
-          winDisplay.innerText = `+${winAmount.toLocaleString('fa-IR')} ژتون`;
-          if (s1.mult >= 20) winDisplay.classList.add('jackpot');
-          try {
-            if (tg?.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
-          } catch(e) {}
-          if (s1.mult >= 10 || s1.id === 'energy') {
-            const title = (s1.id === 'chest') ? '👑 JACKPOT بزرگ گنج طلایی!' : '🎉 برد بزرگ ۳ نماد طلایی!';
-            showAlertModal(title, `تبریک! ۳ نماد ${s1.name} با موفقیت جفت شد.`, `+${winAmount.toLocaleString('fa-IR')} ژتون`, false);
-          }
-        } else {
-          winDisplay.innerText = 'پوچ (۰)';
-        }
-        return;
-      }
-
-      // ۳. شرط ۲ نماد همسان مثبت
-      const isPositive = (s) => s.id !== 'bomb' && s.id !== 'skull' && s.id !== 'pants';
-      if ((s1.id === s2.id && isPositive(s1)) || (s2.id === s3.id && isPositive(s2)) || (s1.id === s3.id && isPositive(s1))) {
-        const winAmount = cost * 2;
-        addChips(chipsInv, winAmount);
-        saveChips();
-        winDisplay.innerText = `+${winAmount.toLocaleString('fa-IR')} ژتون`;
-        playTone(587, 'triangle', 0.22);
-        return;
-      }
-
-      // ۴. در صورت عدم تطابق
-      winDisplay.innerText = '۰ ژتون';
     }
 
     // چرخش خودکار
@@ -1260,7 +1067,8 @@
     }
 
     // بارگذاری اولیه استاندارد
-    loadChips();
+    SimabWallet.subscribe(s=>{totalChips=s.chips;chipsInv=chipBreakdown(totalChips);renderChipsUI();});
+    window.addEventListener('simab-receipt',e=>{if(!isSpinning)displayServerSpin(e.detail);});
     updateBetUI();
   </script>
 </body>

@@ -14,7 +14,7 @@ test("V8 core CSS scrolled container and all active mobile pages",()=>{
  assert.doesNotMatch(css,/body\s*\{[^}]*overflow-y:hidden/);
  for(const p of screens){
    const html=read(p);
-   assert.match(html,/simab-v8-core\.css\?v=8/);
+   assert.match(html,/simab-(?:v8-core|common)\.css\?v=(?:8|10)/);
    const hrefs=[...html.matchAll(/<(?:link|script)[^>]+(?:href|src)="([^"]+)"/g)].map(m=>m[1]);
    for(const h of hrefs){
      if(/^(https?:|\/\/)/.test(h))continue;
@@ -61,29 +61,20 @@ test("poker strategies vary among bots and never mirror an all-in every hand",()
  const easy=api.choose({id:"bot3",difficulty:"easy",strength:.19,toCall:110,stack:20,pot:5,rand:.75});
  assert.equal(easy.type,"fold");
 });
-test("poker uses per-bot bankroll, per-round betting, street responses and side-pots",()=>{
- const p=read("games/poker/index.html");
- assert.match(p,/SimabPokerAI\.choose\(/);
- assert.match(p,/pHero\.roundBet=0/);
- assert.match(p,/bot\.roundBet=0/);
- assert.match(p,/pHero\.roundBet<currentHighestBet/);
- assert.match(p,/const tiers=\[\.\.\.new Set\(players\.map\(p=>p\.bet\)/);
- assert.match(p,/const share=Math\.floor\(sidePot\/winners\.length\)/);
- assert.match(p,/SimabSound\.toggle\(this\)/);
+test("poker has a landscape table, real server actions and no local coin inventory",()=>{
+ const html=read('games/poker/index.html'),js=read('assets/js/simab-poker-v10.js'),css=read('assets/css/simab-poker-v10.css');
+ assert.match(css,/rotate\(90deg\)/);assert.match(css,/orientation:portrait/);assert.match(css,/overflow:hidden/);
+ assert.match(js,/SimabWallet\.mutate\('game'/);assert.match(js,/sessionId:session.sessionId,version:session.version/);
+ assert.doesNotMatch(html,/STORAGE_KEY_CHIPS|deductChipsFromInventory/);
 });
-test("backgammon has real selectable bear-off, blocks ghost pieces and refuses exploitative cube",()=>{
- const html=read("games/backgammon/index.html");
- assert.match(html,/function bearOffSelected\(\)/);
- assert.match(html,/id="v8-bear-off"/);
- assert.match(html,/board\[from\]\.color!==color/);
- assert.match(html,/barWhite>0&&from!=="bar"/);
- assert.match(html,/turnToken!==matchTurnVersion/);
- assert.match(html,/دابل تا تکمیل قبول یا رد توسط حریف غیرفعال است/);
- assert.match(html,/SimabSound\.toggle\(this\)/);
+test("backgammon submits server-validated moves and has explicit bear-off and bar controls",()=>{
+ const html=read('games/backgammon/index.html'),js=read('assets/js/simab-backgammon-v10.js');
+ assert.match(html,/id="bg-off"/);assert.match(html,/id="bg-bar"/);assert.match(js,/move:|from:target.from/);
+ assert.match(js,/SimabWallet\.mutate\('game'/);
 });
 test("roll keeps real reel spin and native sound, with new game visuals",()=>{
  const p=read("games/slot/index.html");
- assert.match(p,/function spinSlot\(\)/);
+ assert.match(p,/async function spinSlot\(\)/);
  assert.match(p,/function toggleAudio\(\)/);
  assert.match(p,/simab-slot-v8\.css\?v=8/);
  const css=read("assets/css/simab-slot-v8.css");

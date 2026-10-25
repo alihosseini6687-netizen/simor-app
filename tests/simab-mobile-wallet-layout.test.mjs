@@ -1,66 +1,17 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import {readFileSync,existsSync} from 'node:fs';
-import {resolve,dirname} from 'node:path';
-import {Script} from 'node:vm';
-import {fileURLToPath} from 'node:url';
-
-const root=fileURLToPath(new URL('../',import.meta.url));
-const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
-const pages=[
- 'index.html','swap/index.html','streak/index.html','quests/index.html',
- 'games/slot/index.html','games/wheel/index.html','games/poker/index.html',
- 'games/backgammon/index.html','games/tap/index.html'
-];
-test('wallet link is in page flow, never direct flex body child',()=>{
- for(const path of pages){
-  const html=read(path);
-  assert.doesNotMatch(html,/<body>\s*<a class="simab-secure-entry"/,path);
-  const main=html.indexOf('<div class="app-wrapper">');
-  const nav=html.indexOf('<a class="simab-secure-entry"');
-  assert.ok(nav>0,'missing wallet link '+path);
-  if(main!==-1){
-    const headerEnd=html.indexOf('</header>',main);
-    assert.ok(nav>headerEnd,'link must be within content after header in '+path);
-  } else {
-    const top=html.indexOf('<div class="top-bar">');
-    assert.ok(top>0&&nav>top,'game link must follow top bar: '+path);
-  }
-  assert.equal((html.match(/class="simab-secure-entry"/g)||[]).length,1,
-    'duplicate wallet card '+path);
- }
+import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync,existsSync} from 'node:fs';import {resolve,dirname} from 'node:path';import {Script} from 'node:vm';
+const root=new URL('../',import.meta.url).pathname,read=p=>readFileSync(root+p,'utf8');
+const pages=['index.html','swap/index.html','streak/index.html','quests/index.html','games/slot/index.html','games/wheel/index.html','games/poker/index.html','games/backgammon/index.html','games/tap/index.html','games/horoscope/index.html','friends/index.html','admin/index.html'];
+test('all balance displays have the shared server wallet and no local money writes',()=>{
+ for(const p of pages){const html=read(p);assert.match(html,/simab-wallet-client\.js\?v=10/,p);assert.doesNotMatch(html,/CloudStorage\.(getItem|setItem)|simor_coins_|simab_chips_/);}
 });
-test('one shared responsive stylesheet powers all wallet links; URLs resolve',()=>{
- const css=read('assets/css/simab-secure-entry-v7.css');
- assert.match(css,/max-width:100%!important/);
- assert.match(css,/min-width:0/);
- assert.match(css,/focus-visible/);
- assert.match(css,/flex:0 0 auto/);
- for(const path of pages){
-  const html=read(path);
-  const match=html.match(/<link rel="stylesheet" href="([^"]*simab-secure-entry-v7\.css\?v=7)">/);
-  assert.ok(match,'no link stylesheet '+path);
-  const full=resolve(root,dirname(path),match[1].split('?')[0]);
-  assert.ok(existsSync(full),'bad CSS path '+path);
-  assert.doesNotMatch(html,/<style>\s*\.simab-secure-entry\{/,'duplicated CSS '+path);
-  for(const [,script] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)){
-    new Script(script,{filename:path});
-  }
- }
+test('all local styles and scripts exist and inline scripts compile',()=>{
+ for(const p of pages){const html=read(p);for(const [,code] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(code,{filename:p});
+ for(const [,asset] of html.matchAll(/<(?:script|link)[^>]+(?:src|href)="([^"]+)"/g)){if(/^https?:/.test(asset))continue;assert.ok(existsSync(resolve(root,dirname(p),asset.split('?')[0])),asset);}}
 });
-test('no legacy page claims to hold server-backed funds',()=>{
- const swap=read('swap/index.html');
- assert.match(swap,/سکه محلی \(آزمایشی\)/);
- assert.match(swap,/ژتون بازی‌های آزمایشی/);
- assert.match(read('streak/index.html'),/حالت آزمایشی/);
+test('normal pages scroll; poker alone fills and rotates its bounded game stage',()=>{
+ assert.match(read('assets/css/simab-common.css'),/min-height:100dvh/);const css=read('assets/css/simab-poker-v10.css');assert.match(css,/body.in-poker\{overflow:hidden/);assert.match(css,/orientation:portrait/);assert.match(css,/width:100dvh;height:100dvw/);
 });
-test('new wallet stays narrow-screen usable without exposing local coins',()=>{
- const html=read('wallet/index.html');
- assert.match(html,/grid-template-columns:repeat\(2,minmax\(0,1fr\)\)/);
- assert.match(html,/overflow-wrap:anywhere/);
- assert.match(html,/input\{min-width:0;font-size:16px\}/);
- assert.match(html,/font-size:clamp\(17px,5\.1vw,25px\)/);
- const client=read('assets/js/simab-secure-wallet.js');
- assert.doesNotMatch(client,/CloudStorage\.(?:getItem|setItem)/);
- assert.match(client,/Telegram\?\.WebApp\?\.initData/);
+test('wallet balances show loading markers instead of fabricated local defaults',()=>{
+ for(const p of ['index.html','wallet/index.html','swap/index.html'])assert.match(read(p),/data-coins>—/);
+ assert.match(read('assets/js/simab-wallet-client.js'),/Telegram\?\.WebApp\?\.initData/);
 });
