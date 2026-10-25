@@ -1,5 +1,5 @@
 // Authoritative game rules. No client cards, dice, winner or payout are accepted.
-export type Player = {id:number;name:string;cards:number[];stack:number;bet:number;round:number;folded:boolean;acted:boolean;last:string};
+export type Player = {id:number;name:string;cards:number[];stack:number;bet:number;round:number;folded:boolean;acted:boolean;lastFaced:number;last:string};
 export function randomInt(max:number):number {
   const range=0x100000000, limit=range-range%max;
   const a=new Uint32Array(1); do {crypto.getRandomValues(a);} while(a[0]>=limit);
@@ -60,7 +60,7 @@ function advance(s:Poker,after:number){
   const canBet=live(s).filter(p=>p.stack>0);
   if(s.street===3||canBet.length<=1){while(s.board.length<5)s.board.push(s.deck.pop()!);s.street=3;settlePoker(s);return;}
   s.street++; const count=s.street===1?3:1; s.deck.pop();for(let i=0;i<count;i++)s.board.push(s.deck.pop()!);
-  s.highest=0;s.minRaise=2;s.players.forEach(p=>{p.round=0;p.acted=false;});
+  s.highest=0;s.minRaise=2;s.players.forEach(p=>{p.round=0;p.acted=false;p.lastFaced=0;});
   s.pending=canBet.map(p=>p.id);advance(s,s.button);
 }
 function actPoker(s:Poker,index:number,action:string,amount=0){
@@ -70,7 +70,7 @@ function actPoker(s:Poker,index:number,action:string,amount=0){
   else if(action==='check'){if(toCall)fail('cannot_check');log(s,p,'چک');}
   else if(action==='call'){const n=pay(p,toCall);log(s,p,p.stack===0?'آل‌این '+n:'کال '+n);}
   else if(action==='raise'||action==='allin'){
-    if(p.acted)fail('raise_not_reopened');
+    if(p.acted&&s.highest-p.lastFaced<s.minRaise)fail('raise_not_reopened');
     const target=action==='allin'?p.round+p.stack:amount;
     if(!Number.isSafeInteger(target)||target<=s.highest||target>p.round+p.stack)fail('invalid_raise');
     const increment=target-s.highest;full=increment>=s.minRaise;
@@ -79,7 +79,7 @@ function actPoker(s:Poker,index:number,action:string,amount=0){
     if(full){s.minRaise=increment;s.players.forEach(x=>{x.acted=false;});}
     log(s,p,p.stack===0?'آل‌این '+target:'افزایش تا '+target);
   }else fail('invalid_move');
-  p.acted=true;s.pending=s.pending.filter(i=>i!==index);
+  p.acted=true;p.lastFaced=s.highest;s.pending=s.pending.filter(i=>i!==index);
   if(raised){const owing=live(s).filter(x=>x.id!==index&&x.stack>0&&x.round<s.highest).map(x=>x.id);s.pending=full?owing:[...new Set([...s.pending,...owing])];}
   advance(s,index);
 }
@@ -92,7 +92,7 @@ function bots(s:Poker){
       (p.cards[0]%13===p.cards[1]%13?.65:.12)+(cardValue(p.cards[0])+cardValue(p.cards[1]))/65;
     const r=randomInt(100),price=call/Math.max(1,p.stack+call),aggression=12+p.id*3;
     if(call>0&&price>.18&&strength<.35&&r<55)actPoker(s,p.id,'fold');
-    else if(!p.acted&&r<aggression&&p.stack>call+s.minRaise*2){
+    else if((!p.acted||s.highest-p.lastFaced>=s.minRaise)&&r<aggression&&p.stack>call+s.minRaise*2){
       const target=Math.min(p.round+p.stack,s.highest+s.minRaise*(1+randomInt(2)));
       actPoker(s,p.id,'raise',target);
     }else actPoker(s,p.id,call?'call':'check');
@@ -102,7 +102,7 @@ export function startPoker(buyIn:number,seats:number):Poker {
   if(!Number.isSafeInteger(buyIn)||buyIn<20||buyIn>10000||![2,4,6].includes(seats))fail('invalid_buyin');
   const deck=Array.from({length:52},(_,i)=>i);for(let i=51;i>0;i--){const j=randomInt(i+1);[deck[i],deck[j]]=[deck[j],deck[i]];}
   const s:Poker={kind:'poker',players:[],deck,board:[],street:0,current:0,highest:2,minRaise:2,pending:[],button:randomInt(seats),finished:false,result:'',winners:[],buyIn,log:[]};
-  for(let i=0;i<seats;i++)s.players.push({id:i,name:names[i],cards:[deck.pop()!,deck.pop()!],stack:buyIn,bet:0,round:0,folded:false,acted:false,last:''});
+  for(let i=0;i<seats;i++)s.players.push({id:i,name:names[i],cards:[deck.pop()!,deck.pop()!],stack:buyIn,bet:0,round:0,folded:false,acted:false,lastFaced:0,last:''});
   const small=seats===2?s.button:(s.button+1)%seats,big=(small+1)%seats;
   pay(s.players[small],1);pay(s.players[big],2);s.players[small].last='اسمال بلایند ۱';s.players[big].last='بیگ بلایند ۲';
   s.pending=s.players.map(p=>p.id);advance(s,big);bots(s);return s;
@@ -113,7 +113,7 @@ export function publicPoker(s:Poker){
   return {kind:'poker',players:s.players.map(p=>({...p,cards:p.id===0||s.finished&&!p.folded?p.cards:[],acted:undefined})),board:s.board,
     street:s.street,current:s.current,pot:s.players.reduce((a,p)=>a+p.bet,0),button:s.button,finished:s.finished,result:s.result,winners:s.winners,
     buyIn:s.buyIn,log:s.log,toCall:Math.min(call,hero.stack),minRaiseTo:s.highest+s.minRaise,maxRaiseTo:hero.round+hero.stack,
-    canRaise:!hero.acted&&hero.round+hero.stack>s.highest,highest:s.highest};
+    canRaise:(!hero.acted||s.highest-hero.lastFaced>=s.minRaise)&&hero.round+hero.stack>s.highest,highest:s.highest};
 }
 
 // Backgammon: positive checkers move 23 -> 0; negative checkers move 0 -> 23.

@@ -47,3 +47,9 @@ test('slot validates stake and multiplier; no additional penalty beyond stake',(
  assert.throws(()=>spinSlot(-1,1),/invalid_bet/);assert.throws(()=>spinSlot(3,1),/invalid_bet/);assert.throws(()=>spinSlot(100,99),/invalid_bet/);
  for(let i=0;i<1000;i++){const r=spinSlot(100,1);assert.ok(r.reels.every(n=>n>=0&&n<9));assert.ok(r.payout>=0&&r.payout<=5000);}
 });
+
+test('cumulative short all-ins reopen raising only once the full raise threshold is reached',()=>{
+ const s=startPoker(100,6);s.finished=false;s.current=0;s.players[0].folded=false;s.players[0].acted=true;s.players[0].lastFaced=2;s.players[0].round=2;s.players[0].stack=98;s.minRaise=4;
+ s.highest=5;assert.equal(publicPoker(s).canRaise,false);
+ s.highest=6;assert.equal(publicPoker(s).canRaise,true);
+});
