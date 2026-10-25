@@ -225,9 +225,10 @@
             !/^[0-9]+$/.test(rawAmount) || !Number.isSafeInteger(value) || value < 1 || value > 1000000000000) {
           status.textContent = "آیدی عددی معتبر و تعداد سکه صحیح از ۱ تا ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ وارد کن."; return;
         }
-        if (!globalThis.crypto?.randomUUID) { status.textContent = "مرورگر امکان ساخت درخواست امن ندارد."; return; }
+        const createId=window.SimabWallet?.requestId || globalThis.crypto?.randomUUID?.bind(globalThis.crypto);
+        if (!createId) { status.textContent = "مرورگر امکان ساخت درخواست امن ندارد."; return; }
         if (!window.confirm("افزودن " + value.toLocaleString("fa-IR") + " سکه به آیدی " + id + " تأیید شود؟")) return;
-        const next = {targetUserId: id, amount: value, requestId: crypto.randomUUID()};
+        const next = {targetUserId: id, amount: value, requestId: createId()};
         try { localStorage.setItem(key, JSON.stringify(next)); }
         catch { status.textContent = "ذخیره درخواست ممکن نیست؛ واریزی ارسال نشد."; return; }
         pending = next;

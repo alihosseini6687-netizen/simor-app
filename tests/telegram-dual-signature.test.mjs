@@ -93,6 +93,6 @@ test("admin retries at most two signed inputs, never bypasses server authenticat
   assert.match(client, /JSON\.stringify\(\{ initData: used, action/);
   for(const file of ["admin/index.html","quests/index.html"]) {
     const html = readFileSync(new URL("../"+file, import.meta.url), "utf8");
-    assert.match(html, /simab-central-quests\.js\?v=(?:7|20261025|10)/);
+    assert.match(html, /simab-central-quests\.js\?v=(?:7|20261025|10|11)/);
   }
 });

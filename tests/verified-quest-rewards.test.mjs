@@ -14,7 +14,7 @@ test('TypeScript function and browser client parse',()=>{
     const html=read(p);
     for(const [,code] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))
       new Script(code);
-    assert.match(html,/simab-central-quests\.js\?v=(?:7|20261025|10)/);
+    assert.match(html,/simab-central-quests\.js\?v=(?:7|20261025|10|11)/);
   }
 });
 test('only verified Telegram channel can credit a reward',()=>{

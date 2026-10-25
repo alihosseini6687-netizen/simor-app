@@ -45,10 +45,10 @@ test('new server wallet must not import, spend or mirror legacy CloudStorage bal
   assert.doesNotMatch(ui,/CloudStorage\.(?:getItem|setItem)/);
   assert.doesNotMatch(ui,/Math\.random/);
   assert.match(ui,/simab_financial_pending_v2/);
-  assert.match(ui,/crypto\.randomUUID\(\)/);
+  assert.match(ui,/requestId:requestId\(\)/);
   assert.match(sql,/simab_verified_quest_balances/);
   for(const path of ['index.html','games/poker/index.html','games/backgammon/index.html','games/slot/index.html','games/wheel/index.html','games/tap/index.html','streak/index.html','swap/index.html','quests/index.html']){
-    assert.match(read(path),/simab-wallet-client\.js\?v=10/,path);
+    assert.match(read(path),/simab-wallet-client\.js\?v=11/,path);
     assert.doesNotMatch(read(path),/simor_coins_|simab_chips_/);
   }
 });
