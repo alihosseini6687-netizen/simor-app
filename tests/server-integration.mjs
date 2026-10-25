@@ -4,7 +4,8 @@ try{
  const bad=await h.post({action:'game',game:'poker',op:'start',amount:100,seats:6,requestId:randomUUID(),initData:'invalid'});assert.equal(bad.status,401);
  let r=await h.post({action:'wallet',walletAction:'exchange_to_chips',amount:1000,requestId:randomUUID()});assert.equal(r.body.coins,999000);assert.equal(r.body.chips,1000);
  const request={action:'game',game:'poker',op:'start',amount:100,seats:6,requestId:randomUUID()};let p=await h.post(request);assert.equal(p.status,200);assert.equal(p.body.wallet.chips,900);assert.equal(p.body.state.deck,undefined);
- let repeat=await h.post(request);assert.equal(repeat.body.duplicate,true);assert.equal(repeat.body.wallet.chips,900);
+ assert.ok(p.body.state.timeline.length>0);for(const f of p.body.state.timeline){assert.equal(f.deck,undefined);if(!f.finished)for(const bot of f.players.slice(1))assert.equal(bot.cards.length,0);}
+ let repeat=await h.post(request);assert.equal(repeat.body.duplicate,true);assert.equal(repeat.body.wallet.chips,900);assert.deepEqual(repeat.body.state.timeline,p.body.state.timeline);const saved=await h.db.query('select state from simab_game_sessions where id=$1',[p.body.sessionId]);assert.equal(saved.rows[0].state.timeline,undefined);
  let last=p.body;let turns=0;while(!last.state.finished){const move={type:last.state.toCall?'call':'check'};const rr=await h.post({action:'game',game:'poker',op:'move',sessionId:last.sessionId,version:last.version,move,requestId:randomUUID()});assert.equal(rr.status,200,JSON.stringify(rr));last=rr.body;if(++turns>100)throw Error('stuck');}
  assert.equal(last.wallet.chips,900+last.state.players[0].stack);console.log('Poker HTTP and transactional wallet passed',turns,'turns');
  r=await h.post({action:'game',game:'backgammon',op:'start',amount:20,requestId:randomUUID()});assert.equal(r.status,200);const bg=r.body;

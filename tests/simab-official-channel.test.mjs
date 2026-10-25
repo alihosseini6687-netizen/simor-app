@@ -68,7 +68,7 @@ test('existing game and admin page JS remains valid',()=>{
     const s=read(page);
     for(const [,code] of s.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(code);
     assert.match(s,/simab-central-quests\.js\?v=(?:7|20261025|10|11)/);
-    assert.match(s,/simab-wallet-client\.js\?v=11/);
+    assert.match(s,/simab-wallet-client\.js\?v=12/);
   }
   new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/gm,''));
 });

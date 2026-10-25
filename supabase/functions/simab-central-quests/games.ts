@@ -6,6 +6,11 @@ export function randomInt(max:number):number {
   return a[0]%max;
 }
 const fail=(s:string):never=>{throw Error(s);};
+// Animation snapshots are sanitized, transient and never part of private persisted state.
+const playback=new WeakMap<object,any[]>();
+function trace(s:Poker|BG){const frames=playback.get(s)||[];if(frames.length<48)frames.push(structuredClone(s.kind==='poker'?publicPoker(s):publicBG(s)));playback.set(s,frames);}
+export const gameFrames=(s:object)=>playback.get(s)||[];
+
 export const cardValue=(c:number)=>c%13+2;
 function score5(cards:number[]):number[] {
   const vals=cards.map(cardValue).sort((a,b)=>b-a), unique=[...new Set(vals)];
@@ -56,6 +61,9 @@ export function settlePoker(s:Poker){
 function advance(s:Poker,after:number){
   if(live(s).length===1){settlePoker(s);return;}
   s.pending=s.pending.filter(i=>!s.players[i].folded&&s.players[i].stack>0);
+  // No betting into an empty side pot: a lone funded player may only answer an outstanding bet.
+  const funded=live(s).filter(p=>p.stack>0);
+  if(funded.length===1&&funded[0].round>=s.highest)s.pending=[];
   if(s.pending.length){for(let n=1;n<=s.players.length;n++){const i=(after+n)%s.players.length;if(s.pending.includes(i)){s.current=i;return;}}}
   const canBet=live(s).filter(p=>p.stack>0);
   if(s.street===3||canBet.length<=1){while(s.board.length<5)s.board.push(s.deck.pop()!);s.street=3;settlePoker(s);return;}
@@ -70,6 +78,7 @@ function actPoker(s:Poker,index:number,action:string,amount=0){
   else if(action==='check'){if(toCall)fail('cannot_check');log(s,p,'چک');}
   else if(action==='call'){const n=pay(p,toCall);log(s,p,p.stack===0?'آل‌این '+n:'کال '+n);}
   else if(action==='raise'||action==='allin'){
+    if(!live(s).some(x=>x.id!==index&&x.stack>0))fail('invalid_raise');
     if(p.acted&&s.highest-p.lastFaced<s.minRaise)fail('raise_not_reopened');
     const target=action==='allin'?p.round+p.stack:amount;
     if(!Number.isSafeInteger(target)||target<=s.highest||target>p.round+p.stack)fail('invalid_raise');
@@ -81,7 +90,7 @@ function actPoker(s:Poker,index:number,action:string,amount=0){
   }else fail('invalid_move');
   p.acted=true;p.lastFaced=s.highest;s.pending=s.pending.filter(i=>i!==index);
   if(raised){const owing=live(s).filter(x=>x.id!==index&&x.stack>0&&x.round<s.highest).map(x=>x.id);s.pending=full?owing:[...new Set([...s.pending,...owing])];}
-  advance(s,index);
+  advance(s,index);trace(s);
 }
 function bots(s:Poker){
   let guard=0;
@@ -92,7 +101,7 @@ function bots(s:Poker){
       (p.cards[0]%13===p.cards[1]%13?.65:.12)+(cardValue(p.cards[0])+cardValue(p.cards[1]))/65;
     const r=randomInt(100),price=call/Math.max(1,p.stack+call),aggression=12+p.id*3;
     if(call>0&&price>.18&&strength<.35&&r<55)actPoker(s,p.id,'fold');
-    else if((!p.acted||s.highest-p.lastFaced>=s.minRaise)&&r<aggression&&p.stack>call+s.minRaise*2){
+    else if(live(s).some(x=>x.id!==p.id&&x.stack>0)&&(!p.acted||s.highest-p.lastFaced>=s.minRaise)&&r<aggression&&p.stack>call+s.minRaise*2){
       const target=Math.min(p.round+p.stack,s.highest+s.minRaise*(1+randomInt(2)));
       actPoker(s,p.id,'raise',target);
     }else actPoker(s,p.id,call?'call':'check');
@@ -105,15 +114,15 @@ export function startPoker(buyIn:number,seats:number):Poker {
   for(let i=0;i<seats;i++)s.players.push({id:i,name:names[i],cards:[deck.pop()!,deck.pop()!],stack:buyIn,bet:0,round:0,folded:false,acted:false,lastFaced:0,last:''});
   const small=seats===2?s.button:(s.button+1)%seats,big=(small+1)%seats;
   pay(s.players[small],1);pay(s.players[big],2);s.players[small].last='اسمال بلایند ۱';s.players[big].last='بیگ بلایند ۲';
-  s.pending=s.players.map(p=>p.id);advance(s,big);bots(s);return s;
+  s.pending=s.players.map(p=>p.id);advance(s,big);trace(s);bots(s);return s;
 }
-export function movePoker(s:Poker,action:string,amount:number):Poker {actPoker(s,0,action,amount);bots(s);return s;}
+export function movePoker(s:Poker,action:string,amount:number):Poker {playback.delete(s);actPoker(s,0,action,amount);bots(s);return s;}
 export function publicPoker(s:Poker){
   const hero=s.players[0],call=Math.max(0,s.highest-hero.round);
   return {kind:'poker',players:s.players.map(p=>({...p,cards:p.id===0||s.finished&&!p.folded?p.cards:[],acted:undefined})),board:s.board,
     street:s.street,current:s.current,pot:s.players.reduce((a,p)=>a+p.bet,0),button:s.button,finished:s.finished,result:s.result,winners:s.winners,
     buyIn:s.buyIn,log:s.log,toCall:Math.min(call,hero.stack),minRaiseTo:s.highest+s.minRaise,maxRaiseTo:hero.round+hero.stack,
-    canRaise:(!hero.acted||s.highest-hero.lastFaced>=s.minRaise)&&hero.round+hero.stack>s.highest,highest:s.highest};
+    canRaise:live(s).some(x=>x.id!==0&&x.stack>0)&&(!hero.acted||s.highest-hero.lastFaced>=s.minRaise)&&hero.round+hero.stack>s.highest,highest:s.highest};
 }
 
 // Backgammon: positive checkers move 23 -> 0; negative checkers move 0 -> 23.
@@ -135,6 +144,7 @@ function oneMoves(s:BG,die:number):Move[]{
 function applyBG(s:BG,m:Move){const sign=s.turn===0?1:-1;if(m.from===-1)s.bar[s.turn]--;else s.points[m.from]-=sign;
  if(m.to===-1)s.off[s.turn]++;else{if(s.points[m.to]===-sign){s.points[m.to]=0;s.bar[1-s.turn]++;}s.points[m.to]+=sign;}
  s.dice.splice(s.dice.indexOf(m.die),1);
+ s.log.push((s.turn===0?'شما':'حریف')+': '+(m.from===-1?'بار':m.from+1)+' ← '+(m.to===-1?'خروج':m.to+1));s.log=s.log.slice(-8);
  if(s.off[s.turn]===15){s.finished=true;s.winner=s.turn;}
 }
 export function legalBG(s:BG):Move[]{
@@ -154,23 +164,27 @@ function bgBots(s:BG){let turns=0;
   if(s.turn===1&&moves.length){moves.sort((a,b)=>{
     const score=(m:Move)=>m.to===-1?100:s.points[m.to]===1?65:s.points[m.to]===-1?30:0;
     return score(b)-score(a);
-   });applyBG(s,moves[0]);continue;}
+   });applyBG(s,moves[0]);trace(s);continue;}
   if(++turns>10){s.dice=[];s.turn=0;return;} // next request can roll if both sides were blocked
-  s.turn=1-s.turn;rollBG(s);
+  s.turn=1-s.turn;rollBG(s);trace(s);
  }
 }
 export function startBG(stake:number):BG{
  if(!Number.isSafeInteger(stake)||stake<1||stake>10000)fail('invalid_buyin');
  const points=Array(24).fill(0);points[23]=2;points[12]=5;points[7]=3;points[5]=5;points[0]=-2;points[11]=-5;points[16]=-3;points[18]=-5;
  const s:BG={kind:'backgammon',points,bar:[0,0],off:[0,0],dice:[],turn:0,finished:false,winner:-1,stake,log:[]};
- let a=0,b=0;do{a=1+randomInt(6);b=1+randomInt(6);}while(a===b);s.turn=a>b?0:1;s.dice=[a,b];bgBots(s);return s;
+ let a=0,b=0;do{a=1+randomInt(6);b=1+randomInt(6);}while(a===b);s.turn=a>b?0:1;s.dice=[a,b];s.log.push('تاس شروع: شما '+a+' • حریف '+b+'؛ '+(s.turn===0?'شما':'حریف')+' شروع می‌کند');trace(s);bgBots(s);return s;
 }
 export function moveBG(s:BG,from:number,die:number):BG{
- if(s.finished||s.turn!==0)fail('invalid_turn');
- const move=legalBG(s).find(m=>m.from===from&&m.die===die);if(!move)fail('invalid_move');applyBG(s,move);bgBots(s);return s;
+ playback.delete(s);if(s.finished||s.turn!==0)fail('invalid_turn');
+ const move=legalBG(s).find(m=>m.from===from&&m.die===die);if(!move)fail('invalid_move');applyBG(s,move);trace(s);bgBots(s);return s;
 }
-export function passBG(s:BG):BG{if(s.turn!==0||legalBG(s).length)fail('invalid_move');s.turn=1;rollBG(s);bgBots(s);return s;}
-export function publicBG(s:BG){return{...s,moves:legalBG(s),result:s.finished?(s.winner===0?'شما برنده شدید':'حریف برنده شد'):''};}
+export function passBG(s:BG):BG{playback.delete(s);if(s.turn!==0||legalBG(s).length)fail('invalid_move');s.turn=1;rollBG(s);bgBots(s);return s;}
+export function publicBG(s:BG){
+ const loser=1-s.winner,sign=s.winner===0?1:-1;
+ const level=!s.finished?0:s.off[loser]>0?1:s.bar[loser]>0||s.points.some((n,i)=>n*sign<0&&(s.winner===0?i<6:i>17))?3:2;
+ return{...s,moves:legalBG(s),winType:level,result:s.finished?(s.winner===0?'شما برنده شدید':'حریف برنده شد')+(level===3?' • مارس سیاه':level===2?' • مارس':''):''};
+}
 export function spinSlot(amount:number,multiplier:number){
  const bases=[2,5,25,100,500];if(!Number.isSafeInteger(multiplier)||multiplier<1||multiplier>50||!bases.includes(amount/multiplier))fail('invalid_bet');
  const reels=[randomInt(9),randomInt(9),randomInt(9)],factors=[50,30,20,10,0,5,0,0,0];let payout=0;
