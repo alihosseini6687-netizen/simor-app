@@ -61,7 +61,7 @@
  function integer(value){const v=String(value).trim().replace(/[۰-۹]/g,c=>String('۰۱۲۳۴۵۶۷۸۹'.indexOf(c))).replace(/[٠-٩]/g,c=>String('٠١٢٣٤٥٦٧٨٩'.indexOf(c)));if(!/^\d+$/.test(v)||!Number.isSafeInteger(Number(v))||Number(v)<1)throw Error('یک عدد صحیح مثبت وارد کن.');return Number(v);}
  window.SimabWallet=Object.freeze({ready,read,refresh,mutate,recover,subscribe,integer,requestId,get state(){return state;},get busy(){return inFlight;},get pending(){return pending;}});
  async function init(){
-  const box=document.createElement('div');box.id='simab-connection';box.innerHTML='<small data-wallet-account></small><span style="margin:0 8px">• v12</span><span data-wallet-status>در حال دریافت موجودی…</span><button type="button" id="wallet-recover" hidden>پیگیری تراکنش قبلی</button>';
+  const box=document.createElement('div');box.id='simab-connection';box.innerHTML='<small data-wallet-account></small><span style="margin:0 8px">• v13</span><span data-wallet-status>در حال دریافت موجودی…</span><button type="button" id="wallet-recover" hidden>پیگیری تراکنش قبلی</button>';
   box.style.cssText='position:relative;z-index:20;padding:8px 12px;font:11px system-ui;text-align:center;color:#cfb989;line-height:1.7;background:#0d0b12;';
   document.body.append(box);document.getElementById('wallet-recover').onclick=()=>recover().catch(()=>{});
   accountLabel();
