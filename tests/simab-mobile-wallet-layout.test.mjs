@@ -1,8 +1,8 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {readFileSync,existsSync} from 'node:fs';import {resolve,dirname} from 'node:path';import {Script} from 'node:vm';
 const root=new URL('../',import.meta.url).pathname,read=p=>readFileSync(root+p,'utf8');
-const pages=['index.html','swap/index.html','streak/index.html','quests/index.html','games/slot/index.html','games/wheel/index.html','games/poker/index.html','games/backgammon/index.html','games/tap/index.html','games/horoscope/index.html','friends/index.html','admin/index.html'];
+const pages=['games/hokm/index.html','games/blackjack/index.html','games/mench/index.html','index.html','swap/index.html','streak/index.html','quests/index.html','games/slot/index.html','games/wheel/index.html','games/poker/index.html','games/backgammon/index.html','games/tap/index.html','games/horoscope/index.html','friends/index.html','admin/index.html'];
 test('all balance displays have the shared server wallet and no local money writes',()=>{
- for(const p of pages){const html=read(p);assert.match(html,/simab-wallet-client\.js\?v=12/,p);assert.doesNotMatch(html,/CloudStorage\.(getItem|setItem)|simor_coins_|simab_chips_/);}
+ for(const p of pages){const html=read(p);assert.match(html,/simab-wallet-client\.js\?v=13/,p);assert.doesNotMatch(html,/CloudStorage\.(getItem|setItem)|simor_coins_|simab_chips_/);}
 });
 test('all local styles and scripts exist and inline scripts compile',()=>{
  for(const p of pages){const html=read(p);for(const [,code] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(code,{filename:p});

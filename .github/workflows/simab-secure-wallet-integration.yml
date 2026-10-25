@@ -61,11 +61,8 @@ jobs:
           SQL
       - name: Execute ALL migrations and real SQL integration checks
         run: |
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261012_central_quests_admins.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261012_verified_quest_rewards.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261013_secure_wallet_games.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025074103_admin_wallet_credit.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025081053_unified_wallet_game_sessions.sql
+          for migration in supabase/migrations/*.sql; do psql -v ON_ERROR_STOP=1 -f "$migration"; done
           psql -v ON_ERROR_STOP=1 -f tests/integration-secure-wallet.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-admin-credit.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-unified-wallet.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-table-games.sql

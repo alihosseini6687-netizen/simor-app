@@ -14,5 +14,34 @@ try{
  console.log('Backgammon rejects impossible move and settles leave exactly once');
  const spin={action:'game',game:'slot',op:'start',amount:5,multiplier:1,requestId:randomUUID()};r=await h.post(spin);assert.equal(r.status,200);repeat=await h.post(spin);assert.equal(repeat.body.duplicate,true);assert.equal(repeat.body.wallet.chips,r.body.wallet.chips);assert.deepEqual(repeat.body.state.reels,r.body.state.reels);
  console.log('Slot request retry preserves reels and balance');
+
+ // New games use the exact same signed API and atomic session/wallet transaction.
+ for(const game of ['hokm','ludo']){
+  const initial=await h.post({action:'wallet',walletAction:'state'});const amount=20;
+  const req={action:'game',game,op:'start',amount,requestId:randomUUID()};let r=await h.post(req);assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.wallet.chips,initial.body.chips-amount);const id=r.body.sessionId;
+  const dup=await h.post(req);assert.equal(dup.body.duplicate,true);assert.equal(dup.body.wallet.chips,r.body.wallet.chips);
+  const foreign=await h.post({action:'game_state',game,sessionId:id},801000012);assert.equal(foreign.body.state,null);
+  let last=r.body,guard=0;while(!last.state.finished){const s=last.state;let move;
+   if(game==='hokm'){assert.equal(s.hands,undefined);assert.equal(s.deck,undefined);move=s.phase==='trump'?{type:'trump',suit:0}:s.phase==='round_end'?{type:'next'}:{type:'card',card:s.legal[0]};}
+   else move=s.die?{type:'token',token:s.legal[0]}:{type:'roll'};
+   const request={action:'game',game,op:'move',sessionId:id,version:last.version,move,requestId:randomUUID()};r=await h.post(request);assert.equal(r.status,200,JSON.stringify(r));last=r.body;
+   if(++guard>3000)throw Error(game+' stuck');
+  }
+  assert.equal(last.wallet.chips,initial.body.chips-amount+(last.state.winner===0?amount*(game==='hokm'?2:4):0));
+  console.log(game,'full match and shared wallet settlement passed',guard,'moves');
+ }
+ let opening;do{opening=await h.post({action:'game',game:'blackjack',op:'start',amount:20,requestId:randomUUID()});assert.equal(opening.status,200);}while(opening.body.state.finished);
+ const id=opening.body.sessionId;
+ // Local test fixture only: deterministic pair to exercise an additional atomic split wager.
+ await h.db.query("UPDATE simab_game_sessions SET state=jsonb_set(jsonb_set(state,'{hands,0,cards}','[6,19]'::jsonb),'{dealer}','[7,20]'::jsonb) WHERE id=$1",[id]);
+ const split={action:'game',game:'blackjack',op:'move',sessionId:id,version:opening.body.version,move:{type:'split'},requestId:randomUUID()};await h.db.query("UPDATE simab_secure_wallets SET chips=0 WHERE telegram_subject='801000011'");
+ const denied=await h.post({...split,requestId:randomUUID()});assert.equal(denied.status,409);assert.equal(denied.body.error,'insufficient_chips');
+ const preserved=await h.db.query('SELECT version,state FROM simab_game_sessions WHERE id=$1',[id]);assert.equal(preserved.rows[0].version,opening.body.version);assert.equal(preserved.rows[0].state.hands.length,1);
+ await h.db.query("UPDATE simab_secure_wallets SET chips=$1 WHERE telegram_subject='801000011'",[opening.body.wallet.chips]);
+ r=await h.post(split);assert.equal(r.status,200,JSON.stringify(r));assert.equal(r.body.wallet.chips,opening.body.wallet.chips-20);let bj=r.body;
+ repeat=await h.post(split);assert.equal(repeat.body.wallet.chips,bj.wallet.chips);assert.equal(repeat.body.duplicate,true);
+ let guard=0;while(!bj.state.finished){r=await h.post({action:'game',game:'blackjack',op:'move',sessionId:id,version:bj.version,move:{type:'stand'},requestId:randomUUID()});assert.equal(r.status,200);bj=r.body;if(++guard>4)throw Error('split stuck');}
+ assert.equal(bj.wallet.chips,opening.body.wallet.chips-20+bj.state.payout);
+ console.log('Blackjack split takes additional stake exactly once; final hands settle once');
  console.log('All HTTP/database integration checks passed');
 }finally{await h.db.close();}

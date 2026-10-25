@@ -293,7 +293,7 @@
   <link rel="stylesheet" href="assets/css/simab-v3.css?v=3">
   <link rel="stylesheet" href="assets/css/simab-v4.css?v=4">
   <link rel="stylesheet" href="assets/css/simab-home-v6.css?v=6">
-  <script src="assets/js/simab-wallet-client.js?v=12"></script>
+  <script src="assets/js/simab-wallet-client.js?v=13"></script>
 
 <link rel="stylesheet" href="assets/css/simab-secure-entry-v7.css?v=7">
 <link rel="stylesheet" href="assets/css/simab-v8-core.css?v=8">
@@ -331,6 +331,7 @@
       <a href="games/poker/index.html">🃏 پوکر تگزاس</a>
       <a href="games/slot/index.html">🎰 رول</a>
       <a href="games/backgammon/index.html">🎲 تخته‌نرد</a>
+      <a href="games/hokm/index.html">♠ حکم</a><a href="games/blackjack/index.html">۲۱ بلک‌جک</a><a href="games/mench/index.html">● منچ</a>
     </nav>
     <div id="v8-hero-recent" class="v8-hero-recent" aria-live="polite"></div>
   </div>
@@ -469,7 +470,7 @@
         <p>برای خبرهای جدید، رویدادها و مسابقات آینده همراه سیماب باش.</p>
       </section>
       <div class="v3-section-header"><h2>📢 تازه‌ترین خبرها</h2></div>
-      <div class="v3-news-card"><span class="v3-news-mark">🎮</span><div><strong>بازی‌های فعلی سیماب فعال‌اند</strong><p>پوکر، رول و تخته‌نرد را می‌توانی امتحان کنی. بازی چندنفره واقعی در دست توسعه است.</p></div><span class="v3-soon-pill">اطلاعیه</span></div>
+      <div class="v3-news-card"><span class="v3-news-mark">🎮</span><div><strong>بازی‌های فعلی سیماب فعال‌اند</strong><p>پوکر، رول، تخته‌نرد، حکم، ۲۱ و منچ فعال‌اند؛ فعلاً با ربات بازی می‌کنی. بازی چندنفره واقعی در دست توسعه است.</p></div><span class="v3-soon-pill">اطلاعیه</span></div>
       <div class="v4-section-header"><h2>وضعیت توسعه</h2><span>شفاف و به‌روز</span></div>
       <div class="v4-status-board"><div><span class="v4-status-dot ready"></span><strong>بازی‌های تک‌نفره</strong><small>قابل استفاده</small></div><div><span class="v4-status-dot progress"></span><strong>مسابقات آنلاین</strong><small>در حال توسعه</small></div><div><span class="v4-status-dot progress"></span><strong>اپ اندروید و آیفون</strong><small>در مسیر توسعه</small></div></div>
       <div class="v3-section-header"><h2>🏅 رویدادها و رقابت‌ها</h2></div>
@@ -641,13 +642,13 @@
       { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, title: 'پوکر تگزاس', sub: 'بازی با ربات' },
       { id: 2, icon: '🎰', url: 'games/slot/index.html', active: true, title: 'رول', sub: 'ماشین شانس' },
       { id: 3, icon: '🎲', url: 'games/backgammon/index.html', active: true, title: 'تخته نرد', sub: 'بازی با ربات' },
-      { id: 4, icon: '🎴', url: 'games/hokm/index.html', active: false, title: 'ورق (حکم)', sub: 'مسابقه پاسور ۴ نفره' },
-      { id: 5, icon: '♠️', url: 'games/blackjack/index.html', active: false, title: 'ورق (۲۱)', sub: 'بلک‌جک کارتی' },
+      { id: 4, icon: '🎴', url: 'games/hokm/index.html', active: true, title: 'حکم', sub: 'تیمی تا ۷ امتیاز • ورودی ۲۰ ژتون' },
+      { id: 5, icon: '♠️', url: 'games/blackjack/index.html', active: true, title: '۲۱ — بلک‌جک', sub: 'دیلر S17 • شرط اولیه ۲۰ ژتون' },
       { id: 6, icon: '🃏', url: 'games/haft-khabis/index.html', active: false, title: '۷ خبیث', sub: 'بازی دورهمی' },
       { id: 7, icon: '🎭', url: 'games/truth-or-dare/index.html', active: false, title: 'جرأت حقیقت', sub: 'چالش آنلاین' },
       { id: 8, icon: '⚔️', url: 'games/three-to-three/index.html', active: false, title: '۳ به ۳', sub: 'رقابت سرعتی' },
       { id: 9, icon: '🔢', url: 'games/dabalna/index.html', active: false, title: 'دبلنا', sub: 'بازی خانوادگی' },
-      { id: 10, icon: '🔴', url: 'games/mench/index.html', active: false, title: 'منچ آنلاین', sub: 'نبرد ۴ نفره' },
+      { id: 10, icon: '🔴', url: 'games/mench/index.html', active: true, title: 'منچ', sub: 'چهار نفره با ربات • ورودی ۱۰ ژتون' },
       { id: 11, icon: '🐍', url: 'games/snakes-ladders/index.html', active: false, title: 'مار و پله', sub: 'تاس و هیجان' },
       // بازی‌های بعدی بدون نام اختصاصی
       { id: 12, icon: '⏳', url: '#', active: false, title: 'به‌زودی', sub: 'در آپدیت‌های آینده' },
