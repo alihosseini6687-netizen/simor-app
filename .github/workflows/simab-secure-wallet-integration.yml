@@ -4,6 +4,8 @@ on:
     paths:
       - 'supabase/**'
       - 'wallet/**'
+      - 'admin/**'
+      - 'assets/js/simab-central-quests.js'
       - 'assets/js/simab-secure-wallet.js'
       - 'tests/**'
       - '.github/workflows/simab-secure-wallet-integration.yml'
@@ -47,11 +49,13 @@ jobs:
           psql -v ON_ERROR_STOP=1 <<'SQL'
           CREATE ROLE anon NOLOGIN;
           CREATE ROLE authenticated NOLOGIN;
-          CREATE ROLE service_role NOLOGIN;
+          CREATE ROLE service_role NOLOGIN BYPASSRLS;
           SQL
       - name: Execute ALL migrations and real SQL integration checks
         run: |
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261012_central_quests_admins.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261012_verified_quest_rewards.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261013_secure_wallet_games.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025074103_admin_wallet_credit.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-secure-wallet.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-admin-credit.sql

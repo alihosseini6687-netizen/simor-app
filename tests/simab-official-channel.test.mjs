@@ -67,7 +67,7 @@ test('existing game and admin page JS remains valid',()=>{
   for(const page of ['admin/index.html','quests/index.html']){
     const s=read(page);
     for(const [,code] of s.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(code);
-    assert.match(s,/simab-central-quests\.js\?v=7/);
+    assert.match(s,/simab-central-quests\.js\?v=(?:7|20261025)/);
     assert.match(s,/simab-legacy-guard\.js\?v=1/);
   }
   new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/m,''));

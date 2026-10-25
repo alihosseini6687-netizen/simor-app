@@ -394,6 +394,32 @@ Deno.serve(async (request) => {
 
   if (payload.action === "ping") return reply(200, { ok: true, adminVerified: true });
 
+  if (payload.action === "admin_credit") {
+    const target = payload.targetUserId;
+    const amount = payload.amount;
+    const requestId = payload.requestId;
+    if (typeof target !== "string" || !/^[1-9][0-9]{0,15}$/.test(target) ||
+        !Number.isSafeInteger(Number(target)))
+      return reply(400, { error: "invalid_target" });
+    if (typeof amount !== "number" || !Number.isSafeInteger(amount) || amount < 1 || amount > 1000000000000)
+      return reply(400, { error: "invalid_credit_amount" });
+    if (typeof requestId !== "string" ||
+        !/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(requestId))
+      return reply(400, { error: "invalid_request_id" });
+    const {data, error} = await db.rpc("simab_admin_credit", {
+      p_admin: subject, p_target: target, p_amount: amount, p_request_id: requestId,
+    });
+    if (error) {
+      if (error.message === "admin_only") return reply(403, {error: "admin_only"});
+      if (error.message === "request_conflict") return reply(409, {error: "request_conflict"});
+      if (["wallet_limit", "invalid_target", "invalid_credit_amount", "invalid_request_id"].includes(error.message))
+        return reply(400, {error: error.message});
+      return reply(503, {error: "admin_credit_unavailable"});
+    }
+    if (!data || data.serverWallet !== true) return reply(503, {error: "admin_credit_unavailable"});
+    return reply(200, data);
+  }
+
   if (payload.action === "broadcast") {
     const message = typeof payload.message === "string" ? payload.message.trim() : "";
     const channel = OFFICIAL_CHANNEL;

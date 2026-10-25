@@ -26,6 +26,20 @@
   let rewardsEnabled = false;
   async function readPublished() {
     const r = await fetch(endpoint, { method: "GET", cache: "no-store", headers: { accept: "application/json" } });
+    if (action === "admin_credit" && !r.ok) {
+      const messages = {
+        invalid_target: "آیدی عددی تلگرام معتبر نیست.",
+        invalid_credit_amount: "تعداد سکه باید عدد صحیح مثبت تا ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ باشد.",
+        wallet_limit: "این مبلغ از سقف موجودی کیف پول بیشتر می‌شود.",
+        request_conflict: "این شناسه درخواست قبلاً با مشخصات دیگری ثبت شده است.",
+        admin_only: "مجوز مدیریت این حساب تأیید نشد.",
+        admin_credit_unavailable: "سرویس واریز آماده نیست یا پاسخ قطعی نداد.",
+        telegram_auth_failed: "ورود تلگرام معتبر نیست؛ برنامه را از ربات دوباره باز کن.",
+      };
+      const error = new Error(messages[j.error] || "واریز تأیید نشد؛ پاسخ سرور: " + r.status);
+      error.definitive = [400, 401, 403, 409, 413].includes(r.status);
+      throw error;
+    }
     if (!r.ok) throw new Error("catalog_" + r.status);
     const json = await r.json();
     if (!Array.isArray(json.quests)) throw new Error("invalid_catalog");
@@ -91,6 +105,20 @@
       // At most once, retry another Telegram-signed navigation payload.
       // Never retry an authorization-denied 403 or an expired 401.
       if (r.ok || r.status !== 401 || j.reason !== "signature_mismatch") break;
+    }
+    if (action === "admin_credit" && !r.ok) {
+      const messages = {
+        invalid_target: "آیدی عددی تلگرام معتبر نیست.",
+        invalid_credit_amount: "تعداد سکه باید عدد صحیح مثبت تا ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ باشد.",
+        wallet_limit: "این مبلغ از سقف موجودی کیف پول بیشتر می‌شود.",
+        request_conflict: "این شناسه درخواست قبلاً با مشخصات دیگری ثبت شده است.",
+        admin_only: "مجوز مدیریت این حساب تأیید نشد.",
+        admin_credit_unavailable: "سرویس واریز آماده نیست یا پاسخ قطعی نداد.",
+        telegram_auth_failed: "ورود تلگرام معتبر نیست؛ برنامه را از ربات دوباره باز کن.",
+      };
+      const error = new Error(messages[j.error] || "واریز تأیید نشد؛ پاسخ سرور: " + r.status);
+      error.definitive = [400, 401, 403, 409, 413].includes(r.status);
+      throw error;
     }
     if (!r.ok) throw new Error(
       r.status === 401 ? (
@@ -160,7 +188,74 @@
     }
   }
 
+  function wireAdminCredit() {
+    const target = document.getElementById("target-user-id");
+    const amount = document.getElementById("target-coin-amount");
+    const button = document.getElementById("admin-credit-submit");
+    const status = document.getElementById("admin-credit-status");
+    if (!target || !amount || !button || !status) return;
+    const digits = value => value.trim().replace(/[۰-۹]/g, c => String("۰۱۲۳۴۵۶۷۸۹".indexOf(c)))
+      .replace(/[٠-٩]/g, c => String("٠١٢٣٤٥٦٧٨٩".indexOf(c)));
+    let actor;
+    try { actor = String(JSON.parse(new URLSearchParams(signedInitDataCandidates()[0]).get("user")).id); }
+    catch { status.textContent = "برای واریز، برنامه را از ربات اصلی باز کن."; return; }
+    // This ID only scopes the saved retry; server independently authenticates the actor.
+    const key = "simab_admin_credit_pending_v1:" + actor;
+    let pending = null, busy = false, storageReady = true;
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw) {
+        pending = JSON.parse(raw);
+        if (!pending || typeof pending.requestId !== "string" || typeof pending.targetUserId !== "string" ||
+            !Number.isSafeInteger(pending.amount)) throw Error("invalid pending");
+      }
+    } catch { storageReady = false; status.textContent = "ذخیره درخواست قابل خواندن نیست؛ برای جلوگیری از واریز تکراری، عملیات متوقف شد."; }
+    function paint() {
+      target.disabled = amount.disabled = busy || !!pending || !storageReady;
+      button.disabled = busy || !storageReady;
+      button.textContent = busy ? "در حال ثبت واریز…" : pending ? "پیگیری همان واریز قبلی" : "افزودن سکه به کاربر";
+      if (pending) { target.value = pending.targetUserId; amount.value = String(pending.amount); }
+    }
+    if (pending) status.textContent = "یک واریز پاسخ قطعی ندارد؛ با دکمه پیگیری، همان درخواست را بررسی کن.";
+    window.transferCoinsDirect = async () => {
+      if (busy || !storageReady) return;
+      if (!pending) {
+        const id = digits(target.value), rawAmount = digits(amount.value), value = Number(rawAmount);
+        if (!/^[1-9][0-9]{0,15}$/.test(id) || !Number.isSafeInteger(Number(id)) ||
+            !/^[0-9]+$/.test(rawAmount) || !Number.isSafeInteger(value) || value < 1 || value > 1000000000000) {
+          status.textContent = "آیدی عددی معتبر و تعداد سکه صحیح از ۱ تا ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ وارد کن."; return;
+        }
+        if (!globalThis.crypto?.randomUUID) { status.textContent = "مرورگر امکان ساخت درخواست امن ندارد."; return; }
+        if (!window.confirm("افزودن " + value.toLocaleString("fa-IR") + " سکه به آیدی " + id + " تأیید شود؟")) return;
+        const next = {targetUserId: id, amount: value, requestId: crypto.randomUUID()};
+        try { localStorage.setItem(key, JSON.stringify(next)); }
+        catch { status.textContent = "ذخیره درخواست ممکن نیست؛ واریزی ارسال نشد."; return; }
+        pending = next;
+      }
+      busy = true; paint(); status.textContent = "در حال ثبت در کیف پول سروری…";
+      try {
+        const result = await doAdmin("admin_credit", pending);
+        if (result.serverWallet !== true || result.targetUserId !== pending.targetUserId ||
+            result.requestId !== pending.requestId || result.amount !== pending.amount || !Number.isSafeInteger(result.coins))
+          throw Error("پاسخ سرور قابل تأیید نیست.");
+        localStorage.removeItem(key);
+        pending = null;
+        status.textContent = (result.duplicate ? "این واریز قبلاً ثبت شده؛ دوباره اضافه نشد. " : "واریز ثبت شد. ") +
+          "آیدی: " + result.targetUserId + "؛ مبلغ: " + result.amount.toLocaleString("fa-IR") +
+          " سکه؛ موجودی پس از واریز: " + result.coins.toLocaleString("fa-IR") + " سکه. کد پیگیری: " + result.requestId;
+        amount.value = "";
+      } catch (error) {
+        if (error.definitive) {
+          try { localStorage.removeItem(key); pending = null; } catch { /* keep retry locked */ }
+        }
+        status.textContent = error.message + (pending ? " برای جلوگیری از واریز تکراری، فقط همان درخواست را پیگیری کن." : " واریزی ثبت نشد.");
+      } finally { busy = false; paint(); }
+    };
+    paint();
+  }
+
   if (isAdmin) {
+    wireAdminCredit();
     const DRAFT_KEY = "simab_central_quest_drafts_v2";
     const getDrafts = () => {
       try {
