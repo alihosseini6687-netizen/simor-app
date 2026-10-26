@@ -30,7 +30,7 @@
     const id = index + 1;
     card.dataset.gameId = String(id);
     card.dataset.category = cats[id] || 'future';
-    card.dataset.active = ['1','2','3'].includes(card.dataset.gameId) ? 'true' : 'false';
+    card.dataset.active = String(card.matches('a[href]'));
   });
   const buttons = [...document.querySelectorAll('#v3-game-filters button')];
   buttons.forEach(button => button.addEventListener('click', () => {
