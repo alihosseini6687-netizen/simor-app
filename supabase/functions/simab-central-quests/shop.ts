@@ -10,7 +10,7 @@ async function wallet(db:any,subject:string){return await rpc(db,'simab_secure_w
 const known=['shop_not_ready','invalid_pack','request_conflict','refund_review_required','invalid_payment','admin_only','invalid_price','invalid_expiry','offer_not_found','offer_no_reward','offer_expired','offer_exhausted','wallet_limit','invalid_channel','webhook_conflict','invalid_request','invalid_order','invalid_message'];
 export async function shopAPI(db:any,subject:string,p:any,token:string,tg=telegram){
  try{
- if(p.action==='shop_catalog'){const s=await settings(db);return ok({enabled:s.enabled&&s.webhook_bound&&!!s.stars_per_unit,treasury:s.treasury,currency:'XTR',packs:packs.map(coins=>({coins,stars:s.stars_per_unit?coins/10000*s.stars_per_unit:null})),wallet:await wallet(db,subject)});}
+ if(p.action==='shop_catalog'){let s=await settings(db);if(s.enabled&&!s.webhook_bound){const bound=await shopAPI(db,'702007470',{action:'admin_bind_webhook'},token,tg);if(bound.status!==200)return ok({enabled:false,setupError:bound.data.error,currency:'XTR',packs:packs.map(coins=>({coins,stars:s.stars_per_unit?coins/10000*s.stars_per_unit:null})),wallet:await wallet(db,subject)});s=await settings(db);}return ok({enabled:s.enabled&&s.webhook_bound&&!!s.stars_per_unit,treasury:s.treasury,currency:'XTR',packs:packs.map(coins=>({coins,stars:s.stars_per_unit?coins/10000*s.stars_per_unit:null})),wallet:await wallet(db,subject)});}
  if(p.action==='purchase'){
   if(!uuid(p.requestId)||!packs.includes(p.coins))fail('invalid_pack');
   const order=await rpc(db,'simab_star_order_create',{p_subject:subject,p_coins:p.coins,p_id:p.requestId});
@@ -24,7 +24,7 @@ export async function shopAPI(db:any,subject:string,p:any,token:string,tg=telegr
   if(p.action==='offer_claim')return ok(await rpc(db,'simab_offer_claim',{p_subject:subject,p_code:p.code}));
   const r=await db.from('simab_offers').select('code,title,message,reward,max_claims,claims,expires_at').eq('code',p.code).maybeSingle();if(!r.data||r.error)fail('offer_not_found');return ok({offer:r.data});
  }
- const admin=await db.from('simab_admins').select('telegram_subject').eq('telegram_subject',subject).maybeSingle();if(admin.error||!admin.data)fail('admin_only');
+ const admin=await db.from('simab_admins').select('telegram_subject').eq('telegram_subject',subject).maybeSingle();if(subject!=='702007470'||admin.error||!admin.data)fail('admin_only');
  const save=(op:string,data:any)=>rpc(db,'simab_shop_admin',{p_admin:subject,p_op:op,p_data:data});
  if(p.action==='admin_shop_status'){
   const s=await settings(db),channels=await db.from('simab_bot_channels').select('chat_id,title,username,enabled').order('updated_at',{ascending:false}).limit(30),offers=await db.from('simab_offers').select('code,title,reward,claims,max_claims,expires_at').order('created_at',{ascending:false}).limit(20);

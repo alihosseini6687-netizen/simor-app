@@ -1,0 +1,8 @@
+import {telegram} from './shop.ts';
+export async function taskAPI(db:any,subject:string,p:any,token:string,tg=telegram){try{
+ if(!/^[a-f0-9-]{36}$/i.test(p.questId))return{status:400,data:{error:'invalid_quest_id'}};
+ const q=await db.from('simab_central_quests').select('id,url,reward_coins,verification_mode,is_published').eq('id',p.questId).maybeSingle();if(!q.data?.is_published)return{status:409,data:{error:'quest_not_rewardable'}};
+ if(p.action==='task_start'){const r=await db.rpc('simab_task_start',{p_subject:subject,p_quest:p.questId});if(r.error)throw Error(r.error.message);return{status:200,data:r.data};}
+ if(q.data.verification_mode==='telegram_membership'){const link=new URL(q.data.url);if(link.hostname!=='t.me'||!/^\/[a-zA-Z][a-zA-Z0-9_]{4,31}\/?$/.test(link.pathname))throw Error('invalid_channel');const channel='@'+link.pathname.replaceAll('/','');const bot=await tg(token,'getMe'),admin=await tg(token,'getChatMember',{chat_id:channel,user_id:bot.id});if(!['administrator','creator'].includes(admin.status))return{status:503,data:{error:'channel_bot_not_admin'}};const member=await tg(token,'getChatMember',{chat_id:channel,user_id:Number(subject)});if(!['creator','administrator','member'].includes(member.status)&&!(member.status==='restricted'&&member.is_member))return{status:403,data:{error:'channel_membership_required'}};}
+ const r=await db.rpc('simab_task_claim_v16',{p_subject:subject,p_quest:p.questId});if(r.error)throw Error(r.error.message);return{status:200,data:r.data};
+ }catch(e){return{status:(e as Error).message==='task_not_ready'?409:503,data:{error:(e as Error).message==='task_not_ready'?'task_not_ready':'reward_ledger_unavailable'}};}}

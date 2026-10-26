@@ -52,3 +52,8 @@ function botsL(s:Ludo){let guard=0;while(!s.finished&&s.current!==0){if(++guard>
 export function startL(amount:number):Ludo{stake(amount);return{kind:'ludo',pieces:Array.from({length:4},()=>[-1,-1,-1,-1]),current:0,die:0,sixes:0,stake:amount,finished:false,winner:-1,result:'',log:[]};}
 export function moveL(s:Ludo,m:any){if(s.finished||s.current!==0)fail();if(m.type==='roll')rollL(s);else if(m.type==='piece')stepL(s,m.index);else fail();botsL(s);}
 export function publicL(s:Ludo){return {...s,legal:legalL(s)};}
+
+// Human tables keep each action visible; bots never advance these states.
+export function startHumanH(amount:number){const s=startH(amount);s.scores=[0,0];s.hakem=randomInt(4);dealH(s);return s;}
+export function moveHumanH(s:Hokm,player:number,m:any){if(s.finished||s.current!==player)fail('invalid_turn');if(s.phase==='trump'){if(m.type!=='trump')fail();trumpH(s,m.suit);}else{if(m.type!=='play')fail();playH(s,m.card);}}
+export function moveHumanL(s:Ludo,player:number,m:any){if(s.finished||s.current!==player)fail('invalid_turn');if(m.type==='roll')rollL(s);else if(m.type==='piece')stepL(s,m.index);else fail();}

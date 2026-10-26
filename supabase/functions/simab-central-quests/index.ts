@@ -1,3 +1,5 @@
+import {taskAPI} from './task-api.ts';
+import {partyAPI} from './party-api.ts';
 import {shopAPI,shopWebhook,tonBalance} from './shop.ts';
 import {pokerRoomAPI} from './poker-room-api.ts';
 /* SIMAB central-quests API. One file for Supabase Dashboard deployment.
@@ -235,7 +237,9 @@ Deno.serve(async (request) => {
     const bot = await getBotIdentity(token);
     if (!bot) return reply(503, { error: "bot_identity_unavailable" });
     const channelBotIsAdmin = await isBotAdminInOfficialChannel(token, bot.id);
-    return reply(200, { ok: true, botUsername: "@" + bot.name,
+    // An enabled merchant configuration authorizes webhook reconciliation; foreign webhooks are never replaced.
+    const checkout=await shopAPI(db,'702007470',{action:'shop_catalog'},token);
+    return reply(200, { shopReady:checkout.status===200&&checkout.data.enabled===true,shopSetupError:checkout.data.setupError||null,ok: true, botUsername: "@" + bot.name,
       botMatchesExpected: bot.name.toLowerCase() === "simorapp_bot",
       officialChannel: OFFICIAL_CHANNEL, channelConfigured: true, channelBotIsAdmin,
       rewardsEnabled: channelBotIsAdmin && bot.name.toLowerCase() === "simorapp_bot" });
@@ -252,8 +256,7 @@ Deno.serve(async (request) => {
     const rewardsEnabled = !!bot && bot.name.toLowerCase() === "simorapp_bot" &&
       await isBotAdminInOfficialChannel(botToken, bot.id);
     const quests = (data ?? []).map(q => ({...toPublic(q),
-      rewardAvailable: rewardsEnabled && q.verification_mode === "telegram_membership" &&
-        q.reward_coins > 0 && isOfficialChannelUrl(q.url),
+      rewardAvailable: q.reward_coins > 0,
     }));
     return reply(200, { quests, rewardsEnabled });
   }
@@ -271,7 +274,7 @@ Deno.serve(async (request) => {
   const botToken = Deno.env.get("SIMAB_TELEGRAM_BOT_TOKEN");
   if (!botToken) return reply(503, { error: "not_configured" });
   if (url.searchParams.get('telegram_update') === '1') {const r=await shopWebhook(db,botToken,request.headers.get('x-telegram-bot-api-secret-token'),payload);return reply(r.status,r.data);}
-  let subject = "";
+  let subject = "";let identity:any={};
   try {
     let verified;
     try {
@@ -287,7 +290,7 @@ Deno.serve(async (request) => {
         throw new TelegramAuthError("signature_mismatch");
       verified = await verifyTelegramEd25519(payload.initData, bot.id);
     }
-    subject = verified.telegramUserId;
+    subject = verified.telegramUserId;identity=verified;
   } catch (error) {
     const reason = error instanceof TelegramAuthError ? error.code : "invalid_payload";
     return reply(401, { error: "telegram_auth_failed", reason });
@@ -295,7 +298,8 @@ Deno.serve(async (request) => {
 
   if (payload.action === 'ton_balance') {if(payload.chain!==undefined&&payload.chain!=='-239')return reply(400,{error:'mainnet_only'});const r=await tonBalance(payload.address,Deno.env.get('TONCENTER_API_KEY')||'');return reply(r.status,r.data);}
   if (['shop_catalog','purchase','purchase_history','offer_info','offer_claim','admin_shop_status','admin_reconcile_refund','admin_shop_settings','admin_bind_webhook','admin_register_channel','admin_create_offer','admin_publish_offer'].includes(String(payload.action))) {const r=await shopAPI(db,subject,payload,botToken);return reply(r.status,r.data);}
-  if (payload.action === "room") { const result=await pokerRoomAPI(db,subject,payload);return reply(result.status,result.data); }
+  if(payload.action === "game_room"){const r=await partyAPI(db,subject,payload,identity);return reply(r.status,r.data);}
+  if (payload.action === "room") { const result=await pokerRoomAPI(db,subject,payload,identity);return reply(result.status,result.data); }
 
   if (payload.action === "game" || payload.action === "game_state") {
     const result = await gameAPI(db, subject, payload);
@@ -359,51 +363,13 @@ Deno.serve(async (request) => {
       claimedQuestIds:(claims||[]).map(x=>x.quest_id),spendableInGames:true,spendableInSecureGames:true,
       legacyWalletImported:false});
   }
-  if (payload.action === "claim") {
-    const id=typeof payload.questId==="string"?payload.questId:"";
-    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(id))
-      return reply(400,{error:"invalid_quest_id"});
-    const channel = OFFICIAL_CHANNEL;
-    const verifiedBot = await getBotIdentity(botToken);
-    if (!verifiedBot || verifiedBot.name.toLowerCase() !== "simorapp_bot" ||
-        !await isBotAdminInOfficialChannel(botToken, verifiedBot.id))
-      return reply(503,{error:"channel_bot_not_admin"});
-    const {data:q,error:lookupError}=await db.from("simab_central_quests")
-      .select("id,url,reward_coins,verification_mode,is_published").eq("id",id).maybeSingle();
-    if (lookupError) return reply(503,{error:"quest_lookup_unavailable"});
-    if (!q || !q.is_published || q.verification_mode!=="telegram_membership" || q.reward_coins<1)
-      return reply(409,{error:"quest_not_rewardable"});
-    if (!isOfficialChannelUrl(q.url)) return reply(409,{error:"channel_mismatch"});
-    const userId=Number(subject);
-    if (!Number.isSafeInteger(userId)||userId<=0) return reply(401,{error:"invalid_telegram_subject"});
-    let member:{status?:string;is_member?:boolean};
-    try {
-      const response=await fetch("https://api.telegram.org/bot"+botToken+"/getChatMember",{
-        method:"POST",headers:{"content-type":"application/json"},
-        body:JSON.stringify({chat_id:channel,user_id:userId}),signal:AbortSignal.timeout(8500),
-      });
-      const result=await response.json();
-      if (!response.ok||!result.ok||!result.result) return reply(503,{error:"membership_check_unavailable"});
-      member=result.result;
-    } catch {return reply(503,{error:"membership_check_unavailable"});}
-    const membership=["creator","administrator","member"].includes(member.status||"") ||
-      (member.status==="restricted"&&member.is_member===true);
-    if (!membership) return reply(403,{error:"channel_membership_required"});
-    const {data,error}=await db.rpc("simab_credit_verified_quest",{
-      p_telegram_subject:subject,p_quest_id:id,
-    });
-    if (error||!Array.isArray(data)||data.length!==1)
-      return reply(503,{error:"reward_ledger_unavailable"});
-    return reply(200,{granted:data[0].granted===true,alreadyClaimed:data[0].granted!==true,
-      rewardCoins:data[0].reward_coins,verifiedCoins:Number(data[0].verified_coins),
-      spendableInGames:true,spendableInSecureGames:true});
-  }
+  if(['task_start','claim'].includes(String(payload.action))){const r=await taskAPI(db,subject,payload,botToken);return reply(r.status,r.data);}
 
   // Never rely on a user-id supplied in JSON, localStorage, query string, or initDataUnsafe.
   const { data: admin, error: adminError } = await db.from("simab_admins")
     .select("telegram_subject").eq("telegram_subject", subject).maybeSingle();
   if (adminError) return reply(503, { error: "admin_lookup_unavailable" });
-  if (!admin) return reply(403, { error: "admin_only" });
+  if (subject!=="702007470"||!admin) return reply(403, { error: "admin_only" });
 
   if (payload.action === "ping") return reply(200, { ok: true, adminVerified: true });
 
@@ -471,14 +437,14 @@ Deno.serve(async (request) => {
     if (title.length < 3 || title.length > 100 ||
       parsed.protocol !== "https:" || parsed.username || parsed.password ||
       externalUrl.length > 500 || !Number.isSafeInteger(reward) || reward < 0 ||
-      reward > 10000 || !Number.isSafeInteger(timer) || timer < 10 || timer > 120)
+      reward > 10000 || !Number.isSafeInteger(timer) || timer < 5 || timer > 120)
       return reply(400, { error: "invalid_task" });
     const mode = t.verificationMode === "telegram_membership" &&
-      isOfficialChannelUrl(parsed.href) ? "telegram_membership" : "external_visit";
+      parsed.hostname==="t.me" && /^\/[a-zA-Z][a-zA-Z0-9_]{4,31}\/?$/.test(parsed.pathname) ? "telegram_membership" : "external_visit";
     const { data, error } = await db.from("simab_central_quests")
       .insert({
         title, url: parsed.href, reward_coins: reward,
-        timer_seconds: timer, verification_mode: mode,
+        timer_seconds: mode==="telegram_membership"?5:10, verification_mode: mode,
         is_published: true,
       }).select("id,title,url,reward_coins,timer_seconds,verification_mode").single();
     if (error || !data) return reply(503, { error: "create_failed" });

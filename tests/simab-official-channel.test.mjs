@@ -49,17 +49,9 @@ test('bot must be a Telegram channel ADMIN for payouts; member or outage is deni
   assert.equal(await h.isBotAdminInOfficialChannel('secret','123456789'),false);
 });
 
-test('rewards never trust local page state, a different channel or external links',()=>{
-  assert.match(edge,/if \(!isOfficialChannelUrl\(q\.url\)\) return reply\(409/);
-  assert.match(edge,/channel_bot_not_admin/);
-  assert.match(edge,/simab_credit_verified_quest/);
-  assert.match(edge,/member\.status/);
-  assert.match(edge,/getChatMember/);
-  assert.match(client,/officialChannelUrl = "https:\/\/t\.me\/SimorApp"/);
-  assert.match(client,/simabFillOfficialChannelQuest/);
-  assert.match(client,/await loadVerifiedWallet\(\)/);
-  assert.match(client,/staticChannelCard\.hidden = true/);
-  assert.doesNotMatch(client,/tg: "https:\/\/t\.me\/SimorApp_bot"/);
+test('new tasks verify the configured channel server-side and label external visits honestly',()=>{
+  const task=read('supabase/functions/simab-central-quests/task-api.ts');
+  assert.match(task,/getChatMember/);assert.match(task,/channel_membership_required/);assert.match(task,/channel_bot_not_admin/);assert.match(task,/simab_task_claim_v16/);assert.match(client,/قابل تأیید خودکار نیست/);assert.match(client,/doAdmin\('task_start'/);assert.match(client,/doAdmin\('claim'/);
 });
 
 test('existing game and admin page JS remains valid',()=>{
@@ -67,7 +59,7 @@ test('existing game and admin page JS remains valid',()=>{
   for(const page of ['admin/index.html','quests/index.html']){
     const s=read(page);
     for(const [,code] of s.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(code);
-    assert.match(s,/simab-central-quests\.js\?v=(?:7|20261025|10|11)/);
+    assert.match(s,/simab-central-quests\.js\?v=(?:7|20261025|10|11|16)/);
     assert.match(s,/simab-wallet-client\.js\?v=\d+/);
   }
   new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/gm,''));

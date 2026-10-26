@@ -1,37 +1,4 @@
-/* Small gesture-unlocked synthesised SFX. No downloads, enabled on user gesture,
- no autoplay, audio gracefully disabled when unsupported. */
-(function(root){
-"use strict";
-let enabled=true,ctx=null;try{enabled=localStorage.getItem('simab_sound_enabled')!=='0';}catch{}
-function context(){
- if(!root.AudioContext&&!root.webkitAudioContext)return null;
- if(!ctx)ctx=new (root.AudioContext||root.webkitAudioContext)();
- return ctx;
-}
-function play(kind="tap"){
- if(!enabled)return;
- try{
-  const ac=context();if(!ac)return;ac.resume().catch(()=>{});
-  const notes={
-   tap:[440],chip:[610,850],fold:[320,220],raise:[540,710],
-   deal:[390,515,650],win:[420,530,670,880],dice:[240,490,340],
-   roll:[360,520,800]
-  }[kind]||[420];
-  notes.forEach((freq,i)=>{
-   const start=ac.currentTime+i*.075,osc=ac.createOscillator(),gain=ac.createGain();
-   osc.type="sine";osc.frequency.setValueAtTime(freq,start);
-   gain.gain.setValueAtTime(.0001,start);
-   gain.gain.exponentialRampToValueAtTime(.075,start+.015);
-   gain.gain.exponentialRampToValueAtTime(.0001,start+.15);
-   osc.connect(gain).connect(ac.destination);osc.start(start);osc.stop(start+.17);
-  });
- }catch{}
-}
-function unlock(){try{const ac=context();if(ac?.state==='suspended')ac.resume().catch(()=>{});}catch{}}
-function toggle(button){
- enabled=!enabled;try{localStorage.setItem('simab_sound_enabled',enabled?'1':'0');}catch{}unlock();
- if(button){button.setAttribute("aria-pressed",String(enabled));button.textContent=enabled?"🔊 صدا روشن":"🔇 صدا خاموش";}
- if(enabled)play("tap");return enabled;
-}
-root.SimabSound=Object.freeze({play,toggle,unlock,isEnabled:()=>enabled});
-})(typeof window!=="undefined"?window:globalThis);
+/* Gesture-unlocked procedural Foley: no remote audio or recording. */
+(function(root){'use strict';let enabled=true,ctx;try{enabled=localStorage.getItem('simab_sound_enabled')!=='0';}catch{}function context(){if(!root.AudioContext&&!root.webkitAudioContext)return null;return ctx||(ctx=new(root.AudioContext||root.webkitAudioContext)());}function noise(ac,at,len,volume,cutoff){const buffer=ac.createBuffer(1,Math.ceil(ac.sampleRate*len),ac.sampleRate),a=buffer.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=(Math.random()*2-1)*Math.pow(1-i/a.length,1.5);const src=ac.createBufferSource(),filter=ac.createBiquadFilter(),g=ac.createGain();src.buffer=buffer;filter.type='highpass';filter.frequency.value=cutoff;g.gain.setValueAtTime(volume,at);g.gain.exponentialRampToValueAtTime(.0001,at+len);src.connect(filter).connect(g).connect(ac.destination);src.start(at);}
+function play(kind='tap'){if(!enabled)return;try{const ac=context();if(!ac)return;ac.resume().catch(()=>{});const at=ac.currentTime;if(['card','deal','shuffle'].includes(kind)){const count=kind==='shuffle'?14:kind==='deal'?5:1;for(let i=0;i<count;i++)noise(ac,at+i*.055,.09,.19,kind==='shuffle'?1400:2100);return;}if(['dice','checker','piece'].includes(kind)){const count=kind==='dice'?9:2;for(let i=0;i<count;i++)noise(ac,at+i*.04,.045,.12,kind==='dice'?600:1000);return;}const notes={tap:[440],chip:[610,850],fold:[320,220],raise:[540,710],win:[420,530,670,880],roll:[360,520,800]}[kind]||[420];notes.forEach((f,i)=>{const t=at+i*.075,o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.06,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+.13);o.connect(g).connect(ac.destination);o.start(t);o.stop(t+.15);});}catch{}}
+function unlock(){try{context()?.resume().catch(()=>{});}catch{}}function toggle(b){enabled=!enabled;try{localStorage.setItem('simab_sound_enabled',enabled?'1':'0');}catch{}unlock();if(b){b.setAttribute('aria-pressed',String(enabled));b.textContent=enabled?'🔊 صدا روشن':'🔇 صدا خاموش';}if(enabled)play();return enabled;}root.SimabSound=Object.freeze({play,toggle,unlock,isEnabled:()=>enabled});})(typeof window!=='undefined'?window:globalThis);
