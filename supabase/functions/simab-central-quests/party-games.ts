@@ -11,8 +11,8 @@ const lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 export const adjacent=(a:number,b:number)=>a!==b&&lines.some(l=>l.includes(a)&&l.includes(b)&&Math.abs(l.indexOf(a)-l.indexOf(b))===1);
 function ticket(){for(let tries=0;tries<1000;tries++){const a=Array.from({length:3},()=>shuffle([0,1,2,3,4,5,6,7,8]).slice(0,5)),cols=Array.from({length:9},(_,i)=>a.map((r,j)=>r.includes(i)?j:-1).filter(j=>j>=0));if(cols.some(c=>!c.length))continue;const t=Array.from({length:3},()=>Array(9).fill(0));cols.forEach((rows,c)=>{const low=c===0?1:c*10,high=c===8?90:c*10+9,nums=shuffle(Array.from({length:high-low+1},(_,i)=>low+i)).slice(0,rows.length).sort((a,b)=>a-b);rows.forEach((r,i)=>t[r][c]=nums[i]);});return t;}fail('game_unavailable');}
 export function startParty(kind:string,n:number,buyIn:number,options:any={}){const size=gameSizes[kind];if(!size||n<size[0]||n>size[1])fail('invalid_players');const s:any={kind,n,current:0,finished:false,winners:[],result:'',event:1,lastEvent:'shuffle',deadline:Date.now()+20000,log:[]};
- if(kind==='hokm'){s.table=startHumanH(buyIn);s.current=s.table.current;}
- if(kind==='ludo')s.table=startL(buyIn);
+ if(kind==='hokm'){s.table=startHumanH(Math.max(2,buyIn));s.current=s.table.current;}
+ if(kind==='ludo')s.table=startL(Math.max(2,buyIn));
  if(kind==='backgammon')s.table=startHumanBG(buyIn);
  if(kind==='snakes'){s.positions=Array(n).fill(0);s.die=0;}
  if(kind==='mill'){s.board=Array(9).fill(-1);s.placed=[0,0];s.moves=0;s.repetitions={};}

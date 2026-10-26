@@ -302,7 +302,7 @@ Deno.serve(async (request) => {
   if (payload.action === "room") { const result=await pokerRoomAPI(db,subject,payload,identity);return reply(result.status,result.data); }
 
   if (payload.action === "game" || payload.action === "game_state") {
-    const result = await gameAPI(db, subject, payload);
+    const result = await gameAPI(db, subject, {...payload,timeout:false});
     return reply(result.status, result.data);
   }
 

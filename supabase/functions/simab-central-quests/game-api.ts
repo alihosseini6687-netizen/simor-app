@@ -1,7 +1,9 @@
-import {startBJ,moveBJ,publicBJ,startH,moveH,publicH,startL,moveL,publicL} from './table-games.ts';
+import {startBJ,moveBJ,publicBJ,startH,moveH,publicH,legalH,startL,moveL,publicL,legalL} from './table-games.ts';
 import {startPoker,movePoker,publicPoker,startBG,moveBG,passBG,publicBG,spinSlot,gameFrames} from './games.ts';
 import type {Poker,BG} from './games.ts';
 const uuid=(x:unknown)=>typeof x==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(x);
+const autoMove=(s:any)=>s.kind==='hokm'?(s.phase==='trump'?{type:'trump',suit:Math.floor(s.hands[0][0]/13)}:{type:'play',card:legalH(s,0)[0]}):s.kind==='ludo'?(s.die?{type:'piece',index:legalL(s)[0]}:{type:'roll'}):{type:'stand'};
+const timed=(g:string)=>['hokm','ludo','blackjack'].includes(g);
 const expose=(s:any)=>s.kind==='poker'?publicPoker(s):s.kind==='backgammon'?publicBG(s):s.kind==='blackjack'?publicBJ(s):s.kind==='hokm'?publicH(s):s.kind==='ludo'?publicL(s):s;
 export async function gameAPI(db:any,subject:string,p:Record<string,any>){
  const game=p.game;if(!['poker','backgammon','slot','blackjack','hokm','ludo'].includes(game))return {status:400,data:{error:'invalid_game'}};
@@ -11,6 +13,7 @@ export async function gameAPI(db:any,subject:string,p:Record<string,any>){
   const {data,error}=await q.maybeSingle();if(error)return{status:503,data:{error:'game_unavailable'}};
   const w=await db.rpc('simab_secure_wallet_action',{p_subject:subject,p_action:'state',p_amount:0,p_request_id:null});
   if(w.error)return{status:503,data:{error:'wallet_unavailable'}};
+  if(data&&!data.finished&&timed(game)&&data.state.turnDeadline&&Date.now()>=data.state.turnDeadline)return await gameAPI(db,subject,{action:'game',game,op:'move',sessionId:data.id,version:data.version,requestId:crypto.randomUUID(),move:autoMove(data.state),timeout:true});
   return {status:200,data:{serverNow:Date.now(),sessionId:data?.id||null,version:data?.version||0,state:data?expose(data.state):null,wallet:w.data}};
  }
  if(!uuid(p.requestId))return {status:400,data:{error:'invalid_request_id'}};
@@ -41,7 +44,7 @@ export async function gameAPI(db:any,subject:string,p:Record<string,any>){
    if(r.error)return{status:503,data:{error:'game_unavailable'}};
    if(!r.data)throw Error('game_not_found');if(r.data.finished)throw Error('game_finished');
    if(r.data.version!==p.version)throw Error('stale_game');
-   id=r.data.id;expected=r.data.version;state=r.data.state;
+   id=r.data.id;expected=r.data.version;state=r.data.state;if(timed(game)&&state.turnDeadline&&Date.now()>=state.turnDeadline){if(!p.timeout){await gameAPI(db,subject,{action:'game',game,op:'move',sessionId:id,version:expected,requestId:crypto.randomUUID(),move:autoMove(state),timeout:true});return{status:409,data:{error:'stale_game'}};}p.move=autoMove(state);}
    if(op==='leave'){
     state.finished=true;state.result='از میز خارج شدید؛ ژتون‌های باقی‌مانده آزاد شد.';
     if(game==='poker'){state.players[0].folded=true;state.current=-1;state.pending=[];}
@@ -57,6 +60,7 @@ export async function gameAPI(db:any,subject:string,p:Record<string,any>){
    else if(game==='ludo'){moveL(state,p.move||{});}
    else throw Error('invalid_move');
   }
+  if(timed(game))state.turnDeadline=state.finished?0:Date.now()+20000;
   if(game==='blackjack'&&state.finished&&op!=='leave')credit=state.payout;
   if(game==='hokm'&&state.finished&&state.winner===0)credit=state.stake*2;
   if(game==='ludo'&&state.finished&&state.winner===0)credit=state.stake*4;
