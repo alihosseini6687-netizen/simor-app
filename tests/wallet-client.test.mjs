@@ -45,3 +45,13 @@ test('request timeout fallback also works if AbortController is unavailable',asy
  const c=client(async(_,options)=>{assert.equal(options.signal,undefined);return response({serverWallet:true,coins:123,chips:45});},new Map(),{AbortSignal:undefined,AbortController:undefined});
  await c.api.ready;assert.equal(c.api.state.coins,123);assert.equal(c.api.state.chips,45);
 });
+
+test('lost private room response survives reload and recovers the same escrow request',async()=>{
+ const storage=new Map();let first=true,chips=500;const ids=[];let applied=false;
+ const fetch=async(_,options)=>{const p=JSON.parse(options.body);if(p.walletAction==='state')return response({serverWallet:true,coins:0,chips});ids.push(p.requestId);if(!applied){chips-=100;applied=true;}if(first){first=false;throw Error('lost room response');}return response({room:{code:'ABCDEFGH23',status:'waiting'},version:1,state:null,wallet:{serverWallet:true,coins:0,chips},duplicate:true});};
+ const a=client(fetch,storage);await a.api.ready;await assert.rejects(a.api.mutate('room',{op:'create',amount:100,maxPlayers:2}));assert.ok(a.api.pending);
+ const b=client(fetch,storage);await b.api.ready;assert.equal(b.api.state.chips,400);assert.equal(b.api.pending,null);assert.equal(new Set(ids).size,1);
+});
+test('malformed private room receipt preserves recovery even when the wallet is valid',async()=>{
+ const c=client(async(_,options)=>{const p=JSON.parse(options.body);return response(p.walletAction==='state'?{serverWallet:true,coins:0,chips:500}:{wallet:{serverWallet:true,coins:0,chips:400}});});await c.api.ready;await assert.rejects(c.api.mutate('room',{op:'create',amount:100,maxPlayers:2}),/پاسخ میز/);assert.ok(c.api.pending);
+});
