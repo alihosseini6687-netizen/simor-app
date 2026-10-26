@@ -20,13 +20,13 @@
     { id:'1', title:'پوکر تگزاس', category:'cards', active:true, icon:'🃏', link:'games/poker/index.html' },
     { id:'2', title:'رول', category:'chance', active:true, icon:'🎰', link:'games/slot/index.html' },
     { id:'3', title:'تخته نرد', category:'classic', active:true, icon:'🎲', link:'games/backgammon/index.html' },
-    { id:'4', title:'ورق حکم', category:'cards', active:false },
-    { id:'5', title:'ورق ۲۱', category:'cards', active:false },
+    { id:'4', title:'حکم', category:'cards', active:true, icon:'🎴', link:'games/hokm/index.html' },
+    { id:'5', title:'۲۱ (بلک‌جک)', category:'cards', active:true, icon:'♠️', link:'games/blackjack/index.html' },
     { id:'6', title:'۷ خبیث', category:'cards', active:false },
     { id:'7', title:'جرأت حقیقت', category:'future', active:false },
     { id:'8', title:'۳ به ۳', category:'classic', active:false },
     { id:'9', title:'دبلنا', category:'classic', active:false },
-    { id:'10', title:'منچ آنلاین', category:'classic', active:false },
+    { id:'10', title:'منچ', category:'classic', active:true, icon:'🎲', link:'games/ludo/index.html' },
     { id:'11', title:'مار و پله', category:'classic', active:false },
   ];
   const gameById = new Map(knownGames.map(g => [g.id,g]));
@@ -80,7 +80,9 @@
   cards.forEach((card,index) => {
     const id=String(index+1);
     const game=gameById.get(id);
-    if (!game) { card.remove(); return; } // Drop 3 generic unnamed placeholder cards, keep named upcoming titles.
+    if (!game) { card.remove(); return; }
+    game.active=card.matches('a[href]');
+    if(game.active){game.link=card.getAttribute('href');game.title=card.querySelector('.game-card-title')?.textContent?.trim()||game.title;game.icon=card.querySelector('.game-card-icon')?.textContent?.trim()||game.icon;} // Drop 3 generic unnamed placeholder cards, keep named upcoming titles.
     const holder = document.createElement('div');
     holder.className='v4-game-tile';
     holder.dataset.gameId=id;

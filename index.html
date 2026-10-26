@@ -293,12 +293,12 @@
   <link rel="stylesheet" href="assets/css/simab-v3.css?v=3">
   <link rel="stylesheet" href="assets/css/simab-v4.css?v=4">
   <link rel="stylesheet" href="assets/css/simab-home-v6.css?v=6">
-  <script src="assets/js/simab-wallet-client.js?v=12"></script>
+  <script src="assets/js/simab-wallet-client.js?v=15"></script>
 
 <link rel="stylesheet" href="assets/css/simab-secure-entry-v7.css?v=7">
 <link rel="stylesheet" href="assets/css/simab-v8-core.css?v=8">
 <link rel="stylesheet" href="assets/css/simab-v8-home.css?v=9">
-</head>
+<link rel="stylesheet" href="assets/css/simab-launch-v15.css?v=15"></head>
 <body>
 
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -346,6 +346,7 @@
             <div class="user-name" id="user-name-txt">کاربر سیماب</div>
             <div class="user-username" id="user-tg-username">@User</div>
           </div>
+          <a class="home-wallet-button" href="wallet/index.html"><span>◈</span><span><strong>کیف پول</strong><small>سکه، ژتون و TON</small></span></a>
         </div>
         <div data-emoji-picker></div><div class="ids-container">
           <div class="id-row">
@@ -638,7 +639,7 @@
 
     // فهرست بازی‌ها طبق نام‌گذاری دقیق درخواستی شما
     const gamesDatabase = [
-      { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, title: 'پوکر تگزاس', sub: 'بازی با ربات' },
+      { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, title: 'پوکر تگزاس', sub: 'ربات یا دوستان با کد دعوت' },
       { id: 2, icon: '🎰', url: 'games/slot/index.html', active: true, title: 'رول', sub: 'ماشین شانس' },
       { id: 3, icon: '🎲', url: 'games/backgammon/index.html', active: true, title: 'تخته نرد', sub: 'بازی با ربات' },
       { id: 4, icon: '🎴', url: 'games/hokm/index.html', active: true, title: 'حکم', sub: 'تیمی • ورودی ۲۰ ژتون' },
@@ -750,6 +751,6 @@
     }
     setTimeout(processStartParams, 600);
   </script>
-  <script defer src="assets/js/simab-v4.js?v=4"></script>
-<script src="assets/js/simab-profile-v13.js?v=13" defer></script></body>
+  <script defer src="assets/js/simab-v4.js?v=15"></script>
+<script src="assets/js/simab-profile-v13.js?v=13" defer></script><script>try{const start=window.Telegram?.WebApp?.initDataUnsafe?.start_param||new URLSearchParams(location.search).get('tgWebAppStartParam')||'';if(/^o_[a-f0-9]{32}$/.test(start))location.replace('offers/index.html?code='+encodeURIComponent(start.slice(2)));else if(/^p_[A-Z2-9]{10}$/.test(start))location.replace('games/poker/friends.html?code='+encodeURIComponent(start.slice(2)));}catch{}</script></body>
 </html>

@@ -97,9 +97,9 @@
   </style>
   <link rel="stylesheet" href="../assets/css/simab-secondary-v6.css?v=6">
   <link rel="stylesheet" href="../assets/css/simab-admin-v6.css?v=6">
-  <script src="../assets/js/simab-wallet-client.js?v=12"></script>
+  <script src="../assets/js/simab-wallet-client.js?v=15"></script>
 <link rel="stylesheet" href="../assets/css/simab-v8-core.css?v=8">
-</head>
+<link rel="stylesheet" href="../assets/css/simab-shop-v15.css?v=15"><script src="../assets/js/simab-shop-admin-v15.js?v=15" defer></script></head>
 <body>
   <!-- هدر -->
   <div class="header-bar">
@@ -163,6 +163,9 @@
     </button>
   </div>
 
+
+<section class="admin-card" id="shop-admin"><h3>◈ فروشگاه سکه و پرداخت</h3><p>داخل تلگرام خرید سکهٔ دیجیتال با Stars است. قیمت ثابت TON به Stars تبدیل نمی‌شود؛ قیمت هر ۱۰هزار سکه را تعیین کن.</p><label for="stars-unit">Stars برای هر ۱۰٬۰۰۰ سکه</label><input id="stars-unit" class="input-field" inputmode="numeric" placeholder="قیمت را تعیین کن"><label class="channel-choice"><input type="checkbox" id="shop-enabled">فروش سکه روشن باشد</label><button data-shop-admin id="shop-settings-save" class="btn-action">ذخیرهٔ قیمت و وضعیت فروش</button><p id="shop-setup-status"></p><div id="refund-review"></div><button data-shop-admin id="shop-webhook-bind" class="btn-action">اتصال دریافت پرداخت‌ها و ثبت خودکار کانال‌های جدید</button><p class="hint">اگر ربات قبلاً وبهوک دیگری داشته باشد، بدون بررسی جایگزین نمی‌شود. برای پیام‌های کانال فعلاً از بخش آفر زیر استفاده کن.</p><p>آدرس TON معرفی‌شدهٔ مدیریت:</p><p id="merchant-address" dir="ltr" class="wallet-address"></p><p>نرخ مبنای درخواستی: ۱۰هزار=۰٫۲ TON، ۲۰هزار=۰٫۴، ۵۰هزار=۱، ۱۰۰هزار=۲، ۵۰۰هزار=۱۰ TON. دریافت مستقیم TON برای این خرید داخل تلگرام فعال نیست.</p></section>
+<section class="admin-card" id="offer-admin"><h3>📣 آفر و ارسال گروهی به کانال‌ها</h3><label for="channel-id">آیدی کانال یا شناسهٔ -100…</label><input id="channel-id" class="input-field" dir="ltr" value="@SimorApp" placeholder="@your_channel"><button data-shop-admin id="channel-register" class="btn-action">بررسی اجازهٔ ربات و ثبت کانال</button><p>کانال‌های قبلی را یک بار ثبت کن؛ پس از اتصال دریافت رویدادها، کانال‌های جدیدی که ربات در آن‌ها مدیر می‌شود خودکار ثبت می‌شوند.</p><div id="shop-channels"></div><button id="channels-select-all" class="btn-action">انتخاب همهٔ کانال‌های فعال</button><label for="offer-title">عنوان آفر</label><input id="offer-title" class="input-field" maxlength="100"><label for="offer-message">متن پیام کانال</label><textarea id="offer-message" class="input-field" rows="4" maxlength="1500"></textarea><div class="shop-admin-grid"><label>سکه برای هر نفر (۰ = پیام بدون هدیه)<input id="offer-reward" class="input-field" inputmode="numeric" value="100"></label><label>حداکثر دریافت‌کننده<input id="offer-capacity" class="input-field" inputmode="numeric" value="100"></label><label>مدت اعتبار (ساعت)<input id="offer-hours" class="input-field" inputmode="numeric" value="24"></label></div><button data-shop-admin id="offer-create" class="btn-action">ساخت آفر و پیش‌نمایش</button><div id="offer-preview" class="offer-preview">قبل از انتشار، متن و سقف پاداش را بررسی کن. هر حساب تلگرام فقط یک بار از هر آفر پاداش می‌گیرد.</div><label for="offer-picker">آفر آمادهٔ انتشار</label><select id="offer-picker" class="input-field"></select><button data-shop-admin id="offer-publish" class="btn-action">ارسال آفر به کانال‌های انتخاب‌شده</button><button data-shop-admin id="shop-admin-refresh" class="btn-action">بروزرسانی وضعیت</button><p id="shop-admin-message" class="shop-admin-result" role="status" style="white-space:pre-wrap"></p></section>
   <!-- بخش ۶: ایجاد تسک جدید -->
   <div id="v6-admin-tasks" class="v6-admin-target"></div>
   <div class="admin-card">

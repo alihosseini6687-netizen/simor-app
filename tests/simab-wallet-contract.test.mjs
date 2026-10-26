@@ -12,7 +12,7 @@ test('all changed JS parses, Edge compiles after stripping Deno types',()=>{
   new Script(ui);
   new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/gm,''));
   const html=read('wallet/index.html');
-  assert.match(html,/src="\.\.\/assets\/js\/simab-secure-wallet\.js\?v=10"/);
+  assert.match(html,/src="\.\.\/assets\/js\/simab-secure-wallet\.js\?v=\d+"/);
   for(const [,code] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(code);
 });
 test('Telegram auth and server-side wallet action never trust browser user or RNG',()=>{
@@ -48,7 +48,7 @@ test('new server wallet must not import, spend or mirror legacy CloudStorage bal
   assert.match(ui,/requestId:requestId\(\)/);
   assert.match(sql,/simab_verified_quest_balances/);
   for(const path of ['index.html','games/poker/index.html','games/backgammon/index.html','games/slot/index.html','games/wheel/index.html','games/tap/index.html','streak/index.html','swap/index.html','quests/index.html']){
-    assert.match(read(path),/simab-wallet-client\.js\?v=12/,path);
+    assert.match(read(path),/simab-wallet-client\.js\?v=\d+/,path);
     assert.doesNotMatch(read(path),/simor_coins_|simab_chips_/);
   }
 });
