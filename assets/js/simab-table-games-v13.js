@@ -1,4 +1,4 @@
-(()=>{'use strict';const $=id=>document.getElementById(id),game=document.body.dataset.game,fmt=n=>Number(n).toLocaleString('fa-IR'),names=['شما','ربات راست','هم‌تیمی','ربات چپ'];let session=null,busy=false,offset=0;
+(()=>{'use strict';const $=id=>document.getElementById(id),game=document.body.dataset.game,fmt=n=>Number(n).toLocaleString(window.SimabI18n?.locale||'en-US'),names=['شما','ربات راست','هم‌تیمی','ربات چپ'];let session=null,busy=false,offset=0;
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
 function button(text,fn,disabled=false){const n=el('button','',text);n.disabled=disabled||busy||!!SimabWallet.pending;n.onclick=fn;return n;}
 function card(c,fn,disabled=false){const n=el(fn?'button':'div','table-card'+(c<0?' back':[1,2].includes(Math.floor(c/13))?' red':''),c<0?'♠':(({11:'J',12:'Q',13:'K',14:'A'})[c%13+2]||c%13+2)+['♠','♥','♦','♣'][Math.floor(c/13)]);if(fn){n.disabled=disabled||busy||!!SimabWallet.pending;n.onclick=fn;}return n;}
