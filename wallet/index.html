@@ -71,12 +71,12 @@
   </style>
 <link rel="stylesheet" href="../assets/css/simab-v8-core.css?v=8">
 <link rel="stylesheet" href="../assets/css/simab-wallet-v8.css?v=8">
-<link rel="stylesheet" href="../assets/css/simab-common.css?v=10"><script src="../assets/js/simab-wallet-client.js?v=14"></script></head>
+<link rel="stylesheet" href="../assets/css/simab-common.css?v=10"><script src="../assets/js/simab-wallet-client.js?v=15"></script><link rel="stylesheet" href="../assets/css/simab-shop-v15.css?v=15"><script src="https://unpkg.com/@tonconnect/ui@5.0.1/dist/tonconnect-ui.min.js" defer></script><script src="../assets/js/simab-shop-v15.js?v=15" defer></script></head>
 <body>
 <main>
   <header><strong>⭐ SIMAB</strong><a href="../index.html">بازگشت به خانه ←</a></header>
-  <section class="v8-wallet-hero"><h1>🏆 کیف بازی سیماب</h1><p>همه سکه‌ها و ژتون‌ها اعتبار مجازی داخل بازی هستند و تراکنش‌ها در سرور سیماب ثبت می‌شوند.</p></section>
-  <p class="v8-virtual-label">🔒 هیچ سکه یا ژتونی پول واقعی نیست؛ برداشت نقدی، انتقال به بانک یا تبدیل به تومان وجود ندارد. جوایز فقط داخل بازی استفاده می‌شوند.</p>
+  <section class="v8-wallet-hero"><h1>◈ کیف پول سیماب</h1><p>همه سکه‌ها و ژتون‌ها اعتبار مجازی داخل بازی هستند و تراکنش‌ها در سرور سیماب ثبت می‌شوند.</p></section>
+  <p class="v8-virtual-label">سکه و ژتون، اعتبار مجازی داخل سیماب‌اند؛ برداشت نقدی یا تبدیل آن‌ها به TON وجود ندارد. موجودی TON ولت متصل، جداگانه نمایش داده می‌شود.</p>
   <section class="wallet-grid" aria-label="موجودی‌های تأییدشده">
     <div class="balance"><small>🪙 سکه بازی • ثبت‌شده</small><b id="secure-coins" data-coins>—</b></div>
     <div class="balance"><small>🎟 ژتون بازی • ثبت‌شده</small><b id="secure-chips" data-chips>—</b></div>
@@ -87,6 +87,9 @@
     <button type="button" id="wallet-refresh" class="outline">🔄 بروزرسانی موجودی</button>
     <button type="button" id="wallet-retry" class="outline">🔁 بازیابی درخواست نامشخص</button>
   </div>
+  <section class="panel ton-panel"><div class="wallet-section-title"><h2>◈ ولت TON متصل</h2><span class="network-pill">MAINNET</span></div><p>Tonkeeper یا TON Wallet را با TON Connect وصل کن. اتصال، دسترسی به عبارت بازیابی یا اجازهٔ برداشت خودکار نمی‌دهد.</p><div id="ton-connect"></div><p id="ton-message" class="hint" role="status">هنوز ولتی متصل نیست.</p><div class="ton-balance"><strong id="ton-balance">—</strong><span>TON</span></div><p id="ton-address" dir="ltr" class="wallet-address"></p><div class="button-row"><button id="ton-refresh" class="outline" disabled>بروزرسانی موجودی TON</button><button id="ton-disconnect" class="outline" hidden>قطع اتصال ولت</button></div><small id="ton-updated"></small></section>
+  <section class="panel shop-panel" id="coin-shop"><div class="wallet-section-title"><h2>🪙 خرید سکهٔ بازی</h2><span class="network-pill">TELEGRAM STARS</span></div><p>بسته را انتخاب کن؛ پرداخت در پنجرهٔ رسمی تلگرام انجام می‌شود. سکه فقط پس از تأیید سروری پرداخت اضافه می‌شود.</p><div id="coin-packs" class="coin-packs"></div><p id="shop-message" role="status" class="hint">در حال دریافت بسته‌ها…</p><p class="hint">برای کالای دیجیتال در تلگرام از Stars استفاده می‌شود. اتصال TON برای مشاهدهٔ موجودی است؛ در این صفحه انتقال مستقیم TON برای خرید سکه انجام نمی‌شود.</p><a href="terms.html">قوانین خرید و پشتیبانی ←</a></section>
+  <section class="panel"><h2>🧾 سفارش‌های خرید</h2><button id="orders-refresh" class="outline">بررسی پرداخت‌ها</button><div id="purchase-orders"></div></section>
   <section class="panel">
     <h2>🎁 جایزه‌های روزانه بازی</h2>
     <div class="actions">
@@ -106,9 +109,9 @@
       <button type="button" data-secure-action="exchange_to_chips" disabled>🪙 تبدیل به ژتون</button>
       <button type="button" data-secure-action="exchange_to_coins" disabled>🎟 بازگشت به سکه</button>
     </div>
-    <p class="hint">این تبدیل در یک تراکنش واحد دیتابیس انجام می‌شود.</p>
+    <p class="hint">موجودی سکه و ژتون با هم به‌روزرسانی می‌شود.</p>
   </section>
-  <section class="panel"><h2>میز بازی</h2><div class="button-row"><a href="../games/poker/index.html">♠ پوکر افقی</a><a href="../games/backgammon/index.html">🎲 تخته‌نرد</a><a href="../games/slot/index.html">🎰 رول</a></div><p class="hint">ژتون این کیف پول در تمام این بازی‌ها قابل استفاده است.</p></section>
+  <section class="panel"><h2>میز بازی</h2><div class="button-row"><a href="../games/poker/index.html">♠ پوکر افقی</a><a href="../games/poker/friends.html">👥 پوکر با دوستان</a><a href="../games/backgammon/index.html">🎲 تخته‌نرد</a><a href="../games/slot/index.html">🎰 رول</a></div><p class="hint">ژتون این کیف پول در تمام این بازی‌ها قابل استفاده است.</p></section>
   <section class="panel">
     <h2>📜 تاریخچه تغییرات سکه و ژتون</h2>
     <div id="wallet-events">در حال دریافت تاریخچه...</div>
@@ -116,6 +119,6 @@
   <p class="hint">موجودی خانه، صرافی و تمام میزها از همین کیف پول دریافت می‌شود. موجودی قدیمی دستگاه به اعتبار سروری اضافه نمی‌شود.</p>
   <footer>SIMAB GAMING CLUB • IN-GAME CREDITS</footer>
 </main>
-<script src="../assets/js/simab-secure-wallet.js?v=10" defer></script>
+<script src="../assets/js/simab-secure-wallet.js?v=15" defer></script>
 </body>
 </html>

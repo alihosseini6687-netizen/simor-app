@@ -1,3 +1,4 @@
+import {shopAPI,shopWebhook,tonBalance} from './shop.ts';
 import {pokerRoomAPI} from './poker-room-api.ts';
 /* SIMAB central-quests API. One file for Supabase Dashboard deployment.
    NEVER include Telegram bot token or a service key in the browser/repository.
@@ -269,6 +270,7 @@ Deno.serve(async (request) => {
   } catch { return reply(400, { error: "invalid_request" }); }
   const botToken = Deno.env.get("SIMAB_TELEGRAM_BOT_TOKEN");
   if (!botToken) return reply(503, { error: "not_configured" });
+  if (url.searchParams.get('telegram_update') === '1') {const r=await shopWebhook(db,botToken,request.headers.get('x-telegram-bot-api-secret-token'),payload);return reply(r.status,r.data);}
   let subject = "";
   try {
     let verified;
@@ -291,6 +293,8 @@ Deno.serve(async (request) => {
     return reply(401, { error: "telegram_auth_failed", reason });
   }
 
+  if (payload.action === 'ton_balance') {if(payload.chain!==undefined&&payload.chain!=='-239')return reply(400,{error:'mainnet_only'});const r=await tonBalance(payload.address,Deno.env.get('TONCENTER_API_KEY')||'');return reply(r.status,r.data);}
+  if (['shop_catalog','purchase','purchase_history','offer_info','offer_claim','admin_shop_status','admin_reconcile_refund','admin_shop_settings','admin_bind_webhook','admin_register_channel','admin_create_offer','admin_publish_offer'].includes(String(payload.action))) {const r=await shopAPI(db,subject,payload,botToken);return reply(r.status,r.data);}
   if (payload.action === "room") { const result=await pokerRoomAPI(db,subject,payload);return reply(result.status,result.data); }
 
   if (payload.action === "game" || payload.action === "game_state") {

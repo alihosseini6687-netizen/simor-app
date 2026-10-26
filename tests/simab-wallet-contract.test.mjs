@@ -12,7 +12,7 @@ test('all changed JS parses, Edge compiles after stripping Deno types',()=>{
   new Script(ui);
   new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/gm,''));
   const html=read('wallet/index.html');
-  assert.match(html,/src="\.\.\/assets\/js\/simab-secure-wallet\.js\?v=10"/);
+  assert.match(html,/src="\.\.\/assets\/js\/simab-secure-wallet\.js\?v=\d+"/);
   for(const [,code] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(code);
 });
 test('Telegram auth and server-side wallet action never trust browser user or RNG',()=>{
