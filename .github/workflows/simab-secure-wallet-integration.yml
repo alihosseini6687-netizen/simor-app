@@ -62,6 +62,10 @@ jobs:
         run: node tests/ui-party-v16.mjs
       - name: English default and persistent Persian language choice
         run: node tests/ui-language-v16.mjs
+      - name: Mobile tasks, all bot practices, reward design and management isolation
+        run: node tests/ui-refresh-v17.mjs
+      - name: Management API security and private table grants
+        run: node --test tests/security-v17-integration.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

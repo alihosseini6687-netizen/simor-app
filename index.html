@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-<head><script src="assets/js/simab-i18n-v16.js?v=16"></script><link rel="icon" href="assets/v16/simab-logo.png"><link rel="apple-touch-icon" href="assets/v16/simab-logo.png">
+<head><script src="assets/js/simab-i18n-v16.js?v=17"></script><link rel="icon" href="assets/v16/simab-logo.png"><link rel="apple-touch-icon" href="assets/v16/simab-logo.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>SIMAB | Gaming Club</title>
@@ -298,7 +298,7 @@
 <link rel="stylesheet" href="assets/css/simab-secure-entry-v7.css?v=7">
 <link rel="stylesheet" href="assets/css/simab-v8-core.css?v=8">
 <link rel="stylesheet" href="assets/css/simab-v8-home.css?v=9">
-<link rel="stylesheet" href="assets/css/simab-launch-v15.css?v=15"><link rel="stylesheet" href="assets/css/simab-safe-area-v16.css?v=16"><script src="assets/js/simab-safe-area-v16.js?v=16" defer></script><style>.game-card[data-game-id="11"]{background:linear-gradient(0deg,#10071fdd,transparent),url(assets/v16/snakes-cover.webp) center/cover!important}</style></head>
+<link rel="stylesheet" href="assets/css/simab-launch-v15.css?v=17"><link rel="stylesheet" href="assets/css/simab-safe-area-v16.css?v=17"><script src="assets/js/simab-safe-area-v16.js?v=17" defer></script><style>.game-card[data-game-id="11"]{background:linear-gradient(0deg,#10071fdd,transparent),url(assets/v16/snakes-cover.webp) center/cover!important}</style></head>
 <body>
 
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -581,7 +581,7 @@
     if(adminGuestNote)adminGuestNote.hidden=true;
     const adminBtn = document.getElementById('btn-admin-bar');
     if (adminBtn) {
-      adminBtn.style.display = isRealAdmin ? 'flex' : 'none';
+      adminBtn.style.display='none';if(isRealAdmin)SimabWallet.ready.then(()=>SimabWallet.read('ping')).then(r=>{if(r.adminVerified)adminBtn.style.display='flex';}).catch(()=>{});
     }
 
     // All active balances come from the shared authoritative wallet.
@@ -641,14 +641,14 @@
     const gamesDatabase = [
       { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, title: 'پوکر تگزاس', sub: 'ربات یا دوستان با کد دعوت' },
       { id: 2, icon: '🎰', url: 'games/slot/index.html', active: true, title: 'رول', sub: 'ماشین شانس' },
-      { id: 3, icon: '🎲', url: 'games/room/index.html?game=backgammon', active: true, title: 'تخته نرد', sub: 'دوستان واقعی • کد دعوت' },
-      { id: 4, icon: '🎴', url: 'games/room/index.html?game=hokm', active: true, title: 'حکم', sub: '۴ نفر واقعی • انتخاب حکم' },
+      { id: 3, icon: '🎲', url: 'games/room/index.html?game=backgammon', active: true, title: 'تخته نرد', sub: 'تمرین با ربات یا دعوت دوستان' },
+      { id: 4, icon: '🎴', url: 'games/room/index.html?game=hokm', active: true, title: 'حکم', sub: 'تمرین با ربات یا دعوت دوستان' },
       { id: 5, icon: '♠️', url: 'games/room/index.html?game=blackjack', active: true, title: '۲۱ (بلک‌جک)', sub: 'دوستانه • ۲ تا ۸ نفر' },
       { id: 6, icon: '🃏', url: 'games/room/index.html?game=sevens', active: true, title: '۷ خبیث', sub: 'بازی دورهمی' },
       { id: 7, icon: '🎭', url: 'games/room/index.html?game=truth', active: true, title: 'جرأت حقیقت', sub: 'چالش آنلاین' },
       { id: 8, icon: '⚔️', url: 'games/room/index.html?game=mill', active: true, title: '۳ به ۳', sub: 'دوز سه‌مهره‌ای' },
       { id: 9, icon: '🔢', url: 'games/room/index.html?game=bingo', active: true, title: 'دبرنا', sub: 'بازی خانوادگی' },
-      { id: 10, icon: '🔴', url: 'games/room/index.html?game=ludo', active: true, title: 'منچ', sub: '۴ نفر واقعی • تاس دستی' },
+      { id: 10, icon: '🔴', url: 'games/room/index.html?game=ludo', active: true, title: 'منچ', sub: 'تمرین با ربات یا دعوت دوستان' },
       { id: 11, icon: '🐍', url: 'games/room/index.html?game=snakes', active: true, title: 'مار و پله', sub: 'تاس و هیجان' },
       // بازی‌های بعدی بدون نام اختصاصی
       { id: 12, icon: '⏳', url: '#', active: false, title: 'به‌زودی', sub: 'در آپدیت‌های آینده' },
