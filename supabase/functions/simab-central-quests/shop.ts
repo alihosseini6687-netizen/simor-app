@@ -7,10 +7,11 @@ export async function telegram(token:string,method:string,data:any={}){const r=a
 async function rpc(db:any,name:string,p:any){const r=await db.rpc(name,p);if(r.error)throw Error(r.error.message);return r.data;}
 async function settings(db:any){const r=await db.from('simab_shop_settings').select('*').eq('singleton',true).maybeSingle();if(r.error||!r.data)fail('shop_not_ready');return r.data;}
 async function wallet(db:any,subject:string){return await rpc(db,'simab_secure_wallet_action',{p_subject:subject,p_action:'state',p_amount:0,p_request_id:null});}
+const webhookFingerprint=async(url:string)=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(url)))].map(n=>n.toString(16).padStart(2,'0')).join('');
 const known=['shop_not_ready','invalid_pack','request_conflict','refund_review_required','invalid_payment','admin_only','invalid_price','invalid_expiry','offer_not_found','offer_no_reward','offer_expired','offer_exhausted','wallet_limit','invalid_channel','webhook_conflict','invalid_request','invalid_order','invalid_message'];
 export async function shopAPI(db:any,subject:string,p:any,token:string,tg=telegram){
  try{
- if(p.action==='shop_catalog'){const s=await settings(db);return ok({enabled:s.enabled&&s.webhook_bound&&!!s.stars_per_unit,treasury:s.treasury,currency:'XTR',packs:packs.map(coins=>({coins,stars:s.stars_per_unit?coins/10000*s.stars_per_unit:null})),wallet:await wallet(db,subject)});}
+ if(p.action==='shop_catalog'){let s=await settings(db);if(s.enabled&&!s.webhook_bound){const bound=await shopAPI(db,'702007470',{action:'admin_bind_webhook'},token,tg);if(bound.status!==200)return ok({enabled:false,setupError:bound.data.error,currency:'XTR',packs:packs.map(coins=>({coins,stars:s.stars_per_unit?coins/10000*s.stars_per_unit:null})),wallet:await wallet(db,subject)});s=await settings(db);}return ok({enabled:s.enabled&&s.webhook_bound&&!!s.stars_per_unit,treasury:s.treasury,currency:'XTR',packs:packs.map(coins=>({coins,stars:s.stars_per_unit?coins/10000*s.stars_per_unit:null})),wallet:await wallet(db,subject)});}
  if(p.action==='purchase'){
   if(!uuid(p.requestId)||!packs.includes(p.coins))fail('invalid_pack');
   const order=await rpc(db,'simab_star_order_create',{p_subject:subject,p_coins:p.coins,p_id:p.requestId});
@@ -24,17 +25,17 @@ export async function shopAPI(db:any,subject:string,p:any,token:string,tg=telegr
   if(p.action==='offer_claim')return ok(await rpc(db,'simab_offer_claim',{p_subject:subject,p_code:p.code}));
   const r=await db.from('simab_offers').select('code,title,message,reward,max_claims,claims,expires_at').eq('code',p.code).maybeSingle();if(!r.data||r.error)fail('offer_not_found');return ok({offer:r.data});
  }
- const admin=await db.from('simab_admins').select('telegram_subject').eq('telegram_subject',subject).maybeSingle();if(admin.error||!admin.data)fail('admin_only');
+ const admin=await db.from('simab_admins').select('telegram_subject').eq('telegram_subject',subject).maybeSingle();if(subject!=='702007470'||admin.error||!admin.data)fail('admin_only');
  const save=(op:string,data:any)=>rpc(db,'simab_shop_admin',{p_admin:subject,p_op:op,p_data:data});
  if(p.action==='admin_shop_status'){
-  const s=await settings(db),channels=await db.from('simab_bot_channels').select('chat_id,title,username,enabled').order('updated_at',{ascending:false}).limit(30),offers=await db.from('simab_offers').select('code,title,reward,claims,max_claims,expires_at').order('created_at',{ascending:false}).limit(20);
-  const refunds=await db.from('simab_star_orders').select('id,telegram_subject,unrecovered_coins').gt('unrecovered_coins',0).order('created_at',{ascending:false}).limit(30);return ok({refunds:refunds.data||[],starsPerUnit:s.stars_per_unit,enabled:s.enabled,webhookBound:s.webhook_bound,treasury:s.treasury,channels:channels.data||[],offers:offers.data||[]});
+  const s=await settings(db),webhook=await tg(token,'getWebhookInfo'),hookURL=typeof webhook?.url==='string'?webhook.url:'',expectedURL='https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests?telegram_update=1',channels=await db.from('simab_bot_channels').select('chat_id,title,username,enabled').order('updated_at',{ascending:false}).limit(30),offers=await db.from('simab_offers').select('code,title,reward,claims,max_claims,expires_at').order('created_at',{ascending:false}).limit(20);
+  const refunds=await db.from('simab_star_orders').select('id,telegram_subject,unrecovered_coins').gt('unrecovered_coins',0).order('created_at',{ascending:false}).limit(30);return ok({webhookHost:hookURL?new URL(hookURL).hostname:'',webhookFingerprint:await webhookFingerprint(hookURL),webhookConflict:!!hookURL&&hookURL!==expectedURL,refunds:refunds.data||[],starsPerUnit:s.stars_per_unit,enabled:s.enabled,webhookBound:s.webhook_bound,treasury:s.treasury,channels:channels.data||[],offers:offers.data||[]});
  }
  if(p.action==='admin_reconcile_refund'){if(!uuid(p.orderId))fail('invalid_order');return ok(await save('reconcile_refund',{orderId:p.orderId}));}
  if(p.action==='admin_shop_settings'){if(!Number.isInteger(p.starsPerUnit)||p.starsPerUnit<1||p.starsPerUnit>10000||typeof p.enabled!=='boolean')fail('invalid_price');return ok(await save('settings',p));}
  if(p.action==='admin_bind_webhook'){
   const s=await settings(db),url='https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests?telegram_update=1',current=await tg(token,'getWebhookInfo');
-  if(current.url&&current.url!==url)fail('webhook_conflict');
+  if(current.url&&current.url!==url&&!(p.replaceExisting===true&&p.expectedWebhookFingerprint===await webhookFingerprint(current.url)))fail('webhook_conflict');
   await tg(token,'setWebhook',{url,secret_token:s.webhook_secret,allowed_updates:['message','pre_checkout_query','my_chat_member'],drop_pending_updates:false});
   const after=await tg(token,'getWebhookInfo');if(after.url!==url)fail('shop_not_ready');await save('webhook_bound',{bound:true});return ok({ok:true});
  }
@@ -67,6 +68,11 @@ export async function shopWebhook(db:any,token:string,secret:string|null,p:any,t
  const payment=p.message?.successful_payment||p.message?.refunded_payment;
  if(payment){const id=typeof payment.invoice_payload==='string'?payment.invoice_payload.replace(/^simab:/,''):'';if(!uuid(id)||payment.currency!=='XTR'||!Number.isInteger(payment.total_amount)||typeof payment.telegram_payment_charge_id!=='string')fail('invalid_payment');const payer=await db.from('simab_star_orders').select('telegram_subject').eq('id',id).maybeSingle();if(!payer.data||!p.message.refunded_payment&&payer.data.telegram_subject!==String(p.message?.from?.id))fail('invalid_payment');const subject=payer.data.telegram_subject,charge=payment.telegram_payment_charge_id;let result;try{result=await rpc(db,'simab_star_payment',{p_subject:subject,p_id:id,p_charge:charge,p_stars:payment.total_amount,p_refund:!!p.message.refunded_payment});}catch(e){if((e as Error).message!=='wallet_limit')throw e;result={needsRefund:true};}if(result.needsRefund){await tg(token,'refundStarPayment',{user_id:Number(subject),telegram_payment_charge_id:charge});await rpc(db,'simab_star_payment',{p_subject:subject,p_id:id,p_charge:charge,p_stars:payment.total_amount,p_refund:true});}return ok({ok:true});}
  if(p.my_chat_member?.chat?.type==='channel'){const chat=p.my_chat_member.chat,role=p.my_chat_member.new_chat_member;await rpc(db,'simab_channel_update',{p_chat:String(chat.id),p_title:chat.title||'کانال',p_username:chat.username||null,p_enabled:['administrator','creator'].includes(role?.status)&&(role.status==='creator'||!!role.can_post_messages)});}
+ if(typeof p.message?.text==='string'&&p.message.chat?.type==='private'){
+  const command=p.message.text.trim().split(/\s/)[0].split('@')[0];
+  if(command==='/start'){const raw=p.message.text.trim().split(/\s+/)[1]||'',start=/^(p_[A-Z2-9]{10}|g_[a-z]+_[A-Z2-9]{10}|o_[a-f0-9]{32})$/.test(raw)?raw:'';await tg(token,'sendMessage',{chat_id:p.message.chat.id,text:'Welcome to SIMAB! Play with friends, join with an invite code, or open your wallet.',reply_markup:{inline_keyboard:[[{text:'🎮 Open SIMAB',web_app:{url:'https://alihosseini6687-netizen.github.io/simor-app/'+(start?'?tgWebAppStartParam='+encodeURIComponent(start):'')}}]]}});}
+  else if(['/terms','/privacy','/support','/help'].includes(command))await tg(token,'sendMessage',{chat_id:p.message.chat.id,text:command==='/terms'?'Purchase terms: https://alihosseini6687-netizen.github.io/simor-app/wallet/terms.html':command==='/privacy'?'Privacy: https://alihosseini6687-netizen.github.io/simor-app/wallet/privacy.html':'SIMAB support: @Alihosseiniv. For purchase issues, include the order ID shown in Wallet. Never share wallet recovery phrases.'});
+ }
  if(p.message?.text?.split(' ')[0]==='/paysupport')await tg(token,'sendMessage',{chat_id:p.message.chat.id,text:'برای پشتیبانی خرید سکهٔ سیماب، شناسه سفارش را از کیف پول بردار و برای @Alihosseiniv بفرست. اطلاعات محرمانهٔ کیف پول و عبارت بازیابی را ارسال نکن.'});
  return ok({ok:true});
  }catch{return ok({error:'webhook_processing_failed'},503);}

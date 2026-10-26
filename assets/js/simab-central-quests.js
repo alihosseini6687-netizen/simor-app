@@ -26,20 +26,6 @@
   let rewardsEnabled = false;
   async function readPublished() {
     const r = await fetch(endpoint, { method: "GET", cache: "no-store", headers: { accept: "application/json" } });
-    if (action === "admin_credit" && !r.ok) {
-      const messages = {
-        invalid_target: "آیدی عددی تلگرام معتبر نیست.",
-        invalid_credit_amount: "تعداد سکه باید عدد صحیح مثبت تا ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ باشد.",
-        wallet_limit: "این مبلغ از سقف موجودی کیف پول بیشتر می‌شود.",
-        request_conflict: "این شناسه درخواست قبلاً با مشخصات دیگری ثبت شده است.",
-        admin_only: "مجوز مدیریت این حساب تأیید نشد.",
-        admin_credit_unavailable: "سرویس واریز آماده نیست یا پاسخ قطعی نداد.",
-        telegram_auth_failed: "ورود تلگرام معتبر نیست؛ برنامه را از ربات دوباره باز کن.",
-      };
-      const error = new Error(messages[j.error] || "واریز تأیید نشد؛ پاسخ سرور: " + r.status);
-      error.definitive = [400, 401, 403, 409, 413].includes(r.status);
-      throw error;
-    }
     if (!r.ok) throw new Error("catalog_" + r.status);
     const json = await r.json();
     if (!Array.isArray(json.quests)) throw new Error("invalid_catalog");
@@ -351,7 +337,7 @@
       catch { popup("ورودی اشتباه", "نشانی معتبر https لازم است.", "⚠️"); return; }
       if (title.length < 3 || title.length > 100 || url.protocol !== "https:" ||
           url.username || url.password || !Number.isSafeInteger(reward) ||
-          reward < 0 || reward > 10000 || !Number.isSafeInteger(timer) || timer < 10 || timer > 120) {
+          reward < 0 || reward > 10000 || !Number.isSafeInteger(timer) || timer < 5 || timer > 120) {
         popup("ورودی اشتباه", "عنوان ۳ تا ۱۰۰ حرف، نشانی امن و پاداش ۰ تا ۱۰هزار لازم است.", "⚠️");
         return;
       }
@@ -361,13 +347,13 @@
         await doAdmin("create", {
           task: {
             title, url: url.href, rewardCoins: reward, timerSeconds: timer,
-            verificationMode: isOfficialChannelUrl(url.href) ? "telegram_membership" : "external_visit",
+            verificationMode: url.hostname==='t.me' ? "telegram_membership" : "external_visit",
           },
         });
         document.getElementById("task-title").value = "";
         document.getElementById("task-url").value = "";
         document.getElementById("task-reward").value = "";
-        popup("منتشر شد", "مأموریت برای همه نمایش داده شد. فقط عضویت تأییدشده در کانالِ تنظیم‌شده ربات، پاداش امن دارد.", "✅");
+        popup("منتشر شد", "مأموریت برای همه نمایش داده شد. تلگرام پس از ۵ ثانیه با بررسی عضویت؛ لینک خارجی پس از ۱۰ ثانیه با پاداش بازدید.", "✅");
         await renderAdmin();
       } catch (e) {
         popup("منتشر نشد", String(e.message || e), "⚠️");
@@ -429,10 +415,10 @@
       if (card) card.classList.remove("completed");
     }
     const progress = document.getElementById("progress-text");
-    if (progress) progress.textContent = "تأیید مأموریت‌ها پس از راه‌اندازی سرور";
+    if (progress) progress.textContent = "تسک‌های فعال توسط مدیر منتشر می‌شوند";
     const bar = document.getElementById("progress-bar");
     if (bar) bar.style.width = "0%";
-    const parent = document.getElementById("quests-container");
+    const parent = document.getElementById("quests-container");parent.replaceChildren();
     // Verified reward balance is separate from legacy browser/CloudStorage coins.
     const verifiedCard = el("div","quest-card");
     verifiedCard.style.cssText = "display:block;margin:10px 0;padding:14px;border-color:#b58a37";
@@ -462,8 +448,7 @@
       try {
         const quests = await readPublished();
         await loadVerifiedWallet();
-        if (!rewardsEnabled) verifiedNote.textContent =
-          "موجودی تأییدشده حفظ می‌شود؛ برای جایزه جدید، ربات باید مدیر @SimorApp باشد. اعتبار سروری در تمام میزهای جدید قابل استفاده است.";
+        verifiedNote.textContent="پاداش‌ها مستقیم به کیف پول مشترک اضافه می‌شوند؛ تلگرام با بررسی عضویت و لینک‌های دیگر با مهلت بازدید.";
         if (quests.some(q => isOfficialChannelUrl(q.url))) {
           const staticChannelCard = document.getElementById("card-quest-tg");
           if (staticChannelCard) staticChannelCard.hidden = true;
@@ -473,52 +458,16 @@
           area.append(el("p", "", "مأموریت مرکزی فعالی وجود ندارد."));
           return;
         }
-        for (const q of quests) {
-          const row = el("div", "quest-card");
-          const info = el("div", "quest-info");
-          const art = el("div", "quest-icon-box", "🎯");
-          const body = el("div", "");
-          body.append(el("div", "quest-title", q.title),
-                      el("div", "quest-reward", q.rewardAvailable ?
-                        "پس از تأیید عضویت: " + q.rewardCoins + " سکه سروری" :
-                        "پاداش پیشنهادی: " + q.rewardCoins + " سکه — فعلاً قابل دریافت نیست"));
-          info.append(art, body);
-          const btn = el("button", "btn-quest-action", "مشاهده ←");
-          btn.type = "button";
-          btn.addEventListener("click", () => {
-            try {
-              const target = new URL(q.url);
-              if (target.protocol !== "https:") return;
-              if (target.hostname === "t.me" && window.Telegram?.WebApp?.openTelegramLink)
-                window.Telegram.WebApp.openTelegramLink(target.href);
-              else window.open(target.href, "_blank", "noopener,noreferrer");
-            } catch { /* ignore invalid remote URL */ }
-          });
-          row.append(info, btn);
-          if(q.rewardAvailable){
-            const claim=el("button","btn-quest-action","✅ بررسی عضویت و دریافت");
-            claim.type="button";claim.style.margin="8px 0";
-            if(claimedIds.has(q.id)){claim.disabled=true;claim.textContent="✓ پاداش قبلاً ثبت شده";}
-            claim.addEventListener("click",async()=>{
-              if(claim.disabled)return;
-              claim.disabled=true;
-              claim.textContent="در حال بررسی عضویت توسط تلگرام...";
-              try{
-                const outcome=await doAdmin("claim",{questId:q.id});
-                claim.textContent="✓ پاداش ثبت شد";
-                popup("ثبت سروری",outcome.granted ?
-                  Number(outcome.rewardCoins)+" سکه سروری ثبت شد؛ برای استفاده به کیف پول سروری برو." :
-                  "این جایزه قبلاً یک بار ثبت شده است.","✅");
-                await loadVerifiedWallet();
-              }catch(e){
-                claim.disabled=false;
-                claim.textContent="✅ بررسی عضویت و دریافت";
-                popup("جایزه ثبت نشد",String(e.message||e)+"؛ ربات باید مدیر همان کانال باشد.","⚠️");
-              }
-            });
-            row.append(claim);
-          }
-          area.append(row);
+        parent.replaceChildren();
+        for(const q of quests){
+          const row=el('div','quest-card'),info=el('div','quest-info'),body=el('div');
+          const telegram=q.verificationMode==='telegram_membership',seconds=telegram?5:10;
+          body.append(el('div','quest-title',q.title),el('div','quest-reward',q.rewardCoins+' سکه • '+(telegram?'تأیید عضویت تلگرام پس از ۵ ثانیه':'پاداش بازدید پس از ۱۰ ثانیه؛ عضویت یا دنبال‌کردن قابل تأیید خودکار نیست')));info.append(body);
+          const visit=el('button','btn-quest-action','باز کردن لینک و شروع'),claim=el('button','btn-quest-action','ابتدا لینک را باز کن');let readyAt=0;claim.disabled=true;
+          function tick(){if(claimedIds.has(q.id)){claim.disabled=true;claim.textContent='✓ قبلاً دریافت شد';return;}const left=Math.max(0,Math.ceil((readyAt-Date.now())/1000));claim.disabled=!readyAt||left>0;claim.textContent=!readyAt?'ابتدا لینک را باز کن':left?'دریافت تا '+left+' ثانیه دیگر':telegram?'بررسی عضویت و دریافت':'دریافت سکه';}
+          visit.onclick=async()=>{visit.disabled=true;try{const r=await doAdmin('task_start',{questId:q.id});readyAt=Date.now()+Math.max(0,new Date(r.readyAt)-new Date(r.serverNow));const target=new URL(q.url);if(target.hostname==='t.me'&&window.Telegram?.WebApp?.openTelegramLink)Telegram.WebApp.openTelegramLink(target.href);else if(window.Telegram?.WebApp?.openLink)Telegram.WebApp.openLink(target.href);else window.open(target.href,'_blank','noopener');tick();}catch(e){popup('شروع تسک',e.message);}finally{visit.disabled=false;}};
+          claim.onclick=async()=>{claim.disabled=true;try{const r=await doAdmin('claim',{questId:q.id});claimedIds.add(q.id);await loadVerifiedWallet();window.SimabWallet?.refresh();popup('ثبت پاداش',r.granted?q.rewardCoins+' سکه به کیف پول اضافه شد.':'قبلاً دریافت شده است.','✅');}catch(e){popup('پاداش ثبت نشد',e.message);}finally{tick();}};
+          setInterval(tick,500);tick();row.append(info,visit,claim);area.append(row);
         }
       } catch {
         area.replaceChildren(el("p", "", "دریافت مأموریت‌های مرکزی فعلاً در دسترس نیست."));

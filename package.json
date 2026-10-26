@@ -1,1 +1,13 @@
-{"name":"simab-game","private":true,"type":"module","scripts":{"test":"node --test tests/*.test.mjs","test:server":"node tests/server-integration.mjs && node --test tests/table-games-integration-v13.mjs && node --test tests/private-poker-integration.mjs && node --test tests/shop-offers-integration.mjs"},"devDependencies":{"@electric-sql/pglite":"0.3.14","playwright":"1.58.2"}}
+{
+  "name": "simab-game",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "test:server": "node tests/server-integration.mjs && node --test tests/table-games-integration-v13.mjs && node --test tests/private-poker-integration.mjs && node --test tests/shop-offers-integration.mjs && node --test tests/party-integration-v16.mjs"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.3.14",
+    "playwright": "1.58.2"
+  }
+}

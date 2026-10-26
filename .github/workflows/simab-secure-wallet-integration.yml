@@ -58,6 +58,10 @@ jobs:
         run: node tests/ui-private-poker.mjs
       - name: Wallet layout, server-confirmed Stars and offer UI
         run: node tests/ui-shop-v15.mjs
+      - name: All friends games, safe areas and real two-way voice
+        run: node tests/ui-party-v16.mjs
+      - name: English default and persistent Persian language choice
+        run: node tests/ui-language-v16.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -82,6 +86,7 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026084226_table_games_v13.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026091612_private_poker_rooms.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026100658_shop_and_channel_offers.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026135953_party_rooms_and_timed_tasks.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-secure-wallet.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-admin-credit.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-unified-wallet.sql

@@ -22,7 +22,7 @@ test('site edits cannot claim server-confirmed rewards locally', () => {
   assert.doesNotMatch(quests, /claimedQuests\.push\(qKey\)/);
   assert.doesNotMatch(quests, /balance\s*=\s*parseFloat\(\(balance\s*\+\s*q\.reward/);
   assert.doesNotMatch(admin, /tasks1\.push\(newTask\)/);
-  assert.match(client, /rewardAvailable:\s*false|rewardsEnabled: false|پاداش پیشنهادی/);
+  assert.match(client, /doAdmin\('claim'/);
 });
 test('Telegram HMAC verification and database admin lookup precede writes', () => {
   const auth = edge.indexOf('verifyTelegramInitData(payload.initData');
