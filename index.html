@@ -330,7 +330,7 @@
     <nav class="v8-hero-focus" aria-label="محبوب‌ترین و آخرین بازی‌ها">
       <a href="games/poker/index.html">🃏 پوکر تگزاس</a>
       <a href="games/slot/index.html">🎰 رول</a>
-      <a href="games/backgammon/index.html">🎲 تخته‌نرد</a>
+      <a href="games/backgammon/index.html">🎲 تخته‌نرد</a><a href="games/hokm/index.html">♠ حکم</a><a href="games/blackjack/index.html">۲۱</a><a href="games/ludo/index.html">🎲 منچ</a>
     </nav>
     <div id="v8-hero-recent" class="v8-hero-recent" aria-live="polite"></div>
   </div>
@@ -347,7 +347,7 @@
             <div class="user-username" id="user-tg-username">@User</div>
           </div>
         </div>
-        <div class="ids-container">
+        <div data-emoji-picker></div><div class="ids-container">
           <div class="id-row">
             <span class="id-label">شناسه تلگرام:</span>
             <span class="id-value">
@@ -640,6 +640,9 @@
     const gamesDatabase = [
       { id: 1, icon: '🃏', url: 'games/poker/index.html', active: true, title: 'پوکر تگزاس', sub: 'بازی با ربات' },
       { id: 2, icon: '🎰', url: 'games/slot/index.html', active: true, title: 'رول', sub: 'ماشین شانس' },
+      { id: 7, icon: '♠️', url: 'games/hokm/index.html', active: true, title: 'حکم', sub: 'تیمی • ورودی ۲۰ ژتون' },
+      { id: 8, icon: '🂡', url: 'games/blackjack/index.html', active: true, title: '۲۱ (بلک‌جک)', sub: 'مقابل دیلر • ۲۰ ژتون' },
+      { id: 9, icon: '🎲', url: 'games/ludo/index.html', active: true, title: 'منچ', sub: 'چهار نفره • ۱۰ ژتون' },
       { id: 3, icon: '🎲', url: 'games/backgammon/index.html', active: true, title: 'تخته نرد', sub: 'بازی با ربات' },
       { id: 4, icon: '🎴', url: 'games/hokm/index.html', active: false, title: 'ورق (حکم)', sub: 'مسابقه پاسور ۴ نفره' },
       { id: 5, icon: '♠️', url: 'games/blackjack/index.html', active: false, title: 'ورق (۲۱)', sub: 'بلک‌جک کارتی' },
@@ -751,5 +754,5 @@
     setTimeout(processStartParams, 600);
   </script>
   <script defer src="assets/js/simab-v4.js?v=4"></script>
-</body>
+<script src="assets/js/simab-profile-v13.js?v=13" defer></script></body>
 </html>

@@ -1,9 +1,10 @@
+import {startBJ,moveBJ,publicBJ,startH,moveH,publicH,startL,moveL,publicL} from './table-games.ts';
 import {startPoker,movePoker,publicPoker,startBG,moveBG,passBG,publicBG,spinSlot,gameFrames} from './games.ts';
 import type {Poker,BG} from './games.ts';
 const uuid=(x:unknown)=>typeof x==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(x);
-const expose=(s:any)=>s.kind==='poker'?publicPoker(s):s.kind==='backgammon'?publicBG(s):s;
+const expose=(s:any)=>s.kind==='poker'?publicPoker(s):s.kind==='backgammon'?publicBG(s):s.kind==='blackjack'?publicBJ(s):s.kind==='hokm'?publicH(s):s.kind==='ludo'?publicL(s):s;
 export async function gameAPI(db:any,subject:string,p:Record<string,any>){
- const game=p.game;if(!['poker','backgammon','slot'].includes(game))return {status:400,data:{error:'invalid_game'}};
+ const game=p.game;if(!['poker','backgammon','slot','blackjack','hokm','ludo'].includes(game))return {status:400,data:{error:'invalid_game'}};
  if(p.action==='game_state'){
   let q=db.from('simab_game_sessions').select('id,version,state,finished').eq('telegram_subject',subject).eq('game',game);
   if(p.sessionId){if(!uuid(p.sessionId))return {status:400,data:{error:'invalid_request'}};q=q.eq('id',p.sessionId);}else q=q.eq('finished',false);
@@ -30,6 +31,9 @@ export async function gameAPI(db:any,subject:string,p:Record<string,any>){
    id=crypto.randomUUID();debit=p.amount;
    if(game==='poker')state=startPoker(p.amount,p.seats||6);
    else if(game==='backgammon')state=startBG(p.amount);
+   else if(game==='blackjack')state=startBJ(p.amount);
+   else if(game==='hokm')state=startH(p.amount);
+   else if(game==='ludo')state=startL(p.amount);
    else{state=spinSlot(p.amount,p.multiplier);credit=state.payout;}
   }else{
    if(!uuid(p.sessionId)||!Number.isInteger(p.version))throw Error('invalid_request');
@@ -48,8 +52,14 @@ export async function gameAPI(db:any,subject:string,p:Record<string,any>){
    }else if(game==='backgammon'){
     if(op==='pass')passBG(state as BG);
     else{if(!p.move||!Number.isInteger(p.move.from)||!Number.isInteger(p.move.die))throw Error('invalid_move');moveBG(state as BG,p.move.from,p.move.die);}
-   }else throw Error('invalid_move');
+   }else if(game==='blackjack'){debit=moveBJ(state,p.move?.type);}
+   else if(game==='hokm'){moveH(state,p.move||{});}
+   else if(game==='ludo'){moveL(state,p.move||{});}
+   else throw Error('invalid_move');
   }
+  if(game==='blackjack'&&state.finished&&op!=='leave')credit=state.payout;
+  if(game==='hokm'&&state.finished&&state.winner===0)credit=state.stake*2;
+  if(game==='ludo'&&state.finished&&state.winner===0)credit=state.stake*4;
   if(game==='poker'&&state.finished)credit=state.players[0].stack;
   if(game==='backgammon'&&state.finished&&state.winner===0)credit=state.stake*2;
   const r=await db.rpc('simab_game_commit',{p_subject:subject,p_game:game,p_request_id:p.requestId,p_operation_key:signature,p_id:id,p_expected_version:expected,
