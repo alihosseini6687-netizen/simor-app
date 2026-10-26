@@ -2,8 +2,8 @@ import {startParty,stepParty,timeoutParty,partyPayout,publicParty,gameSizes} fro
 import {randomInt} from './games.ts';
 const fail=(s:string):never=>{throw Error(s);},validCode=(s:any)=>typeof s==='string'&&/^[A-Z2-9]{10}$/.test(s);
 export async function partyAPI(db:any,subject:string,p:any,identity:any={}){try{
- const op=p.op||'state',wallet=async()=>{const r=await db.rpc('simab_secure_wallet_action',{p_subject:subject,p_action:'state',p_amount:0,p_request_id:null});if(r.error)fail('wallet_unavailable');return r.data;};await wallet();
- if(op==='archive'){if(subject!=='702007470')fail('admin_only');const r=await db.from('simab_room_messages').select('id,room_code,subject,display_name,kind,body,created_at').order('id',{ascending:false}).limit(200);if(r.error)fail('game_unavailable');return{status:200,data:{messages:r.data||[]}};}
+ const op=p.op||'state';if(op==='economy'){if(subject!=='702007470')fail('admin_only');const r=await db.rpc('simab_economy_status',{p_admin:subject});if(r.error)fail('game_unavailable');return{status:200,data:r.data};}const wallet=async()=>{const r=await db.rpc('simab_secure_wallet_action',{p_subject:subject,p_action:'state',p_amount:0,p_request_id:null});if(r.error)fail('wallet_unavailable');return r.data;};await wallet();
+ if(op==='archive'){if(subject!=='702007470')fail('admin_only');const r=await db.from('simab_room_messages').select('id,room_code,subject,display_name,kind,body,created_at').gt('created_at',new Date(Date.now()-30*86400000).toISOString()).order('id',{ascending:false}).limit(200);if(r.error)fail('game_unavailable');return{status:200,data:{messages:r.data||[]}};}
  let code=p.code;if(!code){const a=await db.from('simab_poker_members').select('room_code').eq('telegram_subject',subject).maybeSingle();code=a.data?.room_code;}
  const member=()=>({subject,name:identity.displayName||'بازیکن',emoji:typeof p.emoji==='string'?Array.from(p.emoji).slice(0,4).join(''):'👤',archiveConsent:true});
  const signature=JSON.stringify(['party',op,p.code||null,p.version??null,p.amount??null,p.game||null,p.maxPlayers??null,p.move??null,p.options??null]);if(signature.length>1000)fail('invalid_request');

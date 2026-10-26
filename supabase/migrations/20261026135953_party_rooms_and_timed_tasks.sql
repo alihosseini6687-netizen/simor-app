@@ -54,4 +54,11 @@ REVOKE ALL ON FUNCTION public.simab_task_start(text,uuid),public.simab_task_clai
 GRANT EXECUTE ON FUNCTION public.simab_task_start(text,uuid),public.simab_task_claim_v16(text,uuid) TO service_role;
 -- Archive definitions, preserve historical claims and balances.
 UPDATE public.simab_central_quests SET is_published=false,updated_at=now() WHERE is_published;
+CREATE FUNCTION public.simab_economy_status(p_admin text) RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER SET search_path='' AS $$
+BEGIN
+ IF p_admin<>'702007470' THEN RAISE EXCEPTION 'admin_only';END IF;
+ RETURN jsonb_build_object('players',(SELECT count(*) FROM public.simab_secure_wallets),'totalCoins',(SELECT coalesce(sum(coins),0) FROM public.simab_secure_wallets),'totalChips',(SELECT coalesce(sum(chips),0) FROM public.simab_secure_wallets),'activeRooms',(SELECT count(*) FROM public.simab_poker_rooms WHERE status IN('waiting','playing')),'rewards24h',(SELECT coalesce(jsonb_agg(x),'[]'::jsonb) FROM (SELECT action,count(*) AS payments,coalesce(sum(coin_delta),0) AS coins FROM public.simab_secure_wallet_events WHERE created_at>now()-interval '24 hours' AND action IN('daily','wheel','miner_claim','miner_collect','verified_quest') GROUP BY action) x));
+END;$$;
+REVOKE ALL ON FUNCTION public.simab_economy_status(text) FROM PUBLIC,anon,authenticated;
+GRANT EXECUTE ON FUNCTION public.simab_economy_status(text) TO service_role;
 COMMIT;
