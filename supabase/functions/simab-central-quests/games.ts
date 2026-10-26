@@ -36,7 +36,7 @@ export function evaluate(cards:number[]):number[]{
     const s=score5([cards[a],cards[b],cards[c],cards[d],cards[e]]);if(compare(s,best)>0)best=s;
   }return best;
 }
-export type Poker={kind:'poker';players:Player[];deck:number[];board:number[];street:number;current:number;highest:number;minRaise:number;pending:number[];button:number;finished:boolean;result:string;winners:number[];buyIn:number;log:string[];};
+export type Poker={turnDeadline?:number;kind:'poker';players:Player[];deck:number[];board:number[];street:number;current:number;highest:number;minRaise:number;pending:number[];button:number;finished:boolean;result:string;winners:number[];buyIn:number;log:string[];};
 const names=['شما','آریا','سارا','نیما','رها','کاوه'];
 function pay(p:Player,n:number){const v=Math.min(p.stack,Math.max(0,n));p.stack-=v;p.bet+=v;p.round+=v;return v;}
 function log(s:Poker,p:Player,text:string){p.last=text;s.log.push(p.name+': '+text);s.log=s.log.slice(-10);}
@@ -114,12 +114,12 @@ export function startPoker(buyIn:number,seats:number):Poker {
   for(let i=0;i<seats;i++)s.players.push({id:i,name:names[i],cards:[deck.pop()!,deck.pop()!],stack:buyIn,bet:0,round:0,folded:false,acted:false,lastFaced:0,last:''});
   const small=seats===2?s.button:(s.button+1)%seats,big=(small+1)%seats;
   pay(s.players[small],1);pay(s.players[big],2);s.players[small].last='اسمال بلایند ۱';s.players[big].last='بیگ بلایند ۲';
-  s.pending=s.players.map(p=>p.id);advance(s,big);trace(s);bots(s);return s;
+  s.pending=s.players.map(p=>p.id);advance(s,big);trace(s);bots(s);s.turnDeadline=s.finished?0:Date.now()+20000;return s;
 }
-export function movePoker(s:Poker,action:string,amount:number):Poker {playback.delete(s);actPoker(s,0,action,amount);bots(s);return s;}
+export function movePoker(s:Poker,action:string,amount:number):Poker {playback.delete(s);if(s.turnDeadline&&Date.now()>=s.turnDeadline)action=s.highest>s.players[0].round?'fold':'check';actPoker(s,0,action,amount);bots(s);s.turnDeadline=s.finished?0:Date.now()+20000;return s;}
 export function publicPoker(s:Poker){
   const hero=s.players[0],call=Math.max(0,s.highest-hero.round);
-  return {kind:'poker',players:s.players.map(p=>({...p,cards:p.id===0||s.finished&&!p.folded?p.cards:[],acted:undefined})),board:s.board,
+  return {kind:'poker',turnDeadline:s.turnDeadline||0,serverNow:Date.now(),turnSeconds:20,players:s.players.map(p=>({...p,cards:p.id===0||s.finished&&!p.folded?p.cards:[],acted:undefined})),board:s.board,
     street:s.street,current:s.current,pot:s.players.reduce((a,p)=>a+p.bet,0),button:s.button,finished:s.finished,result:s.result,winners:s.winners,
     buyIn:s.buyIn,log:s.log,toCall:Math.min(call,hero.stack),minRaiseTo:s.highest+s.minRaise,maxRaiseTo:hero.round+hero.stack,
     canRaise:live(s).some(x=>x.id!==0&&x.stack>0)&&(!hero.acted||s.highest-hero.lastFaced>=s.minRaise)&&hero.round+hero.stack>s.highest,highest:s.highest};

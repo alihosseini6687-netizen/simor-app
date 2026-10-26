@@ -18,7 +18,7 @@ permissions:
   contents: read
 jobs:
   wallet-integration:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     services:
       postgres:
@@ -50,6 +50,15 @@ jobs:
         run: npm run test:server
       - name: Browser and Edge static syntax and behavior checks
         run: node --check assets/js/simab-secure-wallet.js && node --test tests/*.test.mjs
+      - name: Install Chromium for mobile UI checks
+        run: npx playwright install --with-deps chromium
+      - name: Verify new games and poker UI in portrait and landscape
+        run: node tests/ui-v13.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: simab-v13-mobile-screenshots
+          path: /tmp/simab-*.png
       - name: Install PostgreSQL client
         run: sudo apt-get update -qq && sudo apt-get install -y postgresql-client
       - name: Prepare Supabase-style database roles
@@ -66,6 +75,7 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261013_secure_wallet_games.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025074103_admin_wallet_credit.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025081053_unified_wallet_game_sessions.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026084226_table_games_v13.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-secure-wallet.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-admin-credit.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-unified-wallet.sql
