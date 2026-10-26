@@ -11,7 +11,7 @@ export async function pokerRoomAPI(db:any,subject:string,p:any){
  if(op==='signal'){if(!codeOK(code)||!['ready','offer','answer','candidate','bye'].includes(p.signal?.type))bad('invalid_request');const r=await db.rpc('simab_poker_signal',{p_subject:subject,p_code:code,p_recipient:p.to,p_payload:p.signal});if(r.error)bad('invalid_request');return{status:200,data:{ok:true}};}
  const signature=JSON.stringify(['poker_room',op,code||null,p.version??null,p.amount??null,p.maxPlayers??null,p.move??null,p.name??null,p.emoji??null]);
  if(signature.length>1000)bad('invalid_request');
- if(op!=='state'){
+ if(!['state','preview'].includes(op)){
   if(!uuid(p.requestId))bad('invalid_request_id');const r=await db.from('simab_financial_requests').select('operation_key,result').eq('telegram_subject',subject).eq('request_id',p.requestId).maybeSingle();if(r.error)bad('game_unavailable');if(r.data){if(r.data.operation_key!==signature)bad('request_conflict');code=r.data.result.roomCode;return await response(code,true);}
  }
  if(op==='create'){
@@ -21,7 +21,8 @@ export async function pokerRoomAPI(db:any,subject:string,p:any){
  if(!code){const active=await db.from('simab_poker_members').select('room_code').eq('telegram_subject',subject).maybeSingle();code=active.data?.room_code;if(!code)return{status:200,data:{state:null,room:null,wallet:wallet.data}};}
  if(!codeOK(code))bad('room_not_found');
  let row=await get(code),s=row.state,index=s.members.findIndex((m:any)=>m.subject===subject);
- if(op==='join'){
+ if(op==='preview')return{status:200,data:{preview:{code,buyIn:s.buyIn,maxPlayers:s.maxPlayers,count:s.members.length,status:row.status},wallet:wallet.data}};
+ if(op==='join'){if(p.amount!==undefined&&p.amount!==s.buyIn)bad('invalid_buyin');
   if(index>=0)return await response(code);if(row.status!=='waiting'||s.members.length>=s.maxPlayers)bad('room_full');
   s.members.push(member());await commit(row.version,s,'waiting',[{subject,delta:-s.buyIn}],p.requestId,signature);return await response(code);
  }

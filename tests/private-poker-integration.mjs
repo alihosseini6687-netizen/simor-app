@@ -5,7 +5,7 @@ test('friends poker isolates cards, protects seats, shares real turns and settle
  try{
  for(const id of ids){if(id!==ids[0])await h.client.rpc('simab_admin_credit',{p_admin:'702007470',p_target:String(id),p_amount:10000,p_request_id:randomUUID()});await h.post({action:'wallet',walletAction:'exchange_to_chips',amount:1000,requestId:randomUUID()},id);}
  let a=await post(ids[0],{op:'create',amount:100,maxPlayers:6,name:'علی',emoji:'🦁'});assert.equal(a.status,200,JSON.stringify(a));const code=a.body.room.code;assert.equal(a.body.wallet.chips,900);
- assert.equal((await post(ids[2],{op:'state',code})).body.error,'room_forbidden');
+ assert.equal((await post(ids[2],{op:'state',code})).body.error,'room_forbidden');const preview=await post(ids[2],{op:'preview',code});assert.equal(preview.body.preview.buyIn,100);assert.equal(preview.body.preview.members,undefined);assert.equal(preview.body.state,undefined);
  let b=await post(ids[1],{op:'join',code,name:'دوست',emoji:'😎'});assert.equal(b.status,200,JSON.stringify(b));assert.equal(b.body.wallet.chips,900);
  const second=await post(ids[1],{op:'create',amount:100,maxPlayers:2});assert.equal(second.body.error,'active_room_exists');assert.equal((await h.post({action:'wallet',walletAction:'state'},ids[1])).body.chips,900);
  a=await post(ids[0],{op:'state',code});let r=await post(ids[1],{op:'start',code,version:a.body.version});assert.equal(r.status,409);
