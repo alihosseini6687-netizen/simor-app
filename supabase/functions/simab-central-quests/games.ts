@@ -107,14 +107,14 @@ function bots(s:Poker){
     }else actPoker(s,p.id,call?'call':'check');
   }
 }
-export function startPoker(buyIn:number,seats:number):Poker {
-  if(!Number.isSafeInteger(buyIn)||buyIn<20||buyIn>10000||![2,4,6].includes(seats))fail('invalid_buyin');
+export function startPoker(buyIn:number,seats:number,human=false):Poker {
+  if(!Number.isSafeInteger(buyIn)||buyIn<20||buyIn>10000||(human?(!Number.isInteger(seats)||seats<2||seats>6):![2,4,6].includes(seats)))fail('invalid_buyin');
   const deck=Array.from({length:52},(_,i)=>i);for(let i=51;i>0;i--){const j=randomInt(i+1);[deck[i],deck[j]]=[deck[j],deck[i]];}
   const s:Poker={kind:'poker',players:[],deck,board:[],street:0,current:0,highest:2,minRaise:2,pending:[],button:randomInt(seats),finished:false,result:'',winners:[],buyIn,log:[]};
   for(let i=0;i<seats;i++)s.players.push({id:i,name:names[i],cards:[deck.pop()!,deck.pop()!],stack:buyIn,bet:0,round:0,folded:false,acted:false,lastFaced:0,last:''});
   const small=seats===2?s.button:(s.button+1)%seats,big=(small+1)%seats;
   pay(s.players[small],1);pay(s.players[big],2);s.players[small].last='اسمال بلایند ۱';s.players[big].last='بیگ بلایند ۲';
-  s.pending=s.players.map(p=>p.id);advance(s,big);trace(s);bots(s);s.turnDeadline=s.finished?0:Date.now()+20000;return s;
+  s.pending=s.players.map(p=>p.id);advance(s,big);trace(s);if(!human)bots(s);s.turnDeadline=s.finished?0:Date.now()+20000;return s;
 }
 export function movePoker(s:Poker,action:string,amount:number):Poker {playback.delete(s);if(s.turnDeadline&&Date.now()>=s.turnDeadline)action=s.highest>s.players[0].round?'fold':'check';actPoker(s,0,action,amount);bots(s);s.turnDeadline=s.finished?0:Date.now()+20000;return s;}
 export function publicPoker(s:Poker){
@@ -192,4 +192,18 @@ export function spinSlot(amount:number,multiplier:number){
  else if([[0,1],[0,2],[1,2]].some(([a,b])=>reels[a]===reels[b]&&reels[a]<6))payout=amount*2;
  // A spin can lose only its displayed stake; no extra bomb penalty.
  return {kind:'slot',reels,payout,bet:amount,finished:true};
+}
+
+// Shared tables have no bot decisions; each authenticated seat acts independently.
+export function moveHumanPoker(s:Poker,index:number,action:string,amount=0,now=Date.now()){
+ playback.delete(s);actPoker(s,index,action,amount);s.turnDeadline=s.finished?0:now+20000;return s;
+}
+export function foldHumanPoker(s:Poker,index:number){
+ if(s.finished||s.players[index].folded)return s;
+ if(s.current===index)return moveHumanPoker(s,index,'fold');
+ s.players[index].folded=true;s.players[index].last='فولد و خروج';s.pending=s.pending.filter(i=>i!==index);advance(s,(s.current-1+s.players.length)%s.players.length);return s;
+}
+export function publicHumanPoker(s:Poker,viewer:number){
+ const hero=s.players[viewer],base=publicPoker(s),map=(i:number)=>i<0?i:(i-viewer+s.players.length)%s.players.length;
+ return {...base,players:s.players.map(p=>({...p,id:map(p.id),cards:p.id===viewer||s.finished&&!p.folded?p.cards:[],acted:undefined})).sort((a,b)=>a.id-b.id),current:map(s.current),button:map(s.button),winners:s.winners.map(map),toCall:Math.min(Math.max(0,s.highest-hero.round),hero.stack),maxRaiseTo:hero.round+hero.stack,canRaise:live(s).some(p=>p.id!==viewer&&p.stack>0)&&(!hero.acted||s.highest-hero.lastFaced>=s.minRaise)&&hero.round+hero.stack>s.highest,result:s.finished?'پایان دست • تغییر ژتون شما: '+(hero.stack-s.buyIn):''};
 }

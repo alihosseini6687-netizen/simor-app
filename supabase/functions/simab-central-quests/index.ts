@@ -1,3 +1,4 @@
+import {pokerRoomAPI} from './poker-room-api.ts';
 /* SIMAB central-quests API. One file for Supabase Dashboard deployment.
    NEVER include Telegram bot token or a service key in the browser/repository.
    The POST endpoint ALWAYS validates Telegram-signed initData and server-side admin ID.
@@ -289,6 +290,8 @@ Deno.serve(async (request) => {
     const reason = error instanceof TelegramAuthError ? error.code : "invalid_payload";
     return reply(401, { error: "telegram_auth_failed", reason });
   }
+
+  if (payload.action === "room") { const result=await pokerRoomAPI(db,subject,payload);return reply(result.status,result.data); }
 
   if (payload.action === "game" || payload.action === "game_state") {
     const result = await gameAPI(db, subject, payload);
