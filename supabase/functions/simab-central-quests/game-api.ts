@@ -11,7 +11,7 @@ export async function gameAPI(db:any,subject:string,p:Record<string,any>){
   const {data,error}=await q.maybeSingle();if(error)return{status:503,data:{error:'game_unavailable'}};
   const w=await db.rpc('simab_secure_wallet_action',{p_subject:subject,p_action:'state',p_amount:0,p_request_id:null});
   if(w.error)return{status:503,data:{error:'wallet_unavailable'}};
-  return {status:200,data:{sessionId:data?.id||null,version:data?.version||0,state:data?expose(data.state):null,wallet:w.data}};
+  return {status:200,data:{serverNow:Date.now(),sessionId:data?.id||null,version:data?.version||0,state:data?expose(data.state):null,wallet:w.data}};
  }
  if(!uuid(p.requestId))return {status:400,data:{error:'invalid_request_id'}};
  const op=p.op;if(!['start','move','leave','pass'].includes(op))return{status:400,data:{error:'invalid_move'}};
@@ -23,7 +23,7 @@ export async function gameAPI(db:any,subject:string,p:Record<string,any>){
   if(replay.data.operation_key!==signature)return{status:409,data:{error:'request_conflict'}};
   const w=await db.rpc('simab_secure_wallet_action',{p_subject:subject,p_action:'state',p_amount:0,p_request_id:null});
   if(w.error)return{status:503,data:{error:'wallet_unavailable'}};
-  return{status:200,data:{...replay.data.result,wallet:w.data,duplicate:true}};
+  return{status:200,data:{...replay.data.result,wallet:w.data,serverNow:Date.now(),duplicate:true}};
  }
  let state:any,id='',expected=-1,debit=0,credit=0;
  try{
@@ -65,7 +65,7 @@ export async function gameAPI(db:any,subject:string,p:Record<string,any>){
   const r=await db.rpc('simab_game_commit',{p_subject:subject,p_game:game,p_request_id:p.requestId,p_operation_key:signature,p_id:id,p_expected_version:expected,
     p_state:state,p_public:{...expose(state),timeline:gameFrames(state)},p_debit:debit,p_credit:credit,p_finished:state.finished});
   if(r.error)throw Error(r.error.message);if(!r.data?.wallet?.serverWallet)throw Error('game_unavailable');
-  return{status:200,data:r.data};
+  return{status:200,data:{...r.data,serverNow:Date.now()}};
  }catch(e){const code=(e as Error).message;const known=['invalid_turn','cannot_check','raise_not_reopened','invalid_raise','raise_too_small','invalid_move','invalid_request','invalid_buyin','invalid_bet','insufficient_chips','wallet_limit','active_game_exists','slot_cooldown','game_not_found','stale_game','game_finished','request_conflict'];
   return{status:known.includes(code)?409:503,data:{error:known.includes(code)?code:'game_unavailable'}};
  }
