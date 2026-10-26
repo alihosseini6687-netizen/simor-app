@@ -97,9 +97,9 @@
   </style>
   <link rel="stylesheet" href="../assets/css/simab-secondary-v6.css?v=6">
   <link rel="stylesheet" href="../assets/css/simab-admin-v6.css?v=6">
-  <script src="../assets/js/simab-wallet-client.js?v=16"></script>
+  <script src="../assets/js/simab-wallet-client.js?v=17"></script>
 <link rel="stylesheet" href="../assets/css/simab-v8-core.css?v=8">
-<link rel="stylesheet" href="../assets/css/simab-shop-v15.css?v=15"><script src="../assets/js/simab-shop-admin-v15.js?v=16" defer></script><link rel="stylesheet" href="../assets/css/simab-safe-area-v16.css?v=16"><script src="../assets/js/simab-safe-area-v16.js?v=16" defer></script></head>
+<link rel="stylesheet" href="../assets/css/simab-shop-v15.css?v=15"><script src="../assets/js/simab-shop-admin-v15.js?v=16" defer></script><link rel="stylesheet" href="../assets/css/simab-safe-area-v16.css?v=17"><script src="../assets/js/simab-safe-area-v16.js?v=17" defer></script></head>
 <body><script>document.documentElement.style.visibility="hidden";SimabWallet.ready.then(()=>SimabWallet.read("ping")).then(()=>{document.documentElement.style.visibility="visible";}).catch(()=>location.replace("../index.html"));</script>
   <!-- هدر -->
   <div class="header-bar">
@@ -301,6 +301,6 @@
 
     renderTasks();
   </script>
-  <script src="../assets/js/simab-central-quests.js?v=16" defer></script>
+  <script src="../assets/js/simab-central-quests.js?v=17" defer></script>
 <section class="admin-card"><h3>گزارش متن پیام‌ها و پرسش‌وپاسخ میزها</h3><p>متن میزهایی که پیش از ورود اطلاع نگهداری پیام را نمایش می‌دهند؛ همراه نام و شناسهٔ تلگرام، حداکثر ۳۰ روز. صدا و تصویر ضبط نمی‌شوند.</p><button class="btn-action" id="chat-archive-refresh">دریافت ۲۰۰ پیام اخیر</button><div id="chat-archive" style="max-height:500px;overflow:auto;white-space:pre-wrap;user-select:text"></div></section><section class="admin-card"><h3>پاداش روزانه، گردونه و ماینر</h3><button id="economy-refresh" class="btn-action">گزارش اقتصاد و پاداش‌های ۲۴ ساعت</button><p id="economy-status" style="white-space:pre-wrap"></p><p>پرداخت فقط روی سرور و با شناسهٔ یکتای درخواست انجام می‌شود. روزانه و گردونه یک بار در هر روز UTC، ماینر رایگان پس از ۸ ساعت ۴ سکه. خرید و ارتقای ماینر از موجودی همان حساب کم می‌شود. تغییر ساعت گوشی یا بارگذاری دوباره جایزهٔ اضافی نمی‌دهد.</p><a href="../wallet/index.html">بررسی موجودی و تاریخچهٔ پرداخت‌ها</a></section><script>document.getElementById('economy-refresh').onclick=async()=>{const box=document.getElementById('economy-status');try{const r=await SimabWallet.read('game_room',{op:'economy'});box.textContent='بازیکن: '+r.players+' | سکهٔ موجود: '+r.totalCoins+' | ژتون آزاد: '+r.totalChips+' | میز باز: '+r.activeRooms+'\n'+r.rewards24h.map(x=>x.action+': '+x.payments+' پرداخت / '+x.coins+' سکه').join('\n');}catch(e){box.textContent=e.message;}};document.getElementById('chat-archive-refresh').onclick=async()=>{const box=document.getElementById('chat-archive');try{const r=await SimabWallet.read('game_room',{op:'archive'});box.replaceChildren();for(const m of r.messages){const p=document.createElement('p');p.textContent=m.display_name+' | '+m.subject+' | '+m.room_code+' | '+m.kind+' | '+new Date(m.created_at).toLocaleString('fa-IR')+'\n'+m.body;box.append(p);}}catch(e){box.textContent=e.message;}};</script></body>
 </html>

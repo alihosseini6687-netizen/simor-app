@@ -52,6 +52,10 @@ jobs:
         run: node --check assets/js/simab-secure-wallet.js && node --test tests/*.test.mjs
       - name: Install Chromium for mobile UI checks
         run: npx playwright install --with-deps chromium
+      - name: Mobile tasks, all bot practices, reward design and management isolation
+        run: node tests/ui-refresh-v17.mjs
+      - name: Management API security and private table grants
+        run: node --test tests/security-v17-integration.mjs
       - name: Verify new games and poker UI in portrait and landscape
         run: node tests/ui-v13.mjs
       - name: Two real seats, invitation, live audio and optional cameras

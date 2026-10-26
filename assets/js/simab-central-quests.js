@@ -22,6 +22,7 @@
   const popup = (title, message, icon = "ℹ️") => {
     if (isAdmin && typeof window.showPopup === "function") window.showPopup(title, message, icon);
     else if (typeof window.showToast === "function") window.showToast(message);
+    else {let n=document.getElementById('quest-feedback');if(!n){n=document.createElement('p');n.id='quest-feedback';n.className='status';n.setAttribute('role','status');document.querySelector('.app-wrapper')?.append(n);}n.textContent=title+' • '+message;n.scrollIntoView({behavior:'smooth',block:'nearest'});}
   };
   let rewardsEnabled = false;
   async function readPublished() {
@@ -421,7 +422,7 @@
     const parent = document.getElementById("quests-container");parent.replaceChildren();
     // Verified reward balance is separate from legacy browser/CloudStorage coins.
     const verifiedCard = el("div","quest-card");
-    verifiedCard.style.cssText = "display:block;margin:10px 0;padding:14px;border-color:#b58a37";
+    verifiedCard.style.cssText = "display:block;margin:16px 0;padding:16px;border-color:#b58a37";
     const verifiedTitle=el("div","quest-title","🔐 سکه‌های تأییدشده در سرور");
     const verifiedValue=el("div","quest-reward","در حال بررسی...");
     const verifiedNote=el("small","","این همان موجودی مشترک خانه، صرافی، پوکر، رول و تخته‌نرد است.");
@@ -440,7 +441,7 @@
       }
     }
     const heading = el("h3", "", "📢 مأموریت‌های منتشرشده");
-    heading.style.cssText = "font-size:15px;color:#f5cf62;padding:12px 4px 4px";
+    heading.style.cssText = "display:none";
     const area = el("div", "");
     area.append(el("p", "", "در حال دریافت مأموریت‌ها..."));
     parent.after(heading, area);
@@ -455,7 +456,7 @@
         }
         area.replaceChildren();
         if (!quests.length) {
-          area.append(el("p", "", "مأموریت مرکزی فعالی وجود ندارد."));
+          const empty=el("div","quest-empty");empty.append(el("span","empty-icon","✓"),el("h3","","مأموریت مرکزی فعالی وجود ندارد."),el("p","muted","تسک‌های فعال توسط مدیر منتشر می‌شوند"));area.append(empty);
           return;
         }
         parent.replaceChildren();
@@ -467,7 +468,7 @@
           function tick(){if(claimedIds.has(q.id)){claim.disabled=true;claim.textContent='✓ قبلاً دریافت شد';return;}const left=Math.max(0,Math.ceil((readyAt-Date.now())/1000));claim.disabled=!readyAt||left>0;claim.textContent=!readyAt?'ابتدا لینک را باز کن':left?'دریافت تا '+left+' ثانیه دیگر':telegram?'بررسی عضویت و دریافت':'دریافت سکه';}
           visit.onclick=async()=>{visit.disabled=true;try{const r=await doAdmin('task_start',{questId:q.id});readyAt=Date.now()+Math.max(0,new Date(r.readyAt)-new Date(r.serverNow));const target=new URL(q.url);if(target.hostname==='t.me'&&window.Telegram?.WebApp?.openTelegramLink)Telegram.WebApp.openTelegramLink(target.href);else if(window.Telegram?.WebApp?.openLink)Telegram.WebApp.openLink(target.href);else window.open(target.href,'_blank','noopener');tick();}catch(e){popup('شروع تسک',e.message);}finally{visit.disabled=false;}};
           claim.onclick=async()=>{claim.disabled=true;try{const r=await doAdmin('claim',{questId:q.id});claimedIds.add(q.id);await loadVerifiedWallet();window.SimabWallet?.refresh();popup('ثبت پاداش',r.granted?q.rewardCoins+' سکه به کیف پول اضافه شد.':'قبلاً دریافت شده است.','✅');}catch(e){popup('پاداش ثبت نشد',e.message);}finally{tick();}};
-          setInterval(tick,500);tick();row.append(info,visit,claim);area.append(row);
+          setInterval(tick,500);tick();const actions=el('div','quest-actions');actions.append(visit,claim);row.append(info,actions);area.append(row);
         }
       } catch {
         area.replaceChildren(el("p", "", "دریافت مأموریت‌های مرکزی فعلاً در دسترس نیست."));

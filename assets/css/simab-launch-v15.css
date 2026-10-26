@@ -4,3 +4,9 @@ body[data-game="ludo"] #board{background:radial-gradient(ellipse,#332446,#160d23
 .poker-mode-nav{display:grid;grid-template-columns:2fr 1fr;gap:10px;margin:15px 0}.poker-mode-nav a{display:flex;align-items:center;justify-content:center;text-align:center;padding:14px 10px;border-radius:13px;border:1px solid #9e74c8;color:#d8c7ef;text-decoration:none}.poker-mode-nav .friend-entry{margin:0;font-weight:bold;min-height:65px;border-color:#e2bc72;background:linear-gradient(135deg,#64418c,#22233f)}
 
 .ludo-board{grid-template-columns:repeat(15,minmax(0,1fr));grid-template-rows:repeat(15,minmax(0,1fr))}.ludo-cell{min-height:0}
+
+.game-card[data-game-id="6"]::before{background:url('../v17/sevens-cover.webp') center 35%/cover!important;opacity:1!important}
+.game-card[data-game-id="7"]::before{background:url('../v17/truth-cover.webp') center 35%/cover!important;opacity:1!important}
+.game-card[data-game-id="8"]::before{background:url('../v17/mill-cover.webp') center 35%/cover!important;opacity:1!important}
+.game-card[data-game-id="9"]::before{background:url('../v17/bingo-cover.webp') center 35%/cover!important;opacity:1!important}
+.game-card[data-game-id="11"]::before{background:url('../v16/snakes-cover.webp') center/cover!important;opacity:1!important}
