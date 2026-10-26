@@ -7,7 +7,7 @@
  }
  async function open(node){stage=node;stableWidth=innerWidth;stableHeight=innerHeight;fit();try{const tg=window.Telegram?.WebApp;tg?.expand();if(tg?.isVersionAtLeast?.('8.0')&&!tg.isFullscreen)tg.requestFullscreen();}catch{}try{await screen.orientation?.lock?.('landscape');}catch{}fit();}
  function close(){stage=null;stableWidth=stableHeight=0;try{screen.orientation?.unlock?.();}catch{}}
- addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);for(const name of ['viewportChanged','safeAreaChanged','contentSafeAreaChanged','fullscreenChanged'])try{window.Telegram?.WebApp?.onEvent(name,fit);}catch{}
+ addEventListener('resize',fit);window.visualViewport?.addEventListener('resize',fit);for(const name of ['viewportChanged','safeAreaChanged','contentSafeAreaChanged','fullscreenChanged'])try{window.Telegram?.WebApp?.onEvent(name,()=>{if(stage){stableWidth=innerWidth;stableHeight=innerHeight;}fit();});}catch{}
  const delay=ms=>new Promise(resolve=>setTimeout(resolve,matchMedia('(prefers-reduced-motion: reduce)').matches?0:ms));
  window.SimabGameRoom={open,close,fit,delay};
 })();
