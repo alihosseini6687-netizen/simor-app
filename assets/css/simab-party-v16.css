@@ -8,3 +8,5 @@
 .hero[data-cover=mill]{background:linear-gradient(0deg,#160d28e6,#160d2833),url('../v17/mill-cover.webp') center 35%/cover}
 .hero[data-cover=bingo]{background:linear-gradient(0deg,#160d28e6,#160d2833),url('../v17/bingo-cover.webp') center 35%/cover}
 #room:has(#turn-status:empty) .game-arena{display:none}#room:has(#start:not([hidden])) .game-arena{min-height:0;background:#162d31;border:1px solid #b38b4f;border-radius:18px;padding:20px;margin-bottom:0}#room:has(#start:not([hidden])) .game-arena p{margin:0}.mode-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mode-buttons button{min-height:64px}.hero{background-position:center 35%}.hero h1{text-shadow:0 2px 5px #000}.hero[data-cover]{min-height:210px;padding-top:65px}
+
+#room[data-status="waiting"] .game-arena{min-height:0;background:#162d31;border:1px solid #b38b4f;border-radius:18px;padding:20px;margin-bottom:0}#room[data-status="waiting"] .game-arena p{margin:0}
