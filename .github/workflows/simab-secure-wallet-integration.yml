@@ -54,6 +54,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Mobile tasks, all bot practices, reward design and management isolation
         run: node tests/ui-refresh-v17.mjs
+      - name: Selected game setup, Hokm variants and wallet visibility
+        run: node tests/ui-room-setup-v19.mjs
       - name: Management API security and private table grants
         run: node --test tests/security-v17-integration.mjs
       - name: Verify new games and poker UI in portrait and landscape

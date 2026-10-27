@@ -38,18 +38,18 @@ export function publicH(s:Hokm){const {deck,hands,...p}=s;return {...p,hand:hand
 
 // Ludo table variant: 52 shared cells, 6 home cells, safe stars, exact finish,
 // one extra roll for six/capture/finish; third consecutive six forfeits the roll.
-export type Ludo={kind:'ludo';pieces:number[][];current:number;die:number;sixes:number;stake:number;finished:boolean;winner:number;result:string;log:string[];};
+export type Ludo={kind:'ludo';pieces:number[][];current:number;die:number;sixes:number;stake:number;finished:boolean;winner:number;result:string;log:string[];seatColors?:number[];};
 const safe=new Set([0,8,13,21,26,34,39,47]);
 export function legalL(s:Ludo):number[]{if(!s.die||s.finished)return[];return s.pieces[s.current].map((p,i)=>p<0?s.die===6?i:-1:p<57&&p+s.die<=57?i:-1).filter(i=>i>=0);}
-function nextL(s:Ludo){s.current=(s.current+1)%4;s.sixes=0;s.die=0;}
+function nextL(s:Ludo){s.current=(s.current+1)%s.pieces.length;s.sixes=0;s.die=0;}
 function rollL(s:Ludo){if(s.die)fail();s.die=randomInt(6)+1;s.sixes=s.die===6?s.sixes+1:0;s.log.push(['شما','قرمز','آبی','زرد'][s.current]+': تاس '+s.die);s.log=s.log.slice(-8);if(s.sixes===3){nextL(s);return;}if(!legalL(s).length){const extra=s.die===6;s.die=0;if(!extra)nextL(s);}}
 function stepL(s:Ludo,index:number){if(!legalL(s).includes(index))fail();const p=s.pieces[s.current],pos=p[index]<0?0:p[index]+s.die;p[index]=pos;let capture=false;
- if(pos<51){const cell=(s.current*13+pos)%52;if(!safe.has(cell))for(let side=0;side<4;side++)if(side!==s.current)for(let i=0;i<4;i++)if(s.pieces[side][i]>=0&&s.pieces[side][i]<51&&(side*13+s.pieces[side][i])%52===cell){s.pieces[side][i]=-1;capture=true;}}
+ if(pos<51){const cell=((s.seatColors?.[s.current]??s.current)*13+pos)%52;if(!safe.has(cell))for(let side=0;side<s.pieces.length;side++)if(side!==s.current)for(let i=0;i<4;i++)if(s.pieces[side][i]>=0&&s.pieces[side][i]<51&&((s.seatColors?.[side]??side)*13+s.pieces[side][i])%52===cell){s.pieces[side][i]=-1;capture=true;}}
  if(p.every(v=>v===57)){s.finished=true;s.winner=s.current;s.result=s.current===0?'شما برنده شدید':'بازیکن '+s.current+' برنده شد';return;}
  const extra=s.die===6||capture||pos===57;s.die=0;if(!extra)nextL(s);
 }
 function botsL(s:Ludo){let guard=0;while(!s.finished&&s.current!==0){if(++guard>200)fail('game_progress_failed');if(!s.die)rollL(s);else{const moves=legalL(s);stepL(s,moves[randomInt(moves.length)]);}}}
-export function startL(amount:number):Ludo{stake(amount);return{kind:'ludo',pieces:Array.from({length:4},()=>[-1,-1,-1,-1]),current:0,die:0,sixes:0,stake:amount,finished:false,winner:-1,result:'',log:[]};}
+export function startL(amount:number,n=4):Ludo{stake(amount);if(![2,3,4].includes(n))fail('invalid_players');return{kind:'ludo',pieces:Array.from({length:n},()=>[-1,-1,-1,-1]),seatColors:n===2?[0,2]:Array.from({length:n},(_,i)=>i),current:0,die:0,sixes:0,stake:amount,finished:false,winner:-1,result:'',log:[]};}
 export function moveL(s:Ludo,m:any){if(s.finished||s.current!==0)fail();if(m.type==='roll')rollL(s);else if(m.type==='piece')stepL(s,m.index);else fail();botsL(s);}
 export function publicL(s:Ludo){return {...s,legal:legalL(s)};}
 
