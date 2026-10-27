@@ -25,12 +25,13 @@
   document.querySelector('.pot-label').classList.toggle('fresh',!!previous&&previous.pot!==s.pot);
   const seats=$('poker-seats');seats.replaceChildren();
   for(const p of s.players){const seat=document.createElement('section');seat.className='poker-seat seat-'+p.id+(p.folded?' folded':'')+(s.current===p.id&&!s.finished?' active':'')+(s.winners.includes(p.id)?' winner':'');
-   const avatar=document.createElement('div');avatar.className='seat-avatar';const face=document.createElement('span');face.className='avatar-face';if(p.id===0&&window.SimabProfile?.get()!=='👤')face.textContent=SimabProfile.get();else if(friends&&p.emoji)face.textContent=p.emoji;else face.innerHTML=avatarArt(p.id);avatar.append(face);
+   const avatar=document.createElement('div');avatar.className='seat-avatar';const face=document.createElement('span');face.className='avatar-face';if(p.id===0&&window.SimabProfile?.get()!=='👤')face.textContent=SimabProfile.get();else if(friends&&p.emoji)face.textContent=p.emoji;else face.innerHTML=avatarArt(p.id);if(friends){const member=friends.memberFor(p.id);face.dataset.mediaSubject=member?.subject||'';}avatar.append(face);
    if(s.button===p.id){const d=document.createElement('b');d.className='dealer-button';d.textContent='D';avatar.append(d);}
    const cards=document.createElement('div');cards.className='hole-cards';cards.dir='ltr';cards.append(...(p.cards.length?p.cards.map(c=>card(c)):[card(0,true),card(0,true)]));for(const [i,c] of [...cards.children].entries()){if(!previous||previous.players?.[p.id]?.cards?.[i]!==p.cards[i])c.classList.add('fresh');c.style.setProperty('--card-index',i);}avatar.append(cards);
    const name=document.createElement('div');name.className='seat-name';name.textContent=p.name+(!friends&&p.id?' • BOT':'');const stack=document.createElement('div');stack.className='seat-stack';stack.textContent=fmt(p.stack);
    const action=document.createElement('div');action.className='seat-action';action.textContent=p.folded?'فولد':p.last||'آماده';const bet=document.createElement('div');bet.className='seat-bet'+(previous&&previous.players?.[p.id]?.round!==p.round?' fresh':'');bet.textContent=p.round?fmt(p.round):'';bet.hidden=!p.round||s.finished;seat.append(avatar,name,stack,action,bet);seats.append(seat);
   }
+  window.SimabRoomMedia?.refreshAvatars();
   $('check-call').textContent=s.toCall?'کال '+fmt(s.toCall):'چک';$('raise-to').min=s.minRaiseTo;$('raise-to').max=s.maxRaiseTo;$('raise-to').value=Math.min(s.maxRaiseTo,s.minRaiseTo);
   $('turn-status').textContent=s.finished?s.result:(friends&&s.current!==0?'نوبت '+s.players.find(p=>p.id===s.current)?.name:(busy?'در حال ثبت حرکت…':('نوبت شما • '+(s.toCall?'کال '+fmt(s.toCall)+' ژتون':'می‌تونی چک کنی'))));
   document.querySelector('.poker-controls').hidden=s.finished;document.querySelector('.bet-shortcuts').hidden=s.finished;$('next-hand').hidden=!s.finished;
