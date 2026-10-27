@@ -56,6 +56,8 @@ jobs:
         run: node tests/ui-refresh-v17.mjs
       - name: Selected game setup, Hokm variants and wallet visibility
         run: node tests/ui-room-setup-v19.mjs
+      - name: Video regressions - invitation recovery, ready table, bot pacing and rewards
+        run: node tests/ui-video-regressions-v20.mjs
       - name: Management API security and private table grants
         run: node --test tests/security-v17-integration.mjs
       - name: Verify new games and poker UI in portrait and landscape
