@@ -30,3 +30,6 @@
 .hokm-variable{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:80px minmax(100px,1fr) 80px;min-height:300px}
 .hokm-variable .seat-0{grid-row:3;grid-column:1/-1}.hokm-variable .trick-center{grid-row:2;grid-column:1/-1;display:flex;justify-content:center}
 .hokm-variable.seats-2 .seat-1{grid-row:1;grid-column:1/-1}.hokm-variable.seats-3 .seat-1{grid-row:1;grid-column:1}.hokm-variable.seats-3 .seat-2{grid-row:1;grid-column:2}
+
+/* Keep microphone/camera actions with the table during play. */
+.turn-banner{flex-wrap:wrap;gap:4px}.turn-banner #call-panel{flex-basis:100%;margin:0;padding:6px 0 0;border:0;border-top:1px solid #b58c4366;border-radius:0;background:none}.turn-banner #call-panel h3{display:none}.turn-banner .call-buttons{gap:6px}.turn-banner .call-buttons button{min-height:34px;padding:5px 9px;font-size:12px;flex:1}.turn-banner #media-message{font-size:11px;margin:3px 0;line-height:1.4}
