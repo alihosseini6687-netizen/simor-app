@@ -19,16 +19,17 @@ export class Element {
   scrollIntoView(){}
 }
 
-export function uiHarness(file,hook,{game='ludo'}={}){
+export function uiHarness(file,hook,{game='ludo',globals={}}={}){
   const body=new Element('body'),nodes=new Map(),sounds=[],timers=new Map(),intervals=[],subscriptions=[];
   body.dataset.game=game;
   const $=id=>{if(!nodes.has(id)){const el=new Element();el.id=id;nodes.set(id,el);body.append(el);}return nodes.get(id);};
   $('truth-mode').value='dice';
   const document={body,visibilityState:'visible',getElementById:$,createElement:tag=>new Element(tag),createElementNS:(_,tag)=>new Element(tag),createTextNode:s=>String(s),addEventListener(){},querySelectorAll:s=>s==='#existing-room button'?$('existing-room').querySelectorAll('button'):s.includes(':checked')?[]:body.querySelectorAll(s)};
   let nextTimer=0;
-  const wallet={pending:null,state:{serverWallet:true},ready:{then(){}},subscribe:fn=>subscriptions.push(fn),integer:Number,read:async()=>({room:null}),mutate:async()=>{throw Error('unexpected wallet mutation');}};
+  const wallet={pending:null,state:{serverWallet:true},ready:{then(){return {catch(){}};}},subscribe:fn=>subscriptions.push(fn),integer:Number,read:async()=>({room:null}),mutate:async()=>{throw Error('unexpected wallet mutation');}};
   const window={SimabI18n:{locale:'en-US',lang:'en'},addEventListener(){}};
   const context={window,document,URLSearchParams,location:{search:'?game='+game},history:{replaceState(){}},navigator:{},SimabWallet:wallet,SimabProfile:{get:()=>''},SimabSound:{unlock(){},play:k=>sounds.push(k),isEnabled:()=>true,toggle(){}},SimabRoomMedia:{update(){},stop(){},refreshAvatars(){}},addEventListener(){},setInterval:fn=>intervals.push(fn),setTimeout:fn=>{timers.set(++nextTimer,fn);return nextTimer;},clearTimeout:id=>timers.delete(id),requestAnimationFrame:fn=>fn(),confirm:()=>true,console};
+  Object.assign(context,globals);
   const source=readSource(new URL('../../'+file,import.meta.url));
   const end=source.lastIndexOf('})();');
   if(end<0)throw Error('missing UI closure');

@@ -1,0 +1,48 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data:; connect-src 'self'; frame-src 'self' about:; img-src 'self' data:">
+<title>SIMAB Phase 2A isolated regressions</title><h1>Phase 2A</h1><ol id="results"></ol>
+<script type="module">
+const results=[],check=(v,m)=>{if(!v)throw Error(m);},tick=()=>new Promise(r=>setTimeout(r,0));
+async function test(name,fn){try{await fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,error:e.stack});}document.querySelector('#results').append(Object.assign(document.createElement('li'),{textContent:JSON.stringify(results.at(-1))}));}
+async function mount(game,width=390,height=844){
+ const url=new URL('../games/'+game+'/index.html',location.href),html=await fetch(url).then(r=>r.text()),doc=new DOMParser().parseFromString(html,'text/html');
+ const inline=[...doc.querySelectorAll('script:not([src])')].map(s=>s.textContent);doc.querySelectorAll('script').forEach(s=>s.remove());doc.head.prepend(Object.assign(doc.createElement('base'),{href:url.href}));
+ const stub=doc.createElement('script');stub.textContent=`window.__sounds=[];window.__writes=[];window.__errors=[];addEventListener('error',e=>__errors.push(e.message));window.Telegram={WebApp:{ready(){},expand(){}}};window.SimabWallet={state:{serverWallet:true},pending:null,busy:false,subscribe(){},ready:{then(){return {catch(){}}}},integer:Number,read:async()=>({}),mutate:async(...args)=>{__writes.push(args);return window.__response;}};window.SimabSound={unlock(){},play:k=>__sounds.push(k),toggle(){},isEnabled:()=>true};window.SimabGameRoom={open(){},close(){},fit(){},delay:async()=>{}};window.__timers=new Map();let serial=0;window.setTimeout=(fn,ms)=>{__timers.set(++serial,{fn,ms});return serial};window.clearTimeout=id=>__timers.delete(id);window.__flush=()=>{const ts=[...__timers.values()];__timers.clear();ts.forEach(t=>t.fn());};`;
+ if(game==='slot')stub.textContent+='window.SimabWallet.ready=Promise.resolve();';
+ doc.body.append(stub);let source=game==='slot'?inline.join('\n'):await fetch(new URL('../assets/js/simab-backgammon-v10.js',location.href)).then(r=>r.text());
+ if(game!=='slot'){const end=source.lastIndexOf('})();');source=source.slice(0,end)+'window.__api={accept,animate,send};'+source.slice(end);}
+ doc.body.append(Object.assign(doc.createElement('script'),{textContent:source}));
+ if(game==='slot')doc.body.append(Object.assign(doc.createElement('script'),{textContent:`initAudio=()=>{};playWinSound=()=>__sounds.push('win');playBombSound=()=>__sounds.push('loss');playTone=()=>__sounds.push('draw');playReelStopSound=()=>{};`}));
+ const iframe=document.createElement('iframe');iframe.style.cssText=`width:${width}px;height:${height}px;border:0`;const ready=new Promise(r=>iframe.onload=r);iframe.srcdoc=doc.documentElement.outerHTML;document.body.append(iframe);await ready;const w=iframe.contentWindow;check(!w.__errors.length,w.__errors.join(';'));return {w,d:w.document,iframe};
+}
+const spin=(v=1,payout=0,bet=2)=>({sessionId:'local-slot',version:v,state:{kind:'slot',reels:[0,1,2],bet,payout,finished:true}});
+const bg=()=>({kind:'backgammon',points:Array(24).fill(0),bar:[0,0],off:[0,0],dice:[1,6],turn:0,moves:[],log:[],finished:false,winner:-1});
+await test('Auto gap Stop cancels next wager, including stale callback',async()=>{
+ const h=await mount('slot'),w=h.w;w.__response=spin();h.d.querySelector('#btn-auto').click();await tick();w.__flush();const queued=[...w.__timers.values()].find(t=>t.ms===1100);check(queued,'next spin queued');h.d.querySelector('#btn-auto').click();check(w.__timers.size===0,'timer cancelled');queued.fn();await tick();check(w.__writes.length===1,'only one wager');h.iframe.remove();
+});
+await test('Stop during request preserves submitted wager and blocks rapid taps',async()=>{
+ const h=await mount('slot'),w=h.w;let resolve;w.SimabWallet.mutate=(...args)=>{w.__writes.push(args);return new Promise(r=>resolve=r);};h.d.querySelector('#btn-auto').click();w.spinSlot();w.spinSlot();await tick();h.d.querySelector('#btn-auto').click();check(w.__writes.length===1,'one request');resolve(spin());await tick();w.__flush();check(w.__timers.size===0,'no automatic wager');check(h.d.querySelector('#win-display').textContent.includes('خالص'),'submitted result visible');h.iframe.remove();
+});
+await test('Stop before wallet initialization prevents unsubmitted automatic wager',async()=>{
+ const h=await mount('slot'),w=h.w;let ready;w.SimabWallet.ready=new Promise(r=>ready=r);h.d.querySelector('#btn-auto').click();h.d.querySelector('#btn-auto').click();ready();await tick();check(w.__writes.length===0,'no wager after Stop');check(!h.d.querySelector('#btn-spin').disabled,'spin unlocked');h.iframe.remove();
+});
+await test('Uncertain wager retains recovery and recovered receipt sounds once',async()=>{
+ const h=await mount('slot'),w=h.w;w.SimabWallet.mutate=async()=>{w.SimabWallet.pending={requestId:'original'};throw Error('timeout');};h.d.querySelector('#btn-auto').click();await tick();check(w.SimabWallet.pending.requestId==='original','pending preserved');check(!h.d.querySelector('#btn-auto').classList.contains('active'),'Auto off');await w.spinSlot();check(w.__sounds.length===0,'unconfirmed silent');w.SimabWallet.pending=null;for(let i=0;i<2;i++)w.dispatchEvent(new w.CustomEvent('simab-receipt',{detail:spin()}));check(w.__sounds.join()==='loss','one recovery sound');h.iframe.remove();
+});
+await test('Slot net win/loss/draw have distinct feedback',async()=>{
+ const h=await mount('slot'),w=h.w;[spin(1,20,100),spin(2,20,20),spin(3,40,20)].forEach(detail=>w.dispatchEvent(new w.CustomEvent('simab-receipt',{detail})));check(w.__sounds.join()==='loss,draw,draw,win','net outcome sounds');h.iframe.remove();
+});
+await test('Paytable exclusions and energy explanation visible without overflow',async()=>{
+ for(const width of [320,390,768]){const h=await mount('slot',width);const p=h.d.querySelector('.payout-explanation');check(p.textContent.includes('شرط ۲۰۰ و جایزهٔ انرژی ۴۰'),'energy example');check(p.getBoundingClientRect().height>30,'explanation visible');check(p.scrollWidth<=p.clientWidth+1,'no clipped explanation');h.iframe.remove();}
+});
+await test('Legacy backgammon six numeric dice/pips visible in normal and compact layouts',async()=>{
+ for(const compact of [false,true]){const h=await mount('backgammon',844,390);if(compact)h.d.querySelector('#bg-stage').classList.add('compact');for(let value=1;value<=6;value++){h.w.__api.accept({sessionId:'bg',version:value,state:{...bg(),dice:[value]}});const b=h.d.querySelector('#bg-dice button'),n=b.querySelector('.bg-die-number'),r=n.getBoundingClientRect(),br=b.getBoundingClientRect();check(n.textContent===String(value),'numeric result');check(b.querySelectorAll('.pip').length===value,'pip count');check(r.width>0&&r.height>0&&r.top>=br.top&&r.bottom<=br.bottom+1,'number inside visible button');}h.iframe.remove();}
+});
+await test('Checker animation has no repeated dice audio; actual new roll sounds once',async()=>{
+ const h=await mount('backgammon',844,390),w=h.w,s=bg();w.__api.accept({sessionId:'bg',version:1,state:s});const frame={...s,dice:[6]};await w.__api.animate({sessionId:'bg',version:2,state:{...frame,timeline:[frame,frame]}});check(w.__sounds.join()==='chip','no roll for consumed dice');const r={sessionId:'bg',version:3,state:{...s,timeline:[{...s,turn:1},s]}};await w.__api.animate(r);await w.__api.animate(r);check(w.__sounds.join()==='chip,dice,chip','one roll despite frames and duplicate');h.iframe.remove();
+});
+await test('Backgammon rejection silent and accepted terminal outcomes deduplicated',async()=>{
+ const h=await mount('backgammon',844,390),w=h.w,s=bg();w.__api.accept({sessionId:'bg',version:1,state:s});w.SimabWallet.mutate=async()=>{throw Error('invalid_move');};await w.__api.send('move',{from:1,die:6});check(w.__sounds.length===0,'rejected silent');[1,-1,0].forEach((winner,i)=>{const r={sessionId:'bg',version:i+2,state:{...s,finished:true,winner}};w.__api.accept(r);w.__api.accept(r);});check(w.__sounds.join()==='fold,tap,win','distinct results');h.iframe.remove();
+});
+window.__phase2aResults={results,passed:results.filter(r=>r.pass).length,failed:results.filter(r=>!r.pass).length};
+</script></html>

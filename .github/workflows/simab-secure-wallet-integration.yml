@@ -74,6 +74,8 @@ jobs:
         run: node tests/ui-dice-board-v22.mjs
       - name: Phase 1 isolated Ludo, setup, rotation, insets and sound regressions
         run: node tests/ui-phase1-v22.mjs
+      - name: Phase 2A isolated slot Stop, paytable, backgammon dice and sound regressions
+        run: node tests/ui-phase2a-v22.mjs
       - name: English default and persistent Persian language choice
         run: node tests/ui-language-v16.mjs
       - uses: actions/upload-artifact@v4
