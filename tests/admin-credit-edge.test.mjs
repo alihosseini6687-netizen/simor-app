@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {stripTypeScriptTypes} from 'node:module';
 import {createHmac, webcrypto} from 'node:crypto';
-const code=stripTypeScriptTypes(readFileSync(new URL('../supabase/functions/simab-central-quests/index.ts',import.meta.url),'utf8').replace(/^import .*\n/gm,''));
+import {stripImports} from './support/source.mjs';
+const code=stripTypeScriptTypes(stripImports(readFileSync(new URL('../supabase/functions/simab-central-quests/index.ts',import.meta.url),'utf8')));
 const token='123456:test-only';
 function signed(id){
  const fields={auth_date:String(Math.floor(Date.now()/1000)),user:JSON.stringify({id})};
