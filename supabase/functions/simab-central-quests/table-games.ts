@@ -38,11 +38,11 @@ export function publicH(s:Hokm){const {deck,hands,...p}=s;return {...p,hand:hand
 
 // Ludo table variant: 52 shared cells, 6 home cells, safe stars, exact finish,
 // one extra roll for six/capture/finish; third consecutive six forfeits the roll.
-export type Ludo={kind:'ludo';pieces:number[][];current:number;die:number;sixes:number;stake:number;finished:boolean;winner:number;result:string;log:string[];seatColors?:number[];};
+export type Ludo={kind:'ludo';pieces:number[][];current:number;die:number;sixes:number;stake:number;finished:boolean;winner:number;result:string;log:string[];seatColors?:number[];lastRoll?:{player:number;value:number};};
 const safe=new Set([0,8,13,21,26,34,39,47]);
 export function legalL(s:Ludo):number[]{if(!s.die||s.finished)return[];return s.pieces[s.current].map((p,i)=>p<0?s.die===6?i:-1:p<57&&p+s.die<=57?i:-1).filter(i=>i>=0);}
 function nextL(s:Ludo){s.current=(s.current+1)%s.pieces.length;s.sixes=0;s.die=0;}
-function rollL(s:Ludo){if(s.die)fail();s.die=randomInt(6)+1;s.sixes=s.die===6?s.sixes+1:0;s.log.push(['شما','قرمز','آبی','زرد'][s.current]+': تاس '+s.die);s.log=s.log.slice(-8);if(s.sixes===3){nextL(s);return;}if(!legalL(s).length){const extra=s.die===6;s.die=0;if(!extra)nextL(s);}}
+function rollL(s:Ludo){if(s.die)fail();s.die=randomInt(6)+1;s.lastRoll={player:s.current,value:s.die};s.sixes=s.die===6?s.sixes+1:0;s.log.push(['شما','قرمز','آبی','زرد'][s.current]+': تاس '+s.die);s.log=s.log.slice(-8);if(s.sixes===3){nextL(s);return;}if(!legalL(s).length){const extra=s.die===6;s.die=0;if(!extra)nextL(s);}}
 function stepL(s:Ludo,index:number){if(!legalL(s).includes(index))fail();const p=s.pieces[s.current],pos=p[index]<0?0:p[index]+s.die;p[index]=pos;let capture=false;
  if(pos<51){const cell=((s.seatColors?.[s.current]??s.current)*13+pos)%52;if(!safe.has(cell))for(let side=0;side<s.pieces.length;side++)if(side!==s.current)for(let i=0;i<4;i++)if(s.pieces[side][i]>=0&&s.pieces[side][i]<51&&((s.seatColors?.[side]??side)*13+s.pieces[side][i])%52===cell){s.pieces[side][i]=-1;capture=true;}}
  if(p.every(v=>v===57)){s.finished=true;s.winner=s.current;s.result=s.current===0?'شما برنده شدید':'بازیکن '+s.current+' برنده شد';return;}
