@@ -1,0 +1,9 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {randomInt} from '../supabase/functions/simab-central-quests/games.ts';
+import {startL,moveHumanL} from '../supabase/functions/simab-central-quests/table-games.ts';
+import {startParty,stepParty} from '../supabase/functions/simab-central-quests/party-games.ts';
+function sequence(values,fn){const original=crypto.getRandomValues;let k=0;crypto.getRandomValues=a=>{assert.ok(k<values.length,'unexpected RNG request');a[0]=values[k++];return a;};try{return fn();}finally{crypto.getRandomValues=original;}}
+test('dice rejection sampling discards biased tail and permits independent repetitions',()=>{sequence([0xffffffff,0xfffffffe,0xfffffffd,0xfffffffc,0,0,1,2,3,4,5,2,2],()=>{assert.equal(randomInt(6),0);assert.deepEqual(Array.from({length:6},()=>randomInt(6)),[0,1,2,3,4,5]);assert.equal(randomInt(6),2);assert.equal(randomInt(6),2);});});
+test('Ludo keeps actual roll and roller after no move, third six, move and turn change',()=>{for(let value=1;value<=6;value++){const s=startL(20,2);sequence([value-1],()=>moveHumanL(s,0,{type:'roll'}));assert.deepEqual(s.lastRoll,{player:0,value});if(value<6){assert.equal(s.current,1);assert.equal(s.die,0);}else{assert.equal(s.die,6);moveHumanL(s,0,{type:'piece',index:0});assert.deepEqual(s.lastRoll,{player:0,value:6});}}const s=startL(20,2);s.sixes=2;sequence([5],()=>moveHumanL(s,0,{type:'roll'}));assert.equal(s.current,1);assert.deepEqual(s.lastRoll,{player:0,value:6});});
+test('Snakes uses each supplied cryptographic result, keeps it on turn change and requires exact finish',()=>{const s=startParty('snakes',2,0);for(let v=1;v<=6;v++){const i=s.current;sequence([v-1],()=>stepParty(s,i,{type:'roll'}));assert.equal(s.die,v);assert.equal(s.current,1-i);}s.positions[s.current]=99;const i=s.current;sequence([1],()=>stepParty(s,i,{type:'roll'}));assert.equal(s.positions[i],99);assert.equal(s.finished,false);});

@@ -47,3 +47,14 @@
 .at-table #wallet-state,.at-table #wallet-retry{display:none}.at-table #balances{font-size:12px;padding:5px 10px;margin:8px 0;gap:8px}.at-table #balances p{white-space:nowrap}.at-table #balances a{margin-inline-start:auto}.at-table #room[data-status=playing] #roster{display:none}.at-table .room-toolbar{gap:6px;font-size:12px}.at-table .room-toolbar button{font-size:12px;min-height:34px;padding:5px 9px}.discard-pile{flex-direction:column;max-width:90px;top:45%;gap:4px}.discard-pile .card-back{position:relative;inset:auto;transform:none;margin:0}.discard-pile small{font-size:10px;text-align:center;line-height:1.5}.at-table #arena{margin-top:10px}
 
 .at-table #entry-status{display:none}
+
+/* Video stays upright when the table uses a CSS landscape fallback. */
+.seat-media-avatar video,.avatar-face video{transform:rotate(var(--simab-video-rotation,0deg));transform-origin:center}
+#arena .seat-media-avatar{width:60px;height:60px;font-size:32px}
+#arena .table-seat{min-width:0;overflow-wrap:anywhere}
+#arena .table-seat>b{display:block;max-width:150px;font-size:12px;line-height:1.5}
+#arena .arena-seats .table-seat{max-width:90px}
+#poker-seats .seat-avatar,#poker-seats .seat-0 .seat-avatar{width:58px;height:58px}
+@media(max-height:350px) and (orientation:landscape){#poker-seats .seat-avatar,#poker-seats .seat-0 .seat-avatar{width:46px;height:46px}}
+#arena .table-four{grid-template-rows:minmax(140px,auto) minmax(160px,1fr) minmax(140px,auto);gap:12px}
+#arena .hokm-variable{grid-template-rows:minmax(140px,auto) minmax(120px,1fr) minmax(140px,auto)}

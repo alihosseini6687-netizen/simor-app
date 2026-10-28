@@ -70,6 +70,8 @@ jobs:
         run: node tests/ui-party-v16.mjs
       - name: Screenshot regression cases v21
         run: node tests/ui-screenshot-regressions-v21.mjs
+      - name: Dice results, numbered pawns, active seat and table direction
+        run: node tests/ui-dice-board-v22.mjs
       - name: English default and persistent Persian language choice
         run: node tests/ui-language-v16.mjs
       - uses: actions/upload-artifact@v4
