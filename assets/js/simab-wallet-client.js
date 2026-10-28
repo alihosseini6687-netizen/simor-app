@@ -1,7 +1,7 @@
 /* The only active coin/chip client. Balances are always read from the server. */
 (()=>{'use strict';
  const endpoint='https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests';
- let state=null,inFlight=false,epoch=0,pending=null,pendingKey='',readyResolve;
+ let state=null,inFlight=false,epoch=0,readEpoch=0,pending=null,pendingKey='',readyResolve;
  const listeners=new Set();
  function accountLabel(){for(const n of document.querySelectorAll('[data-wallet-account]'))n.textContent=actor()?'آیدی تلگرام: '+actor():'ورود از تلگرام لازم است';}
  const ready=new Promise(r=>{readyResolve=r;});
@@ -12,7 +12,7 @@
  }
  function actor(){try{return String(JSON.parse(new URLSearchParams(candidates()[0]).get('user')).id);}catch{return '';}}
  function message(text){for(const n of document.querySelectorAll('[data-wallet-status]'))n.textContent=text;}
- function paint(s){if(!s||s.serverWallet!==true||!Number.isSafeInteger(s.coins)||!Number.isSafeInteger(s.chips))throw Error('پاسخ موجودی معتبر نیست.');state=s;accountLabel();
+ function paint(s){if(!s||s.serverWallet!==true||!Number.isSafeInteger(s.coins)||!Number.isSafeInteger(s.chips)||s.coins<0||s.chips<0)throw Error('پاسخ موجودی معتبر نیست.');state=s;accountLabel();
   for(const n of document.querySelectorAll('[data-coins]'))n.textContent=s.coins.toLocaleString('fa-IR');
   for(const n of document.querySelectorAll('[data-chips]'))n.textContent=s.chips.toLocaleString('fa-IR');
   for(const fn of listeners){try{fn(s);}catch(e){console.error('wallet view failed',e);}}
@@ -42,13 +42,13 @@
  }
  function pendingUI(){const b=document.getElementById('wallet-recover');if(b)b.hidden=!pending;}
  function clear(){localStorage.removeItem(pendingKey);pending=null;pendingUI();}
- async function read(action,extra={}){const seq=epoch,r=await api({action,...extra});if(r.wallet&&seq===epoch&&!inFlight)paint(r.wallet);return r;}
- async function refresh(){const seq=++epoch;try{const s=await api({action:'wallet',walletAction:'state'});if(seq===epoch){paint(s);if(!pending)message('موجودی مشترک سیماب');}return s;}catch(e){if(seq===epoch){message(e.message);if(!state)for(const n of document.querySelectorAll('[data-coins],[data-chips]'))n.textContent='—';}throw e;}}
+ async function read(action,extra={}){const seq=epoch,readSeq=++readEpoch,r=await api({action,...extra});if(r.wallet&&seq===epoch&&readSeq===readEpoch&&!inFlight)paint(r.wallet);return r;}
+ async function refresh(){const seq=++epoch;++readEpoch;try{const s=await api({action:'wallet',walletAction:'state'});if(seq===epoch&&!inFlight){paint(s);if(!pending)message('موجودی مشترک سیماب');}return s;}catch(e){if(seq===epoch&&!inFlight){message(e.message);if(!state)for(const n of document.querySelectorAll('[data-coins],[data-chips]'))n.textContent='—';}throw e;}}
  async function recover(){if(inFlight)throw Error('یک درخواست در حال پردازش است.');if(!pending)return null;
   if(pending.actorId&&actor()!==pending.actorId)throw Error('برای پیگیری این تراکنش با همان حساب تلگرام وارد شو.');
   inFlight=true;++epoch;message('در حال بررسی تراکنش…');try{const response=await api(pending);const s=response.wallet||response;if(pending.action==='game'&&(!response.sessionId||!Number.isSafeInteger(response.version)||response.state?.kind!==pending.game))throw Error('پاسخ بازی قابل تأیید نیست؛ همان درخواست را پیگیری کن.');if(['room','game_room'].includes(pending.action)&&(!Object.hasOwn(response,'room')||response.room!==null&&(!/^[A-Z2-9]{10}$/.test(response.room.code)||!Number.isSafeInteger(response.version))))throw Error('پاسخ میز قابل تأیید نیست؛ همان درخواست را پیگیری کن.');if(pending.action==='purchase'&&(!response.orderId||typeof response.invoiceUrl!=='string'||!response.invoiceUrl.startsWith('https://t.me/')))throw Error('فاکتور قابل تأیید نیست؛ همان درخواست را پیگیری کن.');paint(s);clear();message('تراکنش ثبت شد.');window.dispatchEvent(new CustomEvent('simab-receipt',{detail:response}));return response;}
   catch(e){if(e.definitive){try{clear();}catch{}}message(e.message+(pending?' درخواست محفوظ است؛ «پیگیری» را بزن.':''));throw e;}
-  finally{inFlight=false;pendingUI();}
+  finally{++epoch;++readEpoch;inFlight=false;pendingUI();}
  }
  async function mutate(action,extra={}){await ready;if(inFlight)throw Error('یک درخواست در حال پردازش است.');if(pending)throw Error('یک درخواست پاسخ قطعی ندارد؛ اول دکمهٔ پیگیری را بزن.');
   const id=actor();if(!id)throw Error('ورود تلگرام پیدا نشد.');pendingKey='simab_financial_pending_v2:'+id;

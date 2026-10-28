@@ -35,3 +35,10 @@ test('invalid amounts, recipient IDs and missing request IDs never reach RPC',as
   assert.equal((await s.request({...payload,...bad,initData:signed(702007470)})).status,400);
  }assert.equal(s.calls.length,0);
 });
+test('authenticated wallet burst is rate-limited before RPC, independent of forged JSON identity',async()=>{
+ const s=server(false),initData=signed(123456);
+ for(let i=0;i<120;i++){
+  const r=await s.request({action:'wallet',walletAction:'daily',amount:0,requestId:'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',actorId:String(i),initData});assert.equal(r.status,200);
+ }
+ const denied=await s.request({action:'wallet',walletAction:'daily',amount:0,requestId:'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',actorId:'987654',initData});assert.equal(denied.status,429);assert.equal((await denied.json()).error,'rate_limited');assert.equal(s.calls.length,120);
+});

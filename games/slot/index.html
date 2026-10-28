@@ -612,6 +612,10 @@
       color: #94a3b8;
       letter-spacing: 0.5px;
     }
+    @media (prefers-reduced-motion: reduce) {
+      .reel-strip, .win-amount.jackpot, .reel-window.suspense-glow, .alert-modal-box { animation: none !important; transition: none !important; }
+    }
+    .chip-item[aria-disabled="true"] { opacity: .55; pointer-events: none; }
   </style>
   <!-- SIMAB V5 UI-only layer: game rules and wallet scripts unchanged. -->
   <link rel="stylesheet" href="../../assets/css/simab-game-shell-v5.css?v=5">
@@ -843,7 +847,8 @@
       if (!audioEnabled) return;
       initAudio();
       if (!audioCtx) return;
-      setTimeout(() => {
+      visualTimeout(() => {
+        if(!audioEnabled||!sceneActive||document.visibilityState==='hidden')return;
         try {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -905,6 +910,11 @@
     let autoSpinActive = false;
     let autoSpinTimer = null, autoSpinGeneration = 0;
     const presentedSpins = new Set();
+    const visualTimers=new Set();let visualGeneration=0,sceneActive=true,activeSpinResult=null;
+    function visualTimeout(fn,delay){const generation=visualGeneration;const id=setTimeout(()=>{visualTimers.delete(id);if(generation===visualGeneration)fn();},delay);visualTimers.add(id);return id;}
+    function spinControls(){document.getElementById('btn-spin').disabled=isSpinning||!!SimabWallet.pending;document.querySelectorAll('.btn-multi,.btn-step').forEach(b=>b.disabled=isSpinning);document.querySelectorAll('.chip-item').forEach(b=>b.setAttribute('aria-disabled',String(isSpinning)));}
+    function finishVisualSpin(silent=false){if(activeSpinResult)displayServerSpin(activeSpinResult,silent);activeSpinResult=null;isSpinning=false;spinControls();if(sceneActive&&document.visibilityState!=='hidden')scheduleAutoSpin();}
+    function cancelSlotVisuals(){visualGeneration++;for(const id of visualTimers)clearTimeout(id);visualTimers.clear();if(activeSpinResult)finishVisualSpin(true);}
     function cancelAutoSpinTimer() {
       clearTimeout(autoSpinTimer);autoSpinTimer=null;autoSpinGeneration++;
     }
@@ -1000,33 +1010,36 @@
     // ================= ۶. چرخش رول‌ها و پردازش شرط ژتونی =================
     async function spinSlot(automatic=false) {
       if(automatic&&!autoSpinActive)return;
-      if(isSpinning||SimabWallet.pending||SimabWallet.busy)return;
+      if(!sceneActive||document.visibilityState==='hidden'||isSpinning||SimabWallet.pending||SimabWallet.busy)return;
       cancelAutoSpinTimer();
       const generation=autoSpinGeneration;
-      initAudio();isSpinning=true;document.getElementById('btn-spin').disabled=true;
+      initAudio();isSpinning=true;spinControls();
       try {
         await SimabWallet.ready;
         // Stop may have been pressed while the wallet was initializing.
         // Only a wager already handed to mutate must remain recoverable.
-        if(automatic&&(!autoSpinActive||generation!==autoSpinGeneration)){
-          isSpinning=false;document.getElementById('btn-spin').disabled=false;scheduleAutoSpin();return;
+        if(!sceneActive||document.visibilityState==='hidden'||automatic&&(!autoSpinActive||generation!==autoSpinGeneration)){
+          isSpinning=false;spinControls();if(sceneActive)scheduleAutoSpin();return;
         }
         const r=await SimabWallet.mutate('game',{game:'slot',op:'start',amount:baseCost*multiplier,multiplier});
+        activeSpinResult=r;
+        if(!sceneActive||document.visibilityState==='hidden'){finishVisualSpin(true);return;}
+        if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){finishVisualSpin();return;}
         const reels=r.state.reels.map(i=>symbols[i]);
         animateReel('strip-1',reels[0],850);animateReel('strip-2',reels[1],1200);
         animateReel('strip-3',reels[2],1550,()=>{
-          displayServerSpin(r);isSpinning=false;document.getElementById('btn-spin').disabled=false;
-          scheduleAutoSpin();
+          finishVisualSpin();
         });
-      }catch(e){isSpinning=false;stopAutoSpin();document.getElementById('btn-spin').disabled=false;document.getElementById('win-status-lbl').textContent=e.message;}
+      }catch(e){cancelSlotVisuals();isSpinning=false;stopAutoSpin();spinControls();document.getElementById('win-status-lbl').textContent=e.message;}
     }
-    function displayServerSpin(r){
+    function displayServerSpin(r,silent=false){
       if(r?.state?.kind!=='slot')return;
       const key=r.sessionId+':'+r.version;
       if(presentedSpins.has(key))return;
       presentedSpins.add(key);
       const result=r.state;result.reels.forEach((value,i)=>{const strip=document.getElementById('strip-'+(i+1));populateStrip(strip,symbols[value]);strip.style.transition='none';strip.style.transform='translateY(0px)';});document.getElementById('win-status-lbl').textContent=(r.duplicate?'نتیجه قبلاً ثبت شده بود':'نتیجه ثبت‌شده در سرور')+' • شرط '+result.bet.toLocaleString('fa-IR');
       document.getElementById('win-display').textContent='جایزه: '+result.payout.toLocaleString('fa-IR')+' ژتون • خالص: '+(result.payout-result.bet).toLocaleString('fa-IR');
+      if(silent||!sceneActive||document.visibilityState==='hidden')return;
       if(result.payout>result.bet)playWinSound();
       else if(result.payout<result.bet)playBombSound();
       else {playTone(392,'sine',0.18);playTone(392,'sine',0.18,200);}
@@ -1040,13 +1053,13 @@
       const targetY = -((items.length - 1) * 118);
       strip.style.transform = `translateY(${targetY}px)`;
       
-      setTimeout(() => {
+      visualTimeout(() => {
         playReelStopSound();
         try {
           if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         } catch(e) {}
       }, duration - 100);
-      setTimeout(() => {
+      visualTimeout(() => {
         strip.style.transition = 'none';
         items[0].innerHTML = getSymbolHtml(targetSymbol);
         strip.style.transform = 'translateY(0px)';
@@ -1097,9 +1110,10 @@
 
     // بارگذاری اولیه استاندارد
     SimabWallet.subscribe(s=>{totalChips=s.chips;chipsInv=chipBreakdown(totalChips);renderChipsUI();});
-    window.addEventListener('simab-receipt',e=>{if(!isSpinning)displayServerSpin(e.detail);});
-    window.addEventListener('pagehide',stopAutoSpin);
-    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')stopAutoSpin();});
+    window.addEventListener('simab-receipt',e=>{if(!isSpinning)displayServerSpin(e.detail);spinControls();});
+    window.addEventListener('pagehide',()=>{sceneActive=false;stopAutoSpin();cancelSlotVisuals();});
+    window.addEventListener('pageshow',()=>{sceneActive=true;spinControls();});
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){stopAutoSpin();cancelSlotVisuals();}});
     updateBetUI();
   </script>
 </body>

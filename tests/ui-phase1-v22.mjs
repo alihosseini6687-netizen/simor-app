@@ -12,7 +12,7 @@ let browser;
 try{
   await new Promise((resolve,reject)=>{server.once('error',reject);server.listen(0,'127.0.0.1',resolve);});
   const origin='http://127.0.0.1:'+server.address().port;
-  browser=await chromium.launch({headless:true});const page=await browser.newPage(),errors=[];
+  browser=await chromium.launch({headless:true,...(process.env.SIMAB_TEST_BROWSER?{executablePath:process.env.SIMAB_TEST_BROWSER}:{})});const page=await browser.newPage(),errors=[];
   await page.route('**/*',route=>new URL(route.request().url()).origin===origin?route.continue():route.abort());
   page.on('pageerror',e=>errors.push(e.message));
   await page.goto(origin+'/tests/ui-phase1-v22.html');

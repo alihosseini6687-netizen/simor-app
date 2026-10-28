@@ -7,6 +7,12 @@ on:
       - 'games/**'
       - 'swap/**'
       - 'assets/js/**'
+      - 'assets/css/**'
+      - 'index.html'
+      - 'friends/**'
+      - 'offers/**'
+      - 'streak/**'
+      - 'quests/**'
       - 'package*.json'
       - 'admin/**'
       - 'assets/js/simab-central-quests.js'
@@ -76,6 +82,8 @@ jobs:
         run: node tests/ui-phase1-v22.mjs
       - name: Phase 2A isolated slot Stop, paytable, backgammon dice and sound regressions
         run: node tests/ui-phase2a-v22.mjs
+      - name: Phase 2BC isolated fairness, stale response and animation regressions
+        run: node tests/ui-phase2bc-v22.mjs
       - name: English default and persistent Persian language choice
         run: node tests/ui-language-v16.mjs
       - uses: actions/upload-artifact@v4
@@ -103,6 +111,8 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026091612_private_poker_rooms.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026100658_shop_and_channel_offers.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026135953_party_rooms_and_timed_tasks.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261028090000_wallet_unbiased_random.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-phase2bc.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-secure-wallet.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-admin-credit.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-unified-wallet.sql

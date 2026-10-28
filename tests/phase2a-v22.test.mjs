@@ -36,16 +36,16 @@ test('paytable explains gross/net, excluded pairs and base-independent energy',(
   assert.match(html,/شرط ۲۰۰ و جایزهٔ انرژی ۴۰/);assert.match(html,/خالص = جایزه منهای شرط/);
 });
 
-function slot(){
+function slot({realAnimation=false,reduced=false}={}){
   const nodes=new Map(),timers=new Map(),events={},sounds=[];let seq=0;
   class Node extends Element{appendChild(n){this.append(n);}set innerHTML(s){this._html=s;this.children=[];}get innerHTML(){return this._html;}set innerText(s){this.textContent=s;}get innerText(){return this.textContent;}}
   const $=id=>{if(!nodes.has(id))nodes.set(id,new Node());return nodes.get(id);};
   const document={getElementById:$,createElement:()=>new Node(),querySelectorAll:()=>[],visibilityState:'visible',addEventListener:(k,fn)=>events[k]=fn};
   const wallet={pending:null,busy:false,subscribe(){},mutate:async()=>receipt()};
-  const window={addEventListener:(k,fn)=>events[k]=fn};
+   const window={addEventListener:(k,fn)=>events[k]=fn,matchMedia:()=>({matches:reduced})};
   const context=vm.createContext({window,document,SimabWallet:wallet,localStorage:{setItem(){}},setTimeout:(fn,ms)=>{timers.set(++seq,{fn,ms});return seq;},clearTimeout:id=>timers.delete(id),console});
   vm.runInContext(html.match(/<script>\s*\/\/ ================= ۱\.[\s\S]*?<\/script>/)[0].replace(/^<script>|<\/script>$/g,''),context);
-  vm.runInContext('playWinSound=()=>sounds.push("win");playBombSound=()=>sounds.push("loss");playTone=()=>sounds.push("draw");animateReel=(id,s,d,done)=>{if(done)setTimeout(done,1610);}',Object.assign(context,{sounds}));
+   vm.runInContext('playWinSound=()=>sounds.push("win");playBombSound=()=>sounds.push("loss");playTone=()=>sounds.push("draw");'+(realAnimation?'':'animateReel=(id,s,d,done)=>{if(done)setTimeout(done,1610);}'),Object.assign(context,{sounds}));
   return {context,wallet,timers,events,sounds,$,run:s=>vm.runInContext(s,context),flush:async()=>{const tasks=[...timers.values()];timers.clear();for(const t of tasks)t.fn();await tick();}};
 }
 const receipt=(version=1,payout=0,bet=2)=>({sessionId:'slot-test',version,state:{kind:'slot',reels:[0,1,2],bet,payout,finished:true}});
@@ -81,6 +81,19 @@ test('slot sounds classify net loss, draw and win only after accepted results',(
 });
 test('hidden/pagehide disables future Auto but not submitted work',async()=>{
   for(const event of ['visibilitychange','pagehide']){const h=slot();h.run('toggleAutoSpin()');await tick();await h.flush();h.run('document.visibilityState="hidden"');h.events[event]();assert.equal(h.run('autoSpinActive'),false);assert.equal(h.timers.size,0);}
+});
+test('slot real animation callbacks cancel on page exit, including callbacks already queued',async()=>{
+ const h=slot({realAnimation:true});await h.run('spinSlot()');assert.equal(h.run('isSpinning'),true);
+ const queued=[...h.timers.values()].map(t=>t.fn);h.events.pagehide();assert.equal(h.timers.size,0);assert.equal(h.run('isSpinning'),false);
+ queued.forEach(fn=>fn());assert.equal(h.timers.size,0);assert.deepEqual(h.sounds,[]);assert.match(h.$('win-display').textContent,/خالص/);
+});
+test('slot reduced motion settles immediately without reel timers or duplicate sounds',async()=>{
+ const h=slot({realAnimation:true,reduced:true});await h.run('spinSlot()');assert.equal(h.run('isSpinning'),false);assert.equal(h.timers.size,0);assert.deepEqual(h.sounds,['loss']);
+ h.events['simab-receipt']({detail:receipt()});assert.deepEqual(h.sounds,['loss']);
+});
+test('slot response after page exit presents accepted result silently and never starts animation',async()=>{
+ const h=slot({realAnimation:true});let resolve;h.wallet.mutate=()=>new Promise(r=>resolve=r);const spin=h.run('spinSlot()');await tick();h.events.pagehide();resolve(receipt());await spin;
+ assert.equal(h.timers.size,0);assert.equal(h.run('isSpinning'),false);assert.deepEqual(h.sounds,[]);assert.match(h.$('win-display').textContent,/خالص/);
 });
 
 const bgState=()=>({kind:'backgammon',points:Array(24).fill(0),bar:[0,0],off:[0,0],dice:[1,6],turn:0,moves:[],log:[],finished:false,winner:-1});
