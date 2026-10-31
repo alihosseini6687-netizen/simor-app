@@ -31,7 +31,7 @@ Prior supplied and recorded results (not rerun as part of publication preparatio
 - Phase 4 browser: **188** checks.
 - Mill timing regression passed.
 
-Publication preparation checks passed: **198 integration files copied byte-for-byte**, **38 original image files unchanged**, **11 active catalog cards**, **0 missing local HTML/CSS references** (dynamic template paths excluded), **0 staging runtime markers**, and Git whitespace checks. Workflow triggers were reviewed. CI results on a future PR are separate and must be reviewed before approval. Local synthetic Telegram/camera/server tests do not certify live auth, payments, two-account multiplayer, physical devices, or restrictive-network media.
+Publication preparation checks passed: **198 integration files copied byte-for-byte**, **38 original image files unchanged**, **11 active catalog cards**, **0 missing local HTML/CSS references** (dynamic template paths excluded), **0 staging runtime markers**. Git whitespace checking reports three existing Markdown hard-line-break spaces in the copied production-source report (not runtime errors); they were preserved. Workflow triggers were reviewed. CI results on a future PR are separate and must be reviewed before approval. Local synthetic Telegram/camera/server tests do not certify live auth, payments, two-account multiplayer, physical devices, or restrictive-network media.
 
 ## Workflow and deployment boundaries
 
