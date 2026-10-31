@@ -7,7 +7,7 @@ import {fileURLToPath} from 'node:url';
 // disposable in-memory PGlite instance; no production service is accessible.
 const artifactRoot=process.env.SIMAB_TEST_ARTIFACTS||resolve(process.env.LOCALAPPDATA||process.env.TEMP||'.','Temp','opencode','simab-browser-'+Date.now());
 await mkdir(artifactRoot,{recursive:true});
-const available=['ui-dice-board-v22','ui-language-v16','ui-party-v16','ui-private-poker','ui-refresh-v17','ui-room-setup-v19','ui-screenshot-regressions-v21','ui-shop-v15','ui-v13','ui-video-regressions-v20','ui-phase1-v22','ui-phase2a-v22','ui-phase2bc-v22','ui-phase3-v22','ui-i18n-phase3b-v22'];
+const available=['ui-dice-board-v22','ui-language-v16','ui-party-v16','ui-private-poker','ui-refresh-v17','ui-room-setup-v19','ui-screenshot-regressions-v21','ui-shop-v15','ui-v13','ui-video-regressions-v20','ui-phase1-v22','ui-phase2a-v22','ui-phase2bc-v22','ui-phase3-v22','ui-i18n-phase3b-v22','ui-sevens-transition-v22'];
 const selected=process.argv.slice(2);if(selected.some(name=>!available.includes(name)))throw Error('Unknown browser runner');const tests=selected.length?selected:available;
 const results=[];
 for(const test of tests){

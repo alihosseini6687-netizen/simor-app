@@ -6,7 +6,7 @@ import {startParty,stepParty,publicParty} from '../supabase/functions/simab-cent
 import {localeContext} from './support/i18n-inventory-v22.mjs';
 
 const copy=x=>JSON.parse(JSON.stringify(x));
-function seven(n=4,hands=[[0,1,2,3],[13,14],[26,27],[39,40]],direction=1){return {kind:'sevens',n,current:0,finished:false,winners:[],result:'',event:1,lastEvent:'card',deadline:0,log:[],hands:hands.slice(0,n).map(h=>[...h]),deck:Array.from({length:30},(_,i)=>51-i),discard:[4],suit:0,direction,penalty:0,twoTarget:true,twoGift:true};}
+function seven(n=4,hands=[[0,1,2,3],[13,14],[26,27],[39,40]],direction=1){return {kind:'sevens',sevensRulesVersion:2,n,current:0,finished:false,winners:[],result:'',event:1,lastEvent:'card',deadline:0,log:[],hands:hands.slice(0,n).map(h=>[...h]),deck:Array.from({length:30},(_,i)=>51-i),discard:[4],suit:0,direction,penalty:0,twoTarget:true,twoGift:true};}
 for(const n of [2,3,4]){
  test('phase4 Sevens '+n+': targeted two-card hand transfer and private views',()=>{
   const s=seven(n),deck=JSON.stringify(s.deck),before=s.hands[n-1].length;stepParty(s,0,{type:'play',card:0,target:n-1,gifts:[1,2]});
