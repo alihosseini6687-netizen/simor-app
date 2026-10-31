@@ -89,6 +89,7 @@ test('v2 admission, ownership, optimistic locking, immutable rules, recovery and
   const play={op:'move',code,version:stable.version,sevensProtocol:2,move:{type:'play',card:0,target:1,gifts:[1,2]},requestId:randomUUID()};
   assert.equal((await h.api(1,play)).body.error,'invalid_turn');assert.deepEqual(await h.row(code),stable);
   assert.equal((await h.api(0,{...play,move:{type:'play',card:0,target:1,gift:1}})).body.error,'invalid_gift');assert.deepEqual(await h.row(code),stable);assert.deepEqual(await h.balances(),balance);
+  assert.equal((await h.api(0,{...play,options:{sevensRulesVersion:1},move:{type:'play',card:0,target:1,gift:1}})).body.error,'invalid_gift');assert.deepEqual(await h.row(code),stable);assert.deepEqual(await h.balances(),balance);
   r=await h.api(0,play);assert.equal(r.status,200);assert.deepEqual(r.body.state.hand,[3]);assert.equal(r.body.state.hands,undefined);
   assert.equal((await h.api(0,play)).body.version,r.body.version);
   assert.equal((await h.api(0,{...play,move:{...play.move,gifts:[2,1]}})).body.error,'request_conflict');

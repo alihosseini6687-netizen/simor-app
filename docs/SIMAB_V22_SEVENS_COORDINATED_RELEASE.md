@@ -64,9 +64,9 @@ Its baseline is the published GitHub main source at `33abeedcb36b69136c86c3f4026
 
 ### Frontend rollback
 
-Keep the version-aware backend installed. If there are **no active/waiting v2 rooms**, use a reviewed `git revert <APPROVED_FRONTEND_SQUASH_SHA>` PR from then-current main, then obtain explicit approval to merge/publish it. Do not reset/force-push main. Compare the result to `rollback/simab-pages-pre-v22-20261031`.
+Keep the version-aware backend installed. A full `git revert <APPROVED_FRONTEND_SQUASH_SHA>` is safe only after proving both **no active/waiting v2 rooms and no recoverable/in-flight v2 creation/join requests or cached v2 sessions that can recreate them**. Zero active rooms alone is not enough: pending requests are stored locally and can replay later. If quiescence cannot be proved, prepare an approved forward fix/partial rollback retaining the version-aware Seven Cards route and its JS/CSS/localization dependencies. Do not reset/force-push main. Compare any proposed revert to `rollback/simab-pages-pre-v22-20261031` and test before authorizing publication.
 
-If v2 rooms exist, **do not blindly publish the old frontend**: it cannot render two-card moves for those members. Either keep the current Seven Cards client while forward-fixing the frontend fault, or wait for rooms to end normally before the full revert. Never force-settle or edit room/wallet rows as a rollback shortcut. Cached new clients/pending requests may remain after a frontend revert, so retain the bridge even after the revert.
+If v2 rooms or recoveries may exist, **do not blindly publish the old frontend**: it cannot render two-card moves for those members, including a restored pending create. Keep the version-aware Seven Cards client while forward-fixing the frontend fault. Never force-settle, clear users' pending requests, or edit room/wallet rows as a rollback shortcut. Retain the bridge even after any approved frontend rollback.
 
 ### Backend rollback
 
