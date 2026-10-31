@@ -44,7 +44,7 @@ Its baseline is the published GitHub main source at `33abeedcb36b69136c86c3f4026
 ## Focused verification
 
 - Final affected Node run: **63 passed, 0 failed** (including **11** new transition tests). New Chrome runner: **19 passed**, 0 page errors. Offline bridge reference: **4 passed**.
-- `tests/sevens-transition-v22.test.mjs`: legacy and v2 validation, short hands, invalid/duplicate/foreign cards, atomic rejection, private/public room consistency, capability discovery, and isolated database/API tests for old/new admission, mixed clients, idempotency, authorization, stale versions, wallet conservation and one-time settlement.
+- `tests/sevens-transition-v22.test.mjs` (**8** dependency-free cases): legacy and v2 validation, short hands, invalid/duplicate/foreign cards, atomic rejection, private/public room consistency and capability discovery. `tests/sevens-transition-integration-v22.mjs` (**3** isolated DB/API cases, included in `npm run test:server`): old/new admission, mixed clients, idempotency, authorization, stale versions, wallet conservation and one-time settlement. This split preserves lightweight CI's no-PGlite dependency convention; none of the tests are skipped or weakened.
 - Existing Phase 4/Seven Cards/party/practice/localization tests retained (Phase 4 fixture explicitly identifies its intended v2 contract; no assertion relaxed).
 - `tests/ui-sevens-transition-v22.mjs`: real Chrome controls for legacy/v2, draw/no-target variants, short hands, and preflight blocking a two-card room debit against an old backend. Added to browser orchestration and GitHub wallet CI.
 - Existing Phase 4 browser runner: **188 checks passed** after the changes. Prior screenshots were preserved rather than replaced by the test render.
