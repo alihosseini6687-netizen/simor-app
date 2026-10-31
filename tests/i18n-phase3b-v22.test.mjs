@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
+import {createHash} from 'node:crypto';
 import {localeContext,legacyClassification} from './support/i18n-inventory-v22.mjs';
 
 for(const lang of ['en','fa','ru','ar','hi','fr','de'])test('phase3b '+lang+': every retained source has a stable key and no fallback',()=>{
@@ -10,7 +11,11 @@ for(const lang of ['en','fa','ru','ar','hi','fr','de'])test('phase3b '+lang+': e
  assert.deepEqual([...x.SimabI18n.missing],[]);
 });
 test('phase3b the original 234 omissions are unique sources, classified separately from occurrences',()=>{
- const rows=legacyClassification();assert.equal(rows.length,234);assert.equal(new Set(rows.map(row=>row.source)).size,234);assert.ok(rows.every(row=>row.key&&row.category));assert.ok(rows.some(row=>row.occurrences>1));assert.ok(rows.some(row=>row.occurrences===0));
+  const recovered=readFileSync(new URL('./fixtures/phase3-original-i18n-coverage-v22.json',import.meta.url));
+  assert.equal(createHash('sha256').update(recovered).digest('hex'),'69e1d5864d17381d82d211fe11ac0a62650a64c2696011fb88121678e160dc2a');
+  const rows=legacyClassification();assert.equal(rows.length,234);assert.equal(new Set(rows.map(row=>row.source)).size,234);assert.ok(rows.every(row=>row.key&&row.category));assert.ok(rows.some(row=>row.occurrences>1));assert.ok(rows.some(row=>row.occurrences===0));
+  const evidence=JSON.parse(readFileSync(new URL('../docs/SIMAB_V22_PHASE3B_I18N_INVENTORY.json',import.meta.url),'utf8'));
+  assert.deepEqual(rows.map(row=>row.source),evidence.original234.map(row=>row.source));
 });
 test('phase3b numeric placeholders cannot disguise untranslated prose',()=>{
  const x=localeContext('de');x.SimabI18n.t('یک متن تازه و ترجمه‌نشده با پایان ژتون');assert.ok(x.SimabI18n.missing.includes('یک متن تازه و ترجمه‌نشده با پایان ژتون'));

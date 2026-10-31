@@ -12,7 +12,9 @@ export function applicationFiles(){
  out.push(resolve(projectRoot,'index.html'));for(const dir of ['assets/js','admin','ai','friends','games','offers','quests','streak','swap','wallet'])visit(resolve(projectRoot,dir));return out;
 }
 export function legacyClassification(){
- const baseline=JSON.parse(readFileSync(resolve(projectRoot,'docs/SIMAB_V22_PHASE3_I18N_COVERAGE.json'),'utf8')).coverage.en.legacyUnmapped;
+ // Historical input must not be the mutable current-coverage report written by
+ // ui-phase3-v22.mjs. This fixture is recovered, unmodified Phase 3 evidence.
+ const baseline=JSON.parse(readFileSync(resolve(projectRoot,'tests/fixtures/phase3-original-i18n-coverage-v22.json'),'utf8')).coverage.en.legacyUnmapped;
  const x=localeContext(),inventory=x.SimabLegacyI18n.inventory(),files=applicationFiles().map(file=>({path:relative(projectRoot,file).replaceAll('\\','/'),text:readFileSync(file,'utf8')}));
  const category=en=>/privacy|stored|recorded|cash|withdraw|forfeit|refund|entry|pot|coin|chip|wallet|payment|checkout|purchase|Stars|TON|miner|reward|wheel|streak/i.test(en)?'wallet-reward-policy':/voice|camera|microphone|connection|call|TURN/i.test(en)?'media':/task|mission/i.test(en)?'tasks':/game|table|card|trump|bot|players|poker|slots|dice|spin|fold|raise|check|dealer|hand/i.test(en)?'games':'navigation-home-common';
  return baseline.map(source=>{const locations=files.flatMap(file=>{const occurrences=file.text.split(source).length-1;return occurrences?[{path:file.path,occurrences}]:[];});return {source,english:inventory[source],category:category(inventory[source]),key:x.SimabI18n.sourceKey(source),occurrences:locations.reduce((sum,item)=>sum+item.occurrences,0),locations,status:locations.length?'active-source':'retained-compatibility'};});

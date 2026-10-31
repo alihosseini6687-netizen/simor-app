@@ -1,0 +1,2 @@
+# Preserve the recovered historical evidence byte-for-byte on Windows and CI.
+/tests/fixtures/phase3-original-i18n-coverage-v22.json -text
