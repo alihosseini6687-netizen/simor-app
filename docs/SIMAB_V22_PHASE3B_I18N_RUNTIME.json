@@ -1,0 +1,710 @@
+{
+  "scope": "Actual pages, synthetic read-only state. Exact current DOM audit after language changes; not real-account/device testing.",
+  "coverage": {
+    "en": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "fa": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "ru": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "ar": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "hi": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "fr": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "de": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    }
+  },
+  "observations": {
+    "games/room/index.html?game=hokm": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=hokm#move-0": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=hokm#move-1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=hokm#move-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=ludo": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=ludo#move-0": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=ludo#move-1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=ludo#move-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=backgammon": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=backgammon#move-0": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=backgammon#move-1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=backgammon#move-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=mill": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=mill#move-0": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=mill#move-1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=mill#move-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=truth": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=truth#move-0": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=truth#move-1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=truth#move-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=snakes": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=snakes#move-0": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=snakes#move-1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=snakes#move-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=sevens": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=sevens#move-0": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=sevens#move-1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=sevens#move-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=blackjack": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=blackjack#move-0": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=blackjack#move-1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=blackjack#move-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=bingo": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=bingo#move-0": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=bingo#move-1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=bingo#move-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=slot": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=slot#move-0": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=slot#move-1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/room/index.html?game=slot#move-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "index.html?home=1": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "wallet/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "wallet/privacy.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "wallet/terms.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "quests/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "streak/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/wheel/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/tap/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "admin/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/poker/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/poker/friends.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/backgammon/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/blackjack/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/slot/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/cards/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "games/horoscope/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "ai/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "offers/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "friends/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "swap/index.html": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "hokm-seats-2": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    },
+    "hokm-seats-3": {
+      "en": [],
+      "fa": [],
+      "ru": [],
+      "ar": [],
+      "hi": [],
+      "fr": [],
+      "de": []
+    }
+  },
+  "targeted": {
+    "checks": 266,
+    "languages": {
+      "en": {
+        "checks": 38
+      },
+      "fa": {
+        "checks": 38
+      },
+      "ru": {
+        "checks": 38
+      },
+      "ar": {
+        "checks": 38
+      },
+      "hi": {
+        "checks": 38
+      },
+      "fr": {
+        "checks": 38
+      },
+      "de": {
+        "checks": 38
+      }
+    }
+  },
+  "shop": {
+    "checks": 140,
+    "languages": {
+      "en": {
+        "checks": 20,
+        "unknown": []
+      },
+      "fa": {
+        "checks": 20,
+        "unknown": []
+      },
+      "ru": {
+        "checks": 20,
+        "unknown": []
+      },
+      "ar": {
+        "checks": 20,
+        "unknown": []
+      },
+      "hi": {
+        "checks": 20,
+        "unknown": []
+      },
+      "fr": {
+        "checks": 20,
+        "unknown": []
+      },
+      "de": {
+        "checks": 20,
+        "unknown": []
+      }
+    }
+  },
+  "sevens": {
+    "checks": 252,
+    "languages": {
+      "en": {
+        "checks": 36
+      },
+      "fa": {
+        "checks": 36
+      },
+      "ru": {
+        "checks": 36
+      },
+      "ar": {
+        "checks": 36
+      },
+      "hi": {
+        "checks": 36
+      },
+      "fr": {
+        "checks": 36
+      },
+      "de": {
+        "checks": 36
+      }
+    },
+    "penalties": [
+      0,
+      2,
+      4,
+      6,
+      12,
+      20
+    ],
+    "turns": [
+      0,
+      1
+    ],
+    "directions": [
+      1,
+      -1
+    ]
+  },
+  "errors": [],
+  "checks": 1251
+}

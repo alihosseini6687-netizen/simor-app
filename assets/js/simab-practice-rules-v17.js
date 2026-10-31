@@ -260,7 +260,7 @@ function publicH(s     ){const {deck,hands,...p}=s;return {...p,hand:hands[0],co
 const safe=new Set([0,8,13,21,26,34,39,47]);
 function legalL(s     )         {if(!s.die||s.finished)return[];return s.pieces[s.current].map((p,i)=>p<0?s.die===6?i:-1:p<57&&p+s.die<=57?i:-1).filter(i=>i>=0);}
 function nextL(s     ){s.current=(s.current+1)%s.pieces.length;s.sixes=0;s.die=0;}
-function rollL(s     ){if(s.die)fail();s.die=randomInt(6)+1;s.sixes=s.die===6?s.sixes+1:0;s.log.push(['شما','قرمز','آبی','زرد'][s.current]+': تاس '+s.die);s.log=s.log.slice(-8);if(s.sixes===3){nextL(s);return;}if(!legalL(s).length){const extra=s.die===6;s.die=0;if(!extra)nextL(s);}}
+function rollL(s     ){if(s.die)fail();s.die=randomInt(6)+1;s.lastRoll={player:s.current,value:s.die};s.sixes=s.die===6?s.sixes+1:0;s.log.push(['شما','قرمز','آبی','زرد'][s.current]+': تاس '+s.die);s.log=s.log.slice(-8);if(s.sixes===3){nextL(s);return;}if(!legalL(s).length){const extra=s.die===6;s.die=0;if(!extra)nextL(s);}}
 function stepL(s     ,index       ){if(!legalL(s).includes(index))fail();const p=s.pieces[s.current],pos=p[index]<0?0:p[index]+s.die;p[index]=pos;let capture=false;
  if(pos<51){const cell=((s.seatColors?.[s.current]??s.current)*13+pos)%52;if(!safe.has(cell))for(let side=0;side<s.pieces.length;side++)if(side!==s.current)for(let i=0;i<4;i++)if(s.pieces[side][i]>=0&&s.pieces[side][i]<51&&((s.seatColors?.[side]??side)*13+s.pieces[side][i])%52===cell){s.pieces[side][i]=-1;capture=true;}}
  if(p.every(v=>v===57)){s.finished=true;s.winner=s.current;s.result=s.current===0?'شما برنده شدید':'بازیکن '+s.current+' برنده شد';return;}
@@ -316,6 +316,8 @@ const gameSizes    ={hokm:[2,4],ludo:[2,4],blackjack:[2,8],backgammon:[2,2],snak
 const shuffle=(d         )=>{for(let i=d.length-1;i>0;i--){const j=randomInt(i+1);[d[i],d[j]]=[d[j],d[i]];}return d;};
 const pack=(n=1)=>shuffle(Array.from({length:52*n},(_,i)=>i));
 const rank=(c       )=>c%13+2,suit=(c       )=>Math.floor(c%52/13);
+// Missing version belongs to an existing v14 room, never to the new rule.
+function sevensRulesVersion(s    ){const v=s.sevensRulesVersion===undefined?1:s.sevensRulesVersion;if(v!==1&&v!==2)fail('sevens_upgrade_required');return v;}
 const snakes    ={17:7,54:34,62:19,64:60,87:24,93:73,95:75,99:78};
 const ladders    ={4:14,9:31,20:38,28:84,40:59,51:67,63:81,71:91};
 const lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
@@ -327,7 +329,7 @@ function startParty(kind       ,n       ,buyIn       ,options    ={}){const size
  if(kind==='backgammon')s.table=startHumanBG(buyIn);
  if(kind==='snakes'){s.positions=Array(n).fill(0);s.die=0;}
  if(kind==='mill'){s.board=Array(9).fill(-1);s.placed=[0,0];s.moves=0;s.repetitions={};}
- if(kind==='sevens'){s.deck=pack(n>5?2:1);s.hands=Array.from({length:n},()=>s.deck.splice(-7));s.discard=[];let c=s.deck.pop();while([7,8,10,11,14].includes(rank(c))){s.deck.unshift(c);c=s.deck.pop();}s.discard=[c];s.suit=suit(c);s.direction=1;s.penalty=0;s.twoTarget=options.twoTarget!==false;s.twoGift=options.twoGift===true;}
+ if(kind==='sevens'){s.sevensRulesVersion=sevensRulesVersion({sevensRulesVersion:options.sevensRulesVersion??2});s.deck=pack(n>5?2:1);s.hands=Array.from({length:n},()=>s.deck.splice(-7));s.discard=[];let c=s.deck.pop();while([7,8,10,11,14].includes(rank(c))){s.deck.unshift(c);c=s.deck.pop();}s.discard=[c];s.suit=suit(c);s.direction=1;s.penalty=0;s.twoTarget=s.sevensRulesVersion===2||options.twoTarget!==false;s.twoGift=s.sevensRulesVersion===2||options.twoGift===true;}
  if(kind==='blackjack'){s.deck=pack(4);s.dealer=[s.deck.pop(),s.deck.pop()];s.hands=Array.from({length:n},()=>[s.deck.pop(),s.deck.pop()]);s.done=Array(n).fill(false);s.results=[];}
  if(kind==='bingo'){s.tickets=Array.from({length:n},ticket);s.bag=shuffle(Array.from({length:90},(_,i)=>i+1));s.called=[];s.awards=[[],[],[]];}
  if(kind==='truth'){s.mode=options.mode==='bottle'?'bottle':'dice';s.dareNumbers=Array.isArray(options.dareNumbers)?[...new Set(options.dareNumbers.filter((x    )=>Number.isInteger(x)&&x>=1&&x<=6))]:[1,3,5];s.phase='roll';s.target=0;s.asker=1;s.round=0;s.die=0;s.question='';s.category='truth';s.deadline=0;}
@@ -338,18 +340,37 @@ function next(s    ,steps=1){s.current=(s.current+steps+s.n)%s.n;}
 function win(s    ,indices         ,result='بازی تمام شد'){s.finished=true;s.winners=indices;s.result=result;}
 function draw(s    ,n       ){const out=[];while(out.length<n){if(!s.deck.length){if(s.discard.length<2)break;const top=s.discard.pop();s.deck=shuffle(s.discard);s.discard=[top];}out.push(s.deck.pop());}return out;}
 function legalSevens(s    ,i       ){return s.hands[i].filter((c       )=>s.penalty?rank(c)===7:rank(c)===11||suit(c)===s.suit||rank(c)===rank(s.discard.at(-1)));}
+function validateSevens(s    ,i       ,m    )         {
+ const version=sevensRulesVersion(s);
+ if(m.type==='draw')return [];
+ if(m.type!=='play'||!legalSevens(s,i).includes(m.card))fail();
+ if(rank(m.card)===11&&(!Number.isInteger(m.suit)||m.suit<0||m.suit>3))fail();
+ if(rank(m.card)===11&&s.hands[i].length===1)fail('cannot_finish_jack');
+ if(rank(m.card)!==2||version===1&&!s.twoTarget)return [];
+ const target=m.target??((i+s.direction+s.n)%s.n);
+ if(!Number.isInteger(target)||target<0||target>=s.n||target===i)fail();
+ if(version===1&&!s.twoGift)return [];
+ // v1 keeps the exact old scalar wire contract. Do not guess a second card.
+ const needed=Math.min(version===2?2:1,s.hands[i].length-1);
+ const gifts=version===2?m.gifts:needed?[m.gift]:[];
+ if(version===2&&m.gift!==undefined||version===1&&m.gifts!==undefined)fail('invalid_gift');
+ // Short hand: transfer every remaining card (0 or 1). Never draw substitutes.
+ if(!Array.isArray(gifts)||gifts.length!==needed||new Set(gifts).size!==needed||gifts.some((c    )=>!Number.isInteger(c)||c===m.card||!s.hands[i].includes(c)))fail('invalid_gift');
+ return gifts;
+}
 function stepParty(s    ,i       ,m    ,now=Date.now()){
- if(s.finished||s.current!==i)fail('invalid_turn');s.lastEvent='move';
+ if(s.kind==='truth'&&(m.type==='skip'||m.type==='answer'&&(typeof m.text!=='string'||!m.text.trim()||m.text.length>500)))fail();
+ if(s.finished||s.current!==i)fail('invalid_turn');const gifts=s.kind==='sevens'?validateSevens(s,i,m):[];s.lastEvent='move';
  if(s.kind==='hokm'){s.table.n??=4;moveVariantH(s.table,i,m);s.current=s.table.current;s.lastEvent=m.type==='trump'?'deal':m.type==='next_round'?'shuffle':'card';if(s.table.finished)win(s,s.n===4?[s.table.winner,s.table.winner+2]:[s.table.winner],'برندهٔ مسابقه مشخص شد');}
  else if(s.kind==='ludo'){moveHumanL(s.table,i,m);s.current=s.table.current;s.lastEvent=m.type==='roll'?'dice':'piece';if(s.table.finished)win(s,[s.table.winner]);}
  else if(s.kind==='backgammon'){moveHumanBG(s.table,i,m);s.current=s.table.turn;s.lastEvent=m.type==='roll'?'dice':'checker';if(s.table.finished)win(s,[s.table.winner]);}
  else if(s.kind==='snakes'){if(m.type!=='roll')fail();s.die=randomInt(6)+1;const from=s.positions[i],land=from+s.die;s.positions[i]=land>100?from:snakes[land]||ladders[land]||land;s.lastMove={player:i,from,land:Math.min(land,100),to:s.positions[i]};s.lastEvent='dice';if(s.positions[i]===100)win(s,[i]);else next(s);}
  else if(s.kind==='mill'){const to=m.to;if(!Number.isInteger(to)||to<0||to>8||s.board[to]!==-1)fail();if(s.placed[i]<3){if(m.type!=='place')fail();s.board[to]=i;s.placed[i]++;}else{if(m.type!=='move'||s.board[m.from]!==i||!adjacent(m.from,to))fail();s.board[m.from]=-1;s.board[to]=i;}s.moves++;s.lastEvent='checker';if(lines.some(l=>l.every(c=>s.board[c]===i)))win(s,[i]);else{next(s);const key=s.board.join(',')+':'+s.current;s.repetitions[key]=(s.repetitions[key]||0)+1;if(s.repetitions[key]===3||s.moves>=100)win(s,[],'مساوی؛ ورودی‌ها برگشت');}}
- else if(s.kind==='sevens'){if(m.type==='draw'){const got=draw(s,s.penalty||1);s.hands[i].push(...got);s.penalty=0;next(s,s.direction);s.lastEvent='deal';}else{const c=m.card;if(m.type!=='play'||!legalSevens(s,i).includes(c))fail();if(rank(c)===11&&(!Number.isInteger(m.suit)||m.suit<0||m.suit>3))fail();if(rank(c)===11&&s.hands[i].length===1)fail('cannot_finish_jack');if(rank(c)===2&&s.twoTarget){const target=m.target??((i+s.direction+s.n)%s.n);if(!Number.isInteger(target)||target<0||target>=s.n||target===i)fail();if(s.twoGift){if(s.hands[i].length>1){if(!Number.isInteger(m.gift)||m.gift===c||!s.hands[i].includes(m.gift))fail('invalid_gift');s.hands[i].splice(s.hands[i].indexOf(m.gift),1);s.hands[target].push(m.gift);}}else s.hands[target].push(...draw(s,1));}s.hands[i].splice(s.hands[i].indexOf(c),1);s.discard.push(c);s.suit=rank(c)===11?m.suit:suit(c);if(!s.hands[i].length)win(s,[i]);else{const r=rank(c);if(r===7)s.penalty+=2;if(r===10)s.direction*=-1;if(r!==8)next(s,s.direction*(r===14?2:1));}s.lastEvent='card';}}
+ else if(s.kind==='sevens'){if(m.type==='draw'){const got=draw(s,s.penalty||1);s.hands[i].push(...got);s.penalty=0;next(s,s.direction);s.lastEvent='deal';}else{const c=m.card,version=sevensRulesVersion(s);if(rank(c)===2&&(version===2||s.twoTarget)){const target=m.target??((i+s.direction+s.n)%s.n);if(version===1&&!s.twoGift)s.hands[target].push(...draw(s,1));else for(const gift of gifts){s.hands[i].splice(s.hands[i].indexOf(gift),1);s.hands[target].push(gift);}}s.hands[i].splice(s.hands[i].indexOf(c),1);s.discard.push(c);s.suit=rank(c)===11?m.suit:suit(c);if(!s.hands[i].length)win(s,[i]);else{const r=rank(c);if(r===7)s.penalty+=2;if(r===10)s.direction*=-1;if(r!==8)next(s,s.direction*(r===14?2:1));}s.lastEvent='card';}}
  else if(s.kind==='blackjack'){if(!['hit','stand'].includes(m.type))fail();if(m.type==='hit')s.hands[i].push(s.deck.pop());if(m.type==='stand'||total(s.hands[i].map((c       )=>c%52))>=21){s.done[i]=true;next(s);if(s.done.every(Boolean)){while(total(s.dealer.map((c       )=>c%52))<17)s.dealer.push(s.deck.pop());const dt=total(s.dealer.map((c       )=>c%52));s.results=s.hands.map((h         )=>{const t=total(h.map(c=>c%52));return t>21?-1:dt>21||t>dt?1:t===dt?0:-1;});const best=Math.max(...s.hands.map((h         )=>{const t=total(h.map(c=>c%52));return t<=21?t:0;}));win(s,s.hands.map((h         ,j       )=>total(h.map(c=>c%52))===best&&best>0?j:-1).filter((j       )=>j>=0),'میز دوستانه: نزدیک‌ترین امتیاز به ۲۱ برندهٔ پات است');}}s.lastEvent=m.type==='hit'?'card':'tap';}
  else if(s.kind==='bingo'){if(m.type!=='roll')fail();s.called.push(s.bag.pop());const counts=s.tickets.map((t           )=>t.filter(row=>row.filter(Boolean).every(v=>s.called.includes(v))).length);for(let level=1;level<=3;level++)if(!s.awards[level-1].length){const ws=counts.map((v       ,j       )=>v>=level?j:-1).filter((j       )=>j>=0);if(ws.length)s.awards[level-1]=ws;}if(s.awards[2].length)win(s,s.awards[2],'فول‌هاوس؛ جایزهٔ یک خط، دو خط و کارت کامل تقسیم شد');else next(s);s.lastEvent='roll';}
  else if(s.kind==='slot'){if(m.type!=='roll')fail();const r=Array.from({length:3},()=>randomInt(6));s.reels[i]=r;s.scores[i]=new Set(r).size===1?100+r[0]:new Set(r).size===2?20+Math.max(...r):r.reduce((a,b)=>a+b,0);if(s.scores.every((v       )=>v>=0)){const max=Math.max(...s.scores);win(s,s.scores.map((v       ,j       )=>v===max?j:-1).filter((j       )=>j>=0));}else next(s);s.lastEvent='roll';}
- else if(s.kind==='truth'){if(m.type==='roll'){if(s.phase!=='roll')fail();s.round++;s.die=randomInt(6)+1;s.target=s.mode==='dice'?i:randomInt(s.n);s.angle=s.target*360/s.n;s.asker=s.mode==='dice'?(i+1)%s.n:(s.target+Math.floor(s.n/2))%s.n;s.category=s.mode==='dice'?(s.dareNumbers.includes(s.die)?'dare':'truth'):'choose';s.current=s.asker;s.phase='question';s.question='';s.lastEvent=s.mode==='dice'?'dice':'roll';}else if(m.type==='question'){if(s.phase!=='question'||typeof m.text!=='string'||m.text.length<2||m.text.length>500)fail();s.question=m.text;if(s.mode==='bottle')s.category=m.category==='dare'?'dare':'truth';s.phase='answer';s.current=s.target;}else if(m.type==='answer'||m.type==='skip'){if(s.phase!=='answer')fail();s.phase='roll';s.question='';s.current=(s.target+1)%s.n;}else fail();}
+ else if(s.kind==='truth'){if(m.type==='roll'){if(s.phase!=='roll')fail();s.round++;s.die=randomInt(6)+1;s.target=s.mode==='dice'?i:randomInt(s.n);s.angle=s.target*360/s.n;s.asker=s.mode==='dice'?(i+1)%s.n:(s.target+Math.floor(s.n/2))%s.n;s.category=s.mode==='dice'?(s.dareNumbers.includes(s.die)?'dare':'truth'):'choose';s.current=s.asker;s.phase='question';s.question='';s.lastEvent=s.mode==='dice'?'dice':'roll';}else if(m.type==='question'){if(s.phase!=='question'||typeof m.text!=='string'||m.text.length<2||m.text.length>500)fail();s.question=m.text;if(s.mode==='bottle')s.category=m.category==='dare'?'dare':'truth';s.phase='answer';s.current=s.target;}else if(m.type==='answer'){if(s.phase!=='answer')fail();s.phase='roll';s.question='';s.current=(s.target+1)%s.n;}else fail();}
  s.event++;s.deadline=s.kind==='truth'||s.kind==='hokm'&&s.table.phase==='round_end'?0:now+20000;
 }
 function timeoutParty(s    ){const i=s.current;let m    ;
@@ -369,11 +390,11 @@ function publicParty(s    ,viewer       ){const p=structuredClone(s);delete p.de
  if(s.kind==='hokm')p.table=publicVariantH({...s.table,n:s.table.n??4},viewer);
  if(s.kind==='ludo')p.table.legal=s.current===viewer?legalL(s.table):[];
  if(s.kind==='backgammon')p.table.moves=s.current===viewer?legalBG(s.table):[];
- if(s.kind==='sevens'){p.hand=s.hands[viewer];p.counts=s.hands.map((h    )=>h.length);delete p.hands;p.legal=s.current===viewer?legalSevens(s,viewer):[];p.top=s.discard.at(-1);delete p.discard;}
+ if(s.kind==='sevens'){p.sevensRulesVersion=sevensRulesVersion(s);p.hand=s.hands[viewer];p.counts=s.hands.map((h    )=>h.length);delete p.hands;p.legal=s.current===viewer?legalSevens(s,viewer):[];p.top=s.discard.at(-1);delete p.discard;}
  if(s.kind==='blackjack'){p.hands=s.hands.map((h    ,i       )=>s.finished||i===viewer?h:h.map(()=>-1));p.dealer=s.finished?s.dealer:[s.dealer[0],-1];}
  if(s.kind==='bingo'){p.ticket=s.tickets[viewer];delete p.tickets;}
  return p;
 }
 
-return {gameSizes,snakes,ladders,adjacent,startParty,legalSevens,stepParty,timeoutParty,partyPayout,publicParty};})();
+return {gameSizes,sevensRulesVersion,snakes,ladders,adjacent,startParty,legalSevens,stepParty,timeoutParty,partyPayout,publicParty};})();
 window.SimabPracticeRules={...P,total:T.total,randomInt:G.randomInt};})();

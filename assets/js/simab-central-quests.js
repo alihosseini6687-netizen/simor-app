@@ -19,6 +19,7 @@
   if (!isAdmin && !isQuests) return;
 
   const currentTasks = new Map();
+  const uiText = (key, fallback, values = {}) => window.SimabI18n?.key ? window.SimabI18n.key(key, values) : fallback;
   const popup = (title, message, icon = "ℹ️") => {
     if (isAdmin && typeof window.showPopup === "function") window.showPopup(title, message, icon);
     else if (typeof window.showToast === "function") window.showToast(message);
@@ -40,18 +41,18 @@
       const fields = new URLSearchParams(initData);
       const authDate = fields.get("auth_date");
       if (!authDate || !/^\d{10,12}$/.test(authDate) || !fields.get("user") || !fields.get("hash")) {
-        return "اطلاعات ورود تلگرام ناقص است. مینی‌اپ را از دکمه ربات باز کن؛ در صورت تکرار، نحوه راه‌اندازی را بررسی می‌کنیم.";
+        return uiText('error.telegramIncomplete', "اطلاعات ورود تلگرام ناقص است. مینی‌اپ را از دکمه ربات باز کن؛ در صورت تکرار، نحوه راه‌اندازی را بررسی می‌کنیم.");
       }
       const ageSeconds = Math.floor(Date.now() / 1000) - Number(authDate);
       if (Number.isFinite(ageSeconds) && ageSeconds > 3600) {
-        return "اطلاعات ورود تلگرام قدیمی است (بیش از یک ساعت). نسخه مینی‌اپ را کامل ببند و از دکمه ربات دوباره اجرا کن.";
+        return uiText('error.telegramOld', "اطلاعات ورود تلگرام قدیمی است (بیش از یک ساعت). نسخه مینی‌اپ را کامل ببند و از دکمه ربات دوباره اجرا کن.");
       }
       if (Number.isFinite(ageSeconds) && ageSeconds < -30) {
-        return "زمان ورود تلگرام در آینده ثبت شده است؛ ساعت گوشی و تنظیمات زمان را بررسی کن.";
+        return uiText('error.telegramFuture', "زمان ورود تلگرام در آینده ثبت شده است؛ ساعت گوشی و تنظیمات زمان را بررسی کن.");
       }
-      return "اطلاعات ورود تلگرام تازه است ولی امضای آن پذیرفته نشد. باید تطابق توکن ذخیره‌شده در Supabase با رباتی که مینی‌اپ را باز کرده بررسی شود؛ توکن را ارسال نکن.";
+      return uiText('error.telegramSignatureReview', "اطلاعات ورود تلگرام تازه است ولی امضای آن پذیرفته نشد. باید تطابق توکن ذخیره‌شده در Supabase با رباتی که مینی‌اپ را باز کرده بررسی شود؛ توکن را ارسال نکن.");
     } catch {
-      return "اعتبارسنجی ورود تلگرام انجام نشد؛ شناسه ربات و تنظیمات سرور باید بررسی شوند.";
+      return uiText('error.telegramValidation', "اعتبارسنجی ورود تلگرام انجام نشد؛ شناسه ربات و تنظیمات سرور باید بررسی شوند.");
     }
   }
 
@@ -78,7 +79,7 @@
   }
   async function doAdmin(action, extra) {
     const candidates = signedInitDataCandidates();
-    if (!candidates.length) throw new Error("اطلاعات امضاشده تلگرام در این صفحه موجود نیست. سیماب را با دکمه ربات اصلی باز کن.");
+    if (!candidates.length) throw new Error(uiText('error.telegramSignedMissing', "اطلاعات امضاشده تلگرام در این صفحه موجود نیست. سیماب را با دکمه ربات اصلی باز کن."));
     let r, j, used;
     for (let i = 0; i < candidates.length; i++) {
       used = candidates[i];
@@ -95,34 +96,34 @@
     }
     if (action === "admin_credit" && !r.ok) {
       const messages = {
-        invalid_target: "آیدی عددی تلگرام معتبر نیست.",
-        invalid_credit_amount: "تعداد سکه باید عدد صحیح مثبت تا ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ باشد.",
-        wallet_limit: "این مبلغ از سقف موجودی کیف پول بیشتر می‌شود.",
-        request_conflict: "این شناسه درخواست قبلاً با مشخصات دیگری ثبت شده است.",
-        admin_only: "مجوز مدیریت این حساب تأیید نشد.",
-        admin_credit_unavailable: "سرویس واریز آماده نیست یا پاسخ قطعی نداد.",
-        telegram_auth_failed: "ورود تلگرام معتبر نیست؛ برنامه را از ربات دوباره باز کن.",
+        invalid_target: uiText('error.creditTarget', "آیدی عددی تلگرام معتبر نیست."),
+        invalid_credit_amount: uiText('error.creditAmount', "تعداد سکه باید عدد صحیح مثبت تا ۱٬۰۰۰٬۰۰۰٬۰۰۰٬۰۰۰ باشد."),
+        wallet_limit: uiText('error.creditWalletLimit', "این مبلغ از سقف موجودی کیف پول بیشتر می‌شود."),
+        request_conflict: uiText('error.creditConflict', "این شناسه درخواست قبلاً با مشخصات دیگری ثبت شده است."),
+        admin_only: uiText('error.creditAdminOnly', "مجوز مدیریت این حساب تأیید نشد."),
+        admin_credit_unavailable: uiText('error.creditUnavailable', "سرویس واریز آماده نیست یا پاسخ قطعی نداد."),
+        telegram_auth_failed: uiText('error.creditAuth', "ورود تلگرام معتبر نیست؛ برنامه را از ربات دوباره باز کن."),
       };
-      const error = new Error(messages[j.error] || "واریز تأیید نشد؛ پاسخ سرور: " + r.status);
+      const error = new Error(messages[j.error] || uiText('error.creditStatus', "واریز تأیید نشد؛ پاسخ سرور: " + r.status, {status: r.status}));
       error.definitive = [400, 401, 403, 409, 413].includes(r.status);
       throw error;
     }
     if (!r.ok) throw new Error(
       r.status === 401 ? (
-        j.reason === "expired" ? "امضای ورود تلگرام بیش از یک ساعت قدیمی است. مینی‌اپ را مجدداً از ربات باز کن." :
-        j.reason === "clock_mismatch" ? "زمان ورود تلگرام نامعتبر است؛ ساعت گوشی را بررسی کن." :
-        j.reason === "signature_mismatch" ? "امضای ورود با روش‌های رسمی تأیید نشد؛ باید منبع باز شدن مینی‌اپ بررسی شود." :
-        j.reason === "missing_fields" ? "اطلاعات امضاشده تلگرام ناقص است؛ از دکمه مینی‌اپ ربات باز کن." :
+        j.reason === "expired" ? uiText('error.telegramExpired', "امضای ورود تلگرام بیش از یک ساعت قدیمی است. مینی‌اپ را مجدداً از ربات باز کن.") :
+        j.reason === "clock_mismatch" ? uiText('error.telegramClock', "زمان ورود تلگرام نامعتبر است؛ ساعت گوشی را بررسی کن.") :
+        j.reason === "signature_mismatch" ? uiText('error.telegramSignature', "امضای ورود با روش‌های رسمی تأیید نشد؛ باید منبع باز شدن مینی‌اپ بررسی شود.") :
+        j.reason === "missing_fields" ? uiText('error.telegramFields', "اطلاعات امضاشده تلگرام ناقص است؛ از دکمه مینی‌اپ ربات باز کن.") :
         describeTelegram401(used)
       ) :
       r.status === 403 ? (j.error === "channel_membership_required"
-        ? "عضویت در کانال تأیید نشد؛ ابتدا در کانال عضو شو."
-        : "دسترسی برای انجام این عملیات تأیید نشد.") :
-      r.status === 409 ? "این مأموریت شرایط پرداخت سروری را ندارد." :
+        ? uiText('error.questMembership', "عضویت در کانال تأیید نشد؛ ابتدا در کانال عضو شو.")
+        : uiText('error.questAccess', "دسترسی برای انجام این عملیات تأیید نشد.")) :
+      r.status === 409 ? uiText('error.questPayment', "این مأموریت شرایط پرداخت سروری را ندارد.") :
       r.status === 503 ? (j.error === "channel_bot_not_admin"
-        ? "ربات @SimorApp_bot هنوز مدیر کانال @SimorApp نیست یا مجوز بررسی اعضا را ندارد. هیچ جایزه‌ای ثبت نشد."
-        : "سرور تأیید عضویت یا دفتر جایزه در دسترس نیست؛ هیچ سکه‌ای پرداخت نشده است.") :
-      "درخواست سروری ناموفق بود (HTTP " + r.status + ")."
+        ? uiText('error.questBotAdmin', "ربات @SimorApp_bot هنوز مدیر کانال @SimorApp نیست یا مجوز بررسی اعضا را ندارد. هیچ جایزه‌ای ثبت نشد.")
+        : uiText('error.questServerUnavailable', "سرور تأیید عضویت یا دفتر جایزه در دسترس نیست؛ هیچ سکه‌ای پرداخت نشده است.")) :
+      uiText('error.questHttp', "درخواست سروری ناموفق بود (HTTP " + r.status + ").", {status: r.status})
     );
     return j;
   }
@@ -130,6 +131,11 @@
     const node = document.createElement(tag);
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
+    return node;
+  };
+  const userText = (tag, className, text) => {
+    const node = el(tag, className, text);
+    node.setAttribute('data-user-content', '');
     return node;
   };
 
@@ -148,12 +154,14 @@
       for (const task of quests) {
         currentTasks.set(task.id, task);
         const row = el("div", "custom-task-item");
-        const text = el("span", "", task.title + " (" + task.rewardCoins + " سکه؛ " + (task.rewardAvailable ? "قابل بررسی عضویت" : "پاداش غیرفعال") + ")");
+        const text = el("span");
+        const details = el("span", "", "(" + task.rewardCoins + " سکه؛ " + (task.rewardAvailable ? "قابل بررسی عضویت" : "پاداش غیرفعال") + ")");
+        text.append(userText('span', 'quest-title', task.title), ' ', details);
         const del = el("button", "btn-del", "✕");
         del.type = "button";
         del.setAttribute("aria-label", "حذف مأموریت " + task.title);
         del.addEventListener("click", async () => {
-          if (!window.confirm("این مأموریت برای همه کاربران غیرفعال شود؟")) return;
+          if (!window.confirm(uiText('confirm.archiveQuest', "این مأموریت برای همه کاربران غیرفعال شود؟"))) return;
           del.disabled = true;
           try {
             await doAdmin("archive", { id: task.id });
@@ -264,7 +272,7 @@
       list.append(el("p", "", "📝 پیش‌نویس‌های منتشرنشده:"));
       drafts.forEach((item,index) => {
         const row = el("div","custom-task-item");
-        const title = el("span","",item.title);
+        const title = userText("span","",item.title);
         const restore = el("button","btn-tool","ویرایش");
         restore.type="button";
         restore.addEventListener("click",()=>{
@@ -463,7 +471,7 @@
         for(const q of quests){
           const row=el('div','quest-card'),info=el('div','quest-info'),body=el('div');
           const telegram=q.verificationMode==='telegram_membership',seconds=telegram?5:10;
-          body.append(el('div','quest-title',q.title),el('div','quest-reward',q.rewardCoins+' سکه • '+(telegram?'تأیید عضویت تلگرام پس از ۵ ثانیه':'پاداش بازدید پس از ۱۰ ثانیه؛ عضویت یا دنبال‌کردن قابل تأیید خودکار نیست')));info.append(body);
+          body.append(userText('div','quest-title',q.title),el('div','quest-reward',q.rewardCoins+' سکه • '+(telegram?'تأیید عضویت تلگرام پس از ۵ ثانیه':'پاداش بازدید پس از ۱۰ ثانیه؛ عضویت یا دنبال‌کردن قابل تأیید خودکار نیست')));info.append(body);
           const visit=el('button','btn-quest-action','باز کردن لینک و شروع'),claim=el('button','btn-quest-action','ابتدا لینک را باز کن');let readyAt=0;claim.disabled=true;
           function tick(){if(claimedIds.has(q.id)){claim.disabled=true;claim.textContent='✓ قبلاً دریافت شد';return;}const left=Math.max(0,Math.ceil((readyAt-Date.now())/1000));claim.disabled=!readyAt||left>0;claim.textContent=!readyAt?'ابتدا لینک را باز کن':left?'دریافت تا '+left+' ثانیه دیگر':telegram?'بررسی عضویت و دریافت':'دریافت سکه';}
           visit.onclick=async()=>{visit.disabled=true;try{const r=await doAdmin('task_start',{questId:q.id});readyAt=Date.now()+Math.max(0,new Date(r.readyAt)-new Date(r.serverNow));const target=new URL(q.url);if(target.hostname==='t.me'&&window.Telegram?.WebApp?.openTelegramLink)Telegram.WebApp.openTelegramLink(target.href);else if(window.Telegram?.WebApp?.openLink)Telegram.WebApp.openLink(target.href);else window.open(target.href,'_blank','noopener');tick();}catch(e){popup('شروع تسک',e.message);}finally{visit.disabled=false;}};

@@ -74,7 +74,7 @@ test("backgammon submits server-validated moves and has explicit bear-off and ba
 });
 test("roll keeps real reel spin and native sound, with new game visuals",()=>{
  const p=read("games/slot/index.html");
- assert.match(p,/async function spinSlot\(\)/);
+  assert.match(p,/async function spinSlot\(automatic=false\)/);
  assert.match(p,/function toggleAudio\(\)/);
  assert.match(p,/simab-slot-v8\.css\?v=8/);
  const css=read("assets/css/simab-slot-v8.css");

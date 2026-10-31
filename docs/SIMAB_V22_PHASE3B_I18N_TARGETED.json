@@ -1,0 +1,72 @@
+{
+  "scope": "Targeted real client paths with test-only hooks and synthetic rejected/success responses. No production authorization or mutation.",
+  "coverage": {
+    "en": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "fa": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "ru": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "ar": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "hi": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "fr": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    },
+    "de": {
+      "total": 1035,
+      "translated": 1035,
+      "missingKeys": [],
+      "legacyUnmapped": []
+    }
+  },
+  "checks": 266,
+  "languages": {
+    "en": {
+      "checks": 38
+    },
+    "fa": {
+      "checks": 38
+    },
+    "ru": {
+      "checks": 38
+    },
+    "ar": {
+      "checks": 38
+    },
+    "hi": {
+      "checks": 38
+    },
+    "fr": {
+      "checks": 38
+    },
+    "de": {
+      "checks": 38
+    }
+  },
+  "errors": []
+}

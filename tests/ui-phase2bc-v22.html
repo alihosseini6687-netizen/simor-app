@@ -1,0 +1,36 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data:; connect-src 'self'; frame-src 'self' about:; img-src 'self' data:">
+<title>SIMAB Phase 2BC isolated browser regressions</title><h1>Phase 2BC</h1><ol id="results"></ol>
+<script type="module">
+const results=[],check=(v,m)=>{if(!v)throw Error(m);},tick=()=>new Promise(r=>setTimeout(r,0));
+async function test(name,fn){try{await fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,error:e.stack});}document.querySelector('#results').append(Object.assign(document.createElement('li'),{textContent:JSON.stringify(results.at(-1))}));}
+async function mount(path,{script='',hook='',width=390,reduced=false}={}){
+ const url=new URL('../'+path,location.href),html=await fetch(url).then(r=>r.text()),doc=new DOMParser().parseFromString(html,'text/html');
+ const inline=[...doc.querySelectorAll('script:not([src])')].map(s=>s.textContent);doc.querySelectorAll('script').forEach(s=>s.remove());doc.head.prepend(Object.assign(doc.createElement('base'),{href:url.href}));
+ const stub=doc.createElement('script');stub.textContent=`window.__errors=[];addEventListener('error',e=>__errors.push(e.message));window.Telegram={WebApp:{ready(){},expand(){}}};window.SimabWallet={state:{serverWallet:true},pending:null,busy:false,subscribe(){},ready:Promise.resolve(),integer:Number,read:async()=>({room:null,state:null}),mutate:async()=>window.__response};window.SimabRoomMedia={update(){},stop(){},after:0};window.__sounds=[];window.__timers=new Map();let serial=0;window.setTimeout=(fn,ms)=>{__timers.set(++serial,{fn,ms});return serial;};window.clearTimeout=id=>__timers.delete(id);window.setInterval=()=>0;window.matchMedia=()=>({matches:${reduced}});`;
+ doc.body.append(stub);let source=script?await fetch(new URL('../'+script,location.href)).then(r=>r.text()):inline.join('\n');
+ if(hook){const end=source.lastIndexOf('})();');source=source.slice(0,end)+'window.__api={'+hook+'};'+source.slice(end);}
+ doc.body.append(Object.assign(doc.createElement('script'),{textContent:source}));
+ if(path.includes('/slot/'))doc.body.append(Object.assign(doc.createElement('script'),{textContent:`initAudio=()=>{};playWinSound=()=>__sounds.push('win');playBombSound=()=>__sounds.push('loss');playTone=()=>__sounds.push('draw');playReelStopSound=()=>{};`}));
+ const frame=document.createElement('iframe');frame.style.cssText=`width:${width}px;height:844px;border:0`;const ready=new Promise(r=>frame.onload=r);frame.srcdoc=doc.documentElement.outerHTML;document.body.append(frame);await ready;check(!frame.contentWindow.__errors.length,frame.contentWindow.__errors.join(';'));return{frame,w:frame.contentWindow,d:frame.contentDocument};
+}
+const spin=()=>({sessionId:'slot-local',version:1,state:{kind:'slot',reels:[0,1,2],bet:2,payout:0,finished:true}});
+await test('slot actual controls lock during real animation and queued timers cannot run after exit',async()=>{
+ const h=await mount('games/slot/index.html');h.w.__response=spin();h.d.querySelector('#btn-spin').click();await tick();check(h.d.querySelector('#m-5').disabled,'bet control disabled');check(h.d.querySelector('.chip-item').getAttribute('aria-disabled')==='true','chip disabled');const queued=[...h.w.__timers.values()];check(queued.length===6,'six reel timers');h.w.dispatchEvent(new h.w.Event('pagehide'));check(h.w.__timers.size===0,'timers cleared');queued.forEach(t=>t.fn());check(h.w.__sounds.length===0,'silent exit');check(h.d.querySelector('#win-display').textContent.includes('خالص'),'settled result retained');h.frame.remove();
+});
+await test('slot reduced-motion bypasses reel timers and restores controls',async()=>{
+ const h=await mount('games/slot/index.html',{reduced:true});h.w.__response=spin();await h.w.spinSlot();check(h.w.__timers.size===0,'no reel timers');check(!h.d.querySelector('#m-5').disabled,'controls restored');check(h.w.__sounds.join()==='loss','one result cue');h.frame.remove();
+});
+await test('private poker actual lobby ignores older versions and retired-room receipts',async()=>{
+ const h=await mount('games/poker/friends.html',{script:'assets/js/simab-private-poker-v14.js',hook:'paint,get latest(){return latest;}'});
+ const receipt=v=>({sessionId:'ABCDEFGH23',version:v,state:null,room:{code:'ABCDEFGH23',status:'waiting',host:true,viewer:0,buyIn:20,maxPlayers:2,members:[{subject:'1',name:'Me',emoji:'A'}]}});
+ h.w.__api.paint(receipt(5));h.w.__api.paint(receipt(2));check(h.w.__api.latest.version===5,'monotonic version');check(h.d.querySelector('#invite-code').textContent==='ABCDEFGH23','room visible');h.w.__api.paint({room:null,state:null});h.w.__api.paint(receipt(9));check(h.w.__api.latest===null,'no resurrection');check(!h.d.querySelector('#create-room').disabled,'lobby usable');h.frame.remove();
+});
+await test('private poker full invitation leaves confirmed-join flow unsubmitted',async()=>{
+ const h=await mount('games/poker/friends.html',{script:'assets/js/simab-private-poker-v14.js',hook:'createJoin'});let writes=0,confirms=0;h.w.confirm=()=>{confirms++;return true;};h.w.SimabWallet.read=async()=>({preview:{status:'waiting',count:2,maxPlayers:2,buyIn:20}});h.w.SimabWallet.mutate=async()=>{writes++;};h.d.querySelector('#join-code').value='ABCDEFGH23';await h.w.__api.createJoin('join');check(writes===0&&confirms===0,'no payment/confirmation for full room');check(h.d.querySelector('#lobby-status').textContent.includes('میز پر'),'clear explanation');h.frame.remove();
+});
+await test('daily wheel unequal probabilities readable at narrow widths',async()=>{
+ for(const width of [320,390,768]){const h=await mount('games/tap/index.html',{width});const odds=h.d.querySelector('#wheel-odds');check(odds.textContent.includes('35%')&&odds.textContent.includes('not equal odds'),'weights explained');check(odds.clientHeight>0&&odds.scrollWidth<=odds.clientWidth+1,'readable without clipping');check(h.d.querySelector('#claim').getAttribute('aria-describedby')==='wheel-odds','description associated');h.frame.remove();}
+});
+window.__phase2bcResults={results,passed:results.filter(r=>r.pass).length,failed:results.filter(r=>!r.pass).length};
+</script></html>

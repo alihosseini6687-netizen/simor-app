@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {stripTypeScriptTypes} from 'node:module';
 import {Script} from 'node:vm';
+import {stripImports} from './support/source.mjs';
 
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const edge=read('supabase/functions/simab-central-quests/index.ts');
@@ -62,5 +63,5 @@ test('existing game and admin page JS remains valid',()=>{
     assert.match(s,/simab-central-quests\.js\?v=(?:7|20261025|10|11|16|17)/);
     assert.match(s,/simab-wallet-client\.js\?v=\d+/);
   }
-  new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/gm,''));
+  new Script(stripImports(stripTypeScriptTypes(edge)));
 });

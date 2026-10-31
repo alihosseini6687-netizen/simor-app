@@ -7,6 +7,12 @@ on:
       - 'games/**'
       - 'swap/**'
       - 'assets/js/**'
+      - 'assets/css/**'
+      - 'index.html'
+      - 'friends/**'
+      - 'offers/**'
+      - 'streak/**'
+      - 'quests/**'
       - 'package*.json'
       - 'admin/**'
       - 'assets/js/simab-central-quests.js'
@@ -58,6 +64,8 @@ jobs:
         run: node tests/ui-room-setup-v19.mjs
       - name: Video regressions - invitation recovery, ready table, bot pacing and rewards
         run: node tests/ui-video-regressions-v20.mjs
+      - name: Seven Cards legacy and two-card transition controls and capability preflight
+        run: node tests/ui-sevens-transition-v22.mjs
       - name: Management API security and private table grants
         run: node --test tests/security-v17-integration.mjs
       - name: Verify new games and poker UI in portrait and landscape
@@ -70,6 +78,14 @@ jobs:
         run: node tests/ui-party-v16.mjs
       - name: Screenshot regression cases v21
         run: node tests/ui-screenshot-regressions-v21.mjs
+      - name: Dice results, numbered pawns, active seat and table direction
+        run: node tests/ui-dice-board-v22.mjs
+      - name: Phase 1 isolated Ludo, setup, rotation, insets and sound regressions
+        run: node tests/ui-phase1-v22.mjs
+      - name: Phase 2A isolated slot Stop, paytable, backgammon dice and sound regressions
+        run: node tests/ui-phase2a-v22.mjs
+      - name: Phase 2BC isolated fairness, stale response and animation regressions
+        run: node tests/ui-phase2bc-v22.mjs
       - name: English default and persistent Persian language choice
         run: node tests/ui-language-v16.mjs
       - uses: actions/upload-artifact@v4
@@ -97,6 +113,8 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026091612_private_poker_rooms.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026100658_shop_and_channel_offers.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026135953_party_rooms_and_timed_tasks.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261028090000_wallet_unbiased_random.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-phase2bc.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-secure-wallet.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-admin-credit.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-unified-wallet.sql

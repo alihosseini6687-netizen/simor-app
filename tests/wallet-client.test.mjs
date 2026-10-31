@@ -55,3 +55,30 @@ test('lost private room response survives reload and recovers the same escrow re
 test('malformed private room receipt preserves recovery even when the wallet is valid',async()=>{
  const c=client(async(_,options)=>{const p=JSON.parse(options.body);return response(p.walletAction==='state'?{serverWallet:true,coins:0,chips:500}:{wallet:{serverWallet:true,coins:0,chips:400}});});await c.api.ready;await assert.rejects(c.api.mutate('room',{op:'create',amount:100,maxPlayers:2}),/پاسخ میز/);assert.ok(c.api.pending);
 });
+test('overlapping reads cannot roll wallet display backwards',async()=>{
+ const c=client(async()=>response({serverWallet:true,coins:100,chips:0}));await c.api.ready;
+ let older,newer;const queue=[];
+ // A fresh client keeps controllable network responses without application hooks.
+ const h=client(async(_,o)=>{const p=JSON.parse(o.body);if(p.walletAction==='state')return response({serverWallet:true,coins:100,chips:0});return new Promise(r=>queue.push(r));});await h.api.ready;
+ older=h.api.read('room',{op:'state'});newer=h.api.read('room',{op:'state'});
+ queue[1](response({wallet:{serverWallet:true,coins:80,chips:20}}));await newer;
+ queue[0](response({wallet:{serverWallet:true,coins:100,chips:0}}));await older;
+ assert.equal(h.api.state.chips,20);
+});
+test('refresh begun during settlement cannot overwrite its accepted balance',async()=>{
+ let settle,refresh,reads=0;
+ const c=client(async(_,o)=>{const p=JSON.parse(o.body);if(p.walletAction==='state'){if(++reads===1)return response({serverWallet:true,coins:100,chips:0});return new Promise(r=>refresh=r);}return new Promise(r=>settle=r);});await c.api.ready;
+ const wager=c.api.mutate('wallet',{walletAction:'exchange_to_chips',amount:20});await new Promise(setImmediate);
+ const stale=c.api.refresh();settle(response({serverWallet:true,coins:80,chips:20}));await wager;
+ refresh(response({serverWallet:true,coins:100,chips:0}));await stale;assert.equal(c.api.state.chips,20);
+});
+test('rate-limited recovery retains immutable request ID; rapid duplicate submits do not send',async()=>{
+ let sends=0;const ids=[];const c=client(async(_,o)=>{const p=JSON.parse(o.body);if(p.walletAction==='state')return response({serverWallet:true,coins:100,chips:0});sends++;ids.push(p.requestId);return sends===1?response({error:'rate_limited'},429):response({serverWallet:true,coins:95,chips:5});});await c.api.ready;
+ const one=c.api.mutate('wallet',{walletAction:'exchange_to_chips',amount:5});const two=c.api.mutate('wallet',{walletAction:'exchange_to_chips',amount:5});
+ const results=await Promise.allSettled([one,two]);assert.ok(results.every(r=>r.status==='rejected'));assert.equal(sends,1);assert.ok(c.api.pending);
+ await c.api.recover();assert.equal(new Set(ids).size,1);assert.equal(c.api.state.coins+c.api.state.chips,100);
+});
+test('negative server balances are rejected without losing financial recovery',async()=>{
+ const c=client(async(_,o)=>response(JSON.parse(o.body).walletAction==='state'?{serverWallet:true,coins:100,chips:0}:{serverWallet:true,coins:-1,chips:5}));await c.api.ready;
+ await assert.rejects(c.api.mutate('wallet',{walletAction:'exchange_to_chips',amount:5}));assert.ok(c.api.pending);assert.equal(c.api.state.coins,100);
+});

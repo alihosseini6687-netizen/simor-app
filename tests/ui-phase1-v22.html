@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data:; connect-src 'self'; frame-src 'self' about:; img-src 'self' data:">
+<title>SIMAB v22 phase 1 — isolated browser regressions</title>
+<style>body{font:15px system-ui;background:#171225;color:#eee}iframe{display:block;border:0;margin:12px 0;background:#171225}li.pass{color:#83e5b1}li.fail{color:#ff8e9b}</style>
+<h1>SIMAB v22 phase 1 browser regressions</h1>
+<p>Local assets only. Telegram, wallet and media are mocked. No real account or database is used.</p>
+<p id="summary">Running…</p><ol id="results"></ol><div id="frames"></div>
+<script type="module">
+const results=[];
+const check=(condition,message)=>{if(!condition)throw Error(message);};
+const frame=()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+async function test(name,fn){try{await fn();results.push({name,pass:true});}catch(e){results.push({name,pass:false,error:e.stack||e.message});}const item=document.createElement('li'),r=results.at(-1);item.className=r.pass?'pass':'fail';item.textContent=(r.pass?'PASS: ':'FAIL: ')+name+(r.error?' — '+r.error:'');document.querySelector('#results').append(item);}
+async function mount(path,script,hook,width=390,height=844){
+  const url=new URL('../'+path,location.href),[html,source]=await Promise.all([fetch(url).then(r=>r.text()),fetch(new URL('../'+script,location.href)).then(r=>r.text())]);
+  const doc=new DOMParser().parseFromString(html,'text/html');doc.querySelectorAll('script').forEach(s=>s.remove());
+  const base=doc.createElement('base');base.href=url.href;doc.head.prepend(base);
+  const stub=doc.createElement('script');stub.textContent=`window.__sounds=[];window.__writes=[];window.__errors=[];addEventListener('error',e=>__errors.push(e.message));window.SimabI18n={locale:'en-US',lang:'en'};window.SimabWallet={state:{serverWallet:true},pending:null,ready:{then(){}},subscribe(){},integer:Number,read:async()=>{throw Error('Network disabled in phase1 UI test');},mutate:async(...args)=>{__writes.push(args);throw Error('Wallet writes disabled in phase1 UI test');}};window.SimabSound={unlock(){},play:k=>__sounds.push(k),isEnabled:()=>true,toggle(){}};window.SimabProfile={get:()=>''};window.SimabRoomMedia={update(){},stop(){},refreshAvatars(){}};window.Telegram={WebApp:{expand(){},onEvent(){}}};`;
+  doc.body.append(stub);
+  // srcdoc has no query string: supply the original page's route parameters.
+  const routed=source.replace('new URLSearchParams(location.search)','new URLSearchParams('+JSON.stringify(url.search)+')');
+  const code=doc.createElement('script'),end=routed.lastIndexOf('})();');
+  code.textContent=hook?routed.slice(0,end)+'window.__phase1={'+hook+'};'+routed.slice(end):routed;doc.body.append(code);
+  const iframe=document.createElement('iframe');iframe.style.width=width+'px';iframe.style.height=height+'px';
+  const loaded=new Promise(resolve=>iframe.onload=resolve);iframe.srcdoc=doc.documentElement.outerHTML;document.querySelector('#frames').append(iframe);await loaded;await frame();
+  const w=iframe.contentWindow;check(w.__errors.length===0,w.__errors.join('; '));
+  return {iframe,w,d:w.document,api:w.__phase1};
+}
+const legacy=width=>mount('games/ludo/index.html','assets/js/simab-table-games-v13.js','accept,ludoDice,ludoBoard',width);
+const ludo=()=>({kind:'ludo',pieces:Array.from({length:4},()=>[-1,-1,-1,-1]),current:0,die:0,sixes:0,stake:20,finished:false,winner:-1,result:'',log:[],legal:[]});
+const receipt=(state,version=1)=>({sessionId:'TEST',version,state});
+const members=Array.from({length:4},(_,i)=>({subject:String(i),name:'Player '+i,emoji:'x'}));
+const room=()=>({code:'TESTROOM23',game:'ludo',viewer:0,host:true,status:'playing',maxPlayers:4,buyIn:0,members,messages:[],signals:[]});
+const sharedState=()=>({kind:'ludo',n:4,current:0,event:1,finished:false,winners:[],lastEvent:'shuffle',table:ludo()});
+
+for(const width of [320,390,768])await test('Legacy Ludo '+width+'px: visible numbered pawns, hit testing, full color and no overflow',async()=>{
+  const h=await legacy(width),s=ludo();s.die=6;s.legal=[0,1,2,3];h.api.accept(receipt(s));await frame();
+  check(h.d.querySelectorAll('.ludo-piece').length===16,'16 pawns');
+  for(const p of h.d.querySelectorAll('.ludo-piece')){check(/^[1-4]$/.test(p.textContent),'pawn number');check(h.w.getComputedStyle(p).opacity==='1','pawn full opacity');}
+  const p=h.d.querySelector('.ludo-piece.green'),b=p.getBoundingClientRect();check(h.d.elementFromPoint(b.x+b.width/2,b.y+b.height/2)===p,'pawn hit target above home art');
+  check(h.d.documentElement.scrollWidth<=width+1,'no horizontal overflow');check(h.w.__writes.length===0,'no wallet calls');h.iframe.remove();
+});
+
+await test('Legacy Ludo: stacked finish pawns stay within their cell and do not overlap',async()=>{
+  const h=await legacy(390),s=ludo();s.pieces=s.pieces.map(()=>[57,57,57,57]);h.api.accept(receipt(s));await frame();
+  const cell=h.d.querySelector('.ludo-cell.stacked'),bounds=cell.getBoundingClientRect(),boxes=[...cell.children].map(p=>p.getBoundingClientRect());check(boxes.length===16,'16 packed pieces');
+  for(const b of boxes)check(b.left>=bounds.left-.5&&b.right<=bounds.right+.5&&b.top>=bounds.top-.5&&b.bottom<=bounds.bottom+.5,'piece contained');
+  for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){const a=boxes[i],b=boxes[j];check(a.right<=b.left+.5||b.right<=a.left+.5||a.bottom<=b.top+.5||b.bottom<=a.top+.5,'pieces do not overlap');}h.iframe.remove();
+});
+
+await test('Legacy Ludo: all six history faces and active seat survive turn changes',async()=>{
+  const h=await legacy(390),s=ludo();s.current=2;
+  for(let v=1;v<=6;v++){s.lastRoll={player:1,value:v};h.api.accept(receipt(s,v));check(h.d.querySelectorAll('.legacy-die-result i').length===v,'matching pips');check(h.d.querySelector('.legacy-dice').dataset.value===String(v),'matching number');check(h.d.querySelector('.legacy-dice').disabled,'not viewer turn');check(h.d.querySelectorAll('.ludo-turns .current').length===1,'one active seat');}
+  h.iframe.remove();
+});
+
+await test('Shared table: polling cannot enable Start before all selected seats arrive',async()=>{
+  const h=await mount('games/room/index.html?game=ludo','assets/js/simab-party-v16.js','accept,syncButtons,roll,resetRoom');const r={...room(),status:'waiting',members:members.slice(0,2)};
+  h.api.accept({room:r,state:null,version:1});h.api.syncButtons();check(h.d.querySelector('#start').disabled,'partial table disabled');r.members=members;h.api.accept({room:r,state:null,version:2});h.api.syncButtons();check(!h.d.querySelector('#start').disabled,'full table enabled');h.iframe.remove();
+});
+
+await test('Shared dice: rapid taps and repeated receipts produce exactly one result sound',async()=>{
+  const h=await mount('games/room/index.html?game=ludo','assets/js/simab-party-v16.js','accept,syncButtons,roll,resetRoom'),s=sharedState(),r=room();h.api.accept({room:r,state:s,version:1});let calls=0;
+  await new Promise((resolve,reject)=>{const timeout=setTimeout(()=>reject(Error('roll callback timed out')),3000),move=()=>{clearTimeout(timeout);calls++;s.event=2;s.lastEvent='dice';s.table.lastRoll={player:0,value:3};h.api.accept({room:r,state:s,version:2});h.api.accept({room:r,state:s,version:2});resolve();};h.api.roll(move);h.api.roll(move);h.api.roll(move);check(h.w.__sounds.length===0,'no optimistic duplicate');});
+  check(calls===1&&h.w.__sounds.join(',')==='dice','one roll and one sound');h.iframe.remove();
+});
+
+await test('Shared results: losses and draws never play victory audio',async()=>{
+  const h=await mount('games/room/index.html?game=ludo','assets/js/simab-party-v16.js','accept,resultSound'),r=room(),s=sharedState();h.api.accept({room:r,state:s,version:1});s.finished=true;s.winners=[1];s.event=2;h.api.accept({room:r,state:s,version:2});check(h.w.__sounds.join(',')==='fold','loss sound');check(h.api.resultSound({...s,winners:[]})==='draw','draw sound');check(h.api.resultSound({...s,winners:[0,2]})==='win','team win');h.iframe.remove();
+});
+
+await test('Rotated table: near-square and height-only resizes match the real viewport',async()=>{
+  const h=await mount('games/poker/friends.html','assets/js/simab-game-room-v12.js',null,768,820),stage=h.d.createElement('div');h.d.body.classList.add('in-poker');await frame();stage.style.position='fixed';h.d.body.append(stage);await h.w.SimabGameRoom.open(stage);check(stage.style.transform.includes('rotate(-90deg)'),'portrait rotation');
+  h.iframe.style.width='820px';h.iframe.style.height='768px';await frame();h.w.SimabGameRoom.fit();check(!stage.style.transform.includes('rotate('),'landscape rotation');check(stage.style.width==='820px'&&stage.style.height==='768px','landscape dimensions');
+  h.iframe.style.height='700px';await frame();h.w.SimabGameRoom.fit();check(stage.style.height==='700px','height-only resize');h.w.SimabGameRoom.close();h.iframe.remove();
+});
+
+await test('Rotated table: all content/safe edges fit, direction flips and video stays upright',async()=>{
+  const h=await mount('games/poker/friends.html','assets/js/simab-game-room-v12.js',null,390,844),tg=h.w.Telegram.WebApp;h.d.body.classList.add('in-poker');await frame();tg.safeAreaInset={top:20,bottom:10,left:4,right:6};tg.contentSafeAreaInset={top:8,bottom:12,left:3,right:5};
+  const stage=h.d.createElement('div');stage.style.position='fixed';stage.innerHTML='<span class="avatar-face"><video></video></span>';h.d.body.append(stage);await h.w.SimabGameRoom.open(stage);
+  let b=stage.getBoundingClientRect();check(Math.abs(b.left-7)<1&&Math.abs(b.top-28)<1&&Math.abs(b.right-379)<1&&Math.abs(b.bottom-822)<1,'all insets applied');check(stage.style.getPropertyValue('--simab-video-rotation')==='90deg','video inverse rotation');
+  stage.querySelector('.room-rotate').click();check(stage.style.transform.includes('rotate(90deg)'),'opposite direction');check(stage.style.getPropertyValue('--simab-video-rotation')==='-90deg','opposite video compensation');
+  tg.isFullscreen=true;h.w.SimabGameRoom.fit();b=stage.getBoundingClientRect();check(Math.abs(b.top-64)<1,'fullscreen top reserve');h.w.SimabGameRoom.close();h.iframe.remove();
+});
+
+window.__phase1Results={passed:results.filter(r=>r.pass).length,failed:results.filter(r=>!r.pass).length,results};
+document.querySelector('#summary').textContent=window.__phase1Results.passed+' passed, '+window.__phase1Results.failed+' failed';
+</script></html>
