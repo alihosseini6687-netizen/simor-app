@@ -1,0 +1,30 @@
+/* Same 15x15 authoritative Ludo coordinates; classic geometry, not new rules. */
+#arena .ludo-grid{width:min(100%,620px);margin:18px auto;box-sizing:border-box;background:#dec393;border:5px solid #31291c;border-radius:18px;padding:4px;box-shadow:0 5px 0 #64513b,0 12px 22px #0006;gap:0;overflow:visible}
+#arena .ludo-grid .ludo-cell.track,#arena .ludo-grid .ludo-cell.lane{border:1px solid #69533b;border-radius:50%;background:#fffdf0;box-shadow:inset 0 1px 2px #0002;z-index:1}
+#arena .ludo-grid .ludo-cell.safe:before{color:#735524;font-size:clamp(8px,2.3vw,15px)}
+#arena .ludo-grid .ludo-home{border:3px solid #fff8;border-radius:22%;box-shadow:inset 0 0 0 6px #0002,inset 0 8px 18px #fff3}
+#arena .ludo-grid .ludo-home:before{background:#fff6e7cc;border-radius:50%;box-shadow:inset 0 2px 8px #0005}
+#arena .ludo-grid .lane.green{background:#54bc83}#arena .ludo-grid .lane.red{background:#f37b79}#arena .ludo-grid .lane.blue{background:#6c9fe3}#arena .ludo-grid .lane.yellow{background:#f7d968}
+#arena .ludo-grid .pawn{--pawn:#168b56;width:90%;height:96%;max-width:29px;max-height:32px;min-height:0!important;min-width:0;padding:0;position:relative;border-radius:45% 45% 30% 30%;background:radial-gradient(ellipse at 35% 20%,#fff9 0 8%,transparent 32%),linear-gradient(100deg,#0007,var(--pawn) 35%,var(--pawn) 60%,#0007);color:#fff;border:1px solid #fff9!important;box-shadow:inset 0 -3px 0 #0005,0 3px 2px #0006;font-size:clamp(8px,2.5vw,13px);text-shadow:0 1px 2px #000;font-weight:900;align-self:center;justify-self:center;z-index:4}
+#arena .ludo-grid .pawn.red{--pawn:#d83237}#arena .ludo-grid .pawn.blue{--pawn:#285bd2}#arena .ludo-grid .pawn.yellow{--pawn:#dab22c;color:#241a05;text-shadow:0 1px #fff9}
+#arena .ludo-grid .ludo-cell.yard .pawn{width:155%;height:170%;max-height:38px;max-width:34px}
+#arena .ludo-grid .ludo-cell:not(.stacked) .pawn{position:absolute;left:50%;top:50%;right:auto;bottom:auto;transform:translate(-50%,-50%)}
+#arena .ludo-grid .stacked .pawn{width:100%;height:100%;font-size:clamp(6px,1.8vw,10px)}
+#arena .ludo-grid .pawn.playable{outline:2px solid #fff6ac;box-shadow:0 0 0 3px #17262e,inset 0 -3px 0 #0005,0 3px 3px #0008}
+#arena .ludo-grid .pawn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.die-result{position:relative}.die-result[data-unrolled=true]:after{content:'?';position:absolute;inset:0;display:grid;place-items:center;color:#7c6851;font:bold 42px system-ui;text-shadow:0 2px #fff}
+.dice3d.landed .die-result{animation:simab-die-land .25s ease-out}@keyframes simab-die-land{0%{transform:translateY(-7px) rotate(5deg)}55%{transform:translateY(2px)}100%{transform:none}}
+#controls[data-phase=round_end]{position:sticky;bottom:8px;background:#211a25f5;border:2px solid #edc980;padding:12px;z-index:45;border-radius:15px}
+#arena[data-phase=round_end] .hokm-phase{border:2px solid #f4d196;padding:14px;border-radius:12px;background:#302736}
+.hokm-round-action{position:sticky;bottom:10px;z-index:8;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:12px auto;padding:14px;max-width:620px;border:2px solid #ffe19c;border-radius:16px;background:linear-gradient(145deg,#49391f,#211a25 70%);box-shadow:0 0 0 4px #1b1420,0 8px 24px #000b;color:#fff0c3;text-align:center}
+.hokm-round-action strong{font-size:clamp(18px,4vw,24px);color:#ffe19c}.hokm-round-action span{flex-basis:100%;font-size:14px}.hokm-round-action button{min-width:min(260px,100%);min-height:52px;font-size:17px}
+.hokm-round-action .hokm-round-wait{color:#f8e8c7}
+.last-trick-label{display:block;grid-column:1/-1;color:#ffe09a;font:12px system-ui}
+#local-panel{min-width:0}.local-name-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:10px}.local-name-grid label{min-width:0;margin:0}.local-name-grid input{min-width:0;box-sizing:border-box;min-height:46px}.local-count-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.local-count-row input{width:85px}.local-count-row button{min-width:44px}
+#local-panel .bottle-disc{width:min(500px,100%);height:auto;aspect-ratio:1;margin:24px auto;position:relative}
+#local-panel .bottle-name{width:22%;max-width:none;box-sizing:border-box;min-height:32px;max-height:48px;padding:4px;font-size:clamp(10px,2.7vw,14px);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;unicode-bidi:plaintext;background:#211b2def;border-radius:10px}
+#local-panel .bottle-disc[data-players="10"] .bottle-name{width:18%}#local-panel .bottle-disc[data-players="dense"] .bottle-name{width:14%;font-size:clamp(9px,2.4vw,12px)}
+#local-panel .bottle-disc[data-players="dense"] .bottle{width:48px;height:115px;left:calc(50% - 24px);top:calc(50% - 57.5px)}
+#local-panel .bottle-disc[data-players="dense"] .bottle-name{min-height:26px;max-height:30px;padding:2px;line-height:1.15}
+#local-panel .bottle-name.selected{background:#f5d78d;color:#201728;border:2px solid #fff5c1;box-shadow:0 0 14px #ffe69b99;font-weight:800}
+@media(prefers-reduced-motion:reduce){.dice3d.landed .die-result{animation:none}}

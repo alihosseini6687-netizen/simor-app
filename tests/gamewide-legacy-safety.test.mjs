@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {resolve,dirname} from 'node:path';
 import {Script,runInNewContext} from 'node:vm';
-const root=new URL('../',import.meta.url).pathname;
+import {projectRoot as root} from './support/source.mjs';
 const read=path=>readFileSync(new URL('../'+path,import.meta.url),'utf8');
 const games=[
  'index.html','swap/index.html','games/poker/index.html',

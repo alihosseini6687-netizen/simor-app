@@ -612,6 +612,10 @@
       color: #94a3b8;
       letter-spacing: 0.5px;
     }
+    @media (prefers-reduced-motion: reduce) {
+      .reel-strip, .win-amount.jackpot, .reel-window.suspense-glow, .alert-modal-box { animation: none !important; transition: none !important; }
+    }
+    .chip-item[aria-disabled="true"] { opacity: .55; pointer-events: none; }
   </style>
   <!-- SIMAB V5 UI-only layer: game rules and wallet scripts unchanged. -->
   <link rel="stylesheet" href="../../assets/css/simab-game-shell-v5.css?v=5">
@@ -727,7 +731,7 @@
   <!-- جدول جوایز و قوانین کامل و جمع‌وجور -->
   <div class="payout-card">
     <div class="payout-card-header">
-      <span>📜 جدول جوایز و قوانین (۳ نماد یکسان)</span>
+      <span>📜 جایزهٔ ناخالص سرور (پیش از کسر شرط)</span>
     </div>
     <div class="payout-grid">
       <div class="payout-item">
@@ -748,14 +752,14 @@
       </div>
       <div class="payout-item">
         <span class="payout-name">⚡ ۳ قوطی انرژی</span>
-        <span class="payout-reward" style="color: #22c55e;">+۲۰ ژتون</span>
+        <span class="payout-reward" style="color: #22c55e;">۲۰ × ضریب ژتون</span>
       </div>
       <div class="payout-item">
         <span class="payout-name">🟣 ۳ ژتون شانس</span>
         <span class="payout-reward" style="color: #f5cf62;">x5</span>
       </div>
       <div class="payout-item">
-        <span class="payout-name">✨ ۲ نماد همسان</span>
+        <span class="payout-name">✨ دقیقاً ۲ نماد مجاز همسان</span>
         <span class="payout-reward" style="color: #ffffff;">x2</span>
       </div>
       <div class="payout-item">
@@ -767,6 +771,7 @@
         <span class="payout-reward" style="color: #ef4444;">پوچ؛ بدون کسر اضافه</span>
       </div>
     </div>
+    <p class="payout-explanation" style="font-size:12px;line-height:1.9;margin-top:8px">x یعنی برابر مبلغ کل شرط. جفت در هر جای رول پذیرفته است، فقط برای صندوق، الماس، هفت، سکه، انرژی و ژتون؛ جفت شلوار، جمجمه یا بمب جایزه ندارد. سه نماد یکسان طبق ردیف خود حساب می‌شود، نه جفت. سه انرژی: ۲۰ × ضریب انتخابی (x1 تا x50)، مستقل از ژتون پایه؛ مثلاً ژتون پایهٔ ۱۰۰ با x2، شرط ۲۰۰ و جایزهٔ انرژی ۴۰ است. خالص = جایزه منهای شرط؛ سایر ترکیب‌ها جایزهٔ صفر دارند و بمب کسر اضافه ندارد.</p>
   </div>
   <!-- مودال جک‌پات و هشدارها -->
   <div class="modal-overlay" id="alert-modal">
@@ -842,7 +847,8 @@
       if (!audioEnabled) return;
       initAudio();
       if (!audioCtx) return;
-      setTimeout(() => {
+      visualTimeout(() => {
+        if(!audioEnabled||!sceneActive||document.visibilityState==='hidden')return;
         try {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -902,6 +908,29 @@
     let multiplier = 1;
     let isSpinning = false;
     let autoSpinActive = false;
+    let autoSpinTimer = null, autoSpinGeneration = 0;
+    const presentedSpins = new Set();
+    const visualTimers=new Set();let visualGeneration=0,sceneActive=true,activeSpinResult=null;
+    function visualTimeout(fn,delay){const generation=visualGeneration;const id=setTimeout(()=>{visualTimers.delete(id);if(generation===visualGeneration)fn();},delay);visualTimers.add(id);return id;}
+    function spinControls(){document.getElementById('btn-spin').disabled=isSpinning||!!SimabWallet.pending;document.querySelectorAll('.btn-multi,.btn-step').forEach(b=>b.disabled=isSpinning);document.querySelectorAll('.chip-item').forEach(b=>b.setAttribute('aria-disabled',String(isSpinning)));}
+    function finishVisualSpin(silent=false){if(activeSpinResult)displayServerSpin(activeSpinResult,silent);activeSpinResult=null;isSpinning=false;spinControls();if(sceneActive&&document.visibilityState!=='hidden')scheduleAutoSpin();}
+    function cancelSlotVisuals(){visualGeneration++;for(const id of visualTimers)clearTimeout(id);visualTimers.clear();if(activeSpinResult)finishVisualSpin(true);}
+    function cancelAutoSpinTimer() {
+      clearTimeout(autoSpinTimer);autoSpinTimer=null;autoSpinGeneration++;
+    }
+    function stopAutoSpin() {
+      autoSpinActive=false;cancelAutoSpinTimer();
+      const b=document.getElementById('btn-auto');b.classList.remove('active');b.innerText='🔄 چرخش خودکار (Auto)';
+    }
+    function scheduleAutoSpin() {
+      cancelAutoSpinTimer();
+      if(!autoSpinActive)return;
+      const generation=autoSpinGeneration;
+      autoSpinTimer=setTimeout(()=>{
+        autoSpinTimer=null;
+        if(autoSpinActive&&generation===autoSpinGeneration)spinSlot(true);
+      },1100);
+    }
 
     function updateBetUI() {
       const cost = baseCost * multiplier;
@@ -979,24 +1008,41 @@
     populateStrip(document.getElementById('strip-3'), symbols[1]); // الماس
 
     // ================= ۶. چرخش رول‌ها و پردازش شرط ژتونی =================
-    async function spinSlot() {
-      if(isSpinning)return;
-      initAudio();isSpinning=true;document.getElementById('btn-spin').disabled=true;
+    async function spinSlot(automatic=false) {
+      if(automatic&&!autoSpinActive)return;
+      if(!sceneActive||document.visibilityState==='hidden'||isSpinning||SimabWallet.pending||SimabWallet.busy)return;
+      cancelAutoSpinTimer();
+      const generation=autoSpinGeneration;
+      initAudio();isSpinning=true;spinControls();
       try {
+        await SimabWallet.ready;
+        // Stop may have been pressed while the wallet was initializing.
+        // Only a wager already handed to mutate must remain recoverable.
+        if(!sceneActive||document.visibilityState==='hidden'||automatic&&(!autoSpinActive||generation!==autoSpinGeneration)){
+          isSpinning=false;spinControls();if(sceneActive)scheduleAutoSpin();return;
+        }
         const r=await SimabWallet.mutate('game',{game:'slot',op:'start',amount:baseCost*multiplier,multiplier});
+        activeSpinResult=r;
+        if(!sceneActive||document.visibilityState==='hidden'){finishVisualSpin(true);return;}
+        if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches){finishVisualSpin();return;}
         const reels=r.state.reels.map(i=>symbols[i]);
         animateReel('strip-1',reels[0],850);animateReel('strip-2',reels[1],1200);
         animateReel('strip-3',reels[2],1550,()=>{
-          displayServerSpin(r);isSpinning=false;document.getElementById('btn-spin').disabled=false;
-          if(autoSpinActive)setTimeout(spinSlot,1100);
+          finishVisualSpin();
         });
-      }catch(e){isSpinning=false;if(autoSpinActive)toggleAutoSpin();document.getElementById('btn-spin').disabled=false;document.getElementById('win-status-lbl').textContent=e.message;}
+      }catch(e){cancelSlotVisuals();isSpinning=false;stopAutoSpin();spinControls();document.getElementById('win-status-lbl').textContent=e.message;}
     }
-    function displayServerSpin(r){
+    function displayServerSpin(r,silent=false){
       if(r?.state?.kind!=='slot')return;
+      const key=r.sessionId+':'+r.version;
+      if(presentedSpins.has(key))return;
+      presentedSpins.add(key);
       const result=r.state;result.reels.forEach((value,i)=>{const strip=document.getElementById('strip-'+(i+1));populateStrip(strip,symbols[value]);strip.style.transition='none';strip.style.transform='translateY(0px)';});document.getElementById('win-status-lbl').textContent=(r.duplicate?'نتیجه قبلاً ثبت شده بود':'نتیجه ثبت‌شده در سرور')+' • شرط '+result.bet.toLocaleString('fa-IR');
       document.getElementById('win-display').textContent='جایزه: '+result.payout.toLocaleString('fa-IR')+' ژتون • خالص: '+(result.payout-result.bet).toLocaleString('fa-IR');
-      if(result.payout>0)playWinSound();
+      if(silent||!sceneActive||document.visibilityState==='hidden')return;
+      if(result.payout>result.bet)playWinSound();
+      else if(result.payout<result.bet)playBombSound();
+      else {playTone(392,'sine',0.18);playTone(392,'sine',0.18,200);}
     }
     // انیمیشن توقف فنری
     function animateReel(stripId, targetSymbol, duration, onComplete) {
@@ -1007,13 +1053,13 @@
       const targetY = -((items.length - 1) * 118);
       strip.style.transform = `translateY(${targetY}px)`;
       
-      setTimeout(() => {
+      visualTimeout(() => {
         playReelStopSound();
         try {
           if (tg?.HapticFeedback) tg.HapticFeedback.impactOccurred('light');
         } catch(e) {}
       }, duration - 100);
-      setTimeout(() => {
+      visualTimeout(() => {
         strip.style.transition = 'none';
         items[0].innerHTML = getSymbolHtml(targetSymbol);
         strip.style.transform = 'translateY(0px)';
@@ -1023,16 +1069,12 @@
 
     // چرخش خودکار
     function toggleAutoSpin() {
-      autoSpinActive = !autoSpinActive;
+      if(autoSpinActive){stopAutoSpin();return;}
+      autoSpinActive = true;
       const b = document.getElementById('btn-auto');
-      if (autoSpinActive) {
-        b.classList.add('active');
-        b.innerText = '⏹️ توقف چرخش خودکار';
-        if (!isSpinning) spinSlot();
-      } else {
-        b.classList.remove('active');
-        b.innerText = '🔄 چرخش خودکار (Auto)';
-      }
+      b.classList.add('active');
+      b.innerText = '⏹️ توقف چرخش خودکار';
+      if (!isSpinning) spinSlot(true);
     }
 
     // پاپ‌آپ مودال بردهای بزرگ، انفجار یا نیاز به صرافی
@@ -1068,7 +1110,10 @@
 
     // بارگذاری اولیه استاندارد
     SimabWallet.subscribe(s=>{totalChips=s.chips;chipsInv=chipBreakdown(totalChips);renderChipsUI();});
-    window.addEventListener('simab-receipt',e=>{if(!isSpinning)displayServerSpin(e.detail);});
+    window.addEventListener('simab-receipt',e=>{if(!isSpinning)displayServerSpin(e.detail);spinControls();});
+    window.addEventListener('pagehide',()=>{sceneActive=false;stopAutoSpin();cancelSlotVisuals();});
+    window.addEventListener('pageshow',()=>{sceneActive=true;spinControls();});
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){stopAutoSpin();cancelSlotVisuals();}});
     updateBetUI();
   </script>
 </body>

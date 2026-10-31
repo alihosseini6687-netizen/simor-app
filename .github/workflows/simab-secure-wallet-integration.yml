@@ -52,6 +52,8 @@ jobs:
         run: node --check assets/js/simab-secure-wallet.js && node --test tests/*.test.mjs
       - name: Install Chromium for mobile UI checks
         run: npx playwright install --with-deps chromium
+      - name: Independent game pages and Auto Stop regressions
+        run: node tests/ui-phase2a-v22.mjs && node tests/ui-independent-v22.mjs
       - name: Mobile tasks, all bot practices, reward design and management isolation
         run: node tests/ui-refresh-v17.mjs
       - name: Selected game setup, Hokm variants and wallet visibility
