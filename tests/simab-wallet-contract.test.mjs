@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {readFileSync,existsSync} from 'node:fs';
 import {Script,runInNewContext} from 'node:vm';
 import {stripTypeScriptTypes} from 'node:module';
+import {stripImports} from './support/source.mjs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const edge=read('supabase/functions/simab-central-quests/index.ts');
 const ui=read('assets/js/simab-wallet-client.js');
@@ -10,7 +11,7 @@ const sql=read('supabase/migrations/20261013_secure_wallet_games.sql');
 
 test('all changed JS parses, Edge compiles after stripping Deno types',()=>{
   new Script(ui);
-  new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/gm,''));
+  new Script(stripImports(stripTypeScriptTypes(edge)));
   const html=read('wallet/index.html');
   assert.match(html,/src="\.\.\/assets\/js\/simab-secure-wallet\.js\?v=\d+"/);
   for(const [,code] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(code);
