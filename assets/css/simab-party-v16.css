@@ -10,3 +10,15 @@
 #room:has(#turn-status:empty) .game-arena{display:none}#room:has(#start:not([hidden])) .game-arena{min-height:0;background:#162d31;border:1px solid #b38b4f;border-radius:18px;padding:20px;margin-bottom:0}#room:has(#start:not([hidden])) .game-arena p{margin:0}.mode-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px}.mode-buttons button{min-height:64px}.hero{background-position:center 35%}.hero h1{text-shadow:0 2px 5px #000}.hero[data-cover]{min-height:210px;padding-top:65px}
 
 #room[data-status="waiting"] .game-arena{min-height:0;background:#162d31;border:1px solid #b38b4f;border-radius:18px;padding:20px;margin-bottom:0}#room[data-status="waiting"] .game-arena p{margin:0}
+
+/* V22: flat result face stays readable on Telegram WebViews without 3D support. */
+.dice3d{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;width:110px;height:130px;opacity:1!important;margin:12px auto;background:none;border:0;box-shadow:none;perspective:none;font:inherit}
+.die-result{display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);width:76px;height:76px;padding:12px;gap:5px;background:linear-gradient(135deg,#fffef2,#d1d6e3);border:2px solid #adb7c9;border-radius:16px;box-shadow:0 5px 0 #7c8595,0 9px 12px #0005}
+.die-result i{display:block;border-radius:50%;background:#222438}.die-number{font:bold 18px system-ui;color:#fff1c4;white-space:nowrap}
+.ludo-grid{isolation:isolate}.ludo-grid .ludo-home{z-index:0}.ludo-grid .ludo-cell{z-index:1}.ludo-grid .ludo-cell.yard{background:transparent}.ludo-grid .ludo-center{z-index:0}
+.ludo-grid .pawn{flex:none;width:84%;height:84%;aspect-ratio:1;opacity:1;display:grid;place-items:center;color:#111827;font:bold clamp(8px,2.2vw,13px) system-ui;line-height:1;border:1px solid #fff;box-shadow:0 1px 2px #0008}
+.ludo-grid .pawn:disabled{opacity:1}.ludo-grid .pawn.playable{outline:2px solid #fff;filter:drop-shadow(0 0 3px #ffe08c)}
+.ludo-grid .stacked{display:grid;grid-template-columns:repeat(var(--stack-cols),minmax(0,1fr));gap:0}.ludo-grid .stacked .pawn{width:100%;height:auto;font-size:7px}
+.arena-seats .table-seat{padding:5px;border:2px solid transparent;border-radius:12px}.arena-seats .table-seat.current,.table-seat.current{outline:2px solid #ffe092;background:#183e3a}.arena-seats .table-seat[class*=current]{border-color:var(--pc,#ffe092)}.seat-turn{color:#ffe092;font-weight:bold}.arena-seats .seat-turn:empty{display:none}
+.bg-die{font:bold 21px system-ui;background:#fff7de;color:#202237;padding:8px;border-radius:10px}
+@media(max-width:480px){.party-shell{padding-inline:8px}.game-arena{padding:14px 8px;border-width:5px;border-radius:24px}.ludo-grid{border-width:3px;margin:10px auto}.turn-banner{padding:9px 11px}.arena-seats{gap:5px}.arena-seats .table-seat{max-width:82px;font-size:11px}}

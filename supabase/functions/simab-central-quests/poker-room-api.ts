@@ -1,6 +1,7 @@
 import {startPoker,moveHumanPoker,foldHumanPoker,publicHumanPoker,randomInt} from './games.ts';
+import {roomIceServers} from './ice-config.ts';
 const codeOK=(s:any)=>typeof s==='string'&&/^[A-Z2-9]{10}$/.test(s);
-const uuid=(s:any)=>typeof s==='string'&&/^[a-f0-9-]{36}$/i.test(s);
+const uuid=(s:any)=>typeof s==='string'&&/^[a-f0-9]{8}-[a-f0-9]{4}-[1-8][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(s);
 const bad=(s:string):never=>{throw Error(s);};
 const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const makeCode=()=>Array.from({length:10},()=>chars[randomInt(chars.length)]).join('');
@@ -54,7 +55,7 @@ export async function pokerRoomAPI(db:any,subject:string,p:any,identity:any={}){
   const inbox=await db.from('simab_poker_signals').select('id,sender,payload').eq('room_code',c).eq('recipient',subject).gt('id',Number.isSafeInteger(p.after)?p.after:0).order('id',{ascending:true}).limit(100);if(inbox.error)bad('game_unavailable');
   const messages=await db.from('simab_room_messages').select('id,subject,display_name,body,created_at').eq('room_code',c).order('id',{ascending:false}).limit(30);
   const w=await db.rpc('simab_secure_wallet_action',{p_subject:subject,p_action:'state',p_amount:0,p_request_id:null});
-  return{status:200,data:{sessionId:c,version:r.version,duplicate,serverNow:Date.now(),wallet:w.data,room:{code:c,status:r.status,host:s.host===subject,viewer:i,buyIn:s.buyIn,maxPlayers:s.maxPlayers,members:s.members,signals:inbox.data||[],messages:messages.data||[],iceServers:[{urls:'stun:stun.l.google.com:19302'}]},state:s.poker?{...publicHumanPoker(s.poker,i),players:publicHumanPoker(s.poker,i).players.map((player:any)=>({...player,emoji:s.members[(player.id+i)%s.members.length].emoji}))}:null}};
+   return{status:200,data:{sessionId:c,version:r.version,duplicate,serverNow:Date.now(),wallet:w.data,room:{code:c,status:r.status,host:s.host===subject,viewer:i,buyIn:s.buyIn,maxPlayers:s.maxPlayers,members:s.members,signals:inbox.data||[],messages:messages.data||[],iceServers:await roomIceServers()},state:s.poker?{...publicHumanPoker(s.poker,i),players:publicHumanPoker(s.poker,i).players.map((player:any)=>({...player,emoji:s.members[(player.id+i)%s.members.length].emoji}))}:null}};
  }
  }catch(e){const msg=(e as Error).message,known=['wrong_room_type','invalid_move','invalid_turn','invalid_request','invalid_request_id','invalid_buyin','room_not_found','room_full','room_forbidden','stale_game','game_finished','active_room_exists','insufficient_chips','request_conflict','cannot_check','invalid_raise','raise_too_small','raise_not_reopened'];return{status:known.includes(msg)?409:503,data:{error:known.includes(msg)?msg:'game_unavailable'}};}
 }

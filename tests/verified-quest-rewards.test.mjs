@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { stripTypeScriptTypes } from 'node:module';
 import { Script } from 'node:vm';
+import {stripImports} from './support/source.mjs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const edge=read('supabase/functions/simab-central-quests/index.ts');
 const sql=read('supabase/migrations/20261012_verified_quest_rewards.sql');
 const client=read('assets/js/simab-central-quests.js');
 test('TypeScript function and browser client parse',()=>{
-  new Script(stripTypeScriptTypes(edge).replace(/^import .*?\n/gm,''));
+  new Script(stripImports(stripTypeScriptTypes(edge)));
   new Script(client);
   for(const p of ['quests/index.html','admin/index.html']){
     const html=read(p);

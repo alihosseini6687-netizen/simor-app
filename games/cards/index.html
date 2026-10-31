@@ -196,17 +196,17 @@
       </div>
       
       <!-- پیام دلخواه تبریک (با فاصله از چیپ سمت چپ) -->
-      <div class="card-msg" id="preview-msg">تولدت مبارک رفیق، همیشه برنده باشی! 🌸</div>
+      <div class="card-msg" id="preview-msg" data-user-content>تولدت مبارک رفیق، همیشه برنده باشی! 🌸</div>
       
       <!-- پاورقی مشخصات فرستنده و گیرنده -->
       <div class="card-footer">
         <div>
           <span style="font-size: 8px; opacity: 0.8; display:block;">به نام:</span>
-          <span class="card-holder" id="preview-to">دوست عزیز</span>
+          <span class="card-holder" id="preview-to" data-user-content>دوست عزیز</span>
         </div>
         <div style="text-align: left;">
           <span style="font-size: 8px; opacity: 0.8; display:block;">از طرف:</span>
-          <span style="color: white; font-weight: bold;" id="preview-from">علی</span>
+          <span style="color: white; font-weight: bold;" id="preview-from" data-user-content>علی</span>
         </div>
       </div>
     </div>
@@ -239,6 +239,20 @@
 
   <script>
     const tg = window.Telegram?.WebApp;
+    const cardDraftDirty=new Set();
+    for(const id of ['input-to','input-msg','input-from'])document.getElementById(id).addEventListener('input',()=>cardDraftDirty.add(id));
+    let cardDefaults={'input-to':'دوست عزیز','input-msg':'تولدت مبارک رفیق، همیشه برنده باشی! 🌸'};
+    function localizeCardDefaults(){
+      if(!window.SimabI18n?.key)return;
+      for(const [id,key] of [['input-to','gift.dearFriend'],['input-msg','gift.birthdayDefault']]){
+        const input=document.getElementById(id),value=SimabI18n.key(key);
+        if(!cardDraftDirty.has(id)&&input.value===cardDefaults[id])input.value=value;
+        cardDefaults[id]=value;
+      }
+      updateCardText();
+    }
+    addEventListener('simab-language-ready',localizeCardDefaults);
+    window.SimabI18nReady?.then(localizeCardDefaults);
     try {
       if (tg) {
         tg.ready();
@@ -277,9 +291,9 @@
     }
 
     function updateCardText() {
-      document.getElementById('preview-to').innerText = document.getElementById('input-to').value || 'دوست عزیز';
-      document.getElementById('preview-msg').innerText = document.getElementById('input-msg').value || 'تبریک!';
-      document.getElementById('preview-from').innerText = document.getElementById('input-from').value || 'شما';
+      document.getElementById('preview-to').innerText = document.getElementById('input-to').value || window.SimabI18n?.key?.('gift.dearFriend') || 'دوست عزیز';
+      document.getElementById('preview-msg').innerText = document.getElementById('input-msg').value || window.SimabI18n?.key?.('gift.congrats') || 'تبریک!';
+      document.getElementById('preview-from').innerText = document.getElementById('input-from').value || window.SimabI18n?.key?.('game.you') || 'شما';
     }
 
     function purchaseCard() {
@@ -314,7 +328,7 @@
         ctx.clearRect(0, 0, 1000, 610);
         ctx.drawImage(bgImg, 0, 0, 1000, 610);
 
-        ctx.direction = 'rtl';
+        ctx.direction = window.SimabI18n?.dir || document.documentElement.dir;
         ctx.textAlign = 'right';
 
         // سایه ملایم برای خوانایی عالی روی تصویر
@@ -326,7 +340,7 @@
         // عنوان بالا
         ctx.fillStyle = '#f7d779';
         ctx.font = 'bold 30px sans-serif';
-        ctx.fillText('SIMOR GIFT CARD', 930, 75);
+        ctx.fillText(window.SimabI18n?.key?.('gift.brand') || 'SIMOR GIFT CARD', 930, 75);
 
         // متن تبریک وسط (سمت راست تا روی چیپ چپ نیفتد)
         ctx.fillStyle = '#ffffff';

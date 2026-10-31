@@ -23,6 +23,25 @@ class TelegramAuthError extends Error {
 }
 const enc = new TextEncoder();
 const allowedAgeSeconds = 60 * 60;
+// Per-isolate burst protection, in addition to transactional DB checks. This is
+// not a distributed quota; never key it on caller-supplied user IDs or room IDs.
+const requestWindows = new Map<string,{until:number,count:number}>();
+function requestLimit(subject:string,p:Record<string,unknown>,now=Date.now()):number {
+  const action=String(p.action),op=String(p.op||'state');
+  const room=['room','game_room'].includes(action);
+  const signal=room&&op==='signal';
+  const write=action==='game'||action==='wallet'&&p.walletAction!=='state'||room&&!['state','preview'].includes(op)||['claim','task_start','offer_claim','purchase'].includes(action);
+  const group=signal?'signal':write?'write':'read',limit=signal?1200:write?120:240;
+  const key=subject+':'+group;let entry=requestWindows.get(key);
+  if(!entry||entry.until<=now){
+    if(requestWindows.size>=10000){for(const [k,v] of requestWindows)if(v.until<=now)requestWindows.delete(k);}
+    // Bounded memory; do not evict live counters to allow a quota bypass.
+    if(!requestWindows.has(key)&&requestWindows.size>=10000)return 60;
+    entry={until:now+60000,count:0};requestWindows.set(key,entry);
+  }
+  if(entry.count>=limit)return Math.max(1,Math.ceil((entry.until-now)/1000));
+  entry.count++;return 0;
+}
 async function hmac(keyBytes: Uint8Array, text: string): Promise<Uint8Array> {
   const key = await crypto.subtle.importKey("raw", keyBytes, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   return new Uint8Array(await crypto.subtle.sign("HMAC", key, enc.encode(text)));
@@ -148,7 +167,7 @@ const httpHeaders = {
   "vary": "Origin",
 };
 const reply = (status: number, data: Record<string, unknown>) =>
-  new Response(JSON.stringify(data), { status, headers: httpHeaders });
+  new Response(JSON.stringify(data), { status, headers: {...httpHeaders,...(status===429?{'retry-after':String(data.retryAfterSeconds||60)}:{})} });
 
 function serviceKey(): string | undefined {
   const raw = Deno.env.get("SUPABASE_SECRET_KEYS");
@@ -296,6 +315,8 @@ Deno.serve(async (request) => {
     return reply(401, { error: "telegram_auth_failed", reason });
   }
 
+  const retryAfterSeconds=requestLimit(subject,payload);
+  if(retryAfterSeconds)return reply(429,{error:'rate_limited',retryAfterSeconds});
   if (payload.action === 'ton_balance') {if(payload.chain!==undefined&&payload.chain!=='-239')return reply(400,{error:'mainnet_only'});const r=await tonBalance(payload.address,Deno.env.get('TONCENTER_API_KEY')||'');return reply(r.status,r.data);}
   if (['shop_catalog','purchase','purchase_history','offer_info','offer_claim','admin_shop_status','admin_reconcile_refund','admin_shop_settings','admin_bind_webhook','admin_register_channel','admin_create_offer','admin_publish_offer'].includes(String(payload.action))) {const r=await shopAPI(db,subject,payload,botToken);return reply(r.status,r.data);}
   if(payload.action === "game_room"){const r=await partyAPI(db,subject,payload,identity);return reply(r.status,r.data);}

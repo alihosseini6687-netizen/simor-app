@@ -328,6 +328,7 @@
       const box = document.getElementById('chatBox');
       const b = document.createElement('div');
       b.className = (sender === 'user' ? 'user-bubble' : 'ai-bubble') + (isError ? ' error-bubble' : '');
+      if(!isError)b.dataset.userContent='true';
       b.innerText = text;
       box.appendChild(b);
       box.scrollTop = box.scrollHeight;

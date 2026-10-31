@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
+  <script src="../assets/js/simab-i18n-v16.js?v=phase3b"></script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SIMAB | پنل مدیریت ارشد</title>
@@ -104,16 +105,16 @@
   <!-- هدر -->
   <div class="header-bar">
     <button class="btn-back" onclick="goBack()">🔙 بازگشت به لابی</button>
-    <div class="admin-title">👑 پنل مدیریت ارشد سیماب</div>
+    <div class="admin-title" data-i18n="admin.heading">👑 پنل مدیریت ارشد سیماب</div>
   </div>
 
   <section class="v6-admin-hero"><span class="v6-admin-kicker">♛ SIMAB • MANAGER</span><h1>مرکز فرمان سیماب</h1><p>دسترسی سریع به ابزارهای موجود و بخش‌های بازی. واریز سکه و موجودی تمام بازی‌ها از کیف پول مشترک سروری استفاده می‌کنند.</p></section>
   <nav class="v6-admin-links" aria-label="رفتن به بخش‌های مدیریتی">
-    <a href="#v6-admin-wallet">🪙 موجودی مدیریت</a>
+    <a href="#v6-admin-wallet" data-i18n="admin.balanceNav">🪙 موجودی مدیریت</a>
     <a href="../wallet/index.html">🔐 کیف پول و بازی سروری</a>
 
-    <a href="#v6-admin-games">🎮 تنظیم بازی‌ها</a>
-    <a href="#v6-admin-tasks">🎯 مأموریت‌ها</a>
+    <a href="#v6-admin-games" data-i18n="admin.gamesNav">🎮 تنظیم بازی‌ها</a>
+    <a href="#v6-admin-tasks" data-i18n="admin.tasksNav">🎯 مأموریت‌ها</a>
   </nav>
   <div class="v6-admin-hint">🔐 <strong>امنیت سیماب:</strong> انتشار مأموریت و ارسال پیام کانال تنها پس از تأیید امضای تلگرام و مجوز مدیر در سرور انجام می‌شود. واریز به آیدی کاربر در کیف پول سروری ثبت می‌شود. شارژ شخصی مدیریت نیز از همان مسیر واریز سروری ثبت می‌شود.</div>
   <!-- بخش ۱: شارژ خودتان -->
@@ -147,7 +148,7 @@
     <input type="text" inputmode="numeric" dir="ltr" class="input-field" id="target-user-id" placeholder="مثلاً 123456789" autocomplete="off">
     <label for="target-coin-amount">تعداد سکه برای افزودن</label>
     <input type="text" inputmode="numeric" dir="ltr" class="input-field" id="target-coin-amount" placeholder="مثلاً 1000" autocomplete="off">
-    <button type="button" class="btn-action" id="admin-credit-submit" onclick="transferCoinsDirect()">افزودن سکه به کاربر</button>
+    <button type="button" class="btn-action" id="admin-credit-submit" data-i18n="admin.creditUser" onclick="transferCoinsDirect()">افزودن سکه به کاربر</button>
     <p id="admin-credit-status" role="status" aria-live="polite" style="font-size:13px;line-height:1.9;margin-top:8px"></p>
     <div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px;">
       <button class="btn-tool purple" style="width: 100%;" onclick="generateGiftLink()">🎁 ساخت لینک هدیه تلگرامی (ارسال در چت)</button>

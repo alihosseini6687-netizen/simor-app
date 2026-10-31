@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync} from 'node:fs';
+import {readSource} from './support/source.mjs';
 import {runInNewContext} from 'node:vm';
 import {webcrypto} from 'node:crypto';
-const source=readFileSync(new URL('../assets/js/simab-central-quests.js',import.meta.url),'utf8');
+const source=readSource(new URL('../assets/js/simab-central-quests.js',import.meta.url));
 const block=source.slice(source.indexOf('  function wireAdminCredit()'),source.indexOf('  if (isAdmin) {\n    wireAdminCredit();'));
 function ui(api, saved=new Map()) {
  const nodes=Object.fromEntries(['target-user-id','target-coin-amount','admin-credit-submit','admin-credit-status'].map(id=>[id,{value:'',textContent:'',disabled:false}]));

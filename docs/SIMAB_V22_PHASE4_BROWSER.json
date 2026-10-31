@@ -1,0 +1,20 @@
+{
+  "checks": 188,
+  "errors": [],
+  "manualPlayers": [
+    2,
+    3,
+    5,
+    7,
+    10,
+    12,
+    20
+  ],
+  "widths": [
+    320,
+    375,
+    430,
+    768
+  ],
+  "scope": "Real rendering with local synthetic fixtures; no device or subjective audio certification."
+}
