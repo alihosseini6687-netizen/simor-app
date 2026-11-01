@@ -38,13 +38,16 @@ async function check(lang,scope){
     const r=el.getBoundingClientRect();
     if(r.right>w+3||r.left< -3)off.push({selector,text:el.textContent.trim().slice(0,42),left:+r.left.toFixed(1),right:+r.right.toFixed(1),width:w});
   }
-  return {documentWidth:document.documentElement.scrollWidth,clientWidth:w,dir:document.documentElement.dir,locale:document.documentElement.lang,selection:document.querySelector('#simab-language select')?.value,off,missing:window.SimabI18n.audit().slice(0,20),missingCount:window.SimabI18n.missing.length};
+  const accounts=[...document.querySelectorAll('[data-wallet-account]')].map(el=>el.textContent.trim()).filter(Boolean);
+  return {documentWidth:document.documentElement.scrollWidth,clientWidth:w,dir:document.documentElement.dir,locale:document.documentElement.lang,selection:document.querySelector('#simab-language select')?.value,accounts,expectedPrefix:window.SimabI18n.key('wallet.telegramId')+': ',off,missing:window.SimabI18n.audit().slice(0,20),missingCount:window.SimabI18n.missing.length};
  });
  assert.equal(data.locale,lang,scope+' document language');
  assert.equal(data.selection,lang,scope+' language selector');
  assert.equal(data.dir,['fa','ar'].includes(lang)?'rtl':'ltr',scope+' writing direction');
  assert.ok(data.documentWidth<=data.clientWidth+3,scope+' horizontal overflow '+JSON.stringify(data));
  assert.deepEqual(data.off,[],scope+' clipped controls');
+ assert.equal(data.missingCount,0,scope+' untranslated text: '+JSON.stringify(data.missing));
+ assert.ok(data.accounts.every(label=>label.startsWith(data.expectedPrefix)),scope+' account label untranslated: '+JSON.stringify(data.accounts));
  results.push({lang,scope,...data});
 }
 try {
@@ -55,6 +58,7 @@ try {
      await visit('index.html');
      await page.locator('#simab-language select').selectOption(lang);
      await page.waitForFunction(code=>document.documentElement.lang===code,lang);
+     await page.evaluate(()=>switchNavTab('home'));
      await check(lang,'home-'+size.width);
      await page.screenshot({path:`/tmp/simab-seven-${lang}-${size.width}-home.png`,fullPage:true});
      await page.evaluate(()=>switchNavTab('games'));
