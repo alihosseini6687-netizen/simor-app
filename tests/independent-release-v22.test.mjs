@@ -13,7 +13,19 @@ test('preserve original protected code while allowing exact reviewed UI/i18n mod
    assert.equal(sha(source),'6ec31198b96b6719f6bf35846449b9488dee15ed2d096878303a1fed2ab463be',file);
    continue;
   }
+  if(file==='assets/js/simab-party-v16.js'){
+   // Only these three audited invite-flow edits are permitted over the v22 baseline.
+   const changes=[["code=r.room.code;if(!practice&&new URLSearchParams(location.search).get('code')!==code)history.replaceState(null,'','?game='+encodeURIComponent(kind)+'&code='+encodeURIComponent(code));offset=","code=r.room.code;offset="],["$('start').disabled=busy||!!SimabWallet.pending||!r||!r.host||r.status!=='waiting'||r.members.length!==requiredPlayers(r);","$('start').disabled=busy||!!SimabWallet.pending||!r||r.members.length<min;"],["$('copy').onclick=async()=>{try{if(!navigator.clipboard?.writeText)throw Error('clipboard_unavailable');await navigator.clipboard.writeText(code);$('status').textContent='کد کپی شد.';}catch{$('status').textContent='کد دعوت: '+code;}};","$('copy').onclick=()=>navigator.clipboard?.writeText(code).then(()=>{$('status').textContent='کد کپی شد.';}).catch(()=>{$('status').textContent=code;});"]];
+   for(const [current,baseline] of changes){
+    assert.equal(source.split(current).length-1,1,'exactly one approved invite change');
+    source=source.replace(current,baseline);
+   }
+  }
   if(file==='index.html'){
+   // Permit only the two extra Telegram deep-link fallbacks.
+   const newRoute="window.Telegram?.WebApp?.initDataUnsafe?.start_param||new URLSearchParams(location.search).get('tgWebAppStartParam')||new URLSearchParams(location.search).get('startapp')||new URLSearchParams(location.search).get('start')||''",oldRoute="window.Telegram?.WebApp?.initDataUnsafe?.start_param||new URLSearchParams(location.search).get('tgWebAppStartParam')||''";
+   assert.equal(source.split(newRoute).length-1,1,'approved invite routing fallback');
+   source=source.replace(newRoute,oldRoute);
    // Both exact link-only UI CSS release and the new language-loader cache key are approved.
    if(source.includes(homeCSS)){
     assert.equal(source.split(homeCSS).length-1,1,'only one home Phase3 link');
