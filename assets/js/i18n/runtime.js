@@ -86,7 +86,7 @@
     const prefix=label+': ';
     if(!current.startsWith(prefix))continue;
     const id=current.slice(prefix.length);
-    if(/^\\d{1,20}$/.test(id)){
+    if(/^\d{1,20}$/.test(id)){
      const translated=key('wallet.telegramId')+': '+id;
      if(current!==translated)el.textContent=translated;
     }
