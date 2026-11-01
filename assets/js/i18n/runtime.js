@@ -46,7 +46,8 @@
    // Numbers, card faces, punctuation and explicit brand names are not prose.
    const parts=trimmed.split(' / ');if(parts.length>1&&parts.every(part=>legacyBindings.has(part)||resolve(part)||/^[\p{N}\s\p{P}\p{S}\uFE0F]+$/u.test(part)))return raw.replace(trimmed,parts.map(part=>t(part)).join(' / '));
    const technical=/^[\p{N}\s\p{P}\p{S}\u200c\u200e\u200f\u2066-\u2069\uFE0F]+$/u.test(trimmed)||/^(?:S|SIMAB|GAMING CLUB|✦ SIMAB GAMING CLUB|⭐ SIMAB|Telegram|TON|Stars|UTC|Tonkeeper|TON Wallet|TELEGRAM STARS|SIMAB GAMING CLUB|SIMAB • FRIENDS CLUB|SIMAB \| Gaming Club|SIMAB ROLLER|[AJQKD]|[AJQK]\s*[♠♥♦♣]|x\d+|@[\w]+)$/iu.test(trimmed);
-   if(!technical)missing.add(trimmed);
+   // A build marker is not prose and must not trigger a missing-translation warning.
+   if(!technical&&!/^•\s*v\d+(?:\.\d+)*$/i.test(trimmed))missing.add(trimmed);
    return lang==='fa'?raw:raw.replace(trimmed,english);
  }
  function coverage(){const keys=Object.keys(catalogs.en);return Object.fromEntries(Object.keys(languages).map(l=>[l,{total:keys.length,translated:keys.filter(k=>typeof catalogs[l][k]==='string'&&catalogs[l][k].length).length,missingKeys:keys.filter(k=>!catalogs[l][k]),legacyUnmapped:Object.keys(legacy.inventory()).filter(fa=>!legacyBindings.has(fa))}]));}
@@ -62,8 +63,9 @@
   ownedIdentityFallbacks();
   const select=document.querySelector('#simab-language select');if(select)select.value=lang;
   scan(document.body,true);document.title=t(titleSource);
-  const notice=document.getElementById('simab-i18n-notice');if(notice){notice.textContent=key('i18n.notice');notice.hidden=['en','fa'].includes(lang)&&missing.size===0;}
+  const notice=document.getElementById('simab-i18n-notice');if(notice){notice.textContent=key('i18n.notice');notice.hidden=missing.size===0;}
    window.dispatchEvent(new CustomEvent('simab-language-ready',{detail:{lang,locale,dir}}));
+   localizeWalletAccount();
    // Subscribers may synchronously rebuild a game surface. Translate those new
    // nodes before returning, not on the following animation frame.
    scan(document.body,true);document.title=t(titleSource);return true;
@@ -72,6 +74,26 @@
  document.documentElement.lang=lang;document.documentElement.dir=dir;
  const ignored='script,style,code,[data-user-content],[data-coins],[data-chips],[data-wallet-account],.wallet-address,#ton-address,#merchant-address,#user-name-txt,#user-tg-username,#user-num-id,#user-game-id,#chat-log,#poker-chat-log,#chat-archive,.seat-name,.bottle-name,.table-seat>b,#simab-language,#simab-i18n-notice';
  const textIgnored=ignored+',textarea,input,#join-code,#invite-code,#code';
+ // Presentation only: leave account identity and wallet requests untouched.
+ // The wallet client owns the numeric Telegram ID; translate just its fixed label.
+ function localizeWalletAccount(){
+  const accountKeys=[...new Set(['آیدی تلگرام',...Object.values(catalogs).map(c=>c['wallet.telegramId'])])];
+  const noLoginLabels=[...new Set(['ورود از تلگرام لازم است',...Object.values(catalogs).map(c=>c['wallet.telegramSignIn'])])];
+  for(const el of document.querySelectorAll('[data-wallet-account]')){
+   const current=el.textContent.trim();
+   if(noLoginLabels.includes(current)){const translated=key('wallet.telegramSignIn');if(current!==translated)el.textContent=translated;continue;}
+   for(const label of accountKeys){
+    const prefix=label+': ';
+    if(!current.startsWith(prefix))continue;
+    const id=current.slice(prefix.length);
+    if(/^\\d{1,20}$/.test(id)){
+     const translated=key('wallet.telegramId')+': '+id;
+     if(current!==translated)el.textContent=translated;
+    }
+    break;
+   }
+  }
+ }
  let titleSource=document.title;
  function ownedIdentityFallbacks(){
   const user=window.Telegram?.WebApp?.initDataUnsafe?.user;
@@ -104,10 +126,10 @@
   const bar=document.createElement('div');bar.className='simab-langbar';bar.id='simab-language';
   const label=document.createElement('label');label.textContent='🌐 ';const select=document.createElement('select');select.setAttribute('aria-label','Language / زبان / اللغة');
   for(const [value,metadata] of Object.entries(languages)){const option=document.createElement('option');option.value=value;option.textContent=metadata.name;select.append(option);}select.value=lang;select.onchange=()=>setLanguage(select.value);label.append(select);bar.append(label);document.body.prepend(bar);
-  const notice=document.createElement('p');notice.id='simab-i18n-notice';notice.className='simab-i18n-notice';notice.textContent=key('i18n.notice');notice.hidden=['en','fa'].includes(lang);document.body.prepend(notice);
-   ownedIdentityFallbacks();scan(document.body);document.title=t(document.title);
+  const notice=document.createElement('p');notice.id='simab-i18n-notice';notice.className='simab-i18n-notice';notice.textContent=key('i18n.notice');notice.hidden=true;document.body.prepend(notice);
+   ownedIdentityFallbacks();scan(document.body);localizeWalletAccount();notice.hidden=missing.size===0;document.title=t(document.title);
   const pending=new Set();let scheduled=false;
-  new MutationObserver(records=>{for(const record of records){if(record.type==='characterData'||record.type==='attributes')pending.add(record.target);else record.addedNodes.forEach(node=>pending.add(node));}if(!scheduled){scheduled=true;requestAnimationFrame(()=>{for(const node of pending)if(node.isConnected)scan(node);pending.clear();scheduled=false;notice.hidden=['en','fa'].includes(lang)&&missing.size===0;});}}).observe(document.body,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['placeholder','aria-label','title']});
+  new MutationObserver(records=>{for(const record of records){if(record.type==='characterData'||record.type==='attributes')pending.add(record.target);else record.addedNodes.forEach(node=>pending.add(node));}if(!scheduled){scheduled=true;requestAnimationFrame(()=>{for(const node of pending)if(node.isConnected)scan(node);localizeWalletAccount();pending.clear();scheduled=false;notice.hidden=missing.size===0;});}}).observe(document.body,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['placeholder','aria-label','title']});
   window.dispatchEvent(new CustomEvent('simab-language-ready',{detail:{lang,locale,dir}}));
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
