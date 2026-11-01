@@ -28,3 +28,10 @@
 #local-panel .bottle-disc[data-players="dense"] .bottle-name{min-height:26px;max-height:30px;padding:2px;line-height:1.15}
 #local-panel .bottle-name.selected{background:#f5d78d;color:#201728;border:2px solid #fff5c1;box-shadow:0 0 14px #ffe69b99;font-weight:800}
 @media(prefers-reduced-motion:reduce){.dice3d.landed .die-result{animation:none}}
+
+/* v24: no numeric die face until a real server-provided roll exists. */
+#arena .dice3d[data-unrolled="true"]{position:relative;min-width:90px;min-height:94px}
+#arena .dice3d[data-unrolled="true"] .dice-unrolled{display:grid;place-items:center;width:62px;height:62px;border-radius:12px;border:2px solid #b5bac9;background:linear-gradient(135deg,#fffef0,#d4d8e4);box-shadow:inset 0 0 8px #9fa5b355,0 5px 8px #0007;color:#635b78;font:bold 40px/1 system-ui}
+.ludo-turns .current{border:2px solid #fff0a3;border-radius:12px;background:#e1ad4830;box-shadow:0 0 0 2px #151923,0 0 14px #e5a63e55;padding:7px 10px;font-weight:800}
+.ludo-turns [aria-current="true"]::before{content:"● ";color:#fee69b}
+@media(max-width:360px){.ludo-turns{gap:5px}.ludo-turns span{font-size:11px;padding:5px 6px}}

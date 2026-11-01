@@ -20,6 +20,12 @@ test('preserve original protected code while allowing exact reviewed UI/i18n mod
     assert.equal(source.split(current).length-1,1,'exactly one approved invite change');
     source=source.replace(current,baseline);
    }
+   // v24: preserve the protected game engine; only truthful die presentation changes.
+   const diceVisualChanges=[["decorateDice(s.kind==='ludo'?s.table.die:s.kind==='truth'&&s.mode==='bottle'?null:s.die);","decorateDice(s.kind==='ludo'?s.table.die:s.die||1);"],["function decorateDice(value){const valid=Number.isInteger(value)&&value>=1&&value<=6,patterns={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};document.querySelectorAll('.dice3d').forEach(b=>{b.replaceChildren();b.dataset.unrolled=valid?'false':'true';b.setAttribute('aria-label',valid?'نتیجهٔ تاس: '+fmt(value):'هنوز تاس انداخته نشده');if(!valid){b.append(node('span','dice-unrolled','?'));return;}const cube=node('span','dice-cube');const rotation={1:[-22,28],2:[-22,-62],3:[-112,28],4:[68,28],5:[-22,118],6:[-22,208]}[value];cube.style.transform='rotateX('+rotation[0]+'deg) rotateY('+rotation[1]+'deg)';[1,2,6,5,3,4].forEach(v=>{const face=node('span','die-face');for(let i=0;i<9;i++){const dot=node(patterns[v].includes(i)?'i':'span');face.append(dot);}cube.append(face);});b.append(cube);});}","function decorateDice(value){const patterns={1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};document.querySelectorAll('.dice3d').forEach(b=>{b.replaceChildren();b.setAttribute('aria-label','تاس '+fmt(value||1));const cube=node('span','dice-cube');const rotation={1:[-22,28],2:[-22,-62],3:[-112,28],4:[68,28],5:[-22,118],6:[-22,208]}[value||1];cube.style.transform='rotateX('+rotation[0]+'deg) rotateY('+rotation[1]+'deg)';[1,2,6,5,3,4].forEach(v=>{const face=node('span','die-face');for(let i=0;i<9;i++){const dot=node(patterns[v].includes(i)?'i':'span');face.append(dot);}cube.append(face);});b.append(cube);});}"]];
+   for(const [current,baseline] of diceVisualChanges){
+    assert.equal(source.split(current).length-1,1,'one approved die display change');
+    source=source.replace(current,baseline);
+   }
   }
   if(file==='index.html'){
    // Permit only the two extra Telegram deep-link fallbacks.
