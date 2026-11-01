@@ -3,6 +3,8 @@
  * rather than inventing abbreviated translations that change the contract. */
 (()=>{'use strict';
  const rows={
+ 'wallet.telegramId':['Telegram ID','آیدی تلگرام','Telegram-ID','معرّف تلغرام','Telegram आईडी','Identifiant Telegram','Telegram-ID'],
+ 'wallet.telegramSignIn':['Telegram sign-in required','ورود از تلگرام لازم است','Требуется вход через Telegram','يلزم تسجيل الدخول عبر تلغرام','Telegram लॉगिन आवश्यक है','Connexion Telegram requise','Telegram-Anmeldung erforderlich'],
  'nav.home':['Home','خانه','Главная','الرئيسية','होम','Accueil','Startseite'],
  'nav.back':['Back','بازگشت','Назад','رجوع','वापस','Retour','Zurück'],
  'nav.games':['Games','بازی‌ها','Игры','الألعاب','खेल','Jeux','Spiele'],
