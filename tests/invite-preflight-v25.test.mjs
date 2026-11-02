@@ -69,3 +69,18 @@ test('invalid cross-game preview does not generate an unallowlisted navigation t
  assert.equal(h.$('existing-room').children.filter(x=>x.tagName==='A').length,0);
  assert.equal(h.mutations,0);
 });
+
+test('a poker invitation found behind wrong_room_type offers Poker link without a wallet write',async()=>{
+ const h=setup();
+ h.wallet.read=async(action,payload)=>{
+  if(payload.op==='state'||(action==='game_room'&&payload.op==='preview'))throw problem('wrong_room_type');
+  if(action==='room'&&payload.op==='preview')return{preview:{code:invite,status:'waiting',count:1,maxPlayers:2,buyIn:20}};
+  throw Error('unexpected read');
+ };
+ await h.api.load();
+ const links=h.$('existing-room').children.filter(x=>x.tagName==='A');
+ assert.equal(links.length,1);
+ assert.equal(links[0].href,'../poker/friends.html?code='+invite);
+ assert.equal(h.$('existing-room').children.some(x=>x.tagName==='BUTTON'),false);
+ assert.equal(h.mutations,0);
+});
