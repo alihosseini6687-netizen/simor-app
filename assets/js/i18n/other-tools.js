@@ -65,6 +65,7 @@
  'miner.balanceDelta':["ثبت شد؛ تغییر سکه: {number}","Recorded; coin change: {number}","Записано; изменение монет: {number}","تم التسجيل؛ تغيّر العملات: {number}","दर्ज हुआ; सिक्कों में बदलाव: {number}","Enregistré ; variation des pièces : {number}","Gebucht; Münzänderung: {number}"],
  'game.ludoServerActions':["حرکت مهره‌ها، نتیجهٔ تاس و تسویه توسط سرور تعیین می‌شوند","Piece moves, dice results and payouts are decided by the server","Ходы фишек, результаты кубика и выплаты определяет сервер","يحدد الخادم حركات القطع ونتائج النرد والتسويات","मोहरे की चाल, पासे का परिणाम और भुगतान सर्वर तय करता है","Les déplacements, les dés et les paiements sont décidés par le serveur","Züge, Würfelergebnisse und Abrechnung bestimmt der Server"],
  'game.hokmServerActions':["کارت‌ها، انتخاب حکم، نوبت‌ها و تسویه توسط سرور تعیین می‌شوند","Cards, trump selection, turns and payouts are decided by the server","Карты, козырь, ходы и выплаты определяет сервер","يحدد الخادم الأوراق واختيار الحكم والأدوار والتسويات","कार्ड, तुरुप, बारी और भुगतान सर्वर तय करता है","Les cartes, l’atout, les tours et les paiements sont décidés par le serveur","Karten, Trumpfwahl, Spielzüge und Abrechnung bestimmt der Server"],
+ 'home.shortWelcome':["خوش آمدید","Welcome","Добро пожаловать","مرحبًا","स्वागत है","Bienvenue","Willkommen"],
  };
  const sources=window.SimabLocaleSources||(window.SimabLocaleSources={});for(const [id,row] of Object.entries(rows))['fa','en','ru','ar','hi','fr','de'].forEach((lang,i)=>{window.SimabLocales.catalogs[lang][id]=row[i];if(i===0)sources[row[i]]=id;});
 })();
