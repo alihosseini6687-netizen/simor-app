@@ -1,0 +1,21 @@
+{
+  "name": "SIMAB — Gaming Club",
+  "short_name": "SIMAB",
+  "description": "SIMAB games, friends and daily missions",
+  "lang": "fa",
+  "dir": "auto",
+  "id": "./index.html",
+  "start_url": "./index.html?home=1",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0820",
+  "theme_color": "#170b2b",
+  "icons": [
+    {
+      "src": "assets/v16/simab-logo.png",
+      "type": "image/png",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}

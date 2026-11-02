@@ -63,7 +63,6 @@
   ownedIdentityFallbacks();
   const select=document.querySelector('#simab-language select');if(select)select.value=lang;
   scan(document.body,true);document.title=t(titleSource);
-  const notice=document.getElementById('simab-i18n-notice');if(notice){notice.textContent=key('i18n.notice');notice.hidden=missing.size===0;}
    window.dispatchEvent(new CustomEvent('simab-language-ready',{detail:{lang,locale,dir}}));
    localizeWalletAccount();
    // Subscribers may synchronously rebuild a game surface. Translate those new
@@ -126,10 +125,9 @@
   const bar=document.createElement('div');bar.className='simab-langbar';bar.id='simab-language';
   const label=document.createElement('label');label.textContent='🌐 ';const select=document.createElement('select');select.setAttribute('aria-label','Language / زبان / اللغة');
   for(const [value,metadata] of Object.entries(languages)){const option=document.createElement('option');option.value=value;option.textContent=metadata.name;select.append(option);}select.value=lang;select.onchange=()=>setLanguage(select.value);label.append(select);bar.append(label);document.body.prepend(bar);
-  const notice=document.createElement('p');notice.id='simab-i18n-notice';notice.className='simab-i18n-notice';notice.textContent=key('i18n.notice');notice.hidden=true;document.body.prepend(notice);
-   ownedIdentityFallbacks();scan(document.body);localizeWalletAccount();notice.hidden=missing.size===0;document.title=t(document.title);
+   ownedIdentityFallbacks();scan(document.body);localizeWalletAccount();document.title=t(document.title);
   const pending=new Set();let scheduled=false;
-  new MutationObserver(records=>{for(const record of records){if(record.type==='characterData'||record.type==='attributes')pending.add(record.target);else record.addedNodes.forEach(node=>pending.add(node));}if(!scheduled){scheduled=true;requestAnimationFrame(()=>{for(const node of pending)if(node.isConnected)scan(node);localizeWalletAccount();pending.clear();scheduled=false;notice.hidden=missing.size===0;});}}).observe(document.body,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['placeholder','aria-label','title']});
+  new MutationObserver(records=>{for(const record of records){if(record.type==='characterData'||record.type==='attributes')pending.add(record.target);else record.addedNodes.forEach(node=>pending.add(node));}if(!scheduled){scheduled=true;requestAnimationFrame(()=>{for(const node of pending)if(node.isConnected)scan(node);localizeWalletAccount();pending.clear();scheduled=false;});}}).observe(document.body,{childList:true,characterData:true,subtree:true,attributes:true,attributeFilter:['placeholder','aria-label','title']});
   window.dispatchEvent(new CustomEvent('simab-language-ready',{detail:{lang,locale,dir}}));
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',mount,{once:true});else mount();
