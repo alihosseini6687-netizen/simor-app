@@ -4,11 +4,18 @@ import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
 const manifest=JSON.parse(readFileSync(new URL('./fixtures/independent-release-protected-v22.json',import.meta.url),'utf8'));
 const sha=text=>createHash('sha256').update(text).digest('hex');
+// Exact Git blob hashes for the five user-approved visual-only files in v29.
+const approvedUIBlobs={"assets/css/simab-safe-area-v16.css":"3652da7c9f0178b76a3dc439fbf0412e73195fec","assets/js/simab-i18n-v16.js":"9d83409dec23a842cffd1bd0af8429a02c01025b","assets/js/simab-shop-v15.js":"778996a444740aacd1aedd9b1f318c4c62e1849d","games/room/index.html":"a98ca0e25ce9a05cad66d75ed8321c04412a10f4","index.html":"e8fb880d49d4546385a34814ab60de6cb78d6660"};
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
 test('preserve original protected code while allowing exact reviewed UI/i18n modifications',()=>{
  for(const [file,expected] of Object.entries(manifest.hashes)){
   let source=readFileSync(new URL('../'+file,import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  if(Object.hasOwn(approvedUIBlobs,file)){
+   const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
+   assert.equal(blob,approvedUIBlobs[file],file+' v29 visual-only file changed unexpectedly');
+   continue;
+  }
   if(file==='assets/js/simab-i18n-v16.js'){
    assert.equal(sha(source),'6ec31198b96b6719f6bf35846449b9488dee15ed2d096878303a1fed2ab463be',file);
    continue;
