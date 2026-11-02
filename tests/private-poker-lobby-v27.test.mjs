@@ -93,3 +93,10 @@ test('malformed invite cannot be previewed or charged',async()=>{
  assert.equal(h.transactions,0);
  assert.match(h.$('lobby-status').textContent,/معتبر|not_found|unexpected read/);
 });
+
+test('finished Poker room reports actual server settlement rather than claiming everyone got buy-in back',()=>{
+ const h=fixture('');
+ h.api.paint({version:5,room:{code:invite,viewer:0,host:true,status:'finished',buyIn:100,maxPlayers:2,members:[{subject:'1',name:'host',emoji:'👤'},{subject:'2',name:'friend',emoji:'🙂'}],signals:[],messages:[]}});
+ assert.match(h.$('room-note').textContent,/طبق نتیجهٔ سروری تسویه شد/);
+ assert.doesNotMatch(h.$('room-note').textContent,/هر نفر به کیف پول خودش برگشت/);
+});
