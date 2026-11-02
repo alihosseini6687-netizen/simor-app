@@ -24,23 +24,25 @@ test("V8 core CSS scrolled container and all active mobile pages",()=>{
    for(const [,src] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(src,{filename:p});
  }
 });
-test("home has one popular cards section with hero navigation but no duplicate quick access",()=>{
+test("home has one simple welcome panel, one Games button and a recent game link, without old shortcut cards",()=>{
  const html=read("index.html");
- assert.match(html,/v8-hero-focus/);
- assert.doesNotMatch(html,/v8-card-enhanced/);
- assert.doesNotMatch(html,/class="v3-featured-grid"/);
- assert.equal((html.match(/class="v8-hero-focus"/g)||[]).length,1);
- assert.doesNotMatch(html,/⚡ دسترسی سریع/);
- assert.doesNotMatch(html,/class="v4-pulse-banner"/);
+ assert.match(html,/data-i18n="home.shortWelcome"/);
+ assert.match(html,/onclick="switchNavTab\('games'\)"/);
+ assert.match(html,/id="v8-hero-recent"/);
+ assert.doesNotMatch(html,/class="v8-hero-focus"/);
+ assert.doesNotMatch(html,/class="simab-secure-entry"/);
+ assert.doesNotMatch(html,/v8-card-enhanced|class="v3-featured-grid"|⚡ دسترسی سریع|class="v4-pulse-banner"/);
 });
-test("all financial labels explicitly call virtual credits not real money",()=>{
- for(const p of ["wallet/index.html","games/poker/index.html","games/backgammon/index.html","games/slot/index.html"]){
-  assert.match(read(p),/مجازی/);
-  assert.match(read(p),/برداشت نقدی/);
- }
+test("purchase policy stays in Terms while redundant warnings are removed from game screens",()=>{
+ const terms=read("wallet/terms.html");
+ assert.match(terms,/مجازی/);
+ assert.match(terms,/برداشت/);
+ const tasks=read("index.html").split('id="tab-tasks-content"')[1];
+ assert.match(tasks,/پاداش‌ها فعلاً مجازی‌اند/);
  const wallet=read("wallet/index.html");
- assert.match(wallet,/تراکنش‌ها در سرور/);
  assert.match(wallet,/هر ۱ سکه = ۱ ژتون/);
+ assert.match(wallet,/سکه فقط پس از تأیید سروری پرداخت اضافه می‌شود/);
+ assert.doesNotMatch(wallet,/v8-virtual-label/);
 });
 test("poker strategies vary among bots and never mirror an all-in every hand",()=>{
  const ctx={window:{}};
