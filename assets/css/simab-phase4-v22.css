@@ -35,3 +35,10 @@
 .ludo-turns .current{border:2px solid #fff0a3;border-radius:12px;background:#e1ad4830;box-shadow:0 0 0 2px #151923,0 0 14px #e5a63e55;padding:7px 10px;font-weight:800}
 .ludo-turns [aria-current="true"]::before{content:"● ";color:#fee69b}
 @media(max-width:360px){.ludo-turns{gap:5px}.ludo-turns span{font-size:11px;padding:5px 6px}}
+
+/* v25: emphasize the authoritative current Hokm player, without rotating seats. */
+#arena.hokm .table-seat.current{border:2px solid #ffdf89;border-radius:14px;background:#ffe6a514;box-shadow:0 0 0 2px #24192e,0 0 18px #dfac5490;padding:6px}
+#arena.hokm .table-seat.current b::after{content:" • نوبت";font-weight:900;color:#ffe6ab}
+#arena.hokm .hokm-round-action{scroll-margin-top:calc(20px + env(safe-area-inset-top))}
+#arena.hokm .hokm-round-action button:focus-visible{outline:3px solid #fff4c9;outline-offset:3px}
+@media(max-width:420px){#arena.hokm .table-seat.current{padding:3px;min-width:0}#arena.hokm .hokm-round-action{padding:10px 8px}}
