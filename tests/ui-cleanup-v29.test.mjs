@@ -72,3 +72,12 @@ test('Web and Mini App share the same home and all game pages, without inventing
  assert.doesNotMatch(home,/window\.location\s*=\s*['"]https:\/\/t\.me/);
  assert.match(read('assets/js/simab-wallet-client.js'),/ورود از تلگرام لازم است/);
 });
+
+test('same web home installs as a standalone shell without caching wallet data offline',()=>{
+ const meta=JSON.parse(read('simab.webmanifest'));
+ assert.equal(meta.start_url,'./index.html?home=1');
+ assert.equal(meta.display,'standalone');
+ assert.match(home,/rel="manifest" href="simab.webmanifest"/);
+ assert.ok(meta.icons.some(x=>x.src==='assets/v16/simab-logo.png'));
+ assert.doesNotMatch(home,/navigator\.serviceWorker\.register/);
+});
