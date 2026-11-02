@@ -81,3 +81,20 @@ test('same web home installs as a standalone shell without caching wallet data o
  assert.ok(meta.icons.some(x=>x.src==='assets/v16/simab-logo.png'));
  assert.doesNotMatch(home,/navigator\.serviceWorker\.register/);
 });
+
+test('updated friends-room instructions are translated into all seven languages without removed footer',()=>{
+ const locales=['fa','en','ru','ar','hi','fr','de'];
+ const catalogs=Object.fromEntries(locales.map(code=>[code,{}]));
+ const source=read('games/room/index.html');
+ const context={window:{SimabLocales:{catalogs}}};
+ vm.runInNewContext(read('assets/js/i18n/owned-terms.js'),context);
+ const content=source.match(/<details class="panel" id="rules-panel">([\s\S]*?)<\/details>/)?.[1]||'';
+ const farsi=catalogs.fa['room.entryExitGuide'];
+ assert.ok(farsi,'full friends-room translation exists');
+ assert.ok(content.includes(farsi),'visible source matches keyed translation exactly');
+ for(const lang of locales){
+  const value=catalogs[lang]['room.entryExitGuide'];
+  assert.ok(value?.length>100,'missing complete instructions '+lang);
+  assert.doesNotMatch(value,/برداشت نقدی|cash out|Barauszahlung|вывода денег/,lang+' outdated footer');
+ }
+});
