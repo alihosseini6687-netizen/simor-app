@@ -2,3 +2,25 @@
 .simab-langbar{height:44px;display:flex;align-items:center;justify-content:flex-end;padding:4px 14px;color:#d6c4a4;font:12px system-ui;position:relative;z-index:30}.simab-langbar label{display:flex;align-items:center;gap:6px;margin:0}.simab-langbar select{width:auto!important;min-width:88px;min-height:32px;padding:4px 8px!important;color:#f9dfb0;background:#241932;border:1px solid #7e648c;border-radius:9px;font:12px system-ui}body.in-poker .simab-langbar{display:none}html[dir=ltr] .turn-banner{direction:ltr}html[dir=ltr] .party-shell{direction:ltr}
 
 body:has(>.simab-langbar){display:block!important}.simab-langbar{width:100%;max-width:1020px;margin-inline:auto;flex:none}.simab-langbar select{font-size:13px;min-height:36px}
+
+/* v29: one usable Back/Home button on mobile, tablet and desktop. */
+.page-head a[href*="index.html"],
+body>main>header a[href*="index.html"],
+body>header a[href*="index.html"],
+.app-wrapper header a[href="../index.html"],
+.shell header a[href*="index.html"]{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:40px;padding:7px 13px;border:1px solid #c99c63;
+  border-radius:11px;background:linear-gradient(135deg,#34204a,#24132e);
+  color:#ffe5a6;text-decoration:none;font-weight:700;
+  line-height:1.35;text-align:center;white-space:normal;
+  box-shadow:0 2px 9px #0005;max-width:100%;
+}
+.page-head a[href*="index.html"]:hover,
+body>main>header a[href*="index.html"]:hover,
+.shell header a[href*="index.html"]:hover{border-color:#ffe5a6;background:#402652}
+.page-head a[href*="index.html"]:focus-visible,
+body>main>header a[href*="index.html"]:focus-visible,
+.shell header a[href*="index.html"]:focus-visible{outline:2px solid #ffe6a2;outline-offset:3px}
+@media (max-width:370px){.page-head a[href*="index.html"],body>main>header a[href*="index.html"]{padding:7px 9px;font-size:12px}}
+@media (min-width:900px){.shell,.app-wrapper{max-width:1120px;margin-inline:auto}}
