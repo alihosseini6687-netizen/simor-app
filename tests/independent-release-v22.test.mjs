@@ -28,6 +28,12 @@ test('preserve original protected code while allowing exact reviewed UI/i18n mod
    assert.equal(source.split(fullRoomPreflight).length-1,1,'one reviewed Poker full-room guard');
    source=source.replace(fullRoomPreflight,'');
   }
+  if(file==='assets/js/simab-private-poker-v14.js'){
+   // Clarify final Poker stack settlement without changing financial results.
+   const current="r.room.status==='finished'?'دست تمام شد؛ ژتون هر بازیکن طبق نتیجهٔ سروری تسویه شد.'",original="r.room.status==='finished'?'دست تمام شد؛ ژتون هر نفر به کیف پول خودش برگشت.'";
+   assert.equal(source.split(current).length-1,1,'one reviewed Poker payout display message');
+   source=source.replace(current,original);
+  }
   if(file==='assets/js/simab-party-v16.js'){
    // v26: only the reviewed Hokm turn marker and round-end UI may differ.
    const hokmUIChanges=[["seat=node('div','table-seat seat-'+pos+(i===s.current&&!s.finished?' current':''));","seat=node('div','table-seat seat-'+pos);"],["if(t.phase==='round_end'){const next=node('section','hokm-round-action');next.setAttribute('role','status');next.setAttribute('aria-live','polite');const heading=node('strong','','دور حکم به پایان رسید'),review=node('span','','دست قبلی روی تخته فقط برای مرور نتیجه باقی است.');window.SimabI18n?.bind?.(heading,'hokm.roundComplete');window.SimabI18n?.bind?.(review,'hokm.roundWinner');next.append(heading,review);if(mine()){const go=button('شروع دور بعد',()=>move({type:'next_round'}),disabled,'primary');window.SimabI18n?.bind?.(go,'hokm.nextRound');next.append(go);}else{const wait=node('span','hokm-round-wait','حاکم بعدی دور را شروع می‌کند؛ منتظر بمانید.');window.SimabI18n?.bind?.(wait,'hokm.waitingHakem');next.append(wait);}a.append(next);}","if(t.phase==='round_end')c.append(button('شروع دور بعد',()=>move({type:'next_round'}),disabled));"]];
