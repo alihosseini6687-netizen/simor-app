@@ -19,6 +19,9 @@ test('preserve original protected code while allowing exact reviewed UI/i18n mod
    for(const [current,baseline] of pokerUIChanges){assert.equal(source.split(current).length-1,1,'one reviewed Poker lobby change');source=source.replace(current,baseline);}
    const codePreflightChanges=[["const requested=$('join-code').value.trim().toUpperCase();if(!validInvite(requested))throw Error('کد دعوت پوکر معتبر نیست.');const check=await SimabWallet.read('room',{op:'preview',code:requested});","const check=await SimabWallet.read('room',{op:'preview',code:$('join-code').value.trim().toUpperCase()});"]];
    for(const [current,baseline] of codePreflightChanges){assert.equal(source.split(current).length-1,1,'one reviewed Poker invite validation');source=source.replace(current,baseline);}
+   const fullRoomPreflight="if(check.preview.status!=='waiting'||check.preview.count>=check.preview.maxPlayers)throw Error('میز پُر است یا دیگر برای ورود باز نیست.');";
+   assert.equal(source.split(fullRoomPreflight).length-1,1,'one reviewed Poker full-room guard');
+   source=source.replace(fullRoomPreflight,'');
   }
   if(file==='assets/js/simab-party-v16.js'){
    // v26: only the reviewed Hokm turn marker and round-end UI may differ.
