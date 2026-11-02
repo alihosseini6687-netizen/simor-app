@@ -66,6 +66,11 @@ test('preserve original protected code while allowing exact reviewed UI/i18n mod
    source=source.replace(changed,'assets/js/simab-i18n-v16.js?v=20');
   }
   if(file==='games/room/index.html'){
+   const updatedMedia='../../assets/js/simab-room-media-v16.js?v=20261102';
+   assert.equal(source.split(updatedMedia).length-1,1,'one reviewed shared-room media cache key');
+   source=source.replace(updatedMedia,'../../assets/js/simab-room-media-v16.js?v=19');
+  }
+  if(file==='games/room/index.html'){
    for(const [current,baseline] of [['assets/js/simab-party-v16.js?v=20261102-hokm','assets/js/simab-party-v16.js?v=20261102'],['assets/css/simab-phase4-v22.css?v=20261102','assets/css/simab-phase4-v22.css?v=20261101']]){
     assert.equal(source.split(current).length-1,1,'one approved Hokm asset cache key');source=source.replace(current,baseline);
    }
