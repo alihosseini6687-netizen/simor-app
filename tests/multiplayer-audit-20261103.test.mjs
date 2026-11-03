@@ -43,3 +43,13 @@ test('multiplayer invitation explains explicit joining and chosen seat capacity'
  assert.match(party,/r\.room\.members\.length===requiredPlayers\(r\.room\)/);
  assert.match(poker,/میز پوکر: '\+r\.room\.members\.length\+' از '\+r\.room\.maxPlayers/);
 });
+
+test('new Seven Cards clients preflight capabilities and send exact two-card protocol',()=>{
+ assert.match(party,/sevensProtocol:2/);
+ assert.match(party,/sevensRulesVersions\?\.includes\(2\)/);
+ assert.match(party,/sevensRulesVersion:2/);
+ assert.match(party,/const modern=s\.sevensRulesVersion===2/);
+ assert.match(party,/new Set\(gifts\)\.size!==gifts\.length/);
+ assert.match(party,/\.\.\.\(modern\?\{gifts\}:\{gift:gifts\[0\]\?\?null\}\)/);
+ assert.match(party,/setupMode==='friends'\?'هفت‌خبیث آنلاین/);
+});
