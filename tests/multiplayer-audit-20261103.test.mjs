@@ -37,7 +37,7 @@ test('bounded limiter never evicts a live quota on overflow',()=>{
  assert.equal(limit('overflow',{action:'game'},60001),0);
 });
 test('multiplayer invitation explains explicit joining and chosen seat capacity',()=>{
- assert.match(party,/r\.preview\.count\)+' از '\+fmt\(r\.preview\.maxPlayers\)/);
+ assert.ok(party.includes("fmt(r.preview.count)+' از '+fmt(r.preview.maxPlayers)"));
  assert.match(party,/برای عضویت در میز دکمه/);
  assert.match(party,/شروع پس از تکمیل ظرفیت امکان‌پذیر است/);
  assert.match(party,/r\.room\.members\.length===requiredPlayers\(r\.room\)/);
