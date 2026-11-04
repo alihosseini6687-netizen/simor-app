@@ -89,6 +89,7 @@
  "mango.walletAria":["کیف پول و موجودی مانگو","Mango wallet and balance","Кошелёк и баланс Mango","محفظة مانجو ورصيدها","मैंगो वॉलेट और शेष राशि","Portefeuille et solde Mango","Mango-Guthaben und Wallet"],
  "mango.welcomeAria":["به مانگو گیم خوش آمدید","Welcome to Mango Game","Добро пожаловать в Mango Game","مرحبًا بك في Mango Game","Mango Game में आपका स्वागत है","Bienvenue sur Mango Game","Willkommen bei Mango Game"],
  "mango.featuredAria":["بازی‌های محبوب مانگو","Popular Mango games","Популярные игры Mango","ألعاب مانجو الشهيرة","लोकप्रिय मैंगो खेल","Jeux Mango populaires","Beliebte Mango-Spiele"],
+ "mango.friendsClub":["MANGO GAME • FRIENDS CLUB","MANGO GAME • FRIENDS CLUB","MANGO GAME • КЛУБ ДРУЗЕЙ","MANGO GAME • نادي الأصدقاء","MANGO GAME • फ्रेंड्स क्लब","MANGO GAME • CLUB DES AMIS","MANGO GAME • FREUNDE-CLUB"],
  'home.shortWelcome':["خوش آمدید","Welcome","Добро пожаловать","مرحبًا","स्वागत है","Bienvenue","Willkommen"],
  };
  const sources=window.SimabLocaleSources||(window.SimabLocaleSources={});for(const [id,row] of Object.entries(rows))['fa','en','ru','ar','hi','fr','de'].forEach((lang,i)=>{window.SimabLocales.catalogs[lang][id]=row[i];if(i===0)sources[row[i]]=id;});
