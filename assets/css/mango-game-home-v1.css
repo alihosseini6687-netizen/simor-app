@@ -45,6 +45,6 @@ body:has(.mango-home) .top-header .mango-profile-trigger{position:absolute;right
 .mango-more{border:1px solid #ffbc5430;border-radius:18px;background:#1b1f24;padding:0 10px 10px}
 .mango-more>summary{padding:13px 6px;color:#ffc247;font-weight:800;cursor:pointer}
 .mango-more .profile-card{margin-top:8px}
-body:has(.mango-home) .bottom-nav{background:#171b1ff2;border:1px solid #ffffff26;border-radius:22px;box-shadow:0 -8px 26px #0009;bottom:10px;left:10px;right:10px;width:calc(100% - 20px);max-width:460px;margin:auto}
+body:has(.mango-home) .bottom-nav{background:#171b1ff2;border:1px solid #ffffff26;border-radius:22px;box-shadow:0 -8px 26px #0009;bottom:10px;left:50%;right:auto;transform:translateX(-50%);width:calc(100% - 20px);max-width:460px;margin:0}
 body:has(.mango-home) .nav-btn-box.active{color:#ff9e1b}
 @media(max-width:365px){.mango-wallet-bar{padding:10px 8px}.mango-wallet-link{padding:9px 7px;font-size:12px}.mango-hero{grid-template-columns:35% 1fr;padding:14px 10px}.mango-hero p{font-size:11px}.mango-games-grid{gap:6px}.mango-game-tile{border-radius:15px}}
