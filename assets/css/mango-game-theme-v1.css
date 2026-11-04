@@ -1,0 +1,47 @@
+/* Mango Game UI theme v1: presentation-only; never modifies wallet, RPC, game engine or rules. */
+:root{
+  color-scheme:dark;
+  --mango-bg:#121417;--mango-surface:#1b1f24;--mango-orange:#ff9e1b;
+  --mango-gold:#ffc247;--mango-lime:#a6d94e;--mango-text:#f5f2ea;
+  --mango-muted:#a7adb7;--mango-border:#ffbc5440;
+  --gold:#ffc247;--simab-gold:#ffc247;--simab-charcoal:#1b1f24;
+  --card-bg:#1b1f24f2;--card-inner:#272521;--text:#f5f2ea;
+  --text-muted:#a7adb7;--border:#ffbc5440;--cyan:#a6d94e;
+  --cyan-neon:#a6d94e;--purple-neon:#ff9e1b;--green:#a6d94e;
+  --gold-gradient:linear-gradient(135deg,#ffe17a,#ffb52e 55%,#ff8a13);
+}
+html{background:#121417}
+body{background:radial-gradient(ellipse at 50% -22%,#74391745,transparent 55%),#121417;color:#f5f2ea}
+button,input,select,textarea{accent-color:#ff9e1b}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #a6d94e!important;outline-offset:3px}
+:is(.panel,.party-panel,.profile-card,.game-card,.action-btn,.task-balance-card,.task-btn-link,.v3-news-card,.v3-event-card,.v4-assistant,.v4-status-board,.room-call,.poker-preview){
+ border-color:#ffbc5440;
+ background-color:#1b1f24;
+}
+:is(.page-head,.party-head,.top-header,.room-top){color:#f5f2ea}
+:is(.page-head,.party-head) a{color:#ffc247;border-color:#ffb23c70}
+:is(button.primary,.v3-gold-button,.mango-cta,.task-btn-link.primary,.btn-primary,.action-primary){
+ background:linear-gradient(135deg,#ffd35c,#ff9e1b)!important;color:#20140a!important;
+ border:1px solid #ffe18c!important;box-shadow:0 5px 22px #ff9e1b33!important;
+}
+:is(.panel,section.panel,.party-panel){background:linear-gradient(145deg,#28221c,#1b1f24 64%)!important;border-color:#b780454f}
+:is(input,select,textarea){background-color:#171b20;color:#f5f2ea;border-color:#b988504d}
+:is(.muted,.game-card-sub,.v3-minor){color:#a7adb7}
+:is(.balances>div,.task-balance-card,.ids-container){background-color:#1b1f24;border-color:#ffbc5440}
+:is(.balance b,.balances b,[data-coins],[data-chips]){color:#ffc247}
+:is(.turn-banner,.room-toolbar,.party-head,.poker-mode-nav){border-color:#ffbc5480}
+:is(.game-hero,.hero,.poker-preview){border-color:#f4ac4380}
+body[data-game] .game-hero{box-shadow:0 10px 32px #0009,0 0 25px #ff9e1b18}
+body[data-game] .game-hero:before{background:linear-gradient(transparent 5%,#13161985 50%,#121417f4 100%)}
+body[data-game] .game-hero h1{color:#ffe2a3}
+#arena .table-seat.current .seat-media-avatar,.player.current{border-color:#ffc247;outline-color:#ffc24766}
+#arena .table-seat.teammate .seat-media-avatar,.player.self{border-color:#a6d94e;outline-color:#a6d94e55}
+#arena .game-arena,.game-arena{border-color:#b47a34;outline-color:#ffd27e;box-shadow:inset 0 0 36px #0005,0 12px 25px #0006}
+#poker-room{background:#121417}.poker-stage{background:radial-gradient(ellipse at center,#342a1819,#151719 70%),repeating-linear-gradient(90deg,#2d211c 0 2px,#1f1d1c 2px 42px,#30241e 42px 44px)}
+.room-top{background:linear-gradient(#121417ed,#12141791,transparent)}
+.room-brand{color:#ffcc62!important}
+#poker-lobby .poker-preview{background:radial-gradient(ellipse at 25% 100%,#72401b,#28211b 50%,#141719 85%)}
+#arena .ludo-grid{border-color:#8b642c;box-shadow:0 7px 0 #48341e,0 12px 25px #0008}
+#arena .pawn.playable{outline-color:#ffda77}
+#simab-connection{border-color:#ffbc5480!important;background:#191b20ed!important}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
