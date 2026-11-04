@@ -10,6 +10,7 @@ test('wallet uses current signed-client script, avoiding stale Telegram WebView 
  assert.match(html,/simab-wallet-client\.js\?v=20261104-payment-audit/);
  assert.doesNotMatch(html,/simab-wallet-client\.js\?v=17/);
  assert.match(html,/simab-shop-v15\.js/);
+ assert.match(html,/simab-shop-v15\.js\?v=20261104-order-status/);
  assert.match(html,/TELEGRAM STARS/);
 });
 test('TON connection is not misleadingly sold as a coin payment service',()=>{
@@ -18,4 +19,5 @@ test('TON connection is not misleadingly sold as a coin payment service',()=>{
  assert.match(shop,/SimabWallet\.read\('ton_balance'/);
  assert.doesNotMatch(shop,/sendTransaction\s*\(/);
  assert.match(terms,/در صورت غیرفعال‌بودن فروشگاه/);
+ assert.match(shop,/مهلت پرداخت این سفارش تمام شده/);
 });
