@@ -1,0 +1,228 @@
+/* Mango Game visual system, presentation only. No game/wallet logic. */
+:root{
+  color-scheme:dark;
+  --mango-bg:#121417;--mango-surface:#1b1f24;--mango-orange:#ff9e1b;
+  --mango-gold:#ffc247;--mango-leaf:#a6d94e;--mango-text:#f5f2ea;
+  --mango-muted:#a7adb7;--mango-border:#ffb13d55;
+  --gold:#ffc247;--ink:#121417;--muted:#a7adb7;--cyan:#a6d94e;
+  --bg:#121417;--card-bg:#1b1f24f5;--card-inner:#292424e8;
+  --text:#f5f2ea;--text-muted:#a7adb7;--border:#ffb13d55;
+  --green:#a6d94e;--purple-neon:#ff9e1b;
+  --gold-gradient:linear-gradient(125deg,#ffd466,#ff9e1b 58%,#e97709);
+}
+html{background:#121417}
+body{color:var(--mango-text)!important;
+ background:radial-gradient(circle at 12% 0%,#62331855,transparent 47%),
+ radial-gradient(circle at 85% 78%,#44231433,transparent 54%),#121417!important}
+:where(.party-shell,.table-shell,.shell,.app-wrapper){color:var(--mango-text)}
+:where(.page-head,.party-head,.room-top,.bg-room-head){
+ color:var(--mango-text);border-color:var(--mango-border)}
+:where(.page-head h1,.party-head h1,.bg-room-head strong,.room-brand){
+ color:var(--mango-gold)!important;text-shadow:0 2px 15px #f88a1430}
+:where(.panel,section.panel,.party-panel,.shop-panel,.ton-panel,
+ .balances>div,.party-shell .hero,.poker-preview,
+ .poker-stage,.bg-sidebar,.bg-turn-card,.task-balance-card,.modal-box,
+ .purchase-order,.coin-pack,.game-log,.room-toolbar){
+ border-color:var(--mango-border)!important;
+ background-color:var(--mango-surface)!important}
+:where(.panel,section.panel,.party-panel,.poker-preview,.balances>div,.ton-panel){
+ background-image:linear-gradient(145deg,#2d231df2,#171b20f8)!important;
+ box-shadow:0 12px 30px #08080880,inset 0 1px #ffe3a012!important}
+:where(input,select,textarea){
+ background:#14181d!important;color:var(--mango-text)!important;
+ border-color:#ffa53c65!important}
+:where(input,select,textarea):focus-visible{
+ outline:2px solid var(--mango-gold)!important;outline-offset:2px}
+:where(.muted,.game-card-sub,.room-brand small,.balances small,
+ .status small,.party-shell .muted,.panel small){color:var(--mango-muted)!important}
+:where(.status,.room-toolbar strong,[data-coins],[data-chips]){
+ font-variant-numeric:tabular-nums}
+:where(a:not(.mango-game-tile),.outline,.network-pill){color:var(--mango-gold)}
+:where(button.primary,.party-shell button.primary,.party-shell .primary,
+ .v3-gold-button,.btn-modal-close,.coin-pack,.shop-panel button,
+ .poker-controls .call,.poker-controls .allin,.bg-sidebar button,
+ .mango-button){
+ background:linear-gradient(125deg,#ffcf56,#ff9e1b 62%,#ee7a10)!important;
+ border:1px solid #ffe07c!important;color:#291409!important;
+ border-radius:13px;box-shadow:0 5px 16px #f7881640!important;
+ font-weight:850}
+:where(.party-shell button,.poker-controls button,
+ #poker-lobby button,.game-controls button,.bg-room-head button,
+ .bg-sidebar button,.room-top button,.panel button){
+ border-color:#e6a44388}
+:where(button,a):focus-visible{outline:3px solid var(--mango-leaf)!important;outline-offset:3px}
+:where(button,a):disabled{box-shadow:none!important}
+:where(.player.current,.poker-seat.active .seat-avatar,.table-seat.current,
+ .seat-media-avatar.has-camera){border-color:var(--mango-leaf)!important;
+ box-shadow:0 0 0 2px #a6d94e44,0 0 22px #b9ed5160!important}
+:where(.table-four,.game-arena,.poker-stage,.bg-stage,.bg-table-wrap){
+ filter:drop-shadow(0 5px 20px #0006)}
+:where(.table-felt,.poker-table){border-color:#edb55b!important;
+ box-shadow:inset 0 0 30px #050d0b88,0 0 25px #ff9e1b24!important}
+:where(.poker-table .table-wordmark,.table-wordmark span){color:var(--mango-gold)!important}
+:where(.turn-banner,.turn-status,.room-message,#room-message,
+ .bg-turn-card,.bg-room-head){border-color:#ffba5588!important}
+:where(.my-hand .playcard.legal,.poker-controls button:enabled){
+ filter:drop-shadow(0 2px 3px #0007)}
+:where(.party-shell,.poker-stage,.bg-stage) button:active:not(:disabled){
+ filter:brightness(1.13)}
+:where(.dice3d,.bg-die,.dice-face){box-shadow:0 4px 0 #9c6927,0 9px 20px #0008!important}
+:where(.coin-pack strong,.balances b,.turn-banner b,.task-balance-val){
+ color:var(--mango-gold)!important}
+:where(.tab-icon,.game-card-icon){color:var(--mango-orange)}
+:where(.simab-langbar,.simab-i18n-notice){border-color:var(--mango-border)!important}
+:where(.party-shell .hero,.poker-preview,.bg-welcome){
+ border-color:#ffba5680!important;
+ background:radial-gradient(circle at 20% 10%,#67351466,transparent 57%),
+ linear-gradient(140deg,#34221b,#15171c)!important}
+:where(.party-shell .hero h1,.poker-preview h2,.bg-welcome h2){
+ color:var(--mango-gold)!important}
+:where(.party-shell .panel .primary,.mode-buttons [aria-pressed=true],
+ .poker-mode-nav .friend-entry){background:linear-gradient(125deg,#ffcf56,#ff9e1b)!important;
+ color:#24160d!important;border-color:#ffe19a!important}
+:where(.party-shell .player.self,.party-shell .player.current){
+ background:linear-gradient(145deg,#3b311c,#242821)!important}
+:where(.poker-controls .fold){background:linear-gradient(130deg,#3b2525,#7e3c30)!important;color:#fff!important}
+:where(.poker-controls .call){background:linear-gradient(130deg,#b5de5b,#75ad31)!important}
+:where(.bg-board,.bg-table-v20){border-color:#e7ab48!important}
+:where(.playcard,.playing-card){box-shadow:0 3px 9px #0007}
+
+/* Home: approved 3-card mango mockup; current tabs, wallet and account stay functional. */
+body:has(>.app-wrapper) .app-wrapper{max-width:470px!important;
+ padding:12px 15px 110px!important;
+ background:radial-gradient(circle at 50% 0,#3c251c66,transparent 47%);
+ box-shadow:0 0 44px #000b}
+body:has(>.app-wrapper) .top-header.mango-header{
+ display:flex!important;align-items:center;justify-content:space-between;
+ min-height:80px;margin-bottom:12px;padding:6px 3px;
+ border:0;background:transparent!important;box-shadow:none!important}
+.mango-head-brand{display:flex;align-items:center;gap:7px;min-width:0}
+.mango-head-brand img{height:67px;width:67px;object-fit:contain;filter:drop-shadow(0 2px 11px #f8972780)}
+.mango-head-brand strong{direction:ltr;white-space:nowrap;font-weight:950;
+ letter-spacing:-.9px;font-size:clamp(22px,6.8vw,31px);color:#f5f2ea;
+ text-shadow:0 4px 12px #0008}
+.mango-head-brand strong span{color:var(--mango-orange)}
+.mango-header-icon{display:grid;place-items:center;flex:none;
+ height:44px;width:44px;background:#1a1d21aa;border:1px solid #ffffff36;
+ color:var(--mango-text);border-radius:15px;font-size:21px;cursor:pointer;text-decoration:none}
+.mango-header-icon:focus-visible{outline:3px solid var(--mango-gold)}
+.mango-wallet-strip{display:flex;align-items:center;gap:10px;
+ min-height:80px;border-radius:24px;padding:10px 12px;margin-bottom:16px;
+ background:linear-gradient(125deg,#202023f2,#191d21f5)!important;
+ border:1px solid #e8a65665;box-shadow:0 8px 22px #08080990,inset 0 1px #ffffff12}
+.mango-wallet-cta{flex:none;display:flex;align-items:center;gap:8px;
+ padding:11px 14px;border:1.5px solid var(--mango-orange);
+ border-radius:15px;text-decoration:none;color:var(--mango-text)!important;
+ background:#3725199c;font-weight:850;font-size:13px}
+.mango-wallet-cta span{font-size:19px;color:var(--mango-orange)}
+.mango-wallet-divider{height:43px;width:1px;background:#8c77734d;margin-inline:5px}
+.mango-coins{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-width:0}
+.mango-coin-illustration{display:grid;place-items:center;flex:none;width:46px;height:46px;
+ border-radius:50%;font-size:25px;background:radial-gradient(circle at 28% 20%,#fff49e,#ffc247 45%,#b45e0b);
+ border:3px ridge #fbd768;box-shadow:0 0 13px #ff9e1b70,inset 0 0 0 2px #b06d1a}
+.mango-coins-copy{display:flex;flex-direction:column;min-width:0;text-align:right;line-height:1.38}
+.mango-coins-copy b{font-size:clamp(17px,4.7vw,24px);color:#f5f2ea;white-space:nowrap}
+.mango-coins-copy small{font-size:11px;color:var(--mango-muted)}
+.mango-wallet-plus{width:43px;height:43px;border-radius:14px;flex:none;
+ display:grid;place-items:center;font-weight:900;font-size:25px;
+ background:linear-gradient(125deg,#ffce55,#ff950f);color:#22140b!important;text-decoration:none;
+ border:1px solid #ffe6a4}
+.mango-hero{min-height:245px;display:flex;align-items:center;justify-content:space-between;
+ border-radius:25px;overflow:hidden;padding:24px 16px;margin:0 0 20px;
+ border:1px solid #f8ad4f9f;
+ background:radial-gradient(circle at 20% 75%,#8e480f8f,transparent 44%),
+ linear-gradient(120deg,#332018,#21191b 60%,#1c1b21);
+ box-shadow:0 14px 32px #0008,inset 0 1px #ffd18a42}
+.mango-hero-copy{position:relative;z-index:2;flex:1;text-align:right;min-width:0}
+.mango-hero h1{font-size:clamp(17px,5.25vw,23px);line-height:1.5;white-space:normal;
+ color:#f9f5f0!important;margin:0 0 7px;text-shadow:0 2px 12px #050507}
+.mango-hero h1 em{font-style:normal;color:var(--mango-orange)}
+.mango-hero p{font-size:clamp(11px,3.15vw,13px);color:#d3c9c1;line-height:1.75;margin:0 0 15px}
+.mango-button{display:flex;align-items:center;justify-content:center;gap:10px;
+ padding:12px 14px;text-decoration:none;cursor:pointer;min-height:46px;
+ font-size:clamp(11px,3.5vw,14px);white-space:nowrap}
+.mango-hero-art{width:40%;flex:none;display:grid;place-items:center;position:relative}
+.mango-hero-art:before{content:"";position:absolute;bottom:4%;width:90%;height:19%;
+ border:3px solid #ffad23;border-radius:50%;box-shadow:0 0 12px #ff931d,0 0 24px #f17e1e50}
+.mango-hero-art img{width:100%;height:auto;filter:drop-shadow(0 0 18px #ff941d80);position:relative;z-index:1}
+.mango-section-head{display:flex;align-items:center;justify-content:space-between;
+ gap:10px;margin:12px 2px 12px}
+.mango-section-head h2{margin:0;font-size:clamp(18px,5.2vw,23px);font-weight:900}
+.mango-section-head h2 span{color:var(--mango-orange)}
+.mango-section-head button{border:0;background:transparent!important;box-shadow:none!important;
+ color:var(--mango-orange);padding:8px 4px;min-height:0;font-size:12px}
+.mango-featured-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:9px;margin-bottom:20px}
+.mango-game-tile{position:relative;display:block;min-height:150px;aspect-ratio: .96;
+ overflow:hidden;border-radius:19px;border:1px solid #ce874d9a;
+ text-decoration:none;color:#fff!important;background:#251d21;box-shadow:0 8px 20px #0009}
+.mango-game-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mango-game-tile:before{content:"";position:absolute;inset:0;z-index:1;
+ background:linear-gradient(180deg,#0000 25%,#100c17a3 67%,#0e0d12ef)}
+.mango-game-tile:nth-child(1){border-color:#aa6cc0}
+.mango-game-tile:nth-child(2){border-color:#be4359}
+.mango-game-tile:nth-child(3){border-color:#d2a354}
+.mango-game-label{position:absolute;z-index:2;bottom:12px;left:4px;right:4px;text-align:center;
+ display:flex;flex-direction:column;gap:3px;text-shadow:0 2px 7px #000}
+.mango-game-label strong{font-size:clamp(14px,3.95vw,18px);font-weight:900}
+.mango-game-label small{font-size:11px;color:#d9ccd1}
+.mango-wheel-card{display:flex;align-items:center;gap:14px;min-height:215px;
+ border:1px solid #f6af4aa3;border-radius:25px;padding:16px 13px;margin-bottom:22px;
+ background:radial-gradient(circle at 18% 55%,#89401588,transparent 48%),
+ linear-gradient(125deg,#35221a,#201b1d 70%,#191b20);
+ box-shadow:0 9px 27px #0009,inset 0 1px #fff1b127}
+.mango-wheel-copy{flex:1;min-width:0;text-align:right}
+.mango-wheel-copy h2{font-size:clamp(18px,5.2vw,23px);line-height:1.35;margin:0 0 7px}
+.mango-wheel-copy p{font-size:clamp(11px,3vw,13px);color:#d1c2bb;line-height:1.6;margin:0 0 15px}
+.mango-wheel-copy .mango-button{max-width:230px}
+.mango-wheel-art{width:41%;aspect-ratio:1;flex:none;position:relative;display:grid;place-items:center}
+.mango-wheel-face{position:relative;width:94%;aspect-ratio:1;border-radius:50%;
+ background:repeating-conic-gradient(from -22.5deg,#f7aa1b 0 22.5deg,#c65b0d 22.5deg 45deg);
+ border:11px solid #e7a129;box-shadow:inset 0 0 0 2px #ffe9a4,
+ 0 0 0 3px #844009,0 0 18px #ff9e1b99,0 7px 19px #000a}
+.mango-wheel-face:after{content:"🥭";position:absolute;inset:31%;display:grid;place-items:center;
+ border-radius:50%;border:4px solid #ffc247;font-size:clamp(20px,6vw,28px);
+ background:radial-gradient(circle,#3b2817,#1a1614);box-shadow:0 0 10px #ffbe3570}
+.mango-wheel-pointer{position:absolute;z-index:3;top:-3px;left:50%;transform:translateX(-50%);
+ color:#ffe2a5;font-size:24px;text-shadow:0 0 10px #fcae27}
+.mango-account-tools{margin:4px 0 13px}
+.mango-account-tools>summary{color:#c7b6a4;cursor:pointer;font-size:12px;
+ text-align:center;padding:12px;border:1px solid #ffc24742;border-radius:13px;
+ background:#211d1be0;list-style-position:inside}
+.mango-account-tools .profile-card{margin-top:12px}
+.mango-account-tools .v4-assistant{margin-bottom:12px}
+body:has(>.app-wrapper) .bottom-nav{
+ left:50%;right:auto;bottom:8px;height:73px;width:calc(100% - 24px);
+ max-width:446px!important;border:1px solid #ffffff2f;border-radius:24px;
+ background:linear-gradient(155deg,#222428f8,#17191cfb)!important;
+ box-shadow:0 12px 24px #000c}
+body:has(>.app-wrapper) .bottom-nav .nav-btn-box{color:#bdc0c6}
+body:has(>.app-wrapper) .bottom-nav .nav-btn-box.active{color:#ff9e1b}
+body:has(>.app-wrapper) .bottom-nav .nav-btn-box.active:after{
+ content:"";height:3px;width:54%;border-radius:3px;background:#ff9e1b;position:absolute;bottom:4px}
+body:has(>.app-wrapper) .bottom-nav .nav-btn-box{position:relative}
+body:has(>.app-wrapper) .bottom-nav .tab-icon{font-size:24px}
+body:has(>.app-wrapper) .v3-page-hero,body:has(>.app-wrapper) .v3-games-hero,
+body:has(>.app-wrapper) .v3-rewards-hero{
+ border:1px solid var(--mango-border);
+ background-color:#211d20!important}
+body:has(>.app-wrapper) #tab-games-content .game-card{
+ border-color:#faab4480;background:#1d2023;border-radius:16px}
+body:has(>.app-wrapper) .v3-categories button.selected{
+ background:linear-gradient(130deg,#ffca52,#ff9e1b)!important;color:#231409!important}
+@media(max-width:380px){
+ body:has(>.app-wrapper) .app-wrapper{padding-inline:9px!important}
+ .mango-head-brand img{width:53px;height:53px}
+ .mango-header-icon{width:35px;height:37px;font-size:17px}
+ .mango-wallet-strip{gap:6px;padding:9px 8px}
+ .mango-wallet-cta{padding:9px 8px;font-size:11px}
+ .mango-coin-illustration{width:38px;height:38px;font-size:20px}
+ .mango-wallet-plus{width:36px;height:36px}
+ .mango-hero{padding:15px 10px;min-height:218px}
+ .mango-game-tile{min-height:124px;border-radius:13px}
+ .mango-wheel-card{gap:6px;min-height:180px;padding:10px}
+ .mango-wheel-face{border-width:7px}
+}
+@media(prefers-reduced-motion:reduce){
+ .mango-head-brand img,.mango-hero-art img{animation:none!important}
+}

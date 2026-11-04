@@ -24,14 +24,16 @@ test("V8 core CSS scrolled container and all active mobile pages",()=>{
    for(const [,src] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(src,{filename:p});
  }
 });
-test("home has one simple welcome panel, one Games button and a recent game link, without old shortcut cards",()=>{
+test("home uses user-approved Mango Game hero and only three featured game cards",()=>{
  const html=read("index.html");
- assert.match(html,/data-i18n="home.shortWelcome"/);
- assert.match(html,/onclick="switchNavTab\('games'\)"/);
- assert.match(html,/id="v8-hero-recent"/);
- assert.doesNotMatch(html,/class="v8-hero-focus"/);
- assert.doesNotMatch(html,/class="simab-secure-entry"/);
- assert.doesNotMatch(html,/v8-card-enhanced|class="v3-featured-grid"|⚡ دسترسی سریع|class="v4-pulse-banner"/);
+ const area=html.split('id="tab-home-content"')[1].split('<!-- سربرگ ۲: بازی‌ها -->')[0];
+ assert.match(area,/class="mango-hero"/);
+ assert.match(area,/onclick="switchNavTab\('games'\)"/);
+ assert.match(area,/id="v8-hero-recent"/);
+ assert.equal((area.match(/class="mango-game-tile"/g)||[]).length,3);
+ assert.match(area,/games\/wheel\/index.html/);
+ assert.doesNotMatch(area,/بازی با دوستان|games\/slot\/index.html/);
+ assert.doesNotMatch(html,/class="v8-hero-focus"|class="simab-secure-entry"/);
 });
 test("purchase policy stays in Terms while redundant warnings are removed from game screens",()=>{
  const terms=read("wallet/terms.html");

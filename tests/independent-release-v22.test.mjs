@@ -5,13 +5,13 @@ import {readFileSync} from 'node:fs';
 const manifest=JSON.parse(readFileSync(new URL('./fixtures/independent-release-protected-v22.json',import.meta.url),'utf8'));
 const sha=text=>createHash('sha256').update(text).digest('hex');
 // Exact Git blob hashes for the five user-approved visual-only files in v29.
-const approvedUIBlobs={"assets/css/simab-safe-area-v16.css":"3652da7c9f0178b76a3dc439fbf0412e73195fec","assets/js/simab-i18n-v16.js":"9d83409dec23a842cffd1bd0af8429a02c01025b","assets/js/simab-shop-v15.js":"778996a444740aacd1aedd9b1f318c4c62e1849d","games/room/index.html":"a98ca0e25ce9a05cad66d75ed8321c04412a10f4","index.html":"cb4ed48db48e95390604ddcd55c5aba2e4249bd8"};
+const approvedUIBlobs={"assets/css/simab-safe-area-v16.css":"3652da7c9f0178b76a3dc439fbf0412e73195fec","assets/js/simab-i18n-v16.js":"9d83409dec23a842cffd1bd0af8429a02c01025b","assets/js/simab-shop-v15.js":"778996a444740aacd1aedd9b1f318c4c62e1849d","games/room/index.html":"a98ca0e25ce9a05cad66d75ed8321c04412a10f4","index.html":"d56077b96fe3b3695ffca2f0d9a721eb6a81f5c5"};
 // Exact audited v20261103 Git blob hashes; other protected baselines remain checked.
 const auditApprovedBlobs={
   "assets/js/simab-party-v16.js": "67743636a73c265f3fa901a72fc691fa0d4cf651",
   "assets/js/simab-private-poker-v14.js": "e16d432a72f6378567eb0bb939712fca74d3cd43",
   "assets/js/simab-wallet-client.js": "46c9c95177e9620169c4a0f367f43560f80843c6",
-  "games/room/index.html": "33d85c2c2695847e13bd35a89b5d062f8f5c5fbd",
+  "games/room/index.html": "9d3cd3b9e59f9aaabd8372e4969eacbbf0a40f1d",
   "supabase/functions/simab-central-quests/index.ts": "71e2b03c651a59c0984bef647c8f37441c62b381",
   "supabase/functions/simab-central-quests/party-api.ts": "4d462c66f6143b53a751256e5a89bcdccfe9ba0a",
   "supabase/functions/simab-central-quests/party-games.ts": "0482ebaf2ebc593c125a2b9887539d7fcc603309",
