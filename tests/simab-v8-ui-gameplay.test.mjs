@@ -26,7 +26,8 @@ test("V8 core CSS scrolled container and all active mobile pages",()=>{
 });
 test("Mango Game home has approved welcome panel, Games button and a recent game container",()=>{
  const html=read("index.html");
- assert.match(html,/class="mango-hero"/);\n assert.match(html,/به <em>مانگو گیم<\\/em> خوش آمدید/);
+ assert.match(html,/class="mango-hero"/);
+ assert.ok(html.includes('به <em>مانگو گیم</em> خوش آمدید'));
  assert.match(html,/onclick="switchNavTab\('games'\)"/);
  assert.match(html,/id="v8-hero-recent"/);
  assert.doesNotMatch(html,/class="v8-hero-focus"/);
