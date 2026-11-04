@@ -1,0 +1,59 @@
+name: SIMAB published website, Telegram bot and Edge read-only smoke
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/simab-public-live-smoke.yml'
+      - 'tests/ui-two-seat-hokm-v30.mjs'
+      - 'games/**'
+      - 'assets/js/**'
+      - 'supabase/functions/simab-central-quests/**'
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  published-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Verify live GitHub Pages assets and actual Telegram bot identity
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, urllib.request, urllib.error
+          pages = 'https://alihosseini6687-netizen.github.io/simor-app/'
+          edge = 'https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests'
+          def get(url):
+              req = urllib.request.Request(url, headers={'User-Agent':'SIMAB-release-readonly-smoke/1.0'})
+              with urllib.request.urlopen(req,timeout=22) as response:
+                  return response.status, response.read(250000).decode('utf-8')
+          for path, marker in (
+              ('index.html','simab-launch-routing-v22.js?v=20261102'),
+              ('games/room/index.html','simab-party-v16.js?v=20261103-audit1'),
+              ('games/poker/friends.html','simab-private-poker-v14.js?v=20261103-audit1'),
+              ('assets/js/simab-party-v16.js','برای عضویت در میز دکمه'),
+              ('assets/js/simab-private-poker-v14.js','میز پوکر:'),
+          ):
+              status, content = get(pages+path)
+              assert status==200, (path,status)
+              assert marker in content, (path,'published version lacks expected code')
+              print('Published asset verified:',path)
+          status, content=get(edge+'?health=1')
+          health=json.loads(content)
+          assert status==200 and health.get('ok') is True, 'SIMAB function health unavailable'
+          assert health.get('botMatchesExpected') is True, 'Live Telegram bot is not @SimorApp_bot'
+          assert health.get('shopReady') is True, 'Stars shop is not ready according to live health'
+          print('Live Edge health, correct Telegram bot, Stars storefront: verified')
+          # A request without Telegram-signed initData must never read wallet data.
+          req=urllib.request.Request(edge, method='POST',
+               data=b'{"action":"wallet","walletAction":"state"}',
+               headers={'Content-Type':'application/json','User-Agent':'SIMAB-security-smoke/1.0'})
+          try:
+              with urllib.request.urlopen(req,timeout=22) as response:
+                  raise AssertionError('Anonymous wallet request returned '+str(response.status))
+          except urllib.error.HTTPError as err:
+              payload=json.loads(err.read().decode('utf-8'))
+              assert err.code==401 and payload.get('error')=='telegram_auth_failed',(err.code,payload)
+          print('Anonymous wallet request rejected correctly')
+          PY
