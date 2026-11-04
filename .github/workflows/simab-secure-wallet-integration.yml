@@ -50,6 +50,33 @@ jobs:
         run: npm run test:server
       - name: Browser and Edge static syntax and behavior checks
         run: node --check assets/js/simab-secure-wallet.js && node --test tests/*.test.mjs
+      - name: Install PostgreSQL client
+        run: sudo apt-get update -qq && sudo apt-get install -y postgresql-client
+      - name: Prepare Supabase-style database roles
+        run: |
+          psql -v ON_ERROR_STOP=1 <<'SQL'
+          CREATE ROLE anon NOLOGIN;
+          CREATE ROLE authenticated NOLOGIN;
+          CREATE ROLE service_role NOLOGIN BYPASSRLS;
+          SQL
+      - name: Execute ALL migrations and real SQL integration checks
+        run: |
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261012_central_quests_admins.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261012_verified_quest_rewards.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261013_secure_wallet_games.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025074103_admin_wallet_credit.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025081053_unified_wallet_game_sessions.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026084226_table_games_v13.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026091612_private_poker_rooms.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026100658_shop_and_channel_offers.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026135953_party_rooms_and_timed_tasks.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261028090000_wallet_unbiased_random.sql
+          psql -v ON_ERROR_STOP=1 -c "SELECT COUNT(*) AS sampled FROM generate_series(1,100) g WHERE public.simab_random_below(6) BETWEEN 0 AND 5;"
+          psql -v ON_ERROR_STOP=1 -f tests/integration-secure-wallet.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-admin-credit.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261104_mango_referrals_v31.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-unified-wallet.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-referral-v31.sql
       - name: Install Chromium for mobile UI checks
         run: npx playwright install --with-deps chromium
       - name: Independent game pages and Auto Stop regressions
@@ -83,28 +110,3 @@ jobs:
         with:
           name: simab-v13-mobile-screenshots
           path: /tmp/simab-*.png
-      - name: Install PostgreSQL client
-        run: sudo apt-get update -qq && sudo apt-get install -y postgresql-client
-      - name: Prepare Supabase-style database roles
-        run: |
-          psql -v ON_ERROR_STOP=1 <<'SQL'
-          CREATE ROLE anon NOLOGIN;
-          CREATE ROLE authenticated NOLOGIN;
-          CREATE ROLE service_role NOLOGIN BYPASSRLS;
-          SQL
-      - name: Execute ALL migrations and real SQL integration checks
-        run: |
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261012_central_quests_admins.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261012_verified_quest_rewards.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261013_secure_wallet_games.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025074103_admin_wallet_credit.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261025081053_unified_wallet_game_sessions.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026084226_table_games_v13.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026091612_private_poker_rooms.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026100658_shop_and_channel_offers.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261026135953_party_rooms_and_timed_tasks.sql
-          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261028090000_wallet_unbiased_random.sql
-          psql -v ON_ERROR_STOP=1 -c "SELECT COUNT(*) AS sampled FROM generate_series(1,100) g WHERE public.simab_random_below(6) BETWEEN 0 AND 5;"
-          psql -v ON_ERROR_STOP=1 -f tests/integration-secure-wallet.sql
-          psql -v ON_ERROR_STOP=1 -f tests/integration-admin-credit.sql
-          psql -v ON_ERROR_STOP=1 -f tests/integration-unified-wallet.sql

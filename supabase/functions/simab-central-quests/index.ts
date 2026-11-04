@@ -2,6 +2,7 @@ import {taskAPI} from './task-api.ts';
 import {partyAPI} from './party-api.ts';
 import {shopAPI,shopWebhook,tonBalance} from './shop.ts';
 import {pokerRoomAPI} from './poker-room-api.ts';
+import {referralAPI} from './referral-api.ts';
 /* SIMAB central-quests API. One file for Supabase Dashboard deployment.
    NEVER include Telegram bot token or a service key in the browser/repository.
    The POST endpoint ALWAYS validates Telegram-signed initData and server-side admin ID.
@@ -30,7 +31,7 @@ function requestLimit(subject:string,p:Record<string,unknown>,now=Date.now()):nu
   const action=String(p.action),op=String(p.op||'state');
   const room=['room','game_room'].includes(action);
   const signal=room&&op==='signal';
-  const write=action==='game'||action==='wallet'&&p.walletAction!=='state'||room&&!['state','preview'].includes(op)||['claim','task_start','offer_claim','purchase'].includes(action);
+  const write=action==='game'||action==='wallet'&&p.walletAction!=='state'||room&&!['state','preview'].includes(op)||['claim','task_start','offer_claim','purchase','referral_claim'].includes(action);
   const group=signal?'signal':write?'write':'read',limit=signal?1200:write?120:240;
   const key=subject+':'+group;let entry=requestWindows.get(key);
   if(!entry||entry.until<=now){
@@ -317,7 +318,8 @@ Deno.serve(async (request) => {
 
   const retryAfterSeconds=requestLimit(subject,payload);
   if(retryAfterSeconds)return reply(429,{error:'rate_limited',retryAfterSeconds});
-  if (payload.action === 'ton_balance') {if(payload.chain!==undefined&&payload.chain!=='-239')return reply(400,{error:'mainnet_only'});const r=await tonBalance(payload.address,Deno.env.get('TONCENTER_API_KEY')||'');return reply(r.status,r.data);}
+  if (payload.action === 'referral_info' || payload.action === 'referral_claim') {const r=await referralAPI(db,subject,payload);return reply(r.status,r.data);}
+ if (payload.action === 'ton_balance') {if(payload.chain!==undefined&&payload.chain!=='-239')return reply(400,{error:'mainnet_only'});const r=await tonBalance(payload.address,Deno.env.get('TONCENTER_API_KEY')||'');return reply(r.status,r.data);}
   if (['shop_catalog','purchase','purchase_history','offer_info','offer_claim','admin_shop_status','admin_reconcile_refund','admin_shop_settings','admin_bind_webhook','admin_register_channel','admin_create_offer','admin_publish_offer'].includes(String(payload.action))) {const r=await shopAPI(db,subject,payload,botToken);return reply(r.status,r.data);}
   if(payload.action === "game_room"){const r=await partyAPI(db,subject,payload,identity);return reply(r.status,r.data);}
   if (payload.action === "room") { const result=await pokerRoomAPI(db,subject,payload,identity);return reply(result.status,result.data); }

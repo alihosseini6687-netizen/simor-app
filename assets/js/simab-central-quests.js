@@ -78,7 +78,7 @@
   }
   async function doAdmin(action, extra) {
     const candidates = signedInitDataCandidates();
-    if (!candidates.length) throw new Error("اطلاعات امضاشده تلگرام در این صفحه موجود نیست. سیماب را با دکمه ربات اصلی باز کن.");
+    if (!candidates.length) throw new Error("اطلاعات امضاشده تلگرام در این صفحه موجود نیست. مانگو گیم را با دکمه ربات اصلی باز کن.");
     let r, j, used;
     for (let i = 0; i < candidates.length; i++) {
       used = candidates[i];
@@ -320,7 +320,7 @@
       }
     };
     window.simabFillOfficialChannelQuest = () => {
-      document.getElementById("task-title").value = "عضویت در کانال رسمی سیماب";
+      document.getElementById("task-title").value = "عضویت در کانال رسمی مانگو گیم";
       document.getElementById("task-url").value = officialChannelUrl;
       document.getElementById("task-reward").value = "1";
       document.getElementById("task-timer").value = "20";
