@@ -731,30 +731,28 @@
       }
       if (!startParam) return;
 
-      // مرحله ۱: URL is an untrusted input. The old implementation credited
-      // coins from a user-editable gift_... or gift_to_... URL without a server.
-      // Never mint coins from a URL. Gifts will be re-enabled only after a
-      // server validates the signed-in user, issuer, expiry and single use.
-      if (startParam.startsWith('gift_')) {
-        showToast('🎁 دریافت هدیه تا فعال شدن سرور امن موقتاً غیرفعال است.');
+      // Gift URLs only carry an opaque admin-created offer code; never mint coins
+      // in the browser. The signed Telegram owner claims via the existing offer RPC.
+      const gift = /^gift_([a-f0-9]{32})$/.exec(startParam);
+      if (gift) {
+        location.replace('offers/index.html?code=' + encodeURIComponent(gift[1]));
         return;
       }
-
-      // ب) ثبت خودکار دعوت دوستان (افزایش شمارنده رفرال معرف)
-      else if (startParam.startsWith('S') || startParam.startsWith('ref_')) {
-        const inviterCode = startParam;
-        const refKey = 'simab_joined_by_' + uid;
-
-        if (!localStorage.getItem(refKey)) {
-          localStorage.setItem(refKey, inviterCode);
-          // ثبت در شمارنده معرف جهت باز شدن جوایز رفرال
-          const inviterCountKey = 'simab_ref_count_' + inviterCode;
-          let currentInvites = parseInt(localStorage.getItem(inviterCountKey) || '0', 10);
-          localStorage.setItem(inviterCountKey, (currentInvites + 1).toString());
-
-          showToast(`👥 شما با دعوت کاربر ${inviterCode} به سیماب پیوستید! ✨`);
-        }
+      // Referral credits use a single-use, server-authorized transaction. The
+      // inviter and recipient are independently checked by Telegram-signed ID.
+      const referral = /^r_([a-f0-9]{32})$/.exec(startParam);
+      if (referral) {
+        const key='mango-referral-attempted:'+referral[1];
+        if (sessionStorage.getItem(key)) return;
+        sessionStorage.setItem(key,'1');
+        window.SimabWallet?.ready.then(async()=>{
+          const result=await SimabWallet.mutate('referral_claim',{code:referral[1]});
+          showToast(result.granted?'🎁 پاداش معرفی دوستان به کیف پول اضافه شد.':'🎁 این دعوت قبلاً ثبت شده است.');
+        }).catch(e=>{sessionStorage.removeItem(key);showToast('پاداش معرفی: '+e.message);});
+        return;
       }
+      if (startParam.startsWith('gift_') || startParam.startsWith('ref_'))
+        showToast('این لینک هدیه یا معرفی معتبر نیست؛ لینک تازه از مانگو گیم بگیر.');
     }
     setTimeout(processStartParams, 600);
   </script>
