@@ -6,7 +6,6 @@ const root=new URL('../',import.meta.url);
 const get=p=>readFileSync(new URL(p,root),'utf8');
 const home=get('index.html');
 const css=get('assets/css/mango-game-theme-v1.css');
-const entry=get('assets/js/simab-i18n-v16.js');
 const manifest=JSON.parse(get('simab.webmanifest'));
 const homePart=home.split('id="tab-home-content"')[1]?.split('<!-- سربرگ ۲: بازی‌ها -->')[0];
 test('approved Mango Game home has wallet, hero, exactly three featured games, wheel and existing menu',()=>{
@@ -28,7 +27,7 @@ test('other supported games remain available via existing Games tab; identity an
  assert.match(home,/SimabWallet\.subscribe/);
  assert.match(home,/simab_signed_launch_init_data_v1/);
 });
-test('global theme is loaded for all game pages through shared locale loader',()=>{
+test('global theme is linked on all main gameplay pages without changing the protected i18n loader',()=>{
  assert.match(home,/mango-game-theme-v1\.css\?v=20261104/);
  assert.match(entry,/DOMContentLoaded/);
  assert.match(entry,/mango-game-theme-v1\.css\?v=20261104/);
