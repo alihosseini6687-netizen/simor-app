@@ -15,7 +15,7 @@ GRANT SELECT,INSERT,UPDATE,DELETE ON public.simab_room_presence TO service_role;
 
 CREATE FUNCTION public.simab_room_heartbeat(p_subject text,p_code text) RETURNS jsonb
 LANGUAGE plpgsql SECURITY INVOKER SET search_path='' AS $fn$
-DECLARE r public.simab_poker_rooms%ROWTYPE; is_member boolean; stale boolean;
+DECLARE r public.simab_poker_rooms%ROWTYPE; is_member boolean; stale boolean; expires_at timestamptz;
 BEGIN
  SELECT * INTO r FROM public.simab_poker_rooms WHERE code=p_code FOR UPDATE;
  IF r.code IS NULL OR r.status NOT IN ('waiting','playing') THEN RETURN jsonb_build_object('ok',false,'closed',true); END IF;
@@ -32,7 +32,12 @@ BEGIN
  INSERT INTO public.simab_room_presence(room_code,telegram_subject,last_seen)
  VALUES(p_code,p_subject,now())
  ON CONFLICT (room_code,telegram_subject) DO UPDATE SET last_seen=greatest(public.simab_room_presence.last_seen,excluded.last_seen);
- RETURN jsonb_build_object('ok',true);
+ IF r.status='waiting' THEN
+  SELECT min(coalesce(p.last_seen,r.created_at))+interval '60 seconds' INTO expires_at
+  FROM jsonb_array_elements(r.state->'members') m
+  LEFT JOIN public.simab_room_presence p ON p.room_code=r.code AND p.telegram_subject=m->>'subject';
+ END IF;
+ RETURN jsonb_build_object('ok',true,'expiresAt',expires_at);
 END;$fn$;
 
 CREATE FUNCTION public.simab_expire_waiting_rooms(p_limit integer DEFAULT 50) RETURNS integer
