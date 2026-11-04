@@ -26,11 +26,12 @@ const mangoV31ApprovedBlobs={
   "assets/js/simab-secure-wallet.js": "25fdc23e0005a6495004a709e701bc5239527dda",
   "assets/js/simab-shop-admin-v15.js": "726ebba4945310b9191969b2cb0d564745861229",
   "assets/js/simab-wallet-client.js": "616a1392af09c896187d4774737edcfede1b9361",
-  "games/room/index.html": "4f5b0e06cc046dc8cc7ec005cb175adfdddd0019",
-  "index.html": "9e05bd22c6b2a1d8c27c3a1cb9b4d70d89c5674a",
+  "games/room/index.html": "bb6d2def9b140b8a157f86be9601839ee44f9c74",
+  "index.html": "48cf86ef4c468b0844d3062c4f0812f124c6447b",
   "supabase/functions/simab-central-quests/index.ts": "0ce3b872d3485602fd8ccafbcfcae30fde3c86a5",
   "supabase/functions/simab-central-quests/shop.ts": "b78b9f20ba8d5b8c5bfd192b925797e2a4e67de7",
-  "assets/js/simab-party-v16.js": "0ee89b391abf6f506aae69ddef663a015b1f5304"
+  "assets/js/simab-party-v16.js": "0ee89b391abf6f506aae69ddef663a015b1f5304",
+  "assets/js/simab-i18n-v16.js": "3109c279c3761c42d7a017a55e920070206158db"
 };
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
