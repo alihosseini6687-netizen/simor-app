@@ -5,7 +5,7 @@
    document.title=document.title.replace(/SIMAB|Simor/gi,'Mango Game').replace(/سیماب/g,'مانگو گیم');
    const script=document.querySelector('script[src*="mango-game-labels-v1.js"]');
    if(!script)return;
-   const logo=new URL('../mango-game-logo.svg',script.src).href;
+   const logo=new URL('../mango-game-icon.png',script.src).href;
    document.querySelectorAll('img[src*="simab-logo"]').forEach(img=>{
      img.src=logo;img.alt='لوگوی Mango Game';
    });
