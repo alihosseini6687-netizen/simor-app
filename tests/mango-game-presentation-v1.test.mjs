@@ -35,6 +35,7 @@ test('Mango styles apply to home and game surfaces without changing game rules',
   assert.match(homeTheme,/.mango-hero/);
   assert.match(homeTheme,/.mango-wheel-banner/);
   assert.equal(manifest.short_name,'Mango Game');
+  assert.equal(manifest.icons[0].src,'assets/mango/mango-game-original-logo.png');
   assert.equal(manifest.start_url,'./index.html?home=1');
   assert.equal(manifest.id,'./index.html');
 });
