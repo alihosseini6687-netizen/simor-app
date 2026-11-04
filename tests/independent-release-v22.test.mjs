@@ -16,7 +16,8 @@ const auditApprovedBlobs={
   "supabase/functions/simab-central-quests/party-api.ts": "4d462c66f6143b53a751256e5a89bcdccfe9ba0a",
   "supabase/functions/simab-central-quests/party-games.ts": "0482ebaf2ebc593c125a2b9887539d7fcc603309",
   "supabase/functions/simab-central-quests/poker-room-api.ts": "d968d49bf0acad37be11648b1488a11b8098d5ee",
-  "supabase/functions/simab-central-quests/table-games.ts": "1aed75cd463e9a57d6f390079ecdd1f79a73e435"
+  "supabase/functions/simab-central-quests/table-games.ts": "1aed75cd463e9a57d6f390079ecdd1f79a73e435",
+  "assets/js/simab-shop-v15.js": "d04c3edcb34f44b98e124dc19c72f12e24eaa82f"
 };
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
