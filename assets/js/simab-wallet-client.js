@@ -65,7 +65,7 @@
   box.style.cssText='position:relative;z-index:20;padding:8px 12px;font:11px system-ui;text-align:center;color:#cfb989;line-height:1.7;background:#0d0b12;';
   document.body.append(box);document.getElementById('wallet-recover').onclick=()=>recover().catch(()=>{});
   accountLabel();
-  try{const id=actor();if(id){pendingKey='simab_financial_pending_v2:'+id;const raw=localStorage.getItem(pendingKey);if(raw){const x=JSON.parse(raw);if(x&&typeof x.requestId==='string'&&['wallet','game','room','game_room','purchase','offer_claim'].includes(x.action))pending=x;else throw Error('درخواست ذخیره‌شده نامعتبر است.');}}pendingUI();await refresh();if(pending)await recover();}
+  try{const id=actor();if(id){pendingKey='simab_financial_pending_v2:'+id;const raw=localStorage.getItem(pendingKey);if(raw){const x=JSON.parse(raw);if(x&&typeof x.requestId==='string'&&['wallet','game','room','game_room','purchase','offer_claim','referral_claim'].includes(x.action))pending=x;else throw Error('درخواست ذخیره‌شده نامعتبر است.');}}pendingUI();await refresh();if(pending)await recover();}
   catch(e){message(e.message+(pending?'؛ درخواست قبلی محفوظ است.':''));}finally{readyResolve(state);}
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&!inFlight)refresh().catch(()=>{});});
   window.addEventListener('pageshow',()=>{if(!inFlight)refresh().catch(()=>{});});
