@@ -310,7 +310,7 @@
       <div class="header-start">
         <button class="btn-gear" type="button" aria-label="نمایش جوایز" onclick="switchNavTab('tasks')">🔔</button>
         <img class="mango-mark" src="assets/mango/mango-game-mark.svg" width="57" height="57" alt="نشان Mango Game">
-        <div class="brand-title"><strong>Mango</strong> Game</div>
+        <div class="brand-title" data-user-content><strong>Mango</strong> Game</div>
         <button class="mango-profile-trigger" type="button" aria-label="نمایش پروفایل" onclick="document.getElementById('mango-account-details').open=true;document.getElementById('mango-account-details').scrollIntoView({behavior:'smooth',block:'start'})">👤</button>
       </div>
     </header>
@@ -320,20 +320,20 @@
     <div id="tab-home-content">
 <div class="mango-home">
   <section class="mango-wallet-bar" aria-label="کیف پول و موجودی مانگو">
-    <a class="mango-wallet-link" href="wallet/index.html">▣ کیف پول</a>
-    <div class="mango-wallet-info"><span class="mango-wallet-coin" aria-hidden="true">M</span><span class="mango-wallet-amount"><b data-coins>—</b><small>سکه مانگو</small></span></div>
+    <a class="mango-wallet-link" href="wallet/index.html"><span aria-hidden="true">▣</span> <span data-i18n="nav.wallet">کیف پول</span></a>
+    <div class="mango-wallet-info"><span class="mango-wallet-coin" aria-hidden="true" data-user-content>M</span><span class="mango-wallet-amount"><b data-coins>—</b><small>سکه مانگو</small></span></div>
     <a class="mango-wallet-plus" href="wallet/index.html#coin-shop" aria-label="خرید سکه">+</a>
   </section>
   <section class="v3-hero mango-hero" aria-label="به مانگو گیم خوش آمدید">
     <img class="mango-hero-art" src="assets/mango/mango-game-mark.svg" alt="" decoding="async" fetchpriority="high">
-    <div class="mango-hero-content"><h1>به <em>مانگو گیم</em> خوش آمدید!</h1>
+    <div class="mango-hero-content"><h1 data-i18n="mango.welcome">به مانگو گیم خوش آمدید!</h1>
       <p>دنیایی از بازی‌های هیجان‌انگیز و رقابت‌های دوستانه</p>
-      <button type="button" class="mango-cta" onclick="switchNavTab('games')">▶ همین حالا بازی کن</button>
+      <button type="button" class="mango-cta" onclick="switchNavTab('games')"><span aria-hidden="true">▶</span> <span data-i18n="mango.playNow">همین حالا بازی کن</span></button>
       <div id="v8-hero-recent" class="v8-hero-recent" aria-live="polite" hidden></div>
     </div>
   </section>
   <section aria-label="بازی‌های محبوب مانگو">
-    <div class="mango-heading"><h2>🎮 بازی‌های مانگو</h2><button type="button" onclick="switchNavTab('games')">مشاهده همه ‹</button></div>
+    <div class="mango-heading"><h2><span aria-hidden="true">🎮</span> <span data-i18n="mango.games">بازی‌های مانگو</span></h2><button type="button" onclick="switchNavTab('games')"><span data-i18n="mango.viewAll">مشاهده همه</span> <span aria-hidden="true">‹</span></button></div>
     <div class="mango-games-grid">
       <a class="mango-game-tile hokm" href="games/room/index.html?game=hokm"><span class="tile-label"><strong>حکم</strong><small>Hokm</small></span></a>
       <a class="mango-game-tile poker" href="games/poker/index.html"><span class="tile-label"><strong>پوکر</strong><small>Poker</small></span></a>
@@ -341,9 +341,9 @@
     </div>
   </section>
   <section class="mango-wheel-banner" aria-label="گردونه پاداش روزانه"><div class="mango-wheel-art" aria-hidden="true">🎡</div>
-    <div><h2>🎁 گردونه پاداش روزانه</h2><p>هر روز بچرخان و سکه رایگان بگیر!</p><a href="games/wheel/index.html" class="mango-cta">↻ چرخاندن گردونه</a></div>
+    <div><h2><span aria-hidden="true">🎁</span> <span data-i18n="mango.dailyWheel">گردونه پاداش روزانه</span></h2><p data-i18n="mango.dailyWheelHelp">هر روز بچرخان و سکه رایگان بگیر!</p><a href="games/wheel/index.html" class="mango-cta"><span aria-hidden="true">↻</span> <span data-i18n="mango.spinWheel">چرخاندن گردونه</span></a></div>
   </section>
-  <details id="mango-account-details" class="mango-more"><summary>پروفایل، پشتیبانی و امکانات بیشتر</summary>
+  <details id="mango-account-details" class="mango-more"><summary data-i18n="mango.more">پروفایل، پشتیبانی و امکانات بیشتر</summary>
 <section class="v4-recent" id="v4-recent" hidden aria-hidden="true"><div class="v3-section-header"><h2>↶ آخرین بازی‌های من</h2><span class="v4-secondary-meta">فقط روی این دستگاه</span></div><div id="v4-recent-list"></div></section>
 
       <div class="profile-card">
