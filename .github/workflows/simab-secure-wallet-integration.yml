@@ -64,6 +64,8 @@ jobs:
         run: node --test tests/security-v17-integration.mjs
       - name: Verify new games and poker UI in portrait and landscape
         run: node tests/ui-v13.mjs
+      - name: Two signed Hokm seats with Telegram invite URL and free wallet isolation
+        run: node tests/ui-two-seat-hokm-v30.mjs
       - name: Two real seats, invitation, live audio and optional cameras
         run: node tests/ui-private-poker.mjs
       - name: Wallet layout, server-confirmed Stars and offer UI
