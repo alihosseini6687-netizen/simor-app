@@ -1,21 +1,21 @@
 {
-  "name": "SIMAB — Gaming Club",
-  "short_name": "SIMAB",
-  "description": "SIMAB games, friends and daily missions",
+  "name": "Mango Game — بازی و سرگرمی",
+  "short_name": "Mango Game",
+  "description": "Mango Game: بازی‌های حکم، پوکر، تخته‌نرد و گردونه پاداش در تلگرام",
   "lang": "fa",
   "dir": "auto",
   "id": "./index.html",
   "start_url": "./index.html?home=1",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0b0820",
-  "theme_color": "#170b2b",
+  "background_color": "#121417",
+  "theme_color": "#121417",
   "icons": [
     {
-      "src": "assets/v16/simab-logo.png",
-      "type": "image/png",
+      "src": "assets/mango-game-mark.svg",
+      "type": "image/svg+xml",
       "sizes": "any",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ]
 }
