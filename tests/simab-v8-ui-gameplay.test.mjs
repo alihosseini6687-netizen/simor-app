@@ -24,9 +24,9 @@ test("V8 core CSS scrolled container and all active mobile pages",()=>{
    for(const [,src] of html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g))new Script(src,{filename:p});
  }
 });
-test("home has one simple welcome panel, one Games button and a recent game link, without old shortcut cards",()=>{
+test("Mango home keeps one Games entry, recent-game link and the three approved featured cards",()=>{
  const html=read("index.html");
- assert.match(html,/data-i18n="home.shortWelcome"/);
+ assert.match(html,/<h1>به <strong>مانگو گیم<\\/strong> خوش آمدید!<\\/h1>/);\n  assert.equal((html.match(/class="mango-home-card /g)||[]).length,3);
  assert.match(html,/onclick="switchNavTab\('games'\)"/);
  assert.match(html,/id="v8-hero-recent"/);
  assert.doesNotMatch(html,/class="v8-hero-focus"/);
