@@ -1,0 +1,50 @@
+/* Mango Game front page: reference-inspired UI; no gameplay or wallet state changes. */
+body:has(.mango-home) .app-wrapper{max-width:480px;padding:10px 12px 104px}
+body:has(.mango-home) .top-header{background:transparent;border:0;box-shadow:none;justify-content:center;min-height:76px;padding:8px 0;position:relative}
+body:has(.mango-home) .top-header>.coin-badge{display:none}
+body:has(.mango-home) .top-header .header-start{width:100%;display:flex;justify-content:center;align-items:center;gap:10px}
+body:has(.mango-home) .top-header .brand-title{font-size:clamp(23px,6vw,30px);letter-spacing:0;background:none;-webkit-text-fill-color:initial;color:#f9f5ec;white-space:nowrap}
+body:has(.mango-home) .top-header .brand-title strong{color:#ffad25}
+body:has(.mango-home) .top-header .brand-title .brand-caption{display:none}
+body:has(.mango-home) .top-header .mango-mark{width:57px;height:57px;object-fit:contain;border-radius:0}
+body:has(.mango-home) .top-header .btn-gear{position:absolute;left:0;top:16px;background:#1b1f24;border:1px solid #ffffff2a;color:#ffc247;border-radius:16px;width:46px;height:46px}
+body:has(.mango-home) .top-header .mango-profile-trigger{position:absolute;right:0;top:16px;border:1px solid #ffffff2a;background:#1b1f24;color:#f5f2ea;border-radius:16px;width:46px;height:46px;padding:0;font-size:22px;display:grid;place-items:center}
+.mango-home{display:flex;flex-direction:column;gap:20px}
+.mango-wallet-bar{display:flex;align-items:center;justify-content:space-between;gap:9px;background:linear-gradient(135deg,#202226,#151719);border:1px solid #ffffff22;box-shadow:inset 0 1px #ffffff12;border-radius:24px;padding:12px 14px;min-height:84px}
+.mango-wallet-link{display:flex;gap:7px;align-items:center;border:1px solid #ffab27;background:#2a211c;color:#fff0d6;text-decoration:none;padding:11px 12px;border-radius:16px;white-space:nowrap;font-weight:800}
+.mango-wallet-info{display:flex;flex-direction:row;gap:9px;align-items:center;min-width:0}
+.mango-wallet-coin{width:37px;height:37px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(145deg,#fff4a6,#ffb31e 60%,#b85e08);border:2px solid #ffe49a;box-shadow:0 0 15px #fbaa2866;color:#7e4306;font-weight:900}
+.mango-wallet-amount{display:flex;flex-direction:column;line-height:1.35;min-width:0}
+.mango-wallet-amount b{font-size:clamp(16px,4.5vw,24px);color:#fff;direction:ltr;text-align:right;white-space:nowrap}
+.mango-wallet-amount small{color:#abb0b7;font-size:11px}
+.mango-wallet-plus{width:40px;height:40px;display:grid;place-items:center;border-radius:13px;background:linear-gradient(135deg,#ffd65a,#ff9814);color:#241408;text-decoration:none;font-size:27px;font-weight:850;flex:none}
+.mango-hero{min-height:220px;border:1px solid #ffae386e;border-radius:25px;box-shadow:inset 0 0 24px #ff981311,0 10px 24px #0008;background:radial-gradient(circle at 15% 52%,#a653255d,transparent 46%),linear-gradient(115deg,#30201b,#221b20 63%,#241722);display:grid;grid-template-columns:40% 1fr;gap:6px;align-items:center;overflow:hidden;padding:18px 15px}
+.mango-hero .mango-hero-art{width:100%;max-height:180px;filter:drop-shadow(0 0 17px #ffa52e80);align-self:center}
+.mango-hero h1{font-size:clamp(17px,4.1vw,23px);line-height:1.6;color:#fff;margin:0 0 8px;font-weight:900}
+.mango-hero h1 em{font-style:normal;color:#ffb42e}
+.mango-hero p{font-size:12px;line-height:1.7;color:#e6d9cb;margin:0 0 14px}
+.mango-cta{display:flex;align-items:center;justify-content:center;gap:8px;text-align:center;min-height:45px;border-radius:16px;padding:10px 8px;font-weight:900;width:100%}
+.mango-hero-content{min-width:0}
+.mango-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
+.mango-heading h2{font-size:19px;color:#f5f2ea;margin:0}.mango-heading button{background:none;border:0;box-shadow:none!important;color:#ffae2c!important;font-size:12px;min-height:38px;padding:0}
+.mango-games-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.mango-game-tile{min-width:0;text-decoration:none;overflow:hidden;position:relative;aspect-ratio:.78;border-radius:21px;border:1px solid #c7964a60;background:#27201c;box-shadow:0 8px 18px #0005;display:flex;flex-direction:column;justify-content:end;color:#fff}
+.mango-game-tile:before{content:'';position:absolute;inset:0;background-position:center;background-size:cover;transition:transform .15s ease}
+.mango-game-tile:after{content:'';position:absolute;inset:25% 0 0;background:linear-gradient(transparent,#141015f2)}
+.mango-game-tile:active:before{transform:scale(1.04)}
+.mango-game-tile.hokm{border-color:#aa72d088;background:#26182c}.mango-game-tile.hokm:before{background-image:url('../v15/hokm-cover.webp')}
+.mango-game-tile.poker{border-color:#f2676780;background:#411b22}.mango-game-tile.poker:before{background-image:url('../v3/poker.webp')}
+.mango-game-tile.backgammon{border-color:#cd9550a3;background:#3a281b}.mango-game-tile.backgammon:before{background-image:url('../v3/backgammon.webp')}
+.mango-game-tile .tile-label{position:relative;z-index:2;text-align:center;padding:10px 3px 14px;text-shadow:0 2px 5px #000}
+.mango-game-tile strong{display:block;font-size:clamp(14px,3.8vw,19px);line-height:1.45}.mango-game-tile small{color:#e6d6d6;font-size:11px}
+.mango-wheel-banner{position:relative;display:grid;grid-template-columns:38% 1fr;align-items:center;gap:12px;min-height:175px;background:radial-gradient(circle at 10% 70%,#a95e1f66,transparent 45%),linear-gradient(145deg,#31211a,#1c1b1c);border:1px solid #ffb0458f;border-radius:24px;padding:15px;overflow:hidden}
+.mango-wheel-art{font-size:clamp(62px,18vw,104px);text-shadow:0 0 24px #ffae4480;line-height:1;text-align:center}
+.mango-wheel-banner h2{font-size:clamp(16px,4.5vw,21px);margin:0 0 8px;line-height:1.5}
+.mango-wheel-banner p{font-size:12px;color:#efdfd2;margin:0 0 14px;line-height:1.6}
+.mango-wheel-banner .mango-cta{font-size:14px}
+.mango-more{border:1px solid #ffbc5430;border-radius:18px;background:#1b1f24;padding:0 10px 10px}
+.mango-more>summary{padding:13px 6px;color:#ffc247;font-weight:800;cursor:pointer}
+.mango-more .profile-card{margin-top:8px}
+body:has(.mango-home) .bottom-nav{background:#171b1ff2;border:1px solid #ffffff26;border-radius:22px;box-shadow:0 -8px 26px #0009;bottom:10px;left:10px;right:10px;width:calc(100% - 20px);max-width:460px;margin:auto}
+body:has(.mango-home) .nav-btn-box.active{color:#ff9e1b}
+@media(max-width:365px){.mango-wallet-bar{padding:10px 8px}.mango-wallet-link{padding:9px 7px;font-size:12px}.mango-hero{grid-template-columns:35% 1fr;padding:14px 10px}.mango-hero p{font-size:11px}.mango-games-grid{gap:6px}.mango-game-tile{border-radius:15px}}
