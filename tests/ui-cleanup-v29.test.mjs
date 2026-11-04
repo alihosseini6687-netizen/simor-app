@@ -10,7 +10,9 @@ const css=read('assets/css/simab-safe-area-v16.css');
 const shop=read('assets/js/simab-shop-v15.js');
 
 test('home has one welcome title, one Games entry and recent-game row, but no game shortcut strip or virtual-credit duplicates',()=>{
- assert.match(home,/<h1 data-i18n="home.shortWelcome">خوش آمدید<\/h1>/);
+ assert.match(home,/<h1>به <em>مانگو گیم<\/em> خوش آمدید!<\/h1>/);
+ assert.match(home,/class="mango-games-grid"/);
+ assert.match(home,/class="mango-wheel-banner"/);
  assert.match(home,/onclick="switchNavTab\('games'\)"/);
  assert.match(home,/id="v8-hero-recent"/);
  assert.doesNotMatch(home,/class="v8-hero-focus"/);
