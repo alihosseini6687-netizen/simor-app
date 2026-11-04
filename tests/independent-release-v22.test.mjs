@@ -11,12 +11,13 @@ const auditApprovedBlobs={
   "assets/js/simab-party-v16.js": "67743636a73c265f3fa901a72fc691fa0d4cf651",
   "assets/js/simab-private-poker-v14.js": "e16d432a72f6378567eb0bb939712fca74d3cd43",
   "assets/js/simab-wallet-client.js": "46c9c95177e9620169c4a0f367f43560f80843c6",
-  "games/room/index.html": "33d85c2c2695847e13bd35a89b5d062f8f5c5fbd",
+  "games/room/index.html": "14a7e9a202950dd72c681f82b33dc9cddb0f802e",
   "supabase/functions/simab-central-quests/index.ts": "71e2b03c651a59c0984bef647c8f37441c62b381",
   "supabase/functions/simab-central-quests/party-api.ts": "4d462c66f6143b53a751256e5a89bcdccfe9ba0a",
   "supabase/functions/simab-central-quests/party-games.ts": "0482ebaf2ebc593c125a2b9887539d7fcc603309",
   "supabase/functions/simab-central-quests/poker-room-api.ts": "d968d49bf0acad37be11648b1488a11b8098d5ee",
   "supabase/functions/simab-central-quests/table-games.ts": "1aed75cd463e9a57d6f390079ecdd1f79a73e435",
+  "index.html": "85283fd0046ab2a5829d59027498ab9195d6dc8d",
   "assets/js/simab-shop-v15.js": "d04c3edcb34f44b98e124dc19c72f12e24eaa82f"
 };
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
