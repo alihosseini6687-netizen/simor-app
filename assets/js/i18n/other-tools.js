@@ -83,6 +83,12 @@
  "mango.about":["Mango Game مجموعه بازی‌های آنلاین و سرگرمی با سکه و ژتون مجازی است.","Mango Game is a collection of online games and entertainment with virtual coins and chips.","Mango Game — коллекция онлайн-игр и развлечений с виртуальными монетами и фишками.","Mango Game مجموعة ألعاب وترفيه عبر الإنترنت بعملات ورقائق افتراضية.","Mango Game ऑनलाइन खेल और मनोरंजन का संग्रह है जिसमें आभासी सिक्के और चिप्स हैं।","Mango Game propose des jeux en ligne avec des pièces et jetons virtuels.","Mango Game bietet Online-Spiele mit virtuellen Münzen und Chips."],
  "mango.aboutHeading":["⭐ درباره Mango Game","⭐ About Mango Game","⭐ О Mango Game","⭐ حول Mango Game","⭐ Mango Game के बारे में","⭐ À propos de Mango Game","⭐ Über Mango Game"],
  "mango.gameInvitation":["شما با دعوت کاربر {name} به سیماب پیوستید! ✨","You joined Mango Game via {name}'s invitation! ✨","Вы присоединились к Mango Game по приглашению {name}! ✨","انضممت إلى Mango Game بدعوة من {name}! ✨","आप {name} के निमंत्रण से Mango Game में शामिल हुए! ✨","Vous avez rejoint Mango Game grâce à l’invitation de {name} ! ✨","Du bist Mango Game durch die Einladung von {name} beigetreten! ✨"],
+ "mango.brandInitial":["M","M","M","M","M","M","M"],
+ "mango.rewardsAria":["نمایش جوایز","Show rewards","Открыть награды","عرض المكافآت","इनाम दिखाएँ","Voir les récompenses","Belohnungen anzeigen"],
+ "mango.profileAria":["نمایش پروفایل","Show profile","Открыть профиль","عرض الملف الشخصي","प्रोफ़ाइल दिखाएँ","Voir le profil","Profil anzeigen"],
+ "mango.walletAria":["کیف پول و موجودی مانگو","Mango wallet and balance","Кошелёк и баланс Mango","محفظة مانجو ورصيدها","मैंगो वॉलेट और शेष राशि","Portefeuille et solde Mango","Mango-Guthaben und Wallet"],
+ "mango.welcomeAria":["به مانگو گیم خوش آمدید","Welcome to Mango Game","Добро пожаловать в Mango Game","مرحبًا بك في Mango Game","Mango Game में आपका स्वागत है","Bienvenue sur Mango Game","Willkommen bei Mango Game"],
+ "mango.featuredAria":["بازی‌های محبوب مانگو","Popular Mango games","Популярные игры Mango","ألعاب مانجو الشهيرة","लोकप्रिय मैंगो खेल","Jeux Mango populaires","Beliebte Mango-Spiele"],
  'home.shortWelcome':["خوش آمدید","Welcome","Добро пожаловать","مرحبًا","स्वागत है","Bienvenue","Willkommen"],
  };
  const sources=window.SimabLocaleSources||(window.SimabLocaleSources={});for(const [id,row] of Object.entries(rows))['fa','en','ru','ar','hi','fr','de'].forEach((lang,i)=>{window.SimabLocales.catalogs[lang][id]=row[i];if(i===0)sources[row[i]]=id;});
