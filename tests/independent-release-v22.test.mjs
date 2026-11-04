@@ -34,11 +34,24 @@ const mangoV31ApprovedBlobs={
   "assets/js/simab-i18n-v16.js": "3109c279c3761c42d7a017a55e920070206158db",
   "assets/js/simab-central-quests.js": "aaecc70f6e5bee1af1e85f5dc78e4d4c2eff1762"
 };
+// V32 exact reviewed waiting-lobby, timeout API and presentation fingerprints.
+const mangoV32ApprovedBlobs={
+  "games/room/index.html": "37d88062bfc0797c72d4cab2f937bc7ecfe8b0e5",
+  "assets/js/simab-party-v16.js": "512f897f8d9881b32cc12f1759a7e2759093eca9",
+  "assets/js/simab-private-poker-v14.js": "efc811a26437d43d2514d786033e64d6a468e77e",
+  "supabase/functions/simab-central-quests/party-api.ts": "002475d3d21f91bed7ce115c8d9bf3864d1d7859",
+  "supabase/functions/simab-central-quests/poker-room-api.ts": "51f6cefdb51053a4d501f31e481751c117352173"
+};
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
 test('preserve original protected code while allowing exact reviewed UI/i18n modifications',()=>{
  for(const [file,expected] of Object.entries(manifest.hashes)){
   let source=readFileSync(new URL('../'+file,import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  if(Object.hasOwn(mangoV32ApprovedBlobs,file)){
+   const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
+   assert.equal(blob,mangoV32ApprovedBlobs[file],file+' v32 audited source changed unexpectedly');
+   continue;
+  }
   if(Object.hasOwn(mangoV31ApprovedBlobs,file)){
    const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
    assert.equal(blob,mangoV31ApprovedBlobs[file],file+' v31 reviewed source changed unexpectedly');
