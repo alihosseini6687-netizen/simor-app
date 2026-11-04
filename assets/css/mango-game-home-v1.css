@@ -2,7 +2,7 @@
 body.mango-home-app .app-wrapper{max-width:440px;margin:0 auto;padding:10px 12px calc(100px + env(safe-area-inset-bottom,0px))!important}
 body.mango-home-app .top-header{
  display:grid;grid-template-columns:46px minmax(0,1fr) 46px;align-items:center;gap:6px;
- margin:0 0 10px;padding:8px 1px;background:transparent!important;border:none!important;box-shadow:none!important;
+ margin:0 0 10px;padding:8px 1px;direction:ltr;background:transparent!important;border:none!important;box-shadow:none!important;
 }
 body.mango-home-app .header-start{justify-content:center;min-width:0;gap:6px}
 body.mango-home-app .mango-brand-icon{width:56px;height:56px;object-fit:contain;filter:drop-shadow(0 3px 8px #ff9e1b55)}
@@ -14,24 +14,24 @@ body.mango-home-app .mango-icon-button{
 }
 body.mango-home-app .mango-wallet-row{
  display:grid;grid-template-columns:minmax(100px,1fr) minmax(130px,1.4fr) 43px;align-items:center;
- gap:9px;padding:11px 12px;margin-bottom:16px;
+ gap:9px;padding:11px 12px;margin-bottom:16px;direction:ltr;
  border:1px solid #ffc24747;border-radius:23px;background:linear-gradient(145deg,#202225,#15171b);box-shadow:0 8px 20px #0005
 }
 body.mango-home-app .mango-wallet-link{display:flex;align-items:center;justify-content:center;gap:7px;min-height:46px;
  background:linear-gradient(100deg,#382417,#241e1e);border:1px solid #ff9e1b;border-radius:15px;
  color:#f5f2ea;text-decoration:none;font-weight:850;font-size:13px;white-space:nowrap}
 body.mango-home-app .mango-wallet-link .mango-wallet-symbol{color:#ff9e1b;font-size:22px}
-body.mango-home-app .mango-coin-balance{display:flex;flex-direction:row-reverse;justify-content:center;align-items:center;gap:8px;
+body.mango-home-app .mango-coin-balance{display:flex;flex-direction:row;justify-content:center;align-items:center;gap:8px;
  background:none!important;box-shadow:none!important;border:none!important;padding:0!important;
  cursor:default;color:#f5f2ea;min-width:0}
 body.mango-home-app .mango-coin-symbol{display:grid;place-items:center;width:41px;height:41px;min-width:41px;border-radius:50%;
  background:radial-gradient(circle at 25% 20%,#ffebaa,#ffc247 49%,#c37707 85%);box-shadow:inset 0 0 0 3px #7a460d,0 1px 13px #ffc24755;color:#5d3306;font-size:23px}
-body.mango-home-app .mango-wallet-amount{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+body.mango-home-app .mango-wallet-amount{display:flex;direction:rtl;flex-direction:column;align-items:flex-start;min-width:0}
 body.mango-home-app #user-balance-txt{font-size:clamp(16px,4.6vw,24px);color:#fff;font-weight:900;line-height:1.15;white-space:nowrap}
 body.mango-home-app .mango-wallet-amount small{color:#d4d1c9;font-size:11px;white-space:nowrap}
 body.mango-home-app .mango-wallet-add{display:grid;place-items:center;border-radius:14px;min-height:43px;background:linear-gradient(130deg,#ffc247,#ff9e1b);color:#271500;font-size:29px;font-weight:750;text-decoration:none}
 body.mango-home-app .v3-hero{
- min-height:280px!important;height:auto!important;display:flex!important;direction:rtl;align-items:center;
+ min-height:280px!important;height:auto!important;display:flex!important;direction:ltr;align-items:center;
  border:1px solid #ff9e1b80!important;border-radius:26px!important;overflow:hidden!important;
  background:radial-gradient(circle at 25% 52%,#b35a1c66,transparent 42%),linear-gradient(120deg,#38241d,#25181e 50%,#1a181c)!important;
  box-shadow:0 8px 32px #0007,0 0 20px #ff9e1b16!important;padding:17px!important;margin-bottom:20px!important
@@ -39,7 +39,7 @@ body.mango-home-app .v3-hero{
 body.mango-home-app .mango-hero-image{flex:0 0 43%;width:43%;max-width:186px;align-self:stretch;display:grid;place-items:center}
 body.mango-home-app .mango-hero-image img{width:100%;max-height:200px;object-fit:contain;filter:drop-shadow(0 8px 20px #ff9e1b66)}
 body.mango-home-app .v3-hero-content{position:relative!important;inset:auto!important;transform:none!important;flex:1;
- display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:10px;
+ display:flex;direction:rtl;flex-direction:column;align-items:stretch;justify-content:center;gap:10px;
  padding:0!important;background:none!important;text-align:right!important;min-width:0}
 body.mango-home-app .v3-hero-content h1{font-weight:900!important;color:#fff!important;text-shadow:none!important;
  font-size:clamp(20px,5.2vw,27px)!important;line-height:1.45!important;margin:0!important}
@@ -49,11 +49,11 @@ body.mango-home-app .mango-cta{display:flex;align-items:center;justify-content:c
  border-radius:18px!important;text-decoration:none;font-size:14px!important;padding:10px 12px!important;white-space:normal}
 body.mango-home-app .v8-hero-recent{font-size:10px;margin:0;gap:5px}
 body.mango-home-app .v8-hero-recent a{background:#302016cf!important;border-color:#e6a84f!important}
-body.mango-home-app .mango-feature-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:6px 0 12px}
+body.mango-home-app .mango-feature-heading{display:flex;direction:rtl;justify-content:space-between;align-items:center;gap:10px;margin:6px 0 12px}
 body.mango-home-app .mango-feature-heading h2{font-size:20px;color:#f5f2ea;line-height:1.4;margin:0;white-space:nowrap}
 body.mango-home-app .mango-feature-heading h2 span{color:#ff9e1b}
 body.mango-home-app .mango-feature-heading button{min-height:38px;background:transparent;border:none;box-shadow:none;color:#ffc247;font-weight:750;font-size:12px;padding:5px;white-space:nowrap}
-body.mango-home-app .mango-three-games{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:18px}
+body.mango-home-app .mango-three-games{display:grid;direction:rtl;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;margin-bottom:18px}
 body.mango-home-app .mango-home-card{position:relative;min-width:0;aspect-ratio:.81;display:flex;flex-direction:column;
  justify-content:flex-end;align-items:center;overflow:hidden;border:1px solid #ffc24755;border-radius:20px;
  color:#fff;text-decoration:none;box-shadow:0 8px 23px #0005;transition:transform .2s}
