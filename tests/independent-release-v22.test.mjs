@@ -6,11 +6,28 @@ const manifest=JSON.parse(readFileSync(new URL('./fixtures/independent-release-p
 const sha=text=>createHash('sha256').update(text).digest('hex');
 // Exact Git blob hashes for the five user-approved visual-only files in v29.
 const approvedUIBlobs={"assets/css/simab-safe-area-v16.css":"3652da7c9f0178b76a3dc439fbf0412e73195fec","assets/js/simab-i18n-v16.js":"9d83409dec23a842cffd1bd0af8429a02c01025b","assets/js/simab-shop-v15.js":"778996a444740aacd1aedd9b1f318c4c62e1849d","games/room/index.html":"a98ca0e25ce9a05cad66d75ed8321c04412a10f4","index.html":"cb4ed48db48e95390604ddcd55c5aba2e4249bd8"};
+// Exact audited v20261103 Git blob hashes; other protected baselines remain checked.
+const auditApprovedBlobs={
+  "assets/js/simab-party-v16.js": "67743636a73c265f3fa901a72fc691fa0d4cf651",
+  "assets/js/simab-private-poker-v14.js": "e16d432a72f6378567eb0bb939712fca74d3cd43",
+  "assets/js/simab-wallet-client.js": "46c9c95177e9620169c4a0f367f43560f80843c6",
+  "games/room/index.html": "33d85c2c2695847e13bd35a89b5d062f8f5c5fbd",
+  "supabase/functions/simab-central-quests/index.ts": "71e2b03c651a59c0984bef647c8f37441c62b381",
+  "supabase/functions/simab-central-quests/party-api.ts": "4d462c66f6143b53a751256e5a89bcdccfe9ba0a",
+  "supabase/functions/simab-central-quests/party-games.ts": "0482ebaf2ebc593c125a2b9887539d7fcc603309",
+  "supabase/functions/simab-central-quests/poker-room-api.ts": "d968d49bf0acad37be11648b1488a11b8098d5ee",
+  "supabase/functions/simab-central-quests/table-games.ts": "1aed75cd463e9a57d6f390079ecdd1f79a73e435"
+};
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
 test('preserve original protected code while allowing exact reviewed UI/i18n modifications',()=>{
  for(const [file,expected] of Object.entries(manifest.hashes)){
   let source=readFileSync(new URL('../'+file,import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  if(Object.hasOwn(auditApprovedBlobs,file)){
+   const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
+   assert.equal(blob,auditApprovedBlobs[file],file+' PR46 reviewed source changed unexpectedly');
+   continue;
+  }
   if(Object.hasOwn(approvedUIBlobs,file)){
    const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
    assert.equal(blob,approvedUIBlobs[file],file+' v29 visual-only file changed unexpectedly');

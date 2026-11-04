@@ -39,7 +39,7 @@ test('every published competitive game accepts its supported player counts with 
 test('each competitive player-count variant reaches a terminal state under legal server turns',()=>{
  const endToEnd=modes.filter(([kind])=>kind!=='truth');
  for(const [kind,n] of endToEnd){
-  let state=startParty(kind,n,0,{twoGift:true,twoTarget:true});
+  let state=startParty(kind,n,0,{twoGift:true,twoTarget:true,...(kind==='sevens'?{sevensRulesVersion:1}:{})});
   let turns=0;
   while(!state.finished&&turns++<25000){
    if(kind==='sevens'){
