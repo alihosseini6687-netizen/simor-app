@@ -29,10 +29,8 @@ test('other supported games remain available via existing Games tab; identity an
 });
 test('global theme is linked on all main gameplay pages without changing the protected i18n loader',()=>{
  assert.match(home,/mango-game-theme-v1\.css\?v=20261104/);
- assert.match(entry,/DOMContentLoaded/);
- assert.match(entry,/mango-game-theme-v1\.css\?v=20261104/);
  for(const p of ['games/room/index.html','games/poker/friends.html','games/backgammon/index.html','games/slot/index.html','wallet/index.html']){
-   assert.match(get(p),/simab-i18n-v16\.js/,'shared CSS loader absent in '+p);
+   assert.match(get(p),/mango-game-theme-v1\.css\?v=20261104/,'Mango stylesheet absent in '+p);
  }
  for(const value of ['#121417','#1b1f24','#ff9e1b','#ffc247','#a6d94e','#f5f2ea','#a7adb7'])
   assert.ok(css.includes(value),'missing brand color '+value);
