@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-<head><script src="assets/js/simab-i18n-v16.js?v=20261102"></script><link rel="icon" href="assets/v16/simab-logo.png"><link rel="apple-touch-icon" href="assets/v16/simab-logo.png"><link rel="manifest" href="simab.webmanifest">
+<head><script src="assets/js/simab-i18n-v16.js?v=20261102"></script><link rel="icon" href="assets/mango-game-mark.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="assets/mango-game-mark.svg"><link rel="manifest" href="simab.webmanifest">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>SIMAB | Gaming Club</title>
-  <meta name="theme-color" content="#0c0920">
-  <meta name="description" content="سیماب — مجموعه بازی‌های سرگرمی و مأموریت‌های روزانه">
+  <title>Mango Game | Gaming Club</title>
+  <meta name="theme-color" content="#121417">
+  <meta name="description" content="مانگو گیم — مجموعه بازی‌های سرگرمی و مأموریت‌های روزانه">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
     // Preserve only Telegram's signed launch payload across same-tab page
@@ -298,45 +298,81 @@
 <link rel="stylesheet" href="assets/css/simab-secure-entry-v7.css?v=7">
 <link rel="stylesheet" href="assets/css/simab-v8-core.css?v=8">
 <link rel="stylesheet" href="assets/css/simab-v8-home.css?v=9">
-<link rel="stylesheet" href="assets/css/simab-launch-v15.css?v=17"><link rel="stylesheet" href="assets/css/simab-safe-area-v16.css?v=20261102"><script src="assets/js/simab-safe-area-v16.js?v=17" defer></script><style>.game-card[data-game-id="11"]{background:linear-gradient(0deg,#10071fdd,transparent),url(assets/v16/snakes-cover.webp) center/cover!important}</style><link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101"></head>
+<link rel="stylesheet" href="assets/css/simab-launch-v15.css?v=17"><link rel="stylesheet" href="assets/css/simab-safe-area-v16.css?v=20261102"><script src="assets/js/simab-safe-area-v16.js?v=17" defer></script><style>.game-card[data-game-id="11"]{background:linear-gradient(0deg,#10071fdd,transparent),url(assets/v16/snakes-cover.webp) center/cover!important}</style><link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="assets/css/mango-game-theme-v1.css?v=20261104" id="mango-game-theme-v1"></head>
 <body>
 
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
   
   <div class="app-wrapper">
     <!-- هدر بالای صفحه -->
-    <header class="top-header">
-      <div class="coin-badge" onclick="switchNavTab('tasks')">
-        <div class="coin-badge-s">S</div>
-        <span id="user-balance-txt" data-coins>—</span>
+    <header class="top-header mango-header">
+      <a class="mango-header-icon" href="#mango-account-details" aria-label="پروفایل" title="پروفایل" onclick="document.getElementById('mango-account-details').open=true">♙</a>
+      <div class="mango-head-brand">
+        <img src="assets/mango-game-mark.svg" alt="لوگوی مانگو گیم" width="67" height="67">
+        <strong dir="ltr"><span>Mango</span> Game</strong>
       </div>
-      <div class="header-start">
-        <img src="assets/v16/simab-logo.webp" width="54" height="54" alt="نشان سیماب" style="border-radius:14px"><div class="brand-title">SIMAB<span class="brand-caption">GAMING CLUB</span></div>
-        <button class="btn-gear" onclick="openAboutModal()" title="درباره سیماب">⭐</button>
-      </div>
+      <button type="button" class="mango-header-icon" onclick="switchNavTab('news')" aria-label="اخبار و اعلان‌ها" title="اخبار">♧</button>
     </header>
+    <div class="mango-wallet-strip">
+      <a href="wallet/index.html" class="mango-wallet-cta"><span aria-hidden="true">▣</span> کیف پول</a>
+      <span class="mango-wallet-divider" aria-hidden="true"></span>
+      <div class="mango-coins"><span class="mango-coin-illustration" aria-hidden="true">🥭</span>
+        <div class="mango-coins-copy"><b id="user-balance-txt" data-coins>—</b><small>سکه مانگو</small></div>
+      </div>
+      <a href="wallet/index.html" class="mango-wallet-plus" aria-label="افزایش موجودی">+</a>
+    </div>
 
 
-    <!-- سربرگ ۱: خانه (پیش‌فرض) -->
+    <!-- Mango Game home: approved 3 featured games; all other games remain in Games tab. -->
     <div id="tab-home-content">
-<section class="v3-hero" aria-label="به سیماب خوش آمدید">
-  <img class="v3-hero-art" src="assets/v3/hero.webp" alt="" decoding="async" fetchpriority="high">
-  <div class="v3-hero-content">
-    <h1 data-i18n="home.shortWelcome">خوش آمدید</h1>
-    <p>جایی برای بازی، سرگرمی و رقابت‌های هیجان‌انگیز.</p>
-    <button type="button" class="v3-gold-button" onclick="switchNavTab('games')">شروع بازی <span aria-hidden="true">←</span></button>
-    <div id="v8-hero-recent" class="v8-hero-recent" aria-live="polite"></div>
-  </div>
-</section>
-
-<section class="v4-recent" id="v4-recent" hidden aria-hidden="true"><div class="v3-section-header"><h2>↶ آخرین بازی‌های من</h2><span class="v4-secondary-meta">فقط روی این دستگاه</span></div><div id="v4-recent-list"></div></section>
-
+      <section class="mango-hero" aria-label="به مانگو گیم خوش آمدید">
+        <div class="mango-hero-copy">
+          <h1>به <em>مانگو گیم</em> خوش آمدید!</h1>
+          <p>دنیایی از بازی‌های هیجان‌انگیز<br>و رقابت‌های دوستانه</p>
+          <button class="mango-button" type="button" onclick="switchNavTab('games')">▶ همین حالا بازی کن</button>
+        </div>
+        <div class="mango-hero-art"><img src="assets/mango-game-mark.svg" alt="" aria-hidden="true" width="230" height="230"></div>
+      </section>
+      <div id="v8-hero-recent" class="v8-hero-recent" aria-live="polite"></div>
+      <section aria-labelledby="mango-games-title">
+        <div class="mango-section-head">
+          <h2 id="mango-games-title"><span>🎮</span> بازی‌های مانگو</h2>
+          <button type="button" onclick="switchNavTab('games')">مشاهده همه ‹</button>
+        </div>
+        <div class="mango-featured-grid">
+          <a class="mango-game-tile" href="games/room/index.html?game=hokm" aria-label="بازی حکم">
+            <img src="assets/v15/hokm-cover.webp" alt="" decoding="async">
+            <span class="mango-game-label"><strong>حکم</strong><small>Hokm</small></span>
+          </a>
+          <a class="mango-game-tile" href="games/poker/index.html" aria-label="بازی پوکر">
+            <img src="assets/v3/poker.webp" alt="" decoding="async">
+            <span class="mango-game-label"><strong>پوکر</strong><small>Poker</small></span>
+          </a>
+          <a class="mango-game-tile" href="games/room/index.html?game=backgammon" aria-label="بازی تخته نرد">
+            <img src="assets/v3/backgammon.webp" alt="" decoding="async">
+            <span class="mango-game-label"><strong>تخته نرد</strong><small>Backgammon</small></span>
+          </a>
+        </div>
+      </section>
+      <section class="mango-wheel-card" aria-labelledby="mango-wheel-title">
+        <div class="mango-wheel-copy">
+          <h2 id="mango-wheel-title">🎁 گردونه پاداش روزانه</h2>
+          <p>هر روز بچرخان و سکه رایگان بگیر!</p>
+          <a class="mango-button" href="games/wheel/index.html">⟳ چرخاندن گردونه</a>
+        </div>
+        <div class="mango-wheel-art" aria-hidden="true">
+          <span class="mango-wheel-pointer">▼</span><div class="mango-wheel-face"></div>
+        </div>
+      </section>
+      <details class="mango-account-tools" id="mango-account-details">
+        <summary>پروفایل، پشتیبانی و امکانات دیگر</summary>
+        <section class="v4-recent" id="v4-recent" hidden aria-hidden="true"><div class="v3-section-header"><h2>آخرین بازی‌های من</h2><span class="v4-secondary-meta">فقط روی این دستگاه</span></div><div id="v4-recent-list"></div></section>
       <div class="profile-card">
         <div class="v3-section-header v3-profile-heading"><h2>👑 پروفایل بازیکن</h2></div>
         <div class="profile-top">
           <div class="user-avatar" id="avatar-container">👤</div>
           <div>
-            <div class="user-name" id="user-name-txt">کاربر سیماب</div>
+            <div class="user-name" id="user-name-txt">کاربر مانگو گیم</div>
             <div class="user-username" id="user-tg-username">@User</div>
           </div>
           <a class="home-wallet-button" href="wallet/index.html"><span>◈</span><span><strong>کیف پول</strong><small>سکه، ژتون و TON</small></span></a>
@@ -360,7 +396,7 @@
       </div>
 
       <div class="v4-section-header"><h2>خدمات و راهنما</h2><span>همیشه در دسترس</span></div>
-      <a class="v4-assistant" href="ai/index.html"><span class="v4-assistant-icon" aria-hidden="true">✦</span><div><strong>دستیار هوشمند سیماب</strong><small>راهنما و گفت‌وگو</small></div><span class="v4-chevron" aria-hidden="true">←</span></a>
+      <a class="v4-assistant" href="ai/index.html"><span class="v4-assistant-icon" aria-hidden="true">✦</span><div><strong>دستیار هوشمند مانگو گیم</strong><small>راهنما و گفت‌وگو</small></div><span class="v4-chevron" aria-hidden="true">←</span></a>
       <!-- دکمه‌های کپسولی -->
       <div class="action-bars">
         <div class="action-btn" onclick="openSupport()">
@@ -382,13 +418,15 @@
           <div class="arrow" style="color:var(--gold);">◀</div>
         </a>
       </div>
+
+      </details>
     </div>
 
     <!-- سربرگ ۲: بازی‌ها -->
     <div id="tab-games-content" style="display:none;">
       <section class="v3-page-hero v3-games-hero">
         <img src="assets/v3/hero.webp" alt="" loading="lazy">
-        <p>بازی مورد علاقه‌ات را انتخاب کن و وارد دنیای سیماب شو!</p>
+        <p>بازی مورد علاقه‌ات را انتخاب کن و وارد دنیای مانگو گیم شو!</p>
       </section>
       <label class="v4-game-search"><span aria-hidden="true">⌕</span><input type="search" id="v4-game-search" placeholder="جست‌وجوی بازی..." autocomplete="off" aria-label="جست‌وجوی بازی‌ها"><kbd>⌕</kbd></label>
       <div class="v3-categories" id="v3-game-filters" role="group" aria-label="دسته‌بندی بازی‌ها">
@@ -399,7 +437,7 @@
         <button type="button" data-filter="future" aria-pressed="false">✨ آینده</button>
         <button type="button" data-filter="favorites" aria-pressed="false">★ علاقه‌مندی‌ها</button>
       </div>
-      <div class="v3-section-header"><h2>✦ بازی‌های سیماب</h2><span class="v3-minor" id="v4-games-count" aria-live="polite">بازی‌های موجود</span></div>
+      <div class="v3-section-header"><h2>✦ بازی‌های مانگو گیم</h2><span class="v3-minor" id="v4-games-count" aria-live="polite">بازی‌های موجود</span></div>
       <div class="games-grid-2col" id="games-container"></div>
       <div class="v4-empty-state" id="v4-games-empty" hidden><span>⌕</span><strong>بازی‌ای پیدا نشد</strong><p>نام دیگری را امتحان کن یا فیلترها را تغییر بده.</p><button type="button" id="v4-reset-filters">نمایش همه بازی‌ها</button></div>
     </div>
@@ -418,7 +456,7 @@
         <div class="task-balance-info">
           <div class="task-coin-circle">S</div>
           <div class="task-balance-text">
-            <span class="task-balance-label">موجودی سکه سیماب</span>
+            <span class="task-balance-label">موجودی سکه مانگو گیم</span>
             <span class="task-balance-val" id="tasks-balance-num" data-coins>—</span>
           </div>
         </div>
@@ -455,16 +493,16 @@
     <section id="tab-news-content" style="display:none;">
       <section class="v3-page-hero v3-news-hero">
         <img src="assets/v3/news.webp" alt="" loading="lazy">
-        <span class="v3-eyebrow">🏆 SIMAB EVENTS</span>
+        <span class="v3-eyebrow">🏆 Mango Game EVENTS</span>
         <h1>اخبار <em>و رویدادها</em></h1>
-        <p>برای خبرهای جدید، رویدادها و مسابقات آینده همراه سیماب باش.</p>
+        <p>برای خبرهای جدید، رویدادها و مسابقات آینده همراه مانگو گیم باش.</p>
       </section>
       <div class="v3-section-header"><h2>📢 تازه‌ترین خبرها</h2></div>
-      <div class="v3-news-card"><span class="v3-news-mark">🎮</span><div><strong>بازی‌های فعلی سیماب فعال‌اند</strong><p>میزهای دوستانه با کد دعوت، ویس اختیاری و چت اضافه شدند؛ حکم، منچ، تخته، ۷ خبیث، ماروپله، دبرنا و دوز را با دوستانت امتحان کن.</p></div><span class="v3-soon-pill">اطلاعیه</span></div>
+      <div class="v3-news-card"><span class="v3-news-mark">🎮</span><div><strong>بازی‌های فعلی مانگو گیم فعال‌اند</strong><p>میزهای دوستانه با کد دعوت، ویس اختیاری و چت اضافه شدند؛ حکم، منچ، تخته، ۷ خبیث، ماروپله، دبرنا و دوز را با دوستانت امتحان کن.</p></div><span class="v3-soon-pill">اطلاعیه</span></div>
       <div class="v4-section-header"><h2>وضعیت توسعه</h2><span>شفاف و به‌روز</span></div>
       <div class="v4-status-board"><div><span class="v4-status-dot ready"></span><strong>بازی‌های تک‌نفره</strong><small>قابل استفاده</small></div><div><span class="v4-status-dot progress"></span><strong>میزهای دوستانه</strong><small>با کد دعوت فعال</small></div><div><span class="v4-status-dot progress"></span><strong>اپ اندروید و آیفون</strong><small>در مسیر توسعه</small></div></div>
       <div class="v3-section-header"><h2>🏅 رویدادها و رقابت‌ها</h2></div>
-      <div class="v3-event-card"><img src="assets/v3/tournament.webp" alt="" loading="lazy"><div><strong>مسابقات سیماب</strong><p>پس از راه‌اندازی سیستم رقابت آنلاین و رتبه‌بندی فعال می‌شود.</p><span>در حال توسعه</span></div></div>
+      <div class="v3-event-card"><img src="assets/v3/tournament.webp" alt="" loading="lazy"><div><strong>مسابقات مانگو گیم</strong><p>پس از راه‌اندازی سیستم رقابت آنلاین و رتبه‌بندی فعال می‌شود.</p><span>در حال توسعه</span></div></div>
     </section>
 
     <!-- نوار ناوبری پایین -->
@@ -491,8 +529,8 @@
   <!-- مودال درباره ما -->
   <div class="modal-overlay" id="modal-about">
     <div class="modal-box">
-      <div class="modal-title">⭐ درباره سیماب (SIMAB)</div>
-      <div class="modal-content">پلتفرم گیمینگ و سرگرمی تعاملی سیماب با هدف ارائه بازی‌های آنلاین و سیستم پاداش طراحی شده است.</div>
+      <div class="modal-title">⭐ درباره مانگو گیم (Mango Game)</div>
+      <div class="modal-content">پلتفرم گیمینگ و سرگرمی تعاملی مانگو گیم با هدف ارائه بازی‌های آنلاین و سیستم پاداش طراحی شده است.</div>
       <button class="btn-modal-close" onclick="closeModals()">متوجه شدم</button>
     </div>
   </div>
@@ -524,7 +562,7 @@
         realUserId = u.id;
         uid = u.id.toString();
         
-        document.getElementById('user-name-txt').innerText = u.first_name || 'کاربر سیماب';
+        document.getElementById('user-name-txt').innerText = u.first_name || 'کاربر مانگو گیم';
         document.getElementById('user-tg-username').innerText = u.username ? '@' + u.username : '';
         document.getElementById('user-num-id').innerText = u.id;
 
@@ -735,7 +773,7 @@
           let currentInvites = parseInt(localStorage.getItem(inviterCountKey) || '0', 10);
           localStorage.setItem(inviterCountKey, (currentInvites + 1).toString());
 
-          showToast(`👥 شما با دعوت کاربر ${inviterCode} به سیماب پیوستید! ✨`);
+          showToast(`👥 شما با دعوت کاربر ${inviterCode} به مانگو گیم پیوستید! ✨`);
         }
       }
     }
