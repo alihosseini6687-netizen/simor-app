@@ -40,6 +40,7 @@ test('global theme is linked on all main gameplay pages without changing the pro
  assert.match(css,/\.poker-controls/);
 });
 test('Mango Game identity has a local app icon but legacy bot endpoint remains unchanged',()=>{
+ assert.match(home,/assets\/mango-game-original-icon\.webp/);
  assert.match(home,/assets\/mango-game-mark\.svg/);
  assert.match(get('assets/mango-game-mark.svg'),/<svg /);
  assert.equal(manifest.short_name,'Mango Game');
