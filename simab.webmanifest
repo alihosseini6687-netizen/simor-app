@@ -12,9 +12,9 @@
   "theme_color": "#121417",
   "icons": [
     {
-      "src": "assets/mango/mango-game-mark.svg",
-      "type": "image/svg+xml",
-      "sizes": "any",
+      "src": "assets/mango/mango-game-original-logo.png",
+      "type": "image/png",
+      "sizes": "128x128",
       "purpose": "any"
     }
   ]
