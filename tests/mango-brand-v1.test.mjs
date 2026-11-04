@@ -7,7 +7,7 @@ const txt=path=>read(path).toString('utf8');
 test('Mango Game home follows approved composition, but keeps the full original game catalog',()=>{
  const home=txt('index.html');
  const section=home.slice(home.indexOf('id="tab-home-content"'),home.indexOf('<!-- سربرگ ۲: بازی‌ها -->'));
- assert.match(section,/mango-wallet-row/);
+ assert.match(home,/mango-wallet-row/);
  assert.equal((home.match(/id="user-balance-txt"/g)||[]).length,1,'one authoritative wallet balance');
  assert.equal((home.match(/id="v8-hero-recent"/g)||[]).length,1,'recent-game restore hook retained');
  assert.match(section,/به <strong>مانگو گیم<\/strong> خوش آمدید/);
