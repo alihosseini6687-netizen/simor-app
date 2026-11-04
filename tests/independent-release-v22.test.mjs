@@ -30,7 +30,7 @@ const mangoV31ApprovedBlobs={
   "index.html": "9e05bd22c6b2a1d8c27c3a1cb9b4d70d89c5674a",
   "supabase/functions/simab-central-quests/index.ts": "0ce3b872d3485602fd8ccafbcfcae30fde3c86a5",
   "supabase/functions/simab-central-quests/shop.ts": "b78b9f20ba8d5b8c5bfd192b925797e2a4e67de7",
-  "assets/js/simab-party-v16.js": "66c207966f7eab35c44063a30797ddc8256d43cb"
+  "assets/js/simab-party-v16.js": "0ee89b391abf6f506aae69ddef663a015b1f5304"
 };
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
