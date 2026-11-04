@@ -9,14 +9,13 @@ const runtime=read('assets/js/i18n/runtime.js');
 const css=read('assets/css/simab-safe-area-v16.css');
 const shop=read('assets/js/simab-shop-v15.js');
 
-test('home has one welcome title, one Games entry and recent-game row, but no game shortcut strip or virtual-credit duplicates',()=>{
- assert.match(home,/<h1 data-i18n="home.shortWelcome">خوش آمدید<\/h1>/);
- assert.match(home,/onclick="switchNavTab\('games'\)"/);
- assert.match(home,/id="v8-hero-recent"/);
- assert.doesNotMatch(home,/class="v8-hero-focus"/);
- assert.doesNotMatch(home,/class="simab-secure-entry"/);
- assert.doesNotMatch(home,/🎮 GAME ZONE/);
- assert.doesNotMatch(home,/<h1>همه <em>بازی‌ها<\/em><\/h1>/);
+test('Approved Mango home keeps a single welcome, Games entry, recent-game row and no duplicate virtual-credit widgets',()=>{
+ const segment=home.split('id="tab-home-content"')[1].split('<!-- سربرگ ۲: بازی‌ها -->')[0];
+ assert.match(segment,/به <em>مانگو گیم<\/em> خوش آمدید!/);
+ assert.match(segment,/onclick="switchNavTab\('games'\)"/);
+ assert.match(segment,/id="v8-hero-recent"/);
+ assert.equal((segment.match(/class="mango-game-tile"/g)||[]).length,3);
+ assert.doesNotMatch(segment,/class="v8-hero-focus"|class="simab-secure-entry"/);
  assert.match(home,/بازی مورد علاقه‌ات را انتخاب کن/);
 });
 test('Tasks keeps requested reward explanation but drops repetitive server-account metadata',()=>{
@@ -78,7 +77,7 @@ test('same web home installs as a standalone shell without caching wallet data o
  assert.equal(meta.start_url,'./index.html?home=1');
  assert.equal(meta.display,'standalone');
  assert.match(home,/rel="manifest" href="simab.webmanifest"/);
- assert.ok(meta.icons.some(x=>x.src==='assets/v16/simab-logo.png'));
+ assert.ok(meta.icons.some(x=>x.src==='assets/mango-game-mark.svg'));
  assert.doesNotMatch(home,/navigator\.serviceWorker\.register/);
 });
 
