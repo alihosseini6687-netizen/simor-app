@@ -9,8 +9,11 @@ const runtime=read('assets/js/i18n/runtime.js');
 const css=read('assets/css/simab-safe-area-v16.css');
 const shop=read('assets/js/simab-shop-v15.js');
 
-test('home has one welcome title, one Games entry and recent-game row, but no game shortcut strip or virtual-credit duplicates',()=>{
- assert.match(home,/<h1 data-i18n="home.shortWelcome">خوش آمدید<\/h1>/);
+test('Mango Game home shows approved three featured games and reward wheel, preserving lower navigation',()=>{
+ assert.match(home,/class="mango-hero"/);
+ assert.ok(home.includes('به <em>مانگو گیم</em> خوش آمدید'));
+ assert.equal((home.match(/class="mango-feature"/g)||[]).length,3);
+ assert.match(home,/games\/wheel\/index\.html/);
  assert.match(home,/onclick="switchNavTab\('games'\)"/);
  assert.match(home,/id="v8-hero-recent"/);
  assert.doesNotMatch(home,/class="v8-hero-focus"/);
@@ -78,7 +81,7 @@ test('same web home installs as a standalone shell without caching wallet data o
  assert.equal(meta.start_url,'./index.html?home=1');
  assert.equal(meta.display,'standalone');
  assert.match(home,/rel="manifest" href="simab.webmanifest"/);
- assert.ok(meta.icons.some(x=>x.src==='assets/v16/simab-logo.png'));
+ assert.ok(meta.icons.some(x=>x.src==='assets/brand/mango-game-mark.svg'));
  assert.doesNotMatch(home,/navigator\.serviceWorker\.register/);
 });
 
