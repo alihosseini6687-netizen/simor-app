@@ -80,7 +80,7 @@ test('same web home installs as a standalone shell without caching wallet data o
  assert.equal(meta.start_url,'./index.html?home=1');
  assert.equal(meta.display,'standalone');
  assert.match(home,/rel="manifest" href="simab.webmanifest"/);
- assert.ok(meta.icons.some(x=>x.src==='assets/mango/mango-game-mark.svg'));
+ assert.ok(meta.icons.some(x=>x.src==='assets/mango/mango-game-original-logo.png'));
  assert.doesNotMatch(home,/navigator\.serviceWorker\.register/);
 });
 
