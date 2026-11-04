@@ -107,4 +107,6 @@ jobs:
           psql -v ON_ERROR_STOP=1 -c "SELECT COUNT(*) AS sampled FROM generate_series(1,100) g WHERE public.simab_random_below(6) BETWEEN 0 AND 5;"
           psql -v ON_ERROR_STOP=1 -f tests/integration-secure-wallet.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-admin-credit.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261104_mango_referrals_v31.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-unified-wallet.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-referral-v31.sql
