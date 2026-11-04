@@ -16,6 +16,12 @@
       "type": "image/png",
       "sizes": "128x128",
       "purpose": "any"
+    },
+    {
+      "src": "assets/mango-game-logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
     }
   ]
 }
