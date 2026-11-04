@@ -25,7 +25,7 @@ const auditApprovedBlobs={
 const mangoV31ApprovedBlobs={
   "assets/js/simab-secure-wallet.js": "25fdc23e0005a6495004a709e701bc5239527dda",
   "assets/js/simab-shop-admin-v15.js": "726ebba4945310b9191969b2cb0d564745861229",
-  "assets/js/simab-wallet-client.js": "03a3b848652cc2e18c46831d7516e3ea0fbf62c1",
+  "assets/js/simab-wallet-client.js": "616a1392af09c896187d4774737edcfede1b9361",
   "games/room/index.html": "4f5b0e06cc046dc8cc7ec005cb175adfdddd0019",
   "index.html": "9e05bd22c6b2a1d8c27c3a1cb9b4d70d89c5674a",
   "supabase/functions/simab-central-quests/index.ts": "0ce3b872d3485602fd8ccafbcfcae30fde3c86a5",
