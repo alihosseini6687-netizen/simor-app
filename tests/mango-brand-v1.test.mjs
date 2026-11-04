@@ -15,6 +15,12 @@ test('Mango Game home follows approved composition, but keeps the full original 
  for(const url of ['games/room/index.html?game=hokm','games/poker/index.html','games/room/index.html?game=backgammon'])assert.ok(section.includes('href="'+url+'"'),url);
  assert.doesNotMatch(section,/games\/slot\/index\.html|games\/wheel\/index\.html\?slot|رولت|class="friends-banner"/);
  assert.match(section,/href="games\/wheel\/index\.html"/);
+ for(const asset of ['mango-hokm-card.webp','mango-poker-card.webp','mango-backgammon-card.webp','mango-wheel-art.webp']){
+  assert.match(section,new RegExp('assets/'+asset.replace('.',String.raw'\.')));
+  const bytes=read('assets/'+asset);
+  assert.equal(bytes.subarray(0,4).toString('ascii'),'RIFF',asset);
+  assert.equal(bytes.subarray(8,12).toString('ascii'),'WEBP',asset);
+ }
  assert.match(section,/id="mango-account-details"/);
  assert.match(section,/id="btn-admin-bar"/);
  assert.match(home,/id="tab-news-content"/);
