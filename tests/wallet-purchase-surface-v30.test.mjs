@@ -15,7 +15,7 @@ test('wallet uses current signed-client script, avoiding stale Telegram WebView 
 test('TON connection is not misleadingly sold as a coin payment service',()=>{
  assert.match(html,/خرید سکه با TON فعلاً فعال نیست/);
  assert.match(html,/Tonkeeper یا TON Wallet/);
- assert.match(shop,/tonBalance/);
+ assert.match(shop,/SimabWallet\.read\('ton_balance'/);
  assert.doesNotMatch(shop,/sendTransaction\s*\(/);
  assert.match(terms,/در صورت غیرفعال‌بودن فروشگاه/);
 });
