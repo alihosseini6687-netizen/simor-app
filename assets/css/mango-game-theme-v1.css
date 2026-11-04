@@ -1,0 +1,57 @@
+/* Mango Game v1 — visual tokens and chrome only.
+   DO NOT change game state, dice/cards, wallet, seats, signaling or auth. */
+:root{
+ --mango-bg:#121417;--mango-surface:#1b1f24;--mango-surface-2:#242429;
+ --mango-orange:#ff9e1b;--mango-gold:#ffc247;--mango-lime:#a6d94e;
+ --mango-ink:#f5f2ea;--mango-muted:#a7adb7;--mango-danger:#ff5b5b;
+ --mango-outline:rgba(255,194,71,.35);--mango-glow:0 10px 28px rgba(0,0,0,.34),0 0 22px rgba(255,158,27,.09);
+ --gold:var(--mango-gold);--simab-gold:var(--mango-gold);
+ --text:var(--mango-ink);--text-muted:var(--mango-muted);
+ --card-bg:rgba(27,31,36,.96);--card-inner:rgba(36,36,41,.92);
+ --border:var(--mango-outline);--gold-gradient:linear-gradient(130deg,#ffc247,#ff9e1b);
+}
+html{color-scheme:dark}
+body{color:var(--mango-ink)!important;background-color:var(--mango-bg)!important;background-image:radial-gradient(ellipse at 20% 0%,rgba(255,158,27,.13),transparent 45%),radial-gradient(ellipse at 95% 75%,rgba(166,217,78,.045),transparent 50%),linear-gradient(180deg,#121417,#101114)!important}
+a{color:var(--mango-gold)}
+:where(.shell,.party-shell,.app-wrapper){color:var(--mango-ink)}
+:where(.page-head,.party-head,.top-header,.poker-mode-nav,.room-top){
+ color:var(--mango-ink);border-color:var(--mango-outline);
+}
+:where(.panel,.profile-card,.task-balance-card,.v3-event-card,.v3-news-card,.v4-status-board,.mode-buttons,.game-card,.game-option,.room-panel,.poker-lobby,.room-call,.poker-preview,.bg-welcome,.shop-panel,.ton-panel){
+ border-color:var(--mango-outline)!important;box-shadow:var(--mango-glow);
+}
+:where(.panel,.task-balance-card,.profile-card,.game-card,.room-call,.shop-panel,.ton-panel){
+ background-color:var(--mango-surface)!important;
+}
+:where(.page-head,.party-head,.top-header,.room-top){
+ background:linear-gradient(150deg,#242326,#17191e)!important;
+ box-shadow:0 8px 24px #0005!important;
+}
+:where(.page-head h1,.party-head h1,.panel h2,.v3-section-header h2,.game-card-title,.room-brand,.room-top h1){color:var(--mango-ink)!important}
+:where(.muted,.hint,.subtitle,.game-card-sub,.v4-secondary-meta,.task-balance-label){color:var(--mango-muted)!important}
+:where(.primary,.v3-gold-button,.btn-modal-close,.coin-pack,.btn-task-swap,.mango-cta,.poker-controls #check-call,.poker-controls #raise,#create,#join,#poker-start,#create-room,#join-room,#claim){
+ background:linear-gradient(130deg,#ffc247,#ff9e1b)!important;
+ border:1px solid #ffc247!important;color:#201406!important;font-weight:850!important;
+ box-shadow:0 4px 13px #ff9e1b24;
+}
+:where(.primary,.v3-gold-button,.mango-cta):active{transform:scale(.98)}
+:where(button,a,input,select,textarea):focus-visible{outline:2px solid var(--mango-gold)!important;outline-offset:3px}
+:where(input,select,textarea):not([type="checkbox"]):not([type="radio"]){border-color:#966d34;color:var(--mango-ink)}
+:where(.game-badge,.badge-live,.network-pill){color:var(--mango-lime);border-color:#a6d94e55}
+:where(.balances,#balances,.wallet-grid,.coin-badge,.room-wallet){border-color:var(--mango-outline)}
+:where(.toast-msg,.mango-notice){background:linear-gradient(120deg,#ffc247,#ff9e1b);color:#21140a}
+:where(#media-message,#room-message,#lobby-status,#status){color:var(--mango-muted)}
+/* Treat playing surfaces as playing surfaces. Keep red/black cards, dice pips,
+   legal move indicators, player colours and contrast unchanged. */
+#arena{--mango-ui-edge:var(--mango-outline)}
+#arena .table-seat.current{box-shadow:0 0 0 2px #16191e,0 0 18px #ff9e1b66}
+#arena .table-seat.current b{color:#ffe4a4}
+#arena .game-controls button:not(.danger){border-color:#d69b4b}
+#poker-stage .room-brand,#poker-stage .room-top,#poker-lobby .page-head{border-color:var(--mango-outline)!important}
+#poker-stage .poker-action-area{border-color:#d69b4b!important}
+#poker-stage .poker-controls #fold{color:#ffd4d4!important;border-color:#c75b5b!important}
+#poker-stage .poker-controls #allin{border-color:#ffc247!important}
+.bg-sidebar,.bg-turn-card{border-color:#bb914f!important}
+.bg-center-bar{background-color:#1b1f24}
+.mango-brand-text{font-weight:900;letter-spacing:-.025em}
+@media(prefers-reduced-motion:reduce){.mango-cta,.mango-home-card{transition:none!important}}
