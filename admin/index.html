@@ -150,7 +150,7 @@
     <button type="button" class="btn-action" id="admin-credit-submit" onclick="transferCoinsDirect()">افزودن سکه به کاربر</button>
     <p id="admin-credit-status" role="status" aria-live="polite" style="font-size:13px;line-height:1.9;margin-top:8px"></p>
     <div style="margin-top: 8px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px;">
-      <button class="btn-tool purple" style="width: 100%;" onclick="generateGiftLink()">🎁 ساخت لینک هدیه تلگرامی (ارسال در چت)</button>
+      <button class="btn-tool purple" style="width: 100%;" onclick="generateGiftLink()">🎁 رفتن به ساخت لینک هدیهٔ امن</button>
     </div>
   </div>
 
@@ -267,7 +267,9 @@
   // ساخت لینک هدیه تلگرامی با کپی خودکار و ارسال در چت
   function generateGiftLink() {
     // Creating a self-authenticating gift URL client-side is never secure.
-    showPopup('موقتاً غیرفعال', 'لینک هدیه پس از راه‌اندازی صدور و مصرف یک‌باره کد در سرور فعال می‌شود. هیچ لینکی ساخته نشده است.', '🔒');
+    const panel=document.getElementById('shop-admin');
+     if(panel){panel.scrollIntoView({behavior:'smooth',block:'start'});document.getElementById('offer-title')?.focus();}
+     showPopup('لینک هدیهٔ امن', 'ابتدا در بخش آفر، مبلغ هدیه، سقف دریافت و انقضا را تعیین و آفر را ثبت کن. سپس روی «کپی لینک هدیهٔ امن» بزن. هیچ اعتباری از آدرس ساختگی پرداخت نمی‌شود.', '🎁');
   }
 
   // ارسال ساده و مستقیم به کانال @SimorApp
