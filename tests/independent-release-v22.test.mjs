@@ -39,8 +39,8 @@ const mangoV32ApprovedBlobs={
   "games/room/index.html": "37d88062bfc0797c72d4cab2f937bc7ecfe8b0e5",
   "assets/js/simab-party-v16.js": "512f897f8d9881b32cc12f1759a7e2759093eca9",
   "assets/js/simab-private-poker-v14.js": "efc811a26437d43d2514d786033e64d6a468e77e",
-  "supabase/functions/simab-central-quests/party-api.ts": "002475d3d21f91bed7ce115c8d9bf3864d1d7859",
-  "supabase/functions/simab-central-quests/poker-room-api.ts": "51f6cefdb51053a4d501f31e481751c117352173"
+  "supabase/functions/simab-central-quests/party-api.ts": "62ef01a91bd9e26269b55a25d06cb6757e707a4d",
+  "supabase/functions/simab-central-quests/poker-room-api.ts": "fd33dea0b0454defff884f321b72524d586bc056"
 };
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
