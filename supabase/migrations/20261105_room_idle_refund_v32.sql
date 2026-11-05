@@ -42,7 +42,7 @@ END;$fn$;
 
 CREATE FUNCTION public.simab_expire_waiting_rooms(p_limit integer DEFAULT 50) RETURNS integer
 LANGUAGE plpgsql SECURITY INVOKER SET search_path='' AS $fn$
-DECLARE r public.simab_poker_rooms%ROWTYPE; m jsonb; subject text; amount bigint; inserted uuid; processed integer:=0;
+DECLARE r public.simab_poker_rooms%ROWTYPE; member_record jsonb; subject text; amount bigint; inserted uuid; processed integer:=0;
 BEGIN
  IF p_limit<1 OR p_limit>100 THEN RAISE EXCEPTION 'invalid_limit'; END IF;
  FOR r IN
@@ -63,8 +63,8 @@ BEGIN
   PERFORM 1 FROM public.simab_secure_wallets w
    WHERE w.telegram_subject IN (SELECT x->>'subject' FROM jsonb_array_elements(r.state->'members') x)
    ORDER BY w.telegram_subject FOR UPDATE;
-  FOR m IN SELECT value FROM jsonb_array_elements(r.state->'members') ORDER BY value->>'subject' LOOP
-   subject:=m->>'subject';
+  FOR member_record IN SELECT value FROM jsonb_array_elements(r.state->'members') ORDER BY value->>'subject' LOOP
+   subject:=member_record->>'subject';
    inserted:=NULL;
    INSERT INTO public.simab_secure_wallet_events(telegram_subject,event_key,action,coin_delta,chip_delta,result)
    VALUES(subject,'room:auto-timeout:'||r.code,'room_timeout_refund',0,amount,
