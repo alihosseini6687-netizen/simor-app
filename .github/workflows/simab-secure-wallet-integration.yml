@@ -77,6 +77,7 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261104_mango_referrals_v31.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-unified-wallet.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-referral-v31.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-referral-guards-v32.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261105_room_idle_refund_v32.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-idle-room-v32.sql
       - name: Install Chromium for mobile UI checks
