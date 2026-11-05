@@ -75,7 +75,7 @@ BEGIN
     IF NOT FOUND THEN RAISE EXCEPTION 'missing_wallet';END IF;
    END IF;
   END LOOP;
-  UPDATE public.simab_poker_rooms SET status='cancelled',version=version+1,updated_at=now() WHERE code=r.code;
+  UPDATE public.simab_poker_rooms SET status='cancelled',state=jsonb_set(r.state,'{idleCancelled}','true'::jsonb,true),version=version+1,updated_at=now() WHERE code=r.code;
   DELETE FROM public.simab_poker_members WHERE room_code=r.code;
   DELETE FROM public.simab_room_presence WHERE room_code=r.code;
   processed:=processed+1;
