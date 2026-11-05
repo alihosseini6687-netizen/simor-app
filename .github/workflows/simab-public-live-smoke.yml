@@ -30,7 +30,7 @@ jobs:
                   return response.status, response.read(250000).decode('utf-8')
           for path, marker in (
               ('index.html','simab-launch-routing-v22.js?v=20261102'),
-              ('games/room/index.html','simab-party-v16.js?v=20261103-audit1'),
+              ('games/room/index.html','simab-party-v16.js?v=20261104-mango31'),
               ('games/poker/friends.html','simab-private-poker-v14.js?v=20261103-audit1'),
               ('assets/js/simab-party-v16.js','برای عضویت در میز دکمه'),
               ('assets/js/simab-private-poker-v14.js','میز پوکر:'),
