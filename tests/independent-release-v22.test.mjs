@@ -40,7 +40,8 @@ const mangoV32ApprovedBlobs={
   "assets/js/simab-party-v16.js": "6bd3fdbc0a438c1d7c0402ab4d4607646ad37a97",
   "assets/js/simab-private-poker-v14.js": "efc811a26437d43d2514d786033e64d6a468e77e",
   "supabase/functions/simab-central-quests/party-api.ts": "62ef01a91bd9e26269b55a25d06cb6757e707a4d",
-  "supabase/functions/simab-central-quests/poker-room-api.ts": "fd33dea0b0454defff884f321b72524d586bc056"
+  "supabase/functions/simab-central-quests/poker-room-api.ts": "fd33dea0b0454defff884f321b72524d586bc056",
+  "assets/js/simab-secure-wallet.js": "42080f4f09d983b7e2e3d89d73dffbd17738c42c"
 };
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
