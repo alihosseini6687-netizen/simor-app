@@ -1,7 +1,7 @@
 import test from 'node:test';import assert from 'node:assert/strict';import {randomUUID} from 'node:crypto';import {harness} from './support/server-harness.mjs';
 const ids=[801000011,801000012,801000013];
 test('friends poker isolates cards, protects seats, shares real turns and settles virtual chips exactly once',async()=>{
- const h=await harness();const post=(id,p)=>h.post({action:'room',requestId:randomUUID(),...p},id);
+ const h=await harness();const idleCheck=await h.client.rpc('simab_expire_waiting_rooms',{p_limit:50});assert.equal(idleCheck.error,null,JSON.stringify(idleCheck.error));const post=(id,p)=>h.post({action:'room',requestId:randomUUID(),...p},id);
  try{
  for(const id of ids){if(id!==ids[0])await h.client.rpc('simab_admin_credit',{p_admin:'702007470',p_target:String(id),p_amount:10000,p_request_id:randomUUID()});await h.post({action:'wallet',walletAction:'exchange_to_chips',amount:1000,requestId:randomUUID()},id);}
  let a=await post(ids[0],{op:'create',amount:100,maxPlayers:6,name:'علی',emoji:'🦁'});assert.equal(a.status,200,JSON.stringify(a));const code=a.body.room.code;assert.equal(a.body.wallet.chips,900);
