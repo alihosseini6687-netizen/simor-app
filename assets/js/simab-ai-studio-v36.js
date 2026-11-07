@@ -78,7 +78,7 @@ function startNext(){
  if(!generating||jobs.size>=1||!queue.length)return;
  const job=queue.shift();const wrap=document.createElement('div');wrap.className='job';
  const frame=document.createElement('iframe');frame.title='ساخت تصویر '+(job.index+1);
- frame.loading='eager';frame.referrerPolicy='no-referrer';
+ frame.loading='eager';frame.referrerPolicy='strict-origin-when-cross-origin';
  // Show the upstream frame without overlays: its ads/security prompts are not hidden.
  frame.allow='clipboard-write';
  const json={id:job.id,prompt:job.prompt,negativePrompt:job.negativePrompt,
