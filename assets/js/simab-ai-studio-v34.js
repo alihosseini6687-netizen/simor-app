@@ -3,7 +3,7 @@
 const $=id=>document.getElementById(id);
 const base='https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests';
 const tg=window.Telegram?.WebApp;
-let settings=null,chosenBlob=null,previewURL=null,popup=null,upscaleURL=null,upscaleContext=null,uploadBusy=false;
+let settings=null,chosenBlob=null,previewURL=null,popup=null,upscaleURL=null,upscaleReadPromise=null,upscaleContext=null,uploadBusy=false;
 const planIds=new Set();
 const setStatus=(t)=>{$('studio-error').textContent=t||'';};
 try{tg?.ready();tg?.expand();tg?.BackButton?.show();tg?.BackButton?.onClick(()=>location.assign('../../index.html'));}catch{}
@@ -65,13 +65,16 @@ $('upscale-open').onclick=async()=>{
  const opened=window.open('https://bigger.pics/','_blank');
  if(!opened)return setStatus('مرورگر تلگرام پنجره را مسدود کرد؛ از لینک بازکردن مستقل استفاده کن.');
  popup=opened;upscaleContext=crypto.randomUUID?.()||('mango-'+Date.now());
- try{upscaleURL=await dataURL(file);setStatus('پنجرهٔ bigger.pics باز شد؛ مراحل آپ‌اسکیل را آنجا انجام بده.');}
+ try{upscaleReadPromise=dataURL(file);upscaleURL=await upscaleReadPromise;setStatus('پنجرهٔ bigger.pics باز شد؛ مراحل آپ‌اسکیل را آنجا انجام بده.');}
  catch{setStatus('عکس قابل‌خواندن نیست.');}
 };
 window.addEventListener('message',async e=>{
  if(e.origin!=='https://app.bigger.pics'||!e.data||typeof e.data!=='object')return;
- if(e.data.type==='bigger-pics-ready'&&popup&&upscaleURL&&upscaleContext){
-  e.source?.postMessage({type:'bigger-pics-image',url:upscaleURL,name:'mango-image.png',site:location.origin+location.pathname,format:'png',context:upscaleContext},e.origin);
+ if(e.data.type==='bigger-pics-ready'&&popup&&upscaleContext){
+  // Ready may arrive before FileReader finishes for a large image.
+  let url=upscaleURL;
+  if(!url&&upscaleReadPromise){try{url=await upscaleReadPromise;}catch{return;}}
+  if(url&&upscaleContext)e.source?.postMessage({type:'bigger-pics-image',url,name:'mango-image.png',site:location.origin+location.pathname,format:'png',context:upscaleContext},e.origin);
  }
  if(e.data.type==='bigger-pics-result'&&upscaleContext&&e.data.context===upscaleContext&&e.data.blob instanceof Blob){
   selectImage(e.data.blob,'تصویر آپ‌اسکیل‌شده');pickTab('save');setStatus('نسخهٔ آپ‌اسکیل دریافت شد؛ حالا می‌توانی آن را دانلود کنی.');
