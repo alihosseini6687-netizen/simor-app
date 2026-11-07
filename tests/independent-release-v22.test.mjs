@@ -51,7 +51,7 @@ const mangoV33ApprovedBlobs={
 };
 // V34 scoped: AI home entry, signed launcher upload routing and wallet recovery.
 const mangoV34ApprovedBlobs={
- "index.html":"2c37a0e8b7f6742723d0be898efc17a706509f94",
+ "index.html":"9d36da95d866b99b756d833e947b8672d6e3b3f3",
  "assets/js/simab-wallet-client.js":"6699f11967c23ea59224f4d80064fafe11fe001a",
  "supabase/functions/simab-central-quests/index.ts":"3734025fae51456d4a4d58a2830fdca9775dec5f"
 };
