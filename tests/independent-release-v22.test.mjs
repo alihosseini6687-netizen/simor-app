@@ -43,11 +43,22 @@ const mangoV32ApprovedBlobs={
   "supabase/functions/simab-central-quests/poker-room-api.ts": "fd33dea0b0454defff884f321b72524d586bc056",
   "assets/js/simab-secure-wallet.js": "42080f4f09d983b7e2e3d89d73dffbd17738c42c"
 };
+// V33 reviewed network-recovery and legacy-turn repair: gameplay engines and
+// financial payout rules are unchanged.
+const mangoV33ApprovedBlobs={
+ "assets/js/simab-room-media-v16.js":"3fe2d7285fb04cf6e1c3117c65c5101173bfbd59",
+ "supabase/functions/simab-central-quests/game-api.ts":"8c72026d5d84eee9395ac835dd5ca0c7491085a2"
+};
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
 test('preserve original protected code while allowing exact reviewed UI/i18n modifications',()=>{
  for(const [file,expected] of Object.entries(manifest.hashes)){
   let source=readFileSync(new URL('../'+file,import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  if(Object.hasOwn(mangoV33ApprovedBlobs,file)){
+   const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
+   assert.equal(blob,mangoV33ApprovedBlobs[file],file+' v33 audited source changed unexpectedly');
+   continue;
+  }
   if(Object.hasOwn(mangoV32ApprovedBlobs,file)){
    const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
    assert.equal(blob,mangoV32ApprovedBlobs[file],file+' v32 audited source changed unexpectedly');
