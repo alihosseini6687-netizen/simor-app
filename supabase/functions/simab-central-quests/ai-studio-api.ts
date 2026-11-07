@@ -17,7 +17,7 @@ export async function aiStudioAPI(db:any,subject:string,p:any,botToken:string){
    const wallet=await rpc(db,'simab_secure_wallet_action',{p_subject:subject,p_action:'state',p_amount:0,p_request_id:null});
    let expiresAt=null;
    if(!cfg.free_mode){const r=await db.from('simab_ai_access_passes').select('expires_at').eq('telegram_subject',subject).gt('expires_at',new Date().toISOString()).order('expires_at',{ascending:false}).limit(1);if(r.error)fail('ai_unavailable');expiresAt=r.data?.[0]?.expires_at||null;}
-   return{status:200,data:{enabled:cfg.enabled,freeMode:cfg.free_mode,plans:cfg.plans,termsText:cfg.terms_text||'',archiveReady:cfg.archive_enabled&&!!cfg.archive_channel_id&&(cfg.terms_text||'').trim().length>=80,active:cfg.enabled&&(cfg.free_mode||!!expiresAt),expiresAt,wallet}};
+   return{status:200,data:{enabled:cfg.enabled,freeMode:cfg.free_mode,plans:cfg.plans,termsText:cfg.terms_text||'',archiveReady:cfg.archive_enabled&&!!cfg.archive_channel_id,active:cfg.enabled&&(cfg.free_mode||!!expiresAt),expiresAt,wallet}};
   }
   if(action==='ai_studio_activate'){
    if(!uuid(p.requestId)||typeof p.planId!=='string')fail('invalid_request');
@@ -34,7 +34,6 @@ export async function aiStudioAPI(db:any,subject:string,p:any,botToken:string){
    const plans=cleanPlans(p.plans);
    const termsText=typeof p.termsText==='string'?p.termsText.trim():'';
    if(termsText.length>5000)fail('invalid_request');
-   if(p.archiveEnabled&&termsText.length<80)fail('invalid_ai_consent');
    const channel=typeof p.channelId==='string'?p.channelId.trim():'';
    if(channel&&!/^-100[0-9]{5,16}$/.test(channel))fail('invalid_channel');
    if(p.archiveEnabled&&!channel)fail('invalid_channel');
@@ -58,7 +57,7 @@ export async function aiStudioAPI(db:any,subject:string,p:any,botToken:string){
    try{const raw=atob(match[1]);bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));}catch{fail('invalid_ai_image');}
    if(bytes.length<256||bytes.length>1700000||bytes[0]!==255||bytes[1]!==216||bytes[2]!==255||bytes[bytes.length-2]!==255||bytes[bytes.length-1]!==217)fail('invalid_ai_image');
    const cfg=await settings(db);
-   if(!cfg.enabled||!cfg.archive_enabled||!cfg.archive_channel_id||(cfg.terms_text||'').trim().length<80)fail('archive_not_ready');
+   if(!cfg.enabled||!cfg.archive_enabled||!cfg.archive_channel_id)fail('archive_not_ready');
    const claimed=await rpc(db,'simab_ai_archive_claim',{p_subject:subject,p_request_id:p.requestId});
    if(!claimed.reserved)return{status:200,data:{archived:claimed.status==='sent',duplicate:true,status:claimed.status,messageId:claimed.messageId||null}};
    try{
