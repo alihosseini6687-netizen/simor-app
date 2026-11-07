@@ -35,7 +35,6 @@ $('ai-admin-save').onclick=async()=>{if(busy)return;
   if(new Set(plans.map(p=>p.id)).size!==plans.length)throw Error('شناسهٔ پلن‌ها باید متفاوت باشد.');
   const termsText=$('ai-admin-terms').value.trim();
   if($('ai-admin-archive').checked&&!channelId)throw Error('برای روشن‌کردن آرشیو شناسهٔ عددی کانال را وارد کن.');
-  if($('ai-admin-archive').checked&&termsText.length<80)throw Error('برای انتشار تصاویر، متن شرایط باید دست‌کم ۸۰ نویسه و توضیح روشن دربارهٔ نگهداری و احتمال انتشار تصویر داشته باشد.');
   if(!$('ai-admin-free').checked&&!confirm('حالت رایگان خاموش شود؟ از این پس برای ورود سکه کسر خواهد شد.'))return;
   busy=true;$('ai-admin-save').disabled=true;state('در حال بررسی مجوز کانال و ثبت قیمت‌ها…');
   await SimabWallet.read('admin_ai_studio_save',{enabled:$('ai-admin-enabled').checked,freeMode:$('ai-admin-free').checked,plans,channelId,termsText,archiveEnabled:$('ai-admin-archive').checked});
