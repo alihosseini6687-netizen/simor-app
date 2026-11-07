@@ -13,6 +13,18 @@ export async function gameAPI(db:any,subject:string,p:Record<string,any>){
   const {data,error}=await q.maybeSingle();if(error)return{status:503,data:{error:'game_unavailable'}};
   const w=await db.rpc('simab_secure_wallet_action',{p_subject:subject,p_action:'state',p_amount:0,p_request_id:null});
   if(w.error)return{status:503,data:{error:'wallet_unavailable'}};
+  // Legacy sessions started before server turn deadlines were introduced must
+  // resume with a fresh 20-second window, never advance invisibly or change chips.
+  // The existing financial RPC version-locks this zero-debit/zero-credit repair.
+  if(data&&!data.finished&&timed(game)&&(!Number.isSafeInteger(data.state.turnDeadline)||data.state.turnDeadline<=0)){
+   const resumed={...data.state,turnDeadline:Date.now()+20000};
+   const repaired=await db.rpc('simab_game_commit',{p_subject:subject,p_game:game,
+    p_request_id:crypto.randomUUID(),p_operation_key:'legacy_deadline:'+data.id+':'+data.version,
+    p_id:data.id,p_expected_version:data.version,p_state:resumed,
+    p_public:{...expose(resumed),timeline:[]},p_debit:0,p_credit:0,p_finished:false});
+   if(repaired.error)return{status:repaired.error.message==='stale_game'?409:503,data:{error:repaired.error.message==='stale_game'?'stale_game':'game_unavailable'}};
+   return {status:200,data:{...repaired.data,serverNow:Date.now(),legacyDeadlineRestored:true}};
+  }
   if(data&&!data.finished&&timed(game)&&data.state.turnDeadline&&Date.now()>=data.state.turnDeadline)return await gameAPI(db,subject,{action:'game',game,op:'move',sessionId:data.id,version:data.version,requestId:crypto.randomUUID(),move:autoMove(data.state),timeout:true});
   return {status:200,data:{serverNow:Date.now(),sessionId:data?.id||null,version:data?.version||0,state:data?expose(data.state):null,wallet:w.data}};
  }
