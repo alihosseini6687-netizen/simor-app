@@ -8,7 +8,7 @@ page.on('pageerror',e=>errors.push(e.message));page.on('console',msg=>{if(msg.ty
 try{
  const tgScript='window.Telegram={WebApp:{initData:"",ready(){},expand(){},BackButton:{show(){},onClick(){}}}};';
  await page.route('https://telegram.org/**',r=>r.fulfill({contentType:'text/javascript',body:tgScript}));
- const walletScript='window.SimabWallet=Object.freeze({ready:Promise.resolve(),read:async action=>action==="ai_studio_state"?{enabled:true,freeMode:true,active:true,archiveReady:false,plans:[],expiresAt:null}:{},mutate:async()=>({}),requestId:()=>crypto.randomUUID()});';
+ const walletScript='window.SimabWallet=Object.freeze({ready:Promise.resolve(),read:async action=>action==="ai_studio_state"?{enabled:true,freeMode:true,active:true,archiveReady:false,termsText:"",plans:[],expiresAt:null}:{},mutate:async()=>({}),requestId:()=>crypto.randomUUID()});';
  await page.route('**/assets/js/simab-wallet-client.js*',r=>r.fulfill({contentType:'text/javascript',body:walletScript}));
  const embedHtml=[
   '<!doctype html><html><body><p>Image service test frame</p><script>',
@@ -23,7 +23,10 @@ try{
  await page.goto('http://127.0.0.1:8793/ai/studio/index.html');
  await page.locator('#studio:not([hidden])').waitFor({timeout:12000});
  assert.equal(await page.locator('a[href*="perchance"],a[href*="bigger.pics"]').count(),0);
- assert.equal(await page.locator('#archive-consent').isDisabled(),true);
+ assert.equal(await page.locator('#archive-consent').isDisabled(),false);
+ assert.equal(await page.locator('#archive-status').isVisible(),false);
+ assert.equal((await page.locator('#archive-consent').locator('xpath=..').textContent()).trim(),'با شرایط موافقم');
+ await page.locator('#archive-consent').check();
  await page.locator('#idea').fill('A bright watercolor forest');
  await page.locator('#count').selectOption('1');
  await page.locator('#generate-now').click();
@@ -31,8 +34,12 @@ try{
  assert.equal(await page.locator('#gallery .result').count(),1);
  assert.equal(await page.locator('#generate-now').isDisabled(),false);
  assert.equal(await page.locator('#gallery .result button').first().textContent(),'💾 دانلود');
+ await page.locator('#tab-resize').click();
+ assert.equal(await page.locator('#resize-file').getAttribute('accept'),'image/*');
+ await page.locator('#resize-file').setInputFiles({name:'sample.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y+LlGgAAAAASUVORK5CYII=','base64')});
+ assert.match(await page.locator('#resize-filename').textContent(),/sample.png/);
  await page.locator('#tab-save').click();
  await page.screenshot({path:'/tmp/simab-ai-v35-gallery.png',fullPage:true});
  assert.deepEqual(errors,[]);
- console.log('AI Studio v35 UI: native form, trusted embed completion, gallery and archive-off default verified');
+ console.log('AI Studio v36 UI: native form, trusted embed completion, gallery and archive-off default verified');
 }finally{await browser.close();server.kill();}
