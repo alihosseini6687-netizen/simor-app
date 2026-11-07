@@ -3,6 +3,7 @@ import {partyAPI} from './party-api.ts';
 import {shopAPI,shopWebhook,tonBalance} from './shop.ts';
 import {pokerRoomAPI} from './poker-room-api.ts';
 import {referralAPI} from './referral-api.ts';
+import {aiStudioAPI} from './ai-studio-api.ts';
 /* SIMAB central-quests API. One file for Supabase Dashboard deployment.
    NEVER include Telegram bot token or a service key in the browser/repository.
    The POST endpoint ALWAYS validates Telegram-signed initData and server-side admin ID.
@@ -31,7 +32,7 @@ function requestLimit(subject:string,p:Record<string,unknown>,now=Date.now()):nu
   const action=String(p.action),op=String(p.op||'state');
   const room=['room','game_room'].includes(action);
   const signal=room&&op==='signal';
-  const write=action==='game'||action==='wallet'&&p.walletAction!=='state'||room&&!['state','preview'].includes(op)||['claim','task_start','offer_claim','purchase','referral_claim'].includes(action);
+  const write=action==='game'||action==='wallet'&&p.walletAction!=='state'||room&&!['state','preview'].includes(op)||['claim','task_start','offer_claim','purchase','referral_claim','ai_studio_activate','ai_studio_archive','admin_ai_studio_save'].includes(action);
   const group=signal?'signal':write?'write':'read',limit=signal?1200:write?120:240;
   const key=subject+':'+group;let entry=requestWindows.get(key);
   if(!entry||entry.until<=now){
@@ -282,14 +283,18 @@ Deno.serve(async (request) => {
   }
 
   if (request.method !== "POST") return reply(405, { error: "method_not_allowed" });
-  if (Number(request.headers.get("content-length") || "0") > 10000)
+  // The one larger JSON request is a signed, bounded JPEG archival upload.
+  const upload=url.searchParams.get('ai_upload')==='1';
+  const maxBody=upload?2400000:10000;
+  if (Number(request.headers.get("content-length") || "0") > maxBody)
     return reply(413, { error: "request_too_large" });
   let payload: Record<string, unknown>;
   try {
     const text = await request.text();
-    if (text.length > 10000) return reply(413, { error: "request_too_large" });
+    if (text.length > maxBody) return reply(413, { error: "request_too_large" });
     payload = JSON.parse(text);
     if (!payload || typeof payload !== "object" || Array.isArray(payload)) throw Error("bad json");
+    if (upload!== (payload.action==='ai_studio_archive')) return reply(400, { error: "invalid_request" });
   } catch { return reply(400, { error: "invalid_request" }); }
   const botToken = Deno.env.get("SIMAB_TELEGRAM_BOT_TOKEN");
   if (!botToken) return reply(503, { error: "not_configured" });
@@ -318,6 +323,7 @@ Deno.serve(async (request) => {
 
   const retryAfterSeconds=requestLimit(subject,payload);
   if(retryAfterSeconds)return reply(429,{error:'rate_limited',retryAfterSeconds});
+  if (['ai_studio_state','ai_studio_activate','admin_ai_studio_status','admin_ai_studio_save','ai_studio_archive'].includes(String(payload.action))) {const r=await aiStudioAPI(db,subject,payload,botToken);return reply(r.status,r.data);}
   if (payload.action === 'referral_info' || payload.action === 'referral_claim') {const r=await referralAPI(db,subject,payload);return reply(r.status,r.data);}
  if (payload.action === 'ton_balance') {if(payload.chain!==undefined&&payload.chain!=='-239')return reply(400,{error:'mainnet_only'});const r=await tonBalance(payload.address,Deno.env.get('TONCENTER_API_KEY')||'');return reply(r.status,r.data);}
   if (['shop_catalog','purchase','purchase_history','offer_info','offer_claim','admin_shop_status','admin_reconcile_refund','admin_shop_settings','admin_bind_webhook','admin_register_channel','admin_create_offer','admin_publish_offer'].includes(String(payload.action))) {const r=await shopAPI(db,subject,payload,botToken);return reply(r.status,r.data);}
