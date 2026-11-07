@@ -9,7 +9,7 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="../../assets/js/simab-wallet-client.js?v=21"></script>
 <script src="../../assets/js/simab-safe-area-v16.js?v=17" defer></script>
-<script src="../../assets/js/simab-ai-studio-v36.js?v=36" defer></script>
+<script src="../../assets/js/simab-ai-studio-v37.js?v=37" defer></script>
 <style>
 :root{--gold:#ffcf69;--text:#fff2dc;--dim:#b5abc8;--surface:#1c1529;--border:#6f4a27}
 *{box-sizing:border-box}html{scroll-behavior:smooth}
@@ -39,7 +39,10 @@ button:disabled{opacity:.47;cursor:not-allowed}
 .jobs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
 .job{border:1px solid #644368;border-radius:14px;overflow:hidden;background:#090a18}
 .job iframe{width:100%;height:360px;border:0;display:block;background:#171328}
-.job p{font-size:12px;padding:8px 9px;margin:0;background:#241b30;color:#ffdd9f}.job iframe{min-height:360px}.picker{position:relative;display:flex;align-items:center;justify-content:center;min-height:50px;padding:12px;border:1px solid #ad7d49;border-radius:12px;background:#292036;color:#ffda97;font-weight:700;overflow:hidden}.picker input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:120px}
+.job p{font-size:12px;padding:8px 9px;margin:0;background:#241b30;color:#ffdd9f}.job iframe{min-height:360px}.picker{display:block;width:100%;padding:12px;border:1px solid #ad7d49;border-radius:12px;background:#292036;color:#ffda97;font-size:15px;cursor:pointer}
+.picker::file-selector-button{border:0;border-radius:10px;background:#ffd575;color:#241027;padding:12px;margin-inline-end:10px;font:700 14px system-ui;cursor:pointer}
+.dropzone{padding:10px;border:1px dashed #78527c;border-radius:12px;color:#b7a9c8;text-align:center;font-size:12px;margin-top:12px}
+.dropzone.dragging{border-color:#ffd575;background:#31253c}
 .results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .result{border:1px solid #78527c;border-radius:15px;background:#100e1c;padding:8px;min-width:0}
 .result img{width:100%;max-height:350px;object-fit:contain;border-radius:10px}
@@ -77,11 +80,15 @@ button:disabled{opacity:.47;cursor:not-allowed}
 <div class="actions"><button id="generate-now" type="button" class="primary">✨ ساخت تصویر</button><button id="cancel-job" type="button" class="secondary" disabled>توقف</button></div>
 <p id="generation-status" class="state" role="status"></p>
 <div id="generation-frames" class="jobs" aria-live="polite"></div>
+<p class="muted" id="provider-note">تولید تصویر به سرویس رایگان بیرونی وابسته است و ممکن است داخل کادر به تأیید امنیتی نیاز داشته باشد. هیچ API پولی استفاده نمی‌شود.</p>
 </section>
 <section class="card" id="panel-resize" hidden>
 <h2>بزرگ‌کردن تصویر روی دستگاه</h2>
 <p class="muted">بدون خروج از اپ، ابعاد عکس را ۲ برابر می‌کنیم؛ این قابلیت جزئیات تازهٔ هوش مصنوعی ایجاد نمی‌کند.</p>
-<label class="picker" for="resize-file">📷 انتخاب از گالری یا فایل دستگاه<input type="file" id="resize-file" accept="image/*"></label>
+<label for="resize-file">📷 انتخاب عکس برای بزرگ‌نمایی</label>
+<input class="picker" type="file" id="resize-file" accept="image/jpeg,image/png,image/webp">
+<div class="dropzone" id="resize-dropzone">در رایانه عکس را اینجا رها کن یا عکس کپی‌شده را در صفحه Paste کن.</div>
+<div class="actions"><button id="resize-paste" class="secondary" type="button">📋 چسباندن عکس از حافظهٔ موقت</button></div>
 <p id="resize-filename" class="muted" aria-live="polite">هنوز تصویری انتخاب نشده است.</p>
 <div class="actions"><button id="resize-go" class="primary" type="button">بزرگ‌کردن ۲برابری</button></div>
 <p id="resize-status" class="state" role="status"></p>
