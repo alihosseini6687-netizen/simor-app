@@ -119,6 +119,7 @@ async function addImage(blob,name,generated){
  send.onclick=async()=>{if(!$('archive-consent').checked)return tab('save'),$('archive-status').textContent='برای ارسال ابتدا گزینهٔ رضایت را فعال کن.';send.disabled=true;try{await archive(blob);send.textContent='✓ ارسال شد';}catch(e){$('archive-status').textContent=e.message;send.disabled=false;}};
  actions.append(download,send);card.append(img,actions);
  $('gallery').prepend(card);
+ if(generated&&done===1)tab('save');
  if(generated&&settings?.archiveReady&&$('archive-consent').checked){
   // Serialize deliveries: backend enforces a 15-second window per user.
   archiveQueue=archiveQueue.catch(()=>{}).then(async()=>{
