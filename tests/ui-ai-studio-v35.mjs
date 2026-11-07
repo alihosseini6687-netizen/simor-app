@@ -27,7 +27,7 @@ try{
  await page.locator('#idea').fill('A bright watercolor forest');
  await page.locator('#count').selectOption('1');
  await page.locator('#generate-now').click();
- try{await page.locator('#gallery .result img').first().waitFor({timeout:12000});}catch(e){const debug=await page.evaluate(()=>({status:document.querySelector('#generation-status')?.textContent,fail:document.querySelector('#studio-error')?.textContent,frames:[...document.querySelectorAll('iframe')].map(f=>f.src),gallery:document.querySelector('#gallery')?.innerHTML.slice(0,500)}));throw Error(JSON.stringify({debug,errors,consoleErrors,requestsFailed}));}
+ try{await page.locator('#gallery .result img').first().waitFor({timeout:12000,state:'attached'});}catch(e){const debug=await page.evaluate(()=>({status:document.querySelector('#generation-status')?.textContent,fail:document.querySelector('#studio-error')?.textContent,frames:[...document.querySelectorAll('iframe')].map(f=>f.src),gallery:document.querySelector('#gallery')?.innerHTML.slice(0,500)}));throw Error(JSON.stringify({debug,errors,consoleErrors,requestsFailed}));}
  assert.equal(await page.locator('#gallery .result').count(),1);
  assert.equal(await page.locator('#generate-now').isDisabled(),false);
  assert.equal(await page.locator('#gallery .result button').first().textContent(),'💾 دانلود');
