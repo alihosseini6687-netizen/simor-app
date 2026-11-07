@@ -152,7 +152,7 @@ async function jpeg(data){
  }finally{URL.revokeObjectURL(url);}
 }
 async function archive(blob){
- if(!settings?.archiveReady||!settings?.termsText)throw Error('ارسال تصویر هنوز فعال نیست.');
+ if(!settings?.archiveReady)throw Error('کانال آرشیو در مدیریت تنظیم یا فعال نشده است.');
  if(!$('archive-consent').checked)throw Error('رضایت ارسال ثبت نشده است.');
  const init=initData();if(!init)throw Error('از داخل ربات تلگرام وارد شو.');
  const requestId=SimabWallet.requestId(),imageData=await jpeg(blob);
