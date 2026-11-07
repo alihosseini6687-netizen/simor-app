@@ -66,8 +66,8 @@ BEGIN
   RETURN jsonb_build_object('active',true,'expiresAt',current_pass.expires_at,'free',false,'alreadyActive',true,
    'wallet',public.simab_secure_wallet_action(p_subject,'state',0,NULL));
  END IF;
- SELECT item INTO plan FROM jsonb_array_elements(cfg.plans) AS item
- WHERE item->>'id'=p_plan_id LIMIT 1;
+ SELECT e.value INTO plan FROM jsonb_array_elements(cfg.plans) AS e(value)
+ WHERE e.value->>'id'=p_plan_id LIMIT 1;
  IF plan IS NULL OR (plan->>'coins') !~ '^[0-9]{1,5}$' OR (plan->>'minutes') !~ '^[0-9]{1,3}$'
  THEN RAISE EXCEPTION 'invalid_ai_plan';END IF;
  charge=(plan->>'coins')::bigint;minutes=(plan->>'minutes')::integer;
