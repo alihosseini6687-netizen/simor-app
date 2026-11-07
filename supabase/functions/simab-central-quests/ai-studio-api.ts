@@ -17,7 +17,7 @@ export async function aiStudioAPI(db:any,subject:string,p:any,botToken:string){
    const wallet=await rpc(db,'simab_secure_wallet_action',{p_subject:subject,p_action:'state',p_amount:0,p_request_id:null});
    let expiresAt=null;
    if(!cfg.free_mode){const r=await db.from('simab_ai_access_passes').select('expires_at').eq('telegram_subject',subject).gt('expires_at',new Date().toISOString()).order('expires_at',{ascending:false}).limit(1);if(r.error)fail('ai_unavailable');expiresAt=r.data?.[0]?.expires_at||null;}
-   return{status:200,data:{enabled:cfg.enabled,freeMode:cfg.free_mode,plans:cfg.plans,archiveReady:cfg.archive_enabled&&!!cfg.archive_channel_id,active:cfg.enabled&&(cfg.free_mode||!!expiresAt),expiresAt,wallet}};
+   return{status:200,data:{enabled:cfg.enabled,freeMode:cfg.free_mode,plans:cfg.plans,termsText:cfg.terms_text||'',archiveReady:cfg.archive_enabled&&!!cfg.archive_channel_id,active:cfg.enabled&&(cfg.free_mode||!!expiresAt),expiresAt,wallet}};
   }
   if(action==='ai_studio_activate'){
    if(!uuid(p.requestId)||typeof p.planId!=='string')fail('invalid_request');
@@ -26,12 +26,14 @@ export async function aiStudioAPI(db:any,subject:string,p:any,botToken:string){
   }
   if(action==='admin_ai_studio_status'){
    await isAdmin(db,subject);const cfg=await settings(db);
-   return{status:200,data:{enabled:cfg.enabled,freeMode:cfg.free_mode,plans:cfg.plans,archiveChannelId:cfg.archive_channel_id||'',archiveEnabled:cfg.archive_enabled}};
+   return{status:200,data:{enabled:cfg.enabled,freeMode:cfg.free_mode,plans:cfg.plans,archiveChannelId:cfg.archive_channel_id||'',archiveEnabled:cfg.archive_enabled,termsText:cfg.terms_text||''}};
   }
   if(action==='admin_ai_studio_save'){
    await isAdmin(db,subject);
    if(typeof p.enabled!=='boolean'||typeof p.freeMode!=='boolean'||typeof p.archiveEnabled!=='boolean')fail('invalid_request');
    const plans=cleanPlans(p.plans);
+   const termsText=typeof p.termsText==='string'?p.termsText.trim():'';
+   if(termsText.length>5000)fail('invalid_request');
    const channel=typeof p.channelId==='string'?p.channelId.trim():'';
    if(channel&&!/^-100[0-9]{5,16}$/.test(channel))fail('invalid_channel');
    if(p.archiveEnabled&&!channel)fail('invalid_channel');
@@ -42,7 +44,7 @@ export async function aiStudioAPI(db:any,subject:string,p:any,botToken:string){
     const chat=await tg(botToken,'getChat',{chat_id:channel});
     if(chat.type!=='channel')fail('invalid_channel');
    }
-   const r=await db.from('simab_ai_settings').update({enabled:p.enabled,free_mode:p.freeMode,plans,archive_channel_id:channel||null,archive_enabled:p.archiveEnabled,updated_at:new Date().toISOString()}).eq('singleton',true).select('singleton').single();
+   const r=await db.from('simab_ai_settings').update({enabled:p.enabled,free_mode:p.freeMode,plans,archive_channel_id:channel||null,archive_enabled:p.archiveEnabled,terms_text:termsText,updated_at:new Date().toISOString()}).eq('singleton',true).select('singleton').single();
    if(r.error||!r.data)fail('ai_unavailable');
    return{status:200,data:{ok:true}};
   }

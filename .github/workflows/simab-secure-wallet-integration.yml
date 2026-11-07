@@ -49,7 +49,7 @@ jobs:
       - name: Test actual signed HTTP API against transactional PostgreSQL
         run: npm run test:server
       - name: Browser and Edge static syntax and behavior checks
-        run: node --check assets/js/simab-secure-wallet.js && node --check assets/js/simab-ai-studio-v35.js && node --test tests/*.test.mjs
+        run: node --check assets/js/simab-secure-wallet.js && node --check assets/js/simab-ai-studio-v36.js && node --test tests/*.test.mjs
       - name: Install PostgreSQL client
         run: sudo apt-get update -qq && sudo apt-get install -y postgresql-client
       - name: Prepare Supabase-style database roles
@@ -81,6 +81,7 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261105_room_idle_refund_v32.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-idle-room-v32.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261107_ai_studio_v34.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261108_ai_studio_terms_v36.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-ai-studio-v34.sql
       - name: Install Chromium for mobile UI checks
         run: npx playwright install --with-deps chromium

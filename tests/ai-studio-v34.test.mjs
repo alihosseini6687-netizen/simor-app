@@ -5,9 +5,9 @@ const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
 test('Mango studio has native generator controls, private gallery, and keeps legacy game/voice',()=>{
  const home=read('index.html'),studio=read('ai/studio/index.html');
  assert.match(home,/mango-wheel-banner[^]*?ورود به هوش مصنوعی[^]*?ai\/studio\/index\.html/);
- for(const id of ['idea','style','color','ratio','count','negative','generate-now','generation-frames','gallery','archive-consent'])
+ for(const id of ['idea','style','color','ratio','count','negative','generate-now','generation-frames','gallery','archive-consent','ai-terms-box','resize-filename'])
   assert.match(studio,new RegExp('id="'+id+'"'));
- assert.match(studio,/simab-ai-studio-v35\.js/);
+ assert.match(studio,/simab-ai-studio-v36\.js/);
  assert.doesNotMatch(studio,/<iframe[^>]*src="https?:/i,'no broken third-party site iframe on initial load');
  assert.doesNotMatch(studio,/href="https?:\/\/(?:perchance|bigger)\./i,'no prominent outbound generator or upscale links');
  assert.match(read('ai/index.html'),/Gemini/,'existing voice assistant must survive');
@@ -38,13 +38,16 @@ test('bounded source-of-truth access, signed image uploads and owner-only config
  assert.doesNotMatch(api,/https?:\/\/.*perchance.*(?:api|generate)/i,'no unofficial Perchance generation calls');
 });
 test('only expected embed origins can return images; no hidden browsing or automatic archive without opt-in',()=>{
- const ui=read('assets/js/simab-ai-studio-v35.js');
+ const ui=read('assets/js/simab-ai-studio-v36.js');
  assert.match(ui,/const embedOrigin='https:\/\/image-generation\.perchance\.org'/);
  assert.match(ui,/embedOrigin\+'\/embed#'/);
  assert.match(ui,/e\.origin!==embedOrigin/);
  assert.match(ui,/j\.frame\.contentWindow===e\.source&&j\.id===e\.data\.id/);
  assert.match(ui,/e\.data\.type!=='finished'/);
  assert.match(ui,/frame\.loading='eager'/);
+ assert.match(ui,/jobs\.size>=1/);
+ assert.match(ui,/received\+\+/);
+ assert.match(ui,/resize-file/);
  assert.match(ui,/const job=queue\.shift\(\)/);
  assert.match(ui,/SimabWallet\.mutate\('ai_studio_activate'/);
  assert.match(ui,/\$\('archive-consent'\)\.checked/);
@@ -54,5 +57,28 @@ test('only expected embed origins can return images; no hidden browsing or autom
  assert.doesNotMatch(ui,/contentDocument|iframe\.contentWindow\.document|cf_clearance|verifyUser|verifyUser/i);
  const admin=read('admin/index.html');
  assert.match(admin,/id="ai-admin-free" checked/);
- assert.match(admin,/simab-ai-admin-v34\.js/);
+ assert.match(admin,/simab-ai-admin-v36\.js/);
+ assert.match(admin,/id="ai-admin-terms"/);
+ assert.match(read('supabase/functions/simab-central-quests/ai-studio-api.ts'),/terms_text:termsText/);
+ assert.match(read('supabase/migrations/20261108_ai_studio_terms_v36.sql'),/ADD COLUMN IF NOT EXISTS terms_text/);
+});
+
+test('v36 beta archive requires explicit consent and configured channel, not a minimum terms length',()=>{
+ const ui=read('assets/js/simab-ai-studio-v36.js');
+ const api=read('supabase/functions/simab-central-quests/ai-studio-api.ts');
+ const admin=read('assets/js/simab-ai-admin-v36.js');
+ const view=read('ai/studio/index.html');
+ assert.match(view,/id="archive-consent"> با شرایط موافقم/);
+ assert.match(view,/id="ai-terms-box"/);
+ assert.match(ui,/settings\?\.archiveReady&&\$\('archive-consent'\)\.checked/);
+ assert.match(ui,/if\(!\$\('archive-consent'\)\.checked\)/);
+ assert.match(api,/p\.consent!==true/);
+ assert.match(api,/archiveReady:cfg\.archive_enabled&&!!cfg\.archive_channel_id/);
+ assert.match(api,/if\(!cfg\.enabled\|\|!cfg\.archive_enabled\|\|!cfg\.archive_channel_id\)fail\('archive_not_ready'\)/);
+ assert.match(api,/if\(p\.archiveEnabled&&!channel\)fail\('invalid_channel'\)/);
+ assert.match(api,/getChatMember/);
+ assert.match(api,/can_post_messages/);
+ assert.doesNotMatch(ui,/!settings\?\.archiveReady\|\|!settings\?\.termsText/);
+ assert.doesNotMatch(api,/termsText\.length<80|terms_text\|\|''\)\.trim\(\)\.length>=80/);
+ assert.doesNotMatch(admin,/termsText\.length<80/);
 });
