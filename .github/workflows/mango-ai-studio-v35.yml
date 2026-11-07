@@ -1,9 +1,9 @@
-name: Mango AI Studio v35 mobile browser
+name: Mango AI Studio v37 mobile browser
 on:
   pull_request:
     paths:
       - 'ai/studio/**'
-      - 'assets/js/simab-ai-studio-v35.js'
+      - 'assets/js/simab-ai-studio-v37.js'
       - 'tests/ui-ai-studio-v35.mjs'
       - '.github/workflows/mango-ai-studio-v35.yml'
   workflow_dispatch:
@@ -20,5 +20,5 @@ jobs:
           node-version: '22'
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: node --check assets/js/simab-ai-studio-v35.js
+      - run: node --check assets/js/simab-ai-studio-v37.js
       - run: node tests/ui-ai-studio-v35.mjs
