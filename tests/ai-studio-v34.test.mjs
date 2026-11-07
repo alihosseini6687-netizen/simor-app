@@ -19,7 +19,7 @@ test('bounded source-of-truth access, signed image uploads and owner-only config
  const api=read('supabase/functions/simab-central-quests/ai-studio-api.ts');
  const index=read('supabase/functions/simab-central-quests/index.ts');
  assert.match(sql,/free_mode boolean NOT NULL DEFAULT true/);
- assert.match(sql,/ON public\.simab_ai_settings ENABLE ROW LEVEL SECURITY/);
+ assert.match(sql,/ALTER TABLE public\.simab_ai_settings ENABLE ROW LEVEL SECURITY/);
  assert.match(sql,/FOR UPDATE/);
  assert.match(sql,/simab_ai_activate/);
  assert.match(sql,/simab_ai_archive_claim/);
