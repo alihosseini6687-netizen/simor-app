@@ -1,0 +1,24 @@
+name: Mango AI Studio v35 mobile browser
+on:
+  pull_request:
+    paths:
+      - 'ai/studio/**'
+      - 'assets/js/simab-ai-studio-v35.js'
+      - 'tests/ui-ai-studio-v35.mjs'
+      - '.github/workflows/mango-ai-studio-v35.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  mobile-browser:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: node --check assets/js/simab-ai-studio-v35.js
+      - run: node tests/ui-ai-studio-v35.mjs
