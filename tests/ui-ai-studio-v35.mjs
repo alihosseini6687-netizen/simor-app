@@ -26,7 +26,9 @@ try{
  assert.equal(await page.locator('#archive-consent').isDisabled(),false);
  assert.equal(await page.locator('#archive-status').isVisible(),false);
  assert.equal((await page.locator('#archive-consent').locator('xpath=..').textContent()).trim(),'با شرایط موافقم');
+ await page.locator('#tab-save').click();
  await page.locator('#archive-consent').check();
+ await page.locator('#tab-generate').click();
  await page.locator('#idea').fill('A bright watercolor forest');
  await page.locator('#count').selectOption('1');
  await page.locator('#generate-now').click();
