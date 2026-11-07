@@ -52,6 +52,9 @@ try{
  assert.equal(await page.locator('#resize-file').getAttribute('accept'),'image/*');
  await page.locator('#resize-file').setInputFiles({name:'sample.png',mimeType:'image/png',buffer:Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y+LlGgAAAAASUVORK5CYII=','base64')});
  assert.match(await page.locator('#resize-filename').textContent(),/sample.png/);
+ await page.locator('#resize-go').click();
+ await page.waitForFunction(()=>document.querySelectorAll('#gallery .result').length===2,{timeout:8000});
+ assert.equal(await page.locator('#gallery .result').count(),2);
  await page.locator('#tab-save').click();
  await page.screenshot({path:'/tmp/simab-ai-v35-gallery.png',fullPage:true});
  assert.deepEqual(errors,[]);
