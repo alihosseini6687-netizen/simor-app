@@ -223,21 +223,57 @@ async function archive(blob){
  if(!resp.ok||!r.archived)throw Error(r.error==='archive_delivery_unknown'?'وضعیت ارسال نامشخص است؛ قبل از تکرار کانال را بررسی کن.':r.error||'ارسال به کانال تأیید نشد.');
  return r;
 }
-$('resize-file').addEventListener('change',()=>{const file=$('resize-file').files?.[0];$('resize-filename').textContent=file?'انتخاب شد: '+file.name:'هنوز تصویری انتخاب نشده است.';$('resize-status').textContent=file?'عکس انتخاب شد؛ «بزرگ‌کردن» را بزن.':'';});
-$('resize-go').onclick=async()=>{
- const file=$('resize-file').files?.[0];if(!file)return $('resize-status').textContent='ابتدا عکس را انتخاب کن.';
- if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>12000000)return $('resize-status').textContent='فقط JPG/PNG/WEBP تا ۱۲ مگابایت مجاز است.';
- const url=URL.createObjectURL(file),img=document.createElement('img');
+
+let selectedResizeImage=null;
+function setSelectedImage(file){
+ if(!file)return;
+ if(!file.type.startsWith('image/')||file.size>12000000){
+  $('resize-status').textContent='عکس باید کمتر از ۱۲ مگابایت باشد.';return;
+ }
+ selectedResizeImage=file;
+ $('resize-filename').textContent='انتخاب شد: '+(file.name||'image');
+ $('resize-status').textContent='عکس آماده است؛ «بزرگ‌کردن» را بزن.';
+}
+$('resize-file').addEventListener('change',()=>setSelectedImage($('resize-file').files?.[0]));
+const drop=$('resize-dropzone');
+for(const eventName of ['dragenter','dragover'])drop.addEventListener(eventName,e=>{e.preventDefault();drop.classList.add('dragging');});
+for(const eventName of ['dragleave','drop'])drop.addEventListener(eventName,e=>{e.preventDefault();drop.classList.remove('dragging');});
+drop.addEventListener('drop',e=>setSelectedImage(e.dataTransfer?.files?.[0]));
+document.addEventListener('paste',e=>{
+ if($('panel-resize').hidden)return;
+ const file=[...e.clipboardData?.files||[]].find(f=>f.type.startsWith('image/'));
+ if(file){e.preventDefault();setSelectedImage(file);}
+});
+$('resize-paste').onclick=async()=>{
  try{
-  await new Promise((ok,bad)=>{img.onload=ok;img.onerror=()=>bad(Error('عکس باز نشد.'));img.src=url;});
+  if(!navigator.clipboard?.read)throw Error('در این مرورگر دسترسی به عکس کپی‌شده ممکن نیست.');
+  const items=await navigator.clipboard.read();
+  for(const item of items)for(const type of item.types){
+   if(type.startsWith('image/')){
+    const blob=await item.getType(type);
+    setSelectedImage(new File([blob],'clipboard.png',{type:blob.type||type}));
+    return;
+   }
+  }
+  throw Error('عکسی در حافظهٔ موقت پیدا نشد.');
+ }catch(e){$('resize-status').textContent=e.message;}
+};
+$('resize-go').onclick=async()=>{
+ const file=selectedResizeImage;
+ if(!file)return $('resize-status').textContent='ابتدا یک تصویر از گالری، فایل‌ها یا حافظهٔ موقت انتخاب کن.';
+ if(!file.type.startsWith('image/')||file.size>12000000)return $('resize-status').textContent='فایل انتخاب‌شده معتبر نیست.';
+ const url=URL.createObjectURL(file),img=document.createElement('img');
+ $('resize-go').disabled=true;$('resize-status').textContent='در حال بزرگ‌کردن تصویر…';
+ try{
+  await new Promise((ok,bad)=>{img.onload=ok;img.onerror=()=>bad(Error('فرمت این عکس در مرورگر گوشی قابل بازکردن نیست.'));img.src=url;});
   if(!img.naturalWidth||!img.naturalHeight||Math.max(img.naturalWidth,img.naturalHeight)>2048)throw Error('حداکثر ضلع تصویر ورودی ۲۰۴۸ پیکسل است.');
   const c=document.createElement('canvas');c.width=img.naturalWidth*2;c.height=img.naturalHeight*2;
   const cx=c.getContext('2d');if(!cx)throw Error('مرورگر پردازش تصویر را پشتیبانی نمی‌کند.');
   cx.imageSmoothingEnabled=true;cx.imageSmoothingQuality='high';cx.drawImage(img,0,0,c.width,c.height);
-  const blob=await new Promise(ok=>c.toBlob(ok,'image/png'));if(!blob)throw Error('تبدیل انجام نشد.');
-  await addImage(blob,'mango-resized-'+Date.now()+'.png',false);
-  $('resize-status').textContent='عکس دوبرابر شد و در گالری قرار گرفت.';tab('save');
- }catch(e){$('resize-status').textContent=e.message;}finally{URL.revokeObjectURL(url);}
+  const blob=await new Promise(ok=>c.toBlob(ok,'image/jpeg',0.94));if(!blob)throw Error('تبدیل انجام نشد.');
+  await addImage(blob,'mango-resized-'+Date.now()+'.jpg',false);
+  $('resize-status').textContent='اندازهٔ عکس دوبرابر شد؛ فایل را از گالری مانگو ذخیره کن.';tab('save');
+ }catch(e){$('resize-status').textContent=e.message;}finally{URL.revokeObjectURL(url);$('resize-go').disabled=false;}
 };
 window.addEventListener('pagehide',()=>{clearJobs();for(const url of urls)URL.revokeObjectURL(url);});
 refresh().catch(e=>{status(e.message);$('access-label').textContent='ورود لازم است';$('access-status').textContent='از دکمهٔ ربات تلگرام وارد شو.';});
