@@ -315,11 +315,13 @@
  <label for="ai-admin-channel">شناسهٔ عددی کانال آرشیو (برای کانال خصوصی با ‎-100 شروع می‌شود)</label>
  <input class="input-field" id="ai-admin-channel" type="text" inputmode="numeric" dir="ltr" placeholder="-1001234567890">
  <label><input type="checkbox" id="ai-admin-archive"> فعال‌کردن آرشیو عکس‌های تأییدشده در کانال</label>
- <p style="font-size:12px;color:#b8aec6">برای جلوگیری از ارسال اشتباه، ربات هنگام ذخیره، مدیریت کانال و اجازهٔ انتشار را بررسی می‌کند. عکس‌های داخل سایت Perchance بدون ارسال فایل از طرف کاربر قابل‌دریافت خودکار نیستند.</p>
+ <label for="ai-admin-terms">متن شرایط استفاده از استودیو (ویرایش توسط مدیر)</label>
+ <textarea id="ai-admin-terms" class="input-field" rows="5" maxlength="5000" placeholder="شرایط استفاده را اینجا بنویس؛ کاربران با بازکردن «مشاهدهٔ شرایط» آن را خواهند دید."></textarea>
+ <p style="font-size:12px;color:#b8aec6">تا وقتی متن شرایط و مجوز مشخصِ نگهداری/انتشار تصویر را ننوشته‌ای، ارسال خودکار به کانال فعال نمی‌شود. فعلاً می‌توانی فقط تست گالری را انجام بدهی.</p>
  <button class="btn-action" id="ai-admin-save" type="button">ذخیرهٔ تنظیمات استودیو</button>
  <button class="btn-tool" id="ai-admin-refresh" type="button" style="margin-top:8px">بازخوانی تنظیمات سرور</button>
  <p id="ai-admin-message" role="status" style="white-space:pre-wrap"></p>
 </section>
-<script src="../assets/js/simab-ai-admin-v34.js?v=34" defer></script>
+<script src="../assets/js/simab-ai-admin-v36.js?v=36" defer></script>
 </body>
 </html>
