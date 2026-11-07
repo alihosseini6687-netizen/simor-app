@@ -7,9 +7,12 @@ test('Mango studio has native generator controls, private gallery, and keeps leg
  assert.match(home,/mango-wheel-banner[^]*?ورود به هوش مصنوعی[^]*?ai\/studio\/index\.html/);
  for(const id of ['idea','style','color','ratio','count','negative','generate-now','generation-frames','gallery','archive-consent','ai-terms-box','resize-filename'])
   assert.match(studio,new RegExp('id="'+id+'"'));
- assert.match(studio,/simab-ai-studio-v36\.js/);
+ assert.match(studio,/simab-ai-studio-v37\.js/);
  assert.doesNotMatch(studio,/<iframe[^>]*src="https?:/i,'no broken third-party site iframe on initial load');
  assert.doesNotMatch(studio,/href="https?:\/\/(?:perchance|bigger)\./i,'no prominent outbound generator or upscale links');
+ assert.match(studio,/id="resize-paste"/);
+ assert.match(studio,/class="picker" type="file"/);
+ assert.doesNotMatch(studio,/opacity:0;cursor:pointer;font-size:120px/);
  assert.match(read('ai/index.html'),/Gemini/,'existing voice assistant must survive');
  assert.match(read('games/wheel/index.html'),/<!DOCTYPE html/i,'original wheel game retained');
 });
@@ -38,16 +41,23 @@ test('bounded source-of-truth access, signed image uploads and owner-only config
  assert.doesNotMatch(api,/https?:\/\/.*perchance.*(?:api|generate)/i,'no unofficial Perchance generation calls');
 });
 test('only expected embed origins can return images; no hidden browsing or automatic archive without opt-in',()=>{
- const ui=read('assets/js/simab-ai-studio-v36.js');
+ const ui=read('assets/js/simab-ai-studio-v37.js');
  assert.match(ui,/const embedOrigin='https:\/\/image-generation\.perchance\.org'/);
  assert.match(ui,/embedOrigin\+'\/embed#'/);
- assert.match(ui,/e\.origin!==embedOrigin/);
- assert.match(ui,/j\.frame\.contentWindow===e\.source&&j\.id===e\.data\.id/);
- assert.match(ui,/e\.data\.type!=='finished'/);
+ assert.match(ui,/e\.origin===embedOrigin/);
+ assert.match(ui,/e\.origin===alternateOrigin/);
+ assert.match(ui,/e\.data\.api==='perchance-image-api'/);
+ assert.match(ui,/job\.method==='public'/);
+ assert.match(ui,/j\.frame\.contentWindow===e\.source/);
+ assert.match(ui,/r\.id!==job\.id/);
+ assert.match(ui,/e\.data\.type==='finished'/);
  assert.match(ui,/frame\.loading='eager'/);
  assert.match(ui,/jobs\.size>=1/);
  assert.match(ui,/received\+\+/);
  assert.match(ui,/resize-file/);
+ assert.match(ui,/selectedResizeImage/);
+ assert.match(ui,/resize-paste/);
+ assert.match(ui,/resize-dropzone/);
  assert.match(ui,/const job=queue\.shift\(\)/);
  assert.match(ui,/SimabWallet\.mutate\('ai_studio_activate'/);
  assert.match(ui,/\$\('archive-consent'\)\.checked/);
