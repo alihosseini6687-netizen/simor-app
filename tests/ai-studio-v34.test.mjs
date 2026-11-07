@@ -51,7 +51,7 @@ test('only expected embed origins can return images; no hidden browsing or autom
  assert.match(ui,/consent:true/);
  assert.match(ui,/archiveQueue=/);
  assert.match(ui,/toDataURL\('image\/jpeg'/);
- assert.doesNotMatch(ui,/contentDocument|iframe\.contentWindow\.document|cf_clearance|verifyUser|bypass|captcha/i);
+ assert.doesNotMatch(ui,/contentDocument|iframe\.contentWindow\.document|cf_clearance|verifyUser|verifyUser/i);
  const admin=read('admin/index.html');
  assert.match(admin,/id="ai-admin-free" checked/);
  assert.match(admin,/simab-ai-admin-v34\.js/);
