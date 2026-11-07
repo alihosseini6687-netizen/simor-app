@@ -49,7 +49,7 @@ jobs:
       - name: Test actual signed HTTP API against transactional PostgreSQL
         run: npm run test:server
       - name: Browser and Edge static syntax and behavior checks
-        run: node --check assets/js/simab-secure-wallet.js && node --test tests/*.test.mjs
+        run: node --check assets/js/simab-secure-wallet.js && node --check assets/js/simab-ai-studio-v35.js && node --test tests/*.test.mjs
       - name: Install PostgreSQL client
         run: sudo apt-get update -qq && sudo apt-get install -y postgresql-client
       - name: Prepare Supabase-style database roles
@@ -86,6 +86,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Independent game pages and Auto Stop regressions
         run: node tests/ui-phase2a-v22.mjs && node tests/ui-independent-v22.mjs
+      - name: Mango AI Studio browser and origin-bound result regression
+        run: node tests/ui-ai-studio-v35.mjs
       - name: Mobile tasks, all bot practices, reward design and management isolation
         run: node tests/ui-refresh-v17.mjs
       - name: Selected game setup, Hokm variants and wallet visibility

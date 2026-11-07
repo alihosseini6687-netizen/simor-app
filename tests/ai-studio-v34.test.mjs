@@ -2,15 +2,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 const read=p=>readFileSync(new URL('../'+p,import.meta.url),'utf8');
-test('AI feature redirects home banner without changing legacy wheel or voice assistant',()=>{
+test('Mango studio has native generator controls, private gallery, and keeps legacy game/voice',()=>{
  const home=read('index.html'),studio=read('ai/studio/index.html');
  assert.match(home,/mango-wheel-banner[^]*?ورود به هوش مصنوعی[^]*?ai\/studio\/index\.html/);
- assert.match(studio,/perchance\.org\/ai-text-to-image-generator/);
- assert.match(studio,/bigger\.pics/);
- assert.match(studio,/id="idea"/);
- assert.match(studio,/id="negative"/);
- assert.match(studio,/id="count"/);
- assert.match(studio,/id="archive-consent"/);
+ for(const id of ['idea','style','color','ratio','count','negative','generate-now','generation-frames','gallery','archive-consent'])
+  assert.match(studio,new RegExp('id="'+id+'"'));
+ assert.match(studio,/simab-ai-studio-v35\.js/);
+ assert.doesNotMatch(studio,/<iframe[^>]*src="https?:/i,'no broken third-party site iframe on initial load');
+ assert.doesNotMatch(studio,/href="https?:\/\/(?:perchance|bigger)\./i,'no prominent outbound generator or upscale links');
  assert.match(read('ai/index.html'),/Gemini/,'existing voice assistant must survive');
  assert.match(read('games/wheel/index.html'),/<!DOCTYPE html/i,'original wheel game retained');
 });
@@ -38,17 +37,21 @@ test('bounded source-of-truth access, signed image uploads and owner-only config
  assert.match(index,/await aiStudioAPI\(db,subject,payload,botToken\)/);
  assert.doesNotMatch(api,/https?:\/\/.*perchance.*(?:api|generate)/i,'no unofficial Perchance generation calls');
 });
-test('do not claim cross-site Perchance output access and use the published bigger.pics protocol',()=>{
- const ui=read('assets/js/simab-ai-studio-v34.js');
- assert.match(ui,/e\.origin!=='https:\/\/app\.bigger\.pics'/);
- assert.match(ui,/bigger-pics-ready/);
- assert.match(ui,/bigger-pics-result/);
- assert.match(ui,/bigger-pics-image/);
- assert.match(ui,/e\.data\.context===upscaleContext/);
+test('only expected embed origins can return images; no hidden browsing or automatic archive without opt-in',()=>{
+ const ui=read('assets/js/simab-ai-studio-v35.js');
+ assert.match(ui,/const embedOrigin='https:\/\/image-generation\.perchance\.org'/);
+ assert.match(ui,/embedOrigin\+'\/embed#'/);
+ assert.match(ui,/e\.origin!==embedOrigin/);
+ assert.match(ui,/j\.frame\.contentWindow===e\.source&&j\.id===e\.data\.id/);
+ assert.match(ui,/e\.data\.type!=='finished'/);
+ assert.match(ui,/frame\.loading='eager'/);
+ assert.match(ui,/const job=queue\.shift\(\)/);
  assert.match(ui,/SimabWallet\.mutate\('ai_studio_activate'/);
+ assert.match(ui,/\$\('archive-consent'\)\.checked/);
  assert.match(ui,/consent:true/);
- assert.match(ui,/image\/jpeg/);
- assert.doesNotMatch(ui,/parent\.frames\[|contentDocument|iframe\.contentWindow\.document/);
+ assert.match(ui,/archiveQueue=/);
+ assert.match(ui,/toDataURL\('image\/jpeg'/);
+ assert.doesNotMatch(ui,/contentDocument|iframe\.contentWindow\.document|cf_clearance|verifyUser|verifyUser/i);
  const admin=read('admin/index.html');
  assert.match(admin,/id="ai-admin-free" checked/);
  assert.match(admin,/simab-ai-admin-v34\.js/);
