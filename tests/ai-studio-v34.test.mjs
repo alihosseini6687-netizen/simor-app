@@ -62,3 +62,23 @@ test('only expected embed origins can return images; no hidden browsing or autom
  assert.match(read('supabase/functions/simab-central-quests/ai-studio-api.ts'),/terms_text:termsText/);
  assert.match(read('supabase/migrations/20261108_ai_studio_terms_v36.sql'),/ADD COLUMN IF NOT EXISTS terms_text/);
 });
+
+test('v36 beta archive requires explicit consent and configured channel, not a minimum terms length',()=>{
+ const ui=read('assets/js/simab-ai-studio-v36.js');
+ const api=read('supabase/functions/simab-central-quests/ai-studio-api.ts');
+ const admin=read('assets/js/simab-ai-admin-v36.js');
+ const view=read('ai/studio/index.html');
+ assert.match(view,/id="archive-consent"> با شرایط موافقم/);
+ assert.match(view,/id="ai-terms-box"/);
+ assert.match(ui,/settings\?\.archiveReady&&\$\('archive-consent'\)\.checked/);
+ assert.match(ui,/if\(!\$\('archive-consent'\)\.checked\)/);
+ assert.match(api,/p\.consent!==true/);
+ assert.match(api,/archiveReady:cfg\.archive_enabled&&!!cfg\.archive_channel_id/);
+ assert.match(api,/if\(!cfg\.enabled\|\|!cfg\.archive_enabled\|\|!cfg\.archive_channel_id\)fail\('archive_not_ready'\)/);
+ assert.match(api,/if\(p\.archiveEnabled&&!channel\)fail\('invalid_channel'\)/);
+ assert.match(api,/getChatMember/);
+ assert.match(api,/can_post_messages/);
+ assert.doesNotMatch(ui,/!settings\?\.archiveReady\|\|!settings\?\.termsText/);
+ assert.doesNotMatch(api,/termsText\.length<80|terms_text\|\|''\)\.trim\(\)\.length>=80/);
+ assert.doesNotMatch(admin,/termsText\.length<80/);
+});
