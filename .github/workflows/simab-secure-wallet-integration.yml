@@ -80,6 +80,8 @@ jobs:
           psql -v ON_ERROR_STOP=1 -f tests/integration-referral-guards-v32.sql
           psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261105_room_idle_refund_v32.sql
           psql -v ON_ERROR_STOP=1 -f tests/integration-idle-room-v32.sql
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20261107_ai_studio_v34.sql
+          psql -v ON_ERROR_STOP=1 -f tests/integration-ai-studio-v34.sql
       - name: Install Chromium for mobile UI checks
         run: npx playwright install --with-deps chromium
       - name: Independent game pages and Auto Stop regressions
