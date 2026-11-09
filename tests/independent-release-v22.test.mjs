@@ -63,11 +63,22 @@ const pagesTransferApprovedBlobs={
  "assets/js/simab-wallet-client.js":"f7e37c80dbbdfcf934d9724d6449e7d546021658",
  "assets/js/simab-i18n-v16.js":"87963af5ba024c79b4b91db2024d2654dde16fdf"
 };
+const mangoMobileApprovedBlobs={
+  "assets/js/simab-i18n-v16.js":"bb17e57b7e4d42c1594db8a6be65bed543e15919",
+  "assets/js/simab-v4.js":"108c960d033020d82a47046d61c610aa0c9a5431",
+  "assets/js/simab-wallet-client.js":"8a4ad5ce704219571ad224f37abead5ffd9f7881",
+  "index.html":"5674b42df9313a7d52c3bdd1dd2885f26fc7f4bb",
+};
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
 test('preserve original protected code while allowing exact reviewed UI/i18n modifications',()=>{
  for(const [file,expected] of Object.entries(manifest.hashes)){
   let source=readFileSync(new URL('../'+file,import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  if(Object.hasOwn(mangoMobileApprovedBlobs,file)){
+   const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
+   assert.equal(blob,mangoMobileApprovedBlobs[file],file+' Mango mobile review scope altered unexpectedly');
+   continue;
+  }
   if(Object.hasOwn(pagesTransferApprovedBlobs,file)){
    const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
    assert.equal(blob,pagesTransferApprovedBlobs[file],file+' Pages transfer scope altered unexpectedly');

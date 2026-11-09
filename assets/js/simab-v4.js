@@ -23,7 +23,7 @@
     { id:'4', title:'حکم', category:'cards', active:true, icon:'🎴', link:'games/room/index.html?game=hokm' },
     { id:'5', title:'۲۱ (بلک‌جک)', category:'cards', active:true, icon:'♠️', link:'games/room/index.html?game=blackjack' },
     { id:'6', title:'۷ خبیث', category:'cards', active:true, icon:'🎮', link:'games/room/index.html?game=sevens' },
-    { id:'7', title:'جرأت حقیقت', category:'future', active:true, icon:'🎮', link:'games/room/index.html?game=truth' },
+    { id:'7', title:'جرأت حقیقت', category:'classic', active:true, icon:'🎮', link:'games/room/index.html?game=truth' },
     { id:'8', title:'۳ به ۳', category:'classic', active:true, icon:'🎮', link:'games/room/index.html?game=mill' },
     { id:'9', title:'دبلنا', category:'classic', active:true, icon:'🎮', link:'games/room/index.html?game=bingo' },
     { id:'10', title:'منچ', category:'classic', active:true, icon:'🎲', link:'games/room/index.html?game=ludo' },
@@ -132,7 +132,8 @@
         (activeFilter==='favorites' && favorites.has(game.id))||
         (activeFilter==='future' && !game.active)||
         (activeFilter===game.category);
-      const matchesText=!needle || normalize(game.title).includes(needle) || normalize(game.category).includes(needle);
+      const localizedTitle=window.SimabI18n?.t(game.title)||game.title;
+      const matchesText=!needle || [game.title,localizedTitle,game.category].some(value=>normalize(value).includes(needle));
       holder.hidden=!(matchFilter && matchesText);
       if (!holder.hidden) visible++;
     });
@@ -166,9 +167,21 @@
     if(inHero){
       inHero.replaceChildren();
       if(ids.length){
-        const title=document.createElement("span");title.textContent="↶ آخرین بازی من:";inHero.appendChild(title);
-        const g=gameById.get(ids[0]);const a=document.createElement("a");a.href=g.link;a.textContent=g.icon+" "+g.title+" ←";inHero.appendChild(a);
+        const title=document.createElement("span");
+        title.dataset.i18n="mango.recentGame";
+        title.textContent="آخرین بازی";
+        const g=gameById.get(ids[0]);
+        const a=document.createElement("a");
+        a.href=g.link;
+        const icon=document.createElement("span");
+        icon.setAttribute("aria-hidden","true");
+        icon.textContent=g.icon;
+        const name=document.createElement("span");
+        name.textContent=g.title;
+        a.append(icon," ",name);
+        inHero.append(title,a);
       }
+      inHero.hidden=!ids.length;
     }
     ids.forEach(id=>{
       const game=gameById.get(id);
@@ -177,11 +190,17 @@
     });
   }
   renderRecent();
+  window.addEventListener('simab-language-ready',refresh);
   document.addEventListener('click',(event)=>{
     const link=event.target.closest('a[href]');
     if(!link)return;
     const dest=new URL(link.href,location.href);
-    const game=knownGames.find(g=>g.active && new URL(g.link,location.href).pathname===dest.pathname);
+    if(dest.origin!==location.origin)return;
+    const game=knownGames.find(g=>{
+      if(!g.active)return false;
+      const route=new URL(g.link,location.href);
+      return route.pathname===dest.pathname && route.searchParams.get('game')===dest.searchParams.get('game');
+    });
     if(!game)return;
     const unique=[game.id,...jsonArray(RECENT_KEY).map(String).filter(id=>id!==game.id)].slice(0,3);
     safeWrite(RECENT_KEY,JSON.stringify(unique));

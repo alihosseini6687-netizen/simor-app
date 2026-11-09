@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-<head><script src="assets/js/simab-i18n-v16.js?v=20261107-ai34"></script><link rel="icon" type="image/png" href="assets/mango/mango-game-original-logo.png"><link rel="apple-touch-icon" href="assets/mango/mango-game-original-logo.png"><link rel="manifest" href="simab.webmanifest">
+<head><script src="assets/js/simab-i18n-v16.js?v=20261109-mango"></script><link rel="icon" type="image/png" href="assets/mango/mango-game-original-logo.png"><link rel="apple-touch-icon" href="assets/mango/mango-game-original-logo.png"><link rel="manifest" href="simab.webmanifest">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Mango Game | بازی و سرگرمی</title>
@@ -293,12 +293,12 @@
   <link rel="stylesheet" href="assets/css/simab-v3.css?v=3">
   <link rel="stylesheet" href="assets/css/simab-v4.css?v=4">
   <link rel="stylesheet" href="assets/css/simab-home-v6.css?v=6">
-  <script src="assets/js/simab-wallet-client.js?v=31"></script>
+  <script src="assets/js/simab-wallet-client.js?v=20261109"></script>
 
 <link rel="stylesheet" href="assets/css/simab-secure-entry-v7.css?v=7">
 <link rel="stylesheet" href="assets/css/simab-v8-core.css?v=8">
 <link rel="stylesheet" href="assets/css/simab-v8-home.css?v=9">
-<link rel="stylesheet" href="assets/css/simab-launch-v15.css?v=17"><link rel="stylesheet" href="assets/css/simab-safe-area-v16.css?v=20261102"><script src="assets/js/simab-safe-area-v16.js?v=17" defer></script><style>.game-card[data-game-id="11"]{background:linear-gradient(0deg,#10071fdd,transparent),url(assets/v16/snakes-cover.webp) center/cover!important}</style><link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="assets/css/mango-game-theme-v1.css?v=20261104"><link rel="stylesheet" href="assets/css/mango-game-home-v1.css?v=20261104"></head>
+<link rel="stylesheet" href="assets/css/simab-launch-v15.css?v=17"><link rel="stylesheet" href="assets/css/simab-safe-area-v16.css?v=20261102"><script src="assets/js/simab-safe-area-v16.js?v=17" defer></script><style>.game-card[data-game-id="11"]{background:linear-gradient(0deg,#10071fdd,transparent),url(assets/v16/snakes-cover.webp) center/cover!important}</style><link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="assets/css/mango-game-theme-v1.css?v=20261104"><link rel="stylesheet" href="assets/css/mango-game-home-v1.css?v=20261109"></head>
 <body>
 
   <div class="toast-msg" id="toast-msg">انجام شد!</div>
@@ -426,7 +426,7 @@
       <section class="v3-page-hero v3-rewards-hero">
         <img src="assets/v3/rewards.webp" alt="" loading="lazy">
         <span class="v3-eyebrow">🎁 REWARDS ZONE</span>
-        <h1>مأموریت‌ها <em>و جوایز</em></h1>
+        <h1 data-i18n="mango.missionsHeading">مأموریت‌ها و جوایز</h1>
         <p>چالش‌های روزانه، هدیه ورود و بازی‌های سرگرم‌کننده.</p>
       </section>
       <div class="v3-section-header"><h2>💰 کیف پول فعلی</h2></div>
@@ -473,7 +473,7 @@
       <section class="v3-page-hero v3-news-hero">
         <img src="assets/v3/news.webp" alt="" loading="lazy">
         <span class="v3-eyebrow">🏆 Mango Game EVENTS</span>
-        <h1>اخبار <em>و رویدادها</em></h1>
+        <h1 data-i18n="mango.newsHeading">اخبار و رویدادها</h1>
         <p>برای خبرهای جدید، رویدادها و مسابقات آینده همراه مانگو گیم باش.</p>
       </section>
       <div class="v3-section-header"><h2>📢 تازه‌ترین خبرها</h2></div>
@@ -591,11 +591,6 @@
       adminBtn.style.display='none';if(isRealAdmin)SimabWallet.ready.then(()=>SimabWallet.read('ping')).then(r=>{if(r.adminVerified)adminBtn.style.display='flex';}).catch(()=>{});
     }
 
-    // All active balances come from the shared authoritative wallet.
-    SimabWallet.subscribe(s=>{
-      document.getElementById('user-balance-txt').textContent=s.coins.toLocaleString('fa-IR');
-      document.getElementById('tasks-balance-num').textContent=s.coins.toLocaleString('fa-IR');
-    });
     function triggerHaptic(type = 'light') {
       try {
         if (tg?.HapticFeedback) {
@@ -756,6 +751,6 @@
     }
     setTimeout(processStartParams, 600);
   </script>
-  <script defer src="assets/js/simab-v4.js?v=16"></script>
+  <script defer src="assets/js/simab-v4.js?v=20261109"></script>
 <script src="assets/js/simab-profile-v13.js?v=13" defer></script><script src="assets/js/simab-launch-routing-v22.js?v=20261102"></script></body>
 </html>

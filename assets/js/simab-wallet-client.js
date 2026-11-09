@@ -16,9 +16,14 @@
  }
  function actor(){try{return String(JSON.parse(new URLSearchParams(candidates()[0]).get('user')).id);}catch{return '';}}
  function message(text){for(const n of document.querySelectorAll('[data-wallet-status]'))n.textContent=text;}
- function paint(s){if(!s||s.serverWallet!==true||!Number.isSafeInteger(s.coins)||!Number.isSafeInteger(s.chips))throw Error('پاسخ موجودی معتبر نیست.');state=s;accountLabel();
-  for(const n of document.querySelectorAll('[data-coins]'))n.textContent=s.coins.toLocaleString('fa-IR');
-  for(const n of document.querySelectorAll('[data-chips]'))n.textContent=s.chips.toLocaleString('fa-IR');
+ function paintBalances(){
+  if(!state)return;
+  const locale=window.SimabI18n?.locale||document.documentElement?.lang||'en';
+  for(const n of document.querySelectorAll('[data-coins]'))n.textContent=state.coins.toLocaleString(locale);
+  for(const n of document.querySelectorAll('[data-chips]'))n.textContent=state.chips.toLocaleString(locale);
+ }
+ window.addEventListener('simab-language-ready',paintBalances);
+ function paint(s){if(!s||s.serverWallet!==true||!Number.isSafeInteger(s.coins)||!Number.isSafeInteger(s.chips))throw Error('پاسخ موجودی معتبر نیست.');state=s;accountLabel();paintBalances();
   for(const fn of listeners){try{fn(s);}catch(e){console.error('wallet view failed',e);}}
   window.dispatchEvent(new CustomEvent('simab-wallet',{detail:s}));
  }
