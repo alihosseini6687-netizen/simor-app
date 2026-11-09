@@ -27,4 +27,5 @@
  'swap.trayHelp':['ارزش مجموع سینی همان موجودی ژتون است؛ رنگ ژتون‌ها مقدار پول را تغییر نمی‌دهد.','The tray’s total value equals your chip balance; chip colors do not change monetary values.','Общая стоимость лотка равна балансу фишек; цвета не меняют сумму.','قيمة الصينية الكلية تساوي رصيد الرقائق؛ ألوان الرقائق لا تغير القيمة.','ट्रे का कुल मूल्य चिप शेष के बराबर है; रंग धन की राशि नहीं बदलते।','La valeur totale du plateau égale le solde de jetons ; leurs couleurs ne changent pas les montants.','Der Gesamtwert der Ablage entspricht dem Chipguthaben; Chipfarben ändern keine Geldwerte.']
  };
  const sources=window.SimabLocaleSources||(window.SimabLocaleSources={});for(const [id,row] of Object.entries(rows))['fa','en','ru','ar','hi','fr','de'].forEach((lang,i)=>{window.SimabLocales.catalogs[lang][id]=row[i];if(i===0)sources[row[i]]=id;});
+ sources['از پاداش روزانه، مأموریت‌ها، گردونه یا ماینر سکه بگیر؛ در صرافی هر ۱ سکه را به ۱ ژتون تبدیل کن. همهٔ بازی‌ها کیف پول مشترک دارند.']='blackjack.walletHelp';
 })();

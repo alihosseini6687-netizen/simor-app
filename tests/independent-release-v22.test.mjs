@@ -56,11 +56,23 @@ const mangoV34ApprovedBlobs={
  "assets/js/simab-wallet-client.js":"6699f11967c23ea59224f4d80064fafe11fe001a",
  "supabase/functions/simab-central-quests/index.ts":"3734025fae51456d4a4d58a2830fdca9775dec5f"
 };
+// Pages transfer: server origins, bot links, and locale-safe wallet labels.
+const pagesTransferApprovedBlobs={
+ "supabase/functions/simab-central-quests/index.ts":"e2ef03d08a98208713b18f4b03db393cf53f9698",
+ "supabase/functions/simab-central-quests/shop.ts":"9ce1e776ed4b5156b560a0216db15391ca5e721f",
+ "assets/js/simab-wallet-client.js":"f7e37c80dbbdfcf934d9724d6449e7d546021658",
+ "assets/js/simab-i18n-v16.js":"87963af5ba024c79b4b91db2024d2654dde16fdf"
+};
 const homeCSS='<link rel="stylesheet" href="assets/css/simab-phase3-v22.css?v=20261101">';
 const roomCSS='<link rel="stylesheet" href="../../assets/css/simab-phase3-v22.css?v=20261101"><link rel="stylesheet" href="../../assets/css/simab-phase4-v22.css?v=20261101">';
 test('preserve original protected code while allowing exact reviewed UI/i18n modifications',()=>{
  for(const [file,expected] of Object.entries(manifest.hashes)){
   let source=readFileSync(new URL('../'+file,import.meta.url),'utf8').replace(/\r\n/g,'\n');
+  if(Object.hasOwn(pagesTransferApprovedBlobs,file)){
+   const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
+   assert.equal(blob,pagesTransferApprovedBlobs[file],file+' Pages transfer scope altered unexpectedly');
+   continue;
+  }
   if(Object.hasOwn(mangoV34ApprovedBlobs,file)){
    const blob=createHash('sha1').update('blob '+Buffer.byteLength(source,'utf8')+'\0'+source).digest('hex');
    assert.equal(blob,mangoV34ApprovedBlobs[file],file+' v34 audited scope altered unexpectedly');

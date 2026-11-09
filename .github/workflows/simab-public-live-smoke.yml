@@ -34,7 +34,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json, urllib.request, urllib.error
-          pages = 'https://alihosseini6687-netizen.github.io/simor-app/'
+          pages = 'https://dododia88-dotcom.github.io/simor-app/'
           edge = 'https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests'
           def get(url):
               req = urllib.request.Request(url, headers={'User-Agent':'SIMAB-release-readonly-smoke/1.0'})

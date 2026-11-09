@@ -45,7 +45,7 @@
   // Keep exact amounts/rules rather than substituting vague or misleading prose.
    // Numbers, card faces, punctuation and explicit brand names are not prose.
    const parts=trimmed.split(' / ');if(parts.length>1&&parts.every(part=>legacyBindings.has(part)||resolve(part)||/^[\p{N}\s\p{P}\p{S}\uFE0F]+$/u.test(part)))return raw.replace(trimmed,parts.map(part=>t(part)).join(' / '));
-   const technical=/^[\p{N}\s\p{P}\p{S}\u200c\u200e\u200f\u2066-\u2069\uFE0F]+$/u.test(trimmed)||/^(?:S|SIMAB|GAMING CLUB|✦ SIMAB GAMING CLUB|⭐ SIMAB|Telegram|TON|Stars|UTC|Tonkeeper|TON Wallet|TELEGRAM STARS|SIMAB GAMING CLUB|SIMAB • FRIENDS CLUB|SIMAB \| Gaming Club|SIMAB ROLLER|[AJQKD]|[AJQK]\s*[♠♥♦♣]|x\d+|@[\w]+)$/iu.test(trimmed);
+   const technical=/^[\p{N}\s\p{P}\p{S}\u200c\u200e\u200f\u2066-\u2069\uFE0F]+$/u.test(trimmed)||/^(?:S|SIMAB|GAMING CLUB|✦ SIMAB GAMING CLUB|⭐ SIMAB|Telegram|TON|Stars|UTC|Tonkeeper|TON Wallet|TELEGRAM STARS|SIMAB GAMING CLUB|SIMAB • FRIENDS CLUB|SIMAB \| Gaming Club|SIMAB ROLLER|♠ MANGO GAME|Mango Game ROLLER|[AJQKD]|[AJQK]\s*[♠♥♦♣]|x\d+|@[\w]+)$/iu.test(trimmed);
    // A build marker is not prose and must not trigger a missing-translation warning.
    if(!technical&&!/^•\s*v\d+(?:\.\d+)*$/i.test(trimmed))missing.add(trimmed);
    return lang==='fa'?raw:raw.replace(trimmed,english);

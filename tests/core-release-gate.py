@@ -15,7 +15,7 @@ import urllib.request
 import json
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE = "https://alihosseini6687-netizen.github.io/simor-app/"
+BASE = "https://dododia88-dotcom.github.io/simor-app/"
 EDGE = "https://pwjlyryrrgbaprfnrieq.supabase.co/functions/v1/simab-central-quests"
 
 EXPECTED_GAMES = {

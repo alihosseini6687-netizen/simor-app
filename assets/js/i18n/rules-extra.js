@@ -1,6 +1,16 @@
 /* Translated descriptions of the existing solo/variant rules. No executable
  * gameplay, odds, payouts, turn handling or settlement is changed here. */
 (()=>{'use strict';const rows={
+ 'rules.sevensOnline':[
+  'هفت‌خبیث آنلاین: هنگام انداختن کارت ۲، تا دو کارت دیگر از دست بازیکن به نفر انتخابی منتقل می‌شود. میزهای قدیمی قوانین قبلی‌شان را حفظ می‌کنند.',
+  'Online Sevens: when you play a 2, up to two other cards from your hand go to the player you choose. Existing tables keep their previous rules.',
+  'Онлайн-семёрка: сыграв двойку, вы передаёте до двух других карт из своей руки выбранному игроку. Для ранее созданных столов действуют прежние правила.',
+  'السبعة على الإنترنت: عند لعب ورقة ٢، ينتقل ما يصل إلى ورقتين أخريين من يدك إلى اللاعب الذي تختاره. تحتفظ الطاولات الحالية بقواعدها السابقة.',
+  'ऑनलाइन सेवन्स: २ खेलने पर आपके हाथ से अधिकतम दो अन्य कार्ड आपके चुने हुए खिलाड़ी को जाते हैं। मौजूदा टेबलों पर पुराने नियम लागू रहते हैं।',
+  'Sevens en ligne : quand vous jouez un 2, jusqu’à deux autres cartes de votre main passent au joueur de votre choix. Les tables déjà ouvertes conservent leurs règles.',
+  'Online-Sevens: Spielst du eine 2, gehen bis zu zwei weitere Karten aus deiner Hand an den Spieler deiner Wahl. Bereits bestehende Tische behalten ihre bisherigen Regeln.'
+ ],
+
  'rules.hokmTwo':['حکم دونفره، بدون تیم: حاکم با نخستین آس تعیین می‌شود. ابتدا پنج کارت حاکم؛ بعد از اعلام حکم، پنج کارت نفر دیگر. حاکم سه کارت و نفر دیگر دو کارت کنار می‌گذارند. سپس نوبتی از دستهٔ وسط کارت اول را می‌پذیرند یا رد می‌کنند و کارت دوم را اجباری می‌گیرند، تا هر نفر ۱۳ کارت داشته باشد. رعایت خال الزامی؛ هفت دست، برد دور. کت ۲ و حاکم‌کتی ۳ امتیاز؛ مسابقه تا ۷ امتیاز.',
  'Two-player Hokm, no teams: the first Ace determines the trump picker. Deal their first five cards, then the other player’s five after trumps are chosen. The trump picker discards three, the other player two. Players alternate accepting the first stock card or rejecting it and taking the second obligatorily, until each has 13 cards. Follow suit; seven tricks win a round. Shutout scores 2, opponents’ shutout against the trump picker 3; match to 7 points.',
  'Хокм вдвоём, без команд: первый туз определяет выбирающего козырь. Сначала его пять карт; после выбора козыря пять другому игроку. Выбирающий сбрасывает три карты, другой две. Затем по очереди принимают первую карту колоды или отклоняют её и обязательно берут вторую, пока у каждого не будет 13. Масть обязательна; семь взяток выигрывают раунд. Сухая победа 2 очка, против выбирающего козырь 3; матч до 7 очков.',
