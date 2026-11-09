@@ -159,7 +159,7 @@ async function verifyTelegramEd25519(
 }
 
 
-const allowedOrigin = "https://alihosseini6687-netizen.github.io";
+const allowedOrigin = "https://dododia88-dotcom.github.io";
 const httpHeaders = {
   "content-type": "application/json; charset=utf-8",
   "cache-control": "no-store",
